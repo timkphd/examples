@@ -1,0 +1,49 @@
+rm results
+cp true source.dat
+
+./airfoil.py 2200
+./fourd.mkl >> results
+./airfoil.py 2400
+./fourd.mkl >> results
+./airfoil.py 2600
+./fourd.mkl >> results
+./airfoil.py 2800
+./fourd.mkl >> results
+./airfoil.py 3000
+./fourd.mkl >> results
+./airfoil.py 3200
+./fourd.mkl >> results
+./airfoil.py 3400
+./fourd.mkl >> results
+./airfoil.py 3600
+./fourd.mkl >> results
+./airfoil.py 3800
+./fourd.mkl >> results
+./airfoil.py 4000
+./fourd.mkl >> results
+
+
+
+
+cp false source.dat
+
+./airfoil.py 2200
+./fourd.cuda >> results
+./airfoil.py 2400
+./fourd.cuda >> results
+./airfoil.py 2600
+./fourd.cuda >> results
+./airfoil.py 2800
+./fourd.cuda >> results
+./airfoil.py 3000
+./fourd.cuda >> results
+./airfoil.py 3200
+./fourd.cuda >> results
+./airfoil.py 3400
+./fourd.cuda >> results
+./airfoil.py 3600
+./fourd.cuda >> results
+./airfoil.py 3800
+./fourd.cuda >> results
+./airfoil.py 4000
+./fourd.cuda >> results

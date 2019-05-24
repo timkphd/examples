@@ -1,0 +1,30 @@
+#!/bin/bash
+#PBS -l nodes=2:ppn=8
+#PBS -l walltime=08:00:00
+#PBS -N test_1
+#PBS -o outx.$PBS_JOBID
+#PBS -e errx.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+##PBS -m abe
+##PBS -M tkaiser@mines.edu
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+# get a short and full list of all of my nodes
+sort -u  $PBS_NODEFILE > mynodes.$PBS_JOBID
+sort   $PBS_NODEFILE > allmynodes.$PBS_JOBID
+
+# select one of these programs to run
+# the rest of the lines are commented
+# out
+#export MYPROGRAM=c_ex00
+#export MYPROGRAM=f_ex00
+#export MYPROGRAM=info_p
+#export MYPROGRAM=info_c
+export MYPROGRAM=info_f
+
+echo "running" $PBS_O_WORKDIR/$MYPROGRAM
+mpiexec -np 16 $PBS_O_WORKDIR/$MYPROGRAM
+
+

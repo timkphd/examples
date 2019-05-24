@@ -1,0 +1,137 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>Slurm Examples</title>
+	<style type="text/css">
+	pre { color: blue; font-size: 9pt; font-family: monospace; }
+	p { width: 6in; text-align: justify; margin: .25in; }
+	</style>
+	<meta name="generator" content="BBEdit 9.3">
+</head>
+<body>
+<h2>
+Slurm Examples
+</h2>
+
+<p>
+This folder contains a number of simple slurm script examples, from very basic, <i>slurm_simple</i> and <i>slurm_basic</i> to <i>slurm_array</i> which does array jobs.  These can be used as templates for your own scripts. 
+</p>
+
+<p>
+For more information about slurm scripts see the discussion <i>Batch Scripting for Parallel Systems </i> off of http://geco.mines.edu/prototype/Show_me_some_local_HPC_tutorials.
+</p>
+
+<p>
+There are a number of programs to be driven by the scripts.
+</p>
+
+<p>
+<i>helloc.c</i> and <i>hellof.f90</i> are basic hello world programs in MPI.
+</p>
+
+<p>
+<i>invertf.f90</i> is an OpenMP program that does 8 matrix inversions in parallel.
+</p>
+
+<p>
+<i>stc_01.c</i> and <i>stf_01.f90</i> are finite difference applications also in MPI
+</p>
+
+<p>
+<i>phostone.c</i> is hybrid MPI/OpenMP glorified hello world program.  It has a number of options which can be used to generate information about nodes and cores on which the program is being run.  The options can bee seen by running with the -h option.  
+</p>
+
+<p>
+The <i>makefile</i> can be used to build the applications.  You will need to have MPI compilers in your path for the makefile to work.  Most MPI compilers brought in to your environment via the module system should work.  For example: 
+</p>
+
+<pre>
+ module purge
+ module load PrgEnv/devtoolset-6 PrgEnv/mpi/openmpi/gcc/3.0.0
+ 
+ make
+</pre>
+
+<p><b>
+slurm_simple
+</b>
+<br>
+Near minimum slurm script.  Run "hello" on two nodes, with four tasks per node.  Output will be in the default slurm-#######.out file, where ####### is the job number
+</p>
+
+<p><b>
+slurm_basic
+</b>
+<br>
+Standard out and standard error are put in the files %J.out and %J.error where %J is the job number.  The script runs the finite difference codes stc_01 and stc_01 on two nodes, eight total tasks.  These receive input from the file st.in.  For the Fortran version of the program output is redirected to a file.  Finally, the glorified hello world hybrid MPI/OpenMP program is run on four tasks with four threads per task.  With the -F option you will get a report of mapping of threads/tasks to nodes and cores.
+</p>
+
+<p><b>
+slurm_openmp
+</b>
+<br>
+This runs the matrix inversion program using 2, 4, and 8 threads.  Output is put in the files two, four, and eight.
+</p>
+
+<p><b>
+heterogen
+</b>
+<br>
+This shows one way to run different MPI codes (Fortran and C in this case) on various cores as part of the MPI run.
+</p>
+
+<p><b>
+slurm_record
+</b>
+<br>
+This runs the glorified hello world hybrid MPI/OpenMP program.  With lots of bells and whistles.  Some of the other things it does:
+</p>
+<pre>
+# Go to the directoy from which our job was launched
+# Create a short JOBID base on the one provided by the scheduler
+# Create a "base name" for a directory in which our job will run
+# Create a directoy for our run based on the $JOBID and go there
+# Create a link back to our starting directory
+# Save a copy of our environment and script
+# Set the path to our program
+# Set a string which is the argument list for our program
+# Run the program with stdout going to our starting director
+# Copy the standard output to our run directory.
+</pre>
+
+<p><b>
+slurm_array
+</b>
+<br>
+This runs an array of slurm jobs.  For more information about array jobs see the end of <i>Batch Scripting for Parallel Systems</i> as discussed above.  Array jobs allow a large number of similar jobs to be run, (bag of tasks) easily. 
+</p>
+
+<p>
+In this example each job will be given its own directory.  Then a simple python program will be run that just reports environmental information along with printing the command line arguments.  The script will read two files if they exist, pars, and list.  These files will contain sets of command line arguments and directory names.  Each subarray job will read a single line from these two files.  The line read is determined by the subarray job number,  $SLURM_ARRAY_TASK_ID.  If the files pars and list do not exist then the directory name will default to mysub_$SLURM_ARRAY_TASK_ID and the string containing the command line arguments will default to the date.
+</p>
+
+<p>
+To run 16 subarray jobs you can use the command:
+</p>
+
+<pre>
+sbatch --array=1-16 slurm_array
+</pre>
+
+<p>
+Note the array range does not need to start with 1.
+</p>
+
+<p>
+You can generate the files pars and list by running the command:
+</p>
+
+<pre>
+make dat
+</pre>
+
+</body>
+</html>
+

@@ -1,0 +1,26 @@
+#!/bin/bash 
+#SBATCH --job-name="sample"
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:15:00
+#SBATCH --out=%J.out
+#SBATCH --error=%J.error
+
+
+#supress warning message for some versions of MPI
+export LD_LIBRARY_PATH=/opt/lib/extras:$LD_LIBRARY_PATH
+
+# Go to the directory from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+export OMP_NUM_THREADS=2
+srun  -n 1 --cpus-per-task=$OMP_NUM_THREADS ./invertf > two
+
+export OMP_NUM_THREADS=4
+srun  -n 1 --cpus-per-task=$OMP_NUM_THREADS ./invertf > four
+
+
+export OMP_NUM_THREADS=8
+srun  -n 1 --cpus-per-task=$OMP_NUM_THREADS ./invertf > eight
+

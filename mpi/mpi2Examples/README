@@ -1,0 +1,61 @@
+The sources main0.py and main1.py show how to use the
+MPI-2 commands:
+
+    mpi_open_port	
+    mpi_close_port		
+    mpi_comm_accept		
+    mpi_comm_connect	
+    mpi_comm_disconnect
+
+These commands allow two separate MPI jobs to connect
+to each other.
+
+These examples are designed to be run interactively.
+
+Start one copy of each application in its own window.
+
+
+mpiexec -n 1 main1.py
+
+
+
+mpiexec -n 1 main0.py
+
+
+The main1.py program will write a port_name string
+to the terminal, something like
+
+port= tag#0$port#54838$description#192.31.21.33$ifname#192.31.21.33$
+
+
+The other program, main0.py, takes this string as input.
+
+It will prompt using 
+
+port_name>
+
+Copy the string from the first window to the second inclosing it
+in quotes.
+
+After the two programs connect they send messages to each other 
+and quit.
+
+The file capture.png shows a screen dump of terminals windows running
+these two programs.
+
++++++++++++++++++++++++++++++++++
+
+The program tspawn.py, worker.c, worker.py show how to use the
+routines
+
+	mpi_comm_spawn
+	mpi_comm_get_parent
+	
+In this example tspawn.py spawns the two other MPI programs.
+It communicates with worker.py using both collective and 
+point-to-point routines
+
+To launch this example you only run tspawn.py using a command like
+
+mpiexec -n 1 tspawn.py
+

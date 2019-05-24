@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+import time
+import os
+import sys
+try:
+	from mpi4py import MPI
+	myid=MPI.COMM_WORLD.Get_rank()
+except ImportError:
+	myid=-1
+
+SLURM_JOB_ID=os.environ.get('SLURM_JOB_ID',"SLURM_JOB_ID")
+SLURM_ARRAY_JOB_ID=os.environ.get('SLURM_ARRAY_JOB_ID',"SLURM_ARRAY_JOB_ID")
+SLURM_ARRAY_TASK_ID=os.environ.get('SLURM_ARRAY_TASK_ID',"SLURM_ARRAY_TASK_ID")
+#os.environ.get('SLURM_ARRAY_TASK_COUNT',"SLURM_ARRAY_TASK_COUNT")
+#os.environ.get('SLURM_ARRAY_TASK_MAX',"SLURM_ARRAY_TASK_MAX")
+#os.environ.get('SLURM_ARRAY_TASK_MIN',"SLURM_ARRAY_TASK_MIN")
+### SLURM_JOB_ID and SLURM_ARRAY_TASK_ID changes for each element in the array
+### SLURM_ARRAY_TASK_ID will be set to the job array index value
+### SLURM_ARRAY_JOB_ID will be set to the first job ID of the array
+print("%4d %15.3f \nSLURM_ARRAY_JOB_ID %20s \nSLURM_JOB_ID %20s \nSLURM_ARRAY_TASK_ID %20s"%(myid,time.time(),SLURM_ARRAY_JOB_ID,SLURM_JOB_ID,SLURM_ARRAY_TASK_ID))
+time.sleep(5)
+i=0
+for x in sys.argv:
+	print("command line argument %d = %s" % (i,x))
+	i=i+1
+

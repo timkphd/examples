@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>MPI Examples</title>
+	<meta name="generator" content="BBEdit 8.7">
+</head>
+<body>
+<h3>ex00&nbsp;<a href="f_ex00.f">f_ex00.f</a>&nbsp;&nbsp;<a href="c_ex00.c">c_ex00.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This is a simple hello world program. Each processor prints out 
+it's rank and the size of the current MPI run (Total number of
+processors).
+		
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex01&nbsp;<a href="f_ex01.f">f_ex01.f</a>&nbsp;&nbsp;<a href="c_ex01.c">c_ex01.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+A simple send/receive program in MPI
+</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Send</li>
+	<li>MPI_Recv</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex02&nbsp;<a href="f_ex02.f">f_ex02.f</a>&nbsp;&nbsp;<a href="c_ex02.c">c_ex02.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+Shows how to use probe and get_count to find the size of an incomming
+message.
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_SEND</li>
+	<li>MPI_Probe</li>
+	<li>MPI_get_count</li>
+	<li>MPI_recv</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex03&nbsp;<a href="f_ex03.f">f_ex03.f</a>&nbsp;&nbsp;<a href="c_ex03.c">c_ex03.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This is a simple isend/ireceive program in MPI.
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Isend</li>
+	<li>MPI_Irecv</li>
+	<li>MPI_Wait</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex04&nbsp;<a href="f_ex04.f">f_ex04.f</a>&nbsp;&nbsp;<a href="c_ex04.c">c_ex04.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This is a simple broadcast program in MPI.		
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Bcast</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex05&nbsp;<a href="f_ex05.f">f_ex05.f</a>&nbsp;&nbsp;<a href="c_ex05.c">c_ex05.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This program shows how to use MPI_Scatter and MPI_Gather.  
+Each processor gets different data from the root processor
+by way of mpi_scatter.  The data is summed and then sent back
+to the root processor using MPI_Gather.  The root processor
+then prints the global sum. 
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Scatter</li>
+	<li>MPI_Gather</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex06&nbsp;<a href="f_ex06.f">f_ex06.f</a>&nbsp;&nbsp;<a href="c_ex06.c">c_ex06.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This program shows how to use MPI_Scatter and MPI_Reduce.
+Each processor gets different data from the root processor
+by way of mpi_scatter.  The data is summed and then sent back
+to the root processor using MPI_Reduce.  The root processor
+then prints the global sum. 
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Scatter</li>
+	<li>MPI_Reduce</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex07&nbsp;<a href="f_ex07.f">f_ex07.f</a>&nbsp;&nbsp;<a href="c_ex07.c">c_ex07.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This program shows how to use MPI_Alltoall.  Each 
+processor send/rec a different  random number 
+to/from other processors. 
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_alltoall</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex08&nbsp;<a href="f_ex08.f">f_ex08.f</a>&nbsp;&nbsp;<a href="c_ex08.c">c_ex08.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This program shows how to use MPI_Gatherv.  Each processor sends a
+different amount of data to the root processor.  We use MPI_Gather
+first to tell the root how much data is going to be sent.
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Gather</li>
+	<li>MPI_Gatherv</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex09&nbsp;<a href="f_ex09.f">f_ex09.f</a>&nbsp;&nbsp;<a href="c_ex09.c">c_ex09.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This program shows how to use MPI_Alltoallv.  Each processor
+send/rec a different and random amount of data to/from other
+processors.  We use MPI_Alltoall to tell how much data is going
+to be sent.
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_alltoall</li>
+	<li>MPI_alltoallv</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex10&nbsp;<a href="f_ex10.f">f_ex10.f</a>&nbsp;&nbsp;<a href="c_ex10.c">c_ex10.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This program is designed to show how to set up a new communicator. 
+We set up a communicator that includes all but one of the processors,
+The last processor is not part of the new communcator, TIMS_COMM_WORLD.
+We use the routine MPI_Group_rank to find the rank within the new
+connunicator.  For the last processor the rank is MPI_UNDEFINED because
+it is not part of the communicator.  For this processor we call get_input
+The processors in TIMS_COMM_WORLD pass a token between themselves in the
+subroutine pass_token.  The remaining processor gets input, i, from the terminal
+and passes it to processor 1 of MPI_COMM_WORLD.  If i > 100 the program stops.
+		</td>
+	</tr>
+</table>
+
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_COMM_GROUP</li>
+	<li>MPI_GROUP_INCL</li>
+	<li>MPI_COMM_CREATE</li>
+	<li>MPI_GROUP_RANK</li>
+	<li>MPI_Barrier</li>
+	<li>MPI_Finalize</li>
+	<li>MPI_COMM_DUP</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Barrier</li>
+	<li>MPI_Finalize</li>
+	<li>MPI_Iprobe</li>
+	<li>MPI_RECV</li>
+	<li>MPI_SEND</li>
+	<li>MPI_RECV</li>
+	<li>MPI_SEND</li>
+	<li>MPI_SEND</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex11&nbsp;<a href="f_ex11.f">f_ex11.f</a>&nbsp;&nbsp;<a href="c_ex11.c">c_ex011.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+Shows how to use MPI_Type_vector to send noncontiguous blocks of data
+and MPI_Get_count and MPI_Get_elements to see the number of elements sent.
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Type_vector</li>
+	<li>MPI_Type_commit</li>
+	<li>MPI_Send</li>
+	<li>MPI_Recv</li>
+	<li>MPI_Get_count</li>
+	<li>MPI_Get_elements</li>
+	<li>MPI_Finalize</li>
+</ul>
+<h3>&nbsp;</h3><h3>ex12&nbsp;<a href="f_ex12.f">f_ex12.f</a>&nbsp;&nbsp;<a href="c_ex12.c">c_ex12.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+Shows a short cut method to create a collection of communicators.
+All processors with the "same color" will be in the same communicator.
+In this case the color is either 0 or 1 for even or odd processors.
+Index gives rank in new communicator.
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_split</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Bcast</li>
+	<li>MPI_Finalize</li>
+</ul>
+
+<h3>&nbsp;</h3><h3>ex12&nbsp;<a href="f_ex13.f">f_ex13.f</a>&nbsp;&nbsp;<a href="c_ex13.c">c_ex13.c</a>&nbsp;</h3>
+<table width="500" frame="box">
+	<tr>
+		<td>
+This program shows how to use mpi_scatterv.  Each processor gets a
+different amount of data from the root processor.  We use mpi_Gather
+first to tell the root how much data is going to be sent.
+		</td>
+	</tr>
+</table>
+<ul>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_comm_split</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_bcast</li>
+	<li>MPI_Finalize</li>
+	<li>MPI_Init</li>
+	<li>MPI_Comm_size</li>
+	<li>MPI_Comm_rank</li>
+	<li>MPI_Gather</li>
+	<li>MPI_Scatterv</li>
+	<li>MPI_Finalize</li>
+</ul>
+
+<h3>&nbsp;</h3><h3><a href="makefile">makefile</a></h3>
+<h3><a href="mpi.tar">mpi.tar</a></h3>
+
+
+</body>
+</html>

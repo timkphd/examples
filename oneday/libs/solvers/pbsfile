@@ -1,0 +1,37 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8
+#PBS -l naccesspolicy=singleuser
+#PBS -l walltime=00:05:00
+#PBS -N testIO
+#PBS -o outx8.$PBS_JOBID
+#PBS -e errx8.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+sort -u  $PBS_NODEFILE > mynodes.$PBS_JOBID
+
+export torun="psgesv"
+for myprog in $torun; do 
+  echo
+  echo running: $myprog
+  mpiexec -np 6 ./$myprog
+done
+
+export torun="ex1_c ex1_f  pdpttr_2c pdpttr_2f"
+for myprog in $torun; do 
+  echo
+  echo running: $myprog
+  mpiexec -np 4 ./$myprog
+done
+
+export torun="lin_c lin_f"
+for myprog in $torun; do 
+  echo
+  echo running: $myprog
+  mpiexec -np 4 ./$myprog < in.dat 
+done
+
+
+

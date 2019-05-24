@@ -1,0 +1,26 @@
+#!/bin/bash -x
+#SBATCH --job-name="match"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks=2
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:02:00
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+#create a shortlist of nodes
+/opt/utility/expands | sort -u > my_nodes
+#create a file with our program full path
+echo `pwd`/hybrid > my_exec
+/opt/utility/match my_nodes my_exec 1 > my_app_node_file
+/opt/utility/match_split  my_app_node_file applist hostlist
+export OMP_NUM_THREADS=12
+export SLURM_HOSTFILE=hostlist
+srun -n2 --multi-prog applist > 12x2.$JOBID
+

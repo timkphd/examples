@@ -1,0 +1,7 @@
+StomOmpf_00a.mic:StomOmpf_00a.f
+	ifort $(FOPT)  StomOmpf_00a.f -o StomOmpf_00a.mic
+
+clean:
+	rm -rf *mod StomOmpf_00a.mic
+
+FOPT=-free -mmic -openmp -O3

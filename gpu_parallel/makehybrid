@@ -1,0 +1,17 @@
+mpigpu: hysub.o hymain.o
+	mpicc -L/curc/sw/cuda/9.1.85/lib64 hymain.o hysub.o -lcudart -o mpigpu
+
+hysub.o: hysub.cu
+	nvcc -c hysub.cu
+
+hymain.o: hymain.c
+	mpicc -c hymain.c
+clean:
+	rm -rf hysub.o hymain.o mpigpu
+
+
+#module purge
+#module load intel/17.4 
+#module load impi/17.3
+#module load cuda/9.1.85
+

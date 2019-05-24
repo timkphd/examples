@@ -1,0 +1,42 @@
+#!/bin/bash -x
+#SBATCH --job-name="match"
+#SBATCH --nodes=3
+#SBATCH --ntasks-per-node=12
+#SBATCH --ntasks=36
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:02:00
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+#create a shortlist of nodes
+/opt/utility/expands | sort -u > my_nodes
+
+#create a file with our program full path
+cat << END > three_exec_file
+$SLURM_SUBMIT_DIR/hellof 
+$SLURM_SUBMIT_DIR/helloc 
+$SLURM_SUBMIT_DIR/hellof 
+END
+
+/opt/utility/match my_nodes three_exec_file  12 > mpmd_app_node_file
+export SLURM_HOSTFILE=hostlist
+/opt/utility/match_split  mpmd_app_node_file applist hostlist
+srun  --multi-prog applist > 12x3.$JOBID
+
+/opt/utility/expands  > my_all_cores
+/opt/utility/match my_all_cores three_exec_file  1 > mpmd_app_cores_file
+/opt/utility/match_split  mpmd_app_cores_file applist hostlist
+srun   --multi-prog applist > 12x3b.$JOBID
+
+/opt/utility/expands | sort -u > three_nodes
+/opt/utility/match three_nodes  three_exec_file 1 > mpmd_app_3_file
+/opt/utility/match_split  mpmd_app_3_file applist hostlist
+srun  -n3 --multi-prog applist > 12x3c.$JOBID
+
+

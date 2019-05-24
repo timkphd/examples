@@ -1,0 +1,16 @@
+#!/bin/bash -x
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:02:00
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Run our program with output put into out.dat
+
+srun ./helloc > out.dat
+
+

@@ -1,0 +1,53 @@
+#!/bin/bash -x
+#SBATCH --job-name="gpu"
+#SBATCH --nodes=3
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks=3
+#SBATCH --partition=gpu
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:05:00
+#SBATCH --gres=gpu:2
+##SBATCH --mail-type=ALL
+##SBATCH --mail-user=tkaiser@mines.edu
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+hostname
+
+#if [ "true" = "false" ] ; then
+ssh gpu003 "/u/pa/ru/tkaiser/examples/examples/more_gpu/testinput \
+           < /u/pa/ru/tkaiser/examples/examples/more_gpu/input    \
+           > /u/pa/ru/tkaiser/examples/examples/more_gpu/gpu003.out_cu"
+
+ssh gpu002 "/u/pa/ru/tkaiser/examples/examples/more_gpu/testinput \
+           < /u/pa/ru/tkaiser/examples/examples/more_gpu/input    \
+           > /u/pa/ru/tkaiser/examples/examples/more_gpu/gpu002.out_cu"
+
+ssh gpu001 "/u/pa/ru/tkaiser/examples/examples/more_gpu/testinput \
+           < /u/pa/ru/tkaiser/examples/examples/more_gpu/input    \
+           > /u/pa/ru/tkaiser/examples/examples/more_gpu/gpu001.out_cu"
+           
+ssh gpu003 "/u/pa/ru/tkaiser/examples/examples/more_gpu/cuda_pg \
+           > /u/pa/ru/tkaiser/examples/examples/more_gpu/gpu003.out_pg"
+
+ssh gpu002 "/u/pa/ru/tkaiser/examples/examples/more_gpu/cuda_pg \
+           > /u/pa/ru/tkaiser/examples/examples/more_gpu/gpu002.out_pg"
+
+ssh gpu001 "/u/pa/ru/tkaiser/examples/examples/more_gpu/cuda_pg \
+           > /u/pa/ru/tkaiser/examples/examples/more_gpu/gpu001.out_pg"
+           
+ssh gpu003 "/opt/utility/gpucount \
+           > /u/pa/ru/tkaiser/examples/examples/more_gpu/gpu003.count"
+
+ssh gpu002 "/opt/utility/gpucount \
+           > /u/pa/ru/tkaiser/examples/examples/more_gpu/gpu002.count"
+
+ssh gpu001 "/opt/utility/gpucount \
+           > /u/pa/ru/tkaiser/examples/examples/more_gpu/gpu001.count"
+#fi           
+srun -N3 -n3 hostname > thehosts
+srun -N3  -n3 --exclusive /opt/utility/gpucount > thecount1

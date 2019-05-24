@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Example Output</title>
+<style type="text/css">
+table,th,td
+{
+border:1px solid black;
+padding: 10px;
+vertical-align:top;
+}
+span.b {color: red;}
+span.n {color: black}
+span.g {color: blue }
+hr.wide {
+	color: #f00;
+	background-color: #f00;
+	height: 2px;
+	width: 5%;
+	margin-left: 0;
+}
+hr.normal {
+height: 2px;
+ width: 80%;
+}
+</style>
+</head>
+<body>
+<h3>Example Stommel Code Output</h3>
+<p>
+Data generated running stc_01d.c with the input file st.mini
+</p>
+<!-- #bbinclude "i01.html" -->
+<table>
+	<tr>
+		<th>Program</th> <th>Task 0</th> <th>Task 1</th> <th>Task 2</th>
+	</tr>
+	<tr>
+		<td>
+		<pre>
+  for( i=1; i<=steps;i++) {
+<span class="b">fprintf(fout,"block 9 i=%d\n",i);
+mat_out(fout,"block 10 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+
+    do_jacobi(psi,new_psi,&mydiff,i1,i2,j1,j2);
+<span class="b">fprintf(fout,"block 11 mydiff=%g\n",mydiff);
+mat_out(fout,"block 12 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+
+    <span class="g">do_transfer(psi,i1,i2,j1,j2);</span>
+<span class="b">mat_out(fout,"block 13 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+    <span class="g">mpi_err= MPI_Reduce(&mydiff,&diff,1,MPI_DOUBLE,
+              MPI_SUM,mpi_master,MPI_COMM_WORLD);</span>
+<span class="b">fprintf(fout,"block 14 diff=%g\n",diff);</span>
+    if(myid == mpi_master && i % iout == 0){
+       printf("%8d %15.5f\n",i,diff);
+      }
+  }
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=1
+block 10 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=5.96093e+07
+block 12 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">         1</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">   2951591</span>
+<span class="b">         0</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">   5318583</span>
+<span class="b">         0</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">   6632164</span>
+<span class="b">         0</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">   6632164</span>
+<span class="b">         0</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">   5318583</span>
+<span class="b">         0</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">   2951591</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=1.78828e+08
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=1
+block 10 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=5.96093e+07
+block 12 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">         1</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">   2951591</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">   2951591</span>
+<span class="g">   5318583</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">   5318583</span>
+<span class="g">   6632164</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">   6632164</span>
+<span class="g">   6632164</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">   6632164</span>
+<span class="g">   5318583</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">   5318583</span>
+<span class="g">   2951591</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">   2951591</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=2.122e-314
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=1
+block 10 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=5.96093e+07
+block 12 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">   2951591</span><span class="n">   2951590</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">   5318583</span><span class="n">   5318582</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">   6632164</span><span class="n">   6632163</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">   6632164</span><span class="n">   6632163</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">   5318583</span><span class="n">   5318582</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">   2951591</span><span class="n">   2951590</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">   2951591</span><span class="n">   2951591</span><span class="n">   2951590</span><span class="b">         0</span>
+<span class="g">   5318583</span><span class="n">   5318583</span><span class="n">   5318582</span><span class="b">         0</span>
+<span class="g">   6632164</span><span class="n">   6632164</span><span class="n">   6632163</span><span class="b">         0</span>
+<span class="g">   6632164</span><span class="n">   6632164</span><span class="n">   6632163</span><span class="b">         0</span>
+<span class="g">   5318583</span><span class="n">   5318583</span><span class="n">   5318582</span><span class="b">         0</span>
+<span class="g">   2951591</span><span class="n">   2951591</span><span class="n">   2951590</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=0
+		</pre>
+		</td> 
+	</tr>
+</table>
+<!-- end bbinclude -->
+<hr class="normal">
+<!-- #bbinclude "i02.html" -->
+<table>
+	<tr>
+		<th>Program</th> <th>Task 0</th> <th>Task 1</th> <th>Task 2</th>
+	</tr>
+	<tr>
+		<td>
+		<pre>
+  for( i=1; i<=steps;i++) {
+<span class="b">fprintf(fout,"block 9 i=%d\n",i);
+mat_out(fout,"block 10 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+
+    do_jacobi(psi,new_psi,&mydiff,i1,i2,j1,j2);
+<span class="b">fprintf(fout,"block 11 mydiff=%g\n",mydiff);
+mat_out(fout,"block 12 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+
+    <span class="g">do_transfer(psi,i1,i2,j1,j2);</span>
+<span class="b">mat_out(fout,"block 13 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+    <span class="g">mpi_err= MPI_Reduce(&mydiff,&diff,1,MPI_DOUBLE,
+              MPI_SUM,mpi_master,MPI_COMM_WORLD);</span>
+<span class="b">fprintf(fout,"block 14 diff=%g\n",diff);</span>
+    if(myid == mpi_master && i % iout == 0){
+       printf("%8d %15.5f\n",i,diff);
+      }
+  }
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=2
+block 10 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">   2951591</span>
+<span class="b">         0</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">   5318583</span>
+<span class="b">         0</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">   6632164</span>
+<span class="b">         0</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">   6632164</span>
+<span class="b">         0</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">   5318583</span>
+<span class="b">         0</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">   2951591</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=5.719e+07
+block 12 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">   5809738</span><span class="n">   5757031</span><span class="g">   2951591</span>
+<span class="b">         0</span><span class="n">  10468786</span><span class="n">  10373811</span><span class="g">   5318583</span>
+<span class="b">         0</span><span class="n">  13054363</span><span class="n">  12935931</span><span class="g">   6632164</span>
+<span class="b">         0</span><span class="n">  13054363</span><span class="n">  12935931</span><span class="g">   6632164</span>
+<span class="b">         0</span><span class="n">  10468786</span><span class="n">  10373811</span><span class="g">   5318583</span>
+<span class="b">         0</span><span class="n">   5809738</span><span class="n">   5757031</span><span class="g">   2951591</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">   5809738</span><span class="n">   5757031</span><span class="g">   5757031</span>
+<span class="b">         0</span><span class="n">  10468786</span><span class="n">  10373811</span><span class="g">  10373811</span>
+<span class="b">         0</span><span class="n">  13054363</span><span class="n">  12935931</span><span class="g">  12935931</span>
+<span class="b">         0</span><span class="n">  13054363</span><span class="n">  12935931</span><span class="g">  12935931</span>
+<span class="b">         0</span><span class="n">  10468786</span><span class="n">  10373811</span><span class="g">  10373811</span>
+<span class="b">         0</span><span class="n">   5809738</span><span class="n">   5757031</span><span class="g">   5757031</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=1.55071e+08
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=2
+block 10 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">   2951591</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">   2951591</span>
+<span class="g">   5318583</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">   5318583</span>
+<span class="g">   6632164</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">   6632164</span>
+<span class="g">   6632164</span><span class="n">   6632164</span><span class="n">   6632164</span><span class="g">   6632164</span>
+<span class="g">   5318583</span><span class="n">   5318583</span><span class="n">   5318583</span><span class="g">   5318583</span>
+<span class="g">   2951591</span><span class="n">   2951591</span><span class="n">   2951591</span><span class="g">   2951591</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=5.66577e+07
+block 12 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">   2951591</span><span class="n">   5757031</span><span class="n">   5757031</span><span class="g">   2951591</span>
+<span class="g">   5318583</span><span class="n">  10373811</span><span class="n">  10373811</span><span class="g">   5318583</span>
+<span class="g">   6632164</span><span class="n">  12935931</span><span class="n">  12935931</span><span class="g">   6632164</span>
+<span class="g">   6632164</span><span class="n">  12935931</span><span class="n">  12935931</span><span class="g">   6632164</span>
+<span class="g">   5318583</span><span class="n">  10373811</span><span class="n">  10373811</span><span class="g">   5318583</span>
+<span class="g">   2951591</span><span class="n">   5757031</span><span class="n">   5757031</span><span class="g">   2951591</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">   5757031</span><span class="n">   5757031</span><span class="n">   5757031</span><span class="g">   5757031</span>
+<span class="g">  10373811</span><span class="n">  10373811</span><span class="n">  10373811</span><span class="g">  10373811</span>
+<span class="g">  12935931</span><span class="n">  12935931</span><span class="n">  12935931</span><span class="g">  12935931</span>
+<span class="g">  12935931</span><span class="n">  12935931</span><span class="n">  12935931</span><span class="g">  12935931</span>
+<span class="g">  10373811</span><span class="n">  10373811</span><span class="n">  10373811</span><span class="g">  10373811</span>
+<span class="g">   5757031</span><span class="n">   5757031</span><span class="n">   5757031</span><span class="g">   5757031</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=2.122e-314
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=2
+block 10 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">   2951591</span><span class="n">   2951591</span><span class="n">   2951590</span><span class="b">         0</span>
+<span class="g">   5318583</span><span class="n">   5318583</span><span class="n">   5318582</span><span class="b">         0</span>
+<span class="g">   6632164</span><span class="n">   6632164</span><span class="n">   6632163</span><span class="b">         0</span>
+<span class="g">   6632164</span><span class="n">   6632164</span><span class="n">   6632163</span><span class="b">         0</span>
+<span class="g">   5318583</span><span class="n">   5318583</span><span class="n">   5318582</span><span class="b">         0</span>
+<span class="g">   2951591</span><span class="n">   2951591</span><span class="n">   2951590</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=4.12232e+07
+block 12 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">   2951591</span><span class="n">   5757031</span><span class="n">   4228529</span><span class="b">         0</span>
+<span class="g">   5318583</span><span class="n">  10373811</span><span class="n">   7619545</span><span class="b">         0</span>
+<span class="g">   6632164</span><span class="n">  12935931</span><span class="n">   9501417</span><span class="b">         0</span>
+<span class="g">   6632164</span><span class="n">  12935931</span><span class="n">   9501417</span><span class="b">         0</span>
+<span class="g">   5318583</span><span class="n">  10373811</span><span class="n">   7619545</span><span class="b">         0</span>
+<span class="g">   2951591</span><span class="n">   5757031</span><span class="n">   4228529</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">   5757031</span><span class="n">   5757031</span><span class="n">   4228529</span><span class="b">         0</span>
+<span class="g">  10373811</span><span class="n">  10373811</span><span class="n">   7619545</span><span class="b">         0</span>
+<span class="g">  12935931</span><span class="n">  12935931</span><span class="n">   9501417</span><span class="b">         0</span>
+<span class="g">  12935931</span><span class="n">  12935931</span><span class="n">   9501417</span><span class="b">         0</span>
+<span class="g">  10373811</span><span class="n">  10373811</span><span class="n">   7619545</span><span class="b">         0</span>
+<span class="g">   5757031</span><span class="n">   5757031</span><span class="n">   4228529</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=0
+		</pre>
+		</td> 
+	</tr>
+</table>
+<!-- end bbinclude -->
+<hr class="wide">
+<hr class="wide">
+<hr class="wide">
+<!-- #bbinclude "i09.html" -->
+<table>
+	<tr>
+		<th>Program</th> <th>Task 0</th> <th>Task 1</th> <th>Task 2</th>
+	</tr>
+	<tr>
+		<td>
+		<pre>
+  for( i=1; i<=steps;i++) {
+<span class="b">fprintf(fout,"block 9 i=%d\n",i);
+mat_out(fout,"block 10 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+
+    do_jacobi(psi,new_psi,&mydiff,i1,i2,j1,j2);
+<span class="b">fprintf(fout,"block 11 mydiff=%g\n",mydiff);
+mat_out(fout,"block 12 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+
+    <span class="g">do_transfer(psi,i1,i2,j1,j2);</span>
+<span class="b">mat_out(fout,"block 13 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+    <span class="g">mpi_err= MPI_Reduce(&mydiff,&diff,1,MPI_DOUBLE,
+              MPI_SUM,mpi_master,MPI_COMM_WORLD);</span>
+<span class="b">fprintf(fout,"block 14 diff=%g\n",diff);</span>
+    if(myid == mpi_master && i % iout == 0){
+       printf("%8d %15.5f\n",i,diff);
+      }
+  }
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=9
+block 10 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">  20148613</span><span class="n">  18763290</span><span class="g">  16830400</span>
+<span class="b">         0</span><span class="n">  36306547</span><span class="n">  33810280</span><span class="g">  30327333</span>
+<span class="b">         0</span><span class="n">  45273523</span><span class="n">  42160730</span><span class="g">  37817565</span>
+<span class="b">         0</span><span class="n">  45273523</span><span class="n">  42160730</span><span class="g">  37817565</span>
+<span class="b">         0</span><span class="n">  36306547</span><span class="n">  33810280</span><span class="g">  30327333</span>
+<span class="b">         0</span><span class="n">  20148613</span><span class="n">  18763290</span><span class="g">  16830400</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=2.6185e+07
+block 12 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">  21744930</span><span class="n">  19760106</span><span class="g">  16830400</span>
+<span class="b">         0</span><span class="n">  39183011</span><span class="n">  35606481</span><span class="g">  30327333</span>
+<span class="b">         0</span><span class="n">  48860415</span><span class="n">  44400556</span><span class="g">  37817565</span>
+<span class="b">         0</span><span class="n">  48860415</span><span class="n">  44400556</span><span class="g">  37817565</span>
+<span class="b">         0</span><span class="n">  39183011</span><span class="n">  35606481</span><span class="g">  30327333</span>
+<span class="b">         0</span><span class="n">  21744930</span><span class="n">  19760106</span><span class="g">  16830400</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">  21744930</span><span class="n">  19760106</span><span class="g">  17291345</span>
+<span class="b">         0</span><span class="n">  39183011</span><span class="n">  35606481</span><span class="g">  31157927</span>
+<span class="b">         0</span><span class="n">  48860415</span><span class="n">  44400556</span><span class="g">  38853299</span>
+<span class="b">         0</span><span class="n">  48860415</span><span class="n">  44400556</span><span class="g">  38853299</span>
+<span class="b">         0</span><span class="n">  39183011</span><span class="n">  35606481</span><span class="g">  31157927</span>
+<span class="b">         0</span><span class="n">  21744930</span><span class="n">  19760106</span><span class="g">  17291345</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=3.23082e+07
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=9
+block 10 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  18763290</span><span class="n">  16830400</span><span class="n">  13696789</span><span class="g">   9664768</span>
+<span class="g">  33810280</span><span class="n">  30327333</span><span class="n">  24680762</span><span class="g">  17415311</span>
+<span class="g">  42160730</span><span class="n">  37817565</span><span class="n">  30776406</span><span class="g">  21716538</span>
+<span class="g">  42160730</span><span class="n">  37817565</span><span class="n">  30776406</span><span class="g">  21716538</span>
+<span class="g">  33810280</span><span class="n">  30327333</span><span class="n">  24680762</span><span class="g">  17415311</span>
+<span class="g">  18763290</span><span class="n">  16830400</span><span class="n">  13696789</span><span class="g">   9664768</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=5.96138e+06
+block 12 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  18763290</span><span class="n">  17291345</span><span class="n">  13826207</span><span class="g">   9664768</span>
+<span class="g">  33810280</span><span class="n">  31157927</span><span class="n">  24913964</span><span class="g">  17415311</span>
+<span class="g">  42160730</span><span class="n">  38853299</span><span class="n">  31067205</span><span class="g">  21716538</span>
+<span class="g">  42160730</span><span class="n">  38853299</span><span class="n">  31067205</span><span class="g">  21716538</span>
+<span class="g">  33810280</span><span class="n">  31157927</span><span class="n">  24913964</span><span class="g">  17415311</span>
+<span class="g">  18763290</span><span class="n">  17291345</span><span class="n">  13826207</span><span class="g">   9664768</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  19760106</span><span class="n">  17291345</span><span class="n">  13826207</span><span class="g">   9680248</span>
+<span class="g">  35606481</span><span class="n">  31157927</span><span class="n">  24913964</span><span class="g">  17443204</span>
+<span class="g">  44400556</span><span class="n">  38853299</span><span class="n">  31067205</span><span class="g">  21751319</span>
+<span class="g">  44400556</span><span class="n">  38853299</span><span class="n">  31067205</span><span class="g">  21751319</span>
+<span class="g">  35606481</span><span class="n">  31157927</span><span class="n">  24913964</span><span class="g">  17443204</span>
+<span class="g">  19760106</span><span class="n">  17291345</span><span class="n">  13826207</span><span class="g">   9680248</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=2.122e-314
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=9
+block 10 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  13696789</span><span class="n">   9664768</span><span class="n">   5058181</span><span class="b">         0</span>
+<span class="g">  24680762</span><span class="n">  17415311</span><span class="n">   9114528</span><span class="b">         0</span>
+<span class="g">  30776406</span><span class="n">  21716538</span><span class="n">  11365630</span><span class="b">         0</span>
+<span class="g">  30776406</span><span class="n">  21716538</span><span class="n">  11365630</span><span class="b">         0</span>
+<span class="g">  24680762</span><span class="n">  17415311</span><span class="n">   9114528</span><span class="b">         0</span>
+<span class="g">  13696789</span><span class="n">   9664768</span><span class="n">   5058181</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=161804
+block 12 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  13696789</span><span class="n">   9680248</span><span class="n">   5057637</span><span class="b">         0</span>
+<span class="g">  24680762</span><span class="n">  17443204</span><span class="n">   9113547</span><span class="b">         0</span>
+<span class="g">  30776406</span><span class="n">  21751319</span><span class="n">  11364407</span><span class="b">         0</span>
+<span class="g">  30776406</span><span class="n">  21751319</span><span class="n">  11364407</span><span class="b">         0</span>
+<span class="g">  24680762</span><span class="n">  17443204</span><span class="n">   9113547</span><span class="b">         0</span>
+<span class="g">  13696789</span><span class="n">   9680248</span><span class="n">   5057637</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  13826207</span><span class="n">   9680248</span><span class="n">   5057637</span><span class="b">         0</span>
+<span class="g">  24913964</span><span class="n">  17443204</span><span class="n">   9113547</span><span class="b">         0</span>
+<span class="g">  31067205</span><span class="n">  21751319</span><span class="n">  11364407</span><span class="b">         0</span>
+<span class="g">  31067205</span><span class="n">  21751319</span><span class="n">  11364407</span><span class="b">         0</span>
+<span class="g">  24913964</span><span class="n">  17443204</span><span class="n">   9113547</span><span class="b">         0</span>
+<span class="g">  13826207</span><span class="n">   9680248</span><span class="n">   5057637</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=0
+		</pre>
+		</td> 
+	</tr>
+</table>
+<!-- end bbinclude -->
+<hr class="normal">
+<!-- #bbinclude "i10.html" -->
+<table>
+	<tr>
+		<th>Program</th> <th>Task 0</th> <th>Task 1</th> <th>Task 2</th>
+	</tr>
+	<tr>
+		<td>
+		<pre>
+  for( i=1; i<=steps;i++) {
+<span class="b">fprintf(fout,"block 9 i=%d\n",i);
+mat_out(fout,"block 10 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+
+    do_jacobi(psi,new_psi,&mydiff,i1,i2,j1,j2);
+<span class="b">fprintf(fout,"block 11 mydiff=%g\n",mydiff);
+mat_out(fout,"block 12 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+
+    <span class="g">do_transfer(psi,i1,i2,j1,j2);</span>
+<span class="b">mat_out(fout,"block 13 psi",psi,i1-1,i2+1,j1-1,j2+1);</span>
+
+
+
+
+
+
+    <span class="g">mpi_err= MPI_Reduce(&mydiff,&diff,1,MPI_DOUBLE,
+              MPI_SUM,mpi_master,MPI_COMM_WORLD);</span>
+<span class="b">fprintf(fout,"block 14 diff=%g\n",diff);</span>
+    if(myid == mpi_master && i % iout == 0){
+       printf("%8d %15.5f\n",i,diff);
+      }
+  }
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=10
+block 10 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">  21744930</span><span class="n">  19760106</span><span class="g">  17291345</span>
+<span class="b">         0</span><span class="n">  39183011</span><span class="n">  35606481</span><span class="g">  31157927</span>
+<span class="b">         0</span><span class="n">  48860415</span><span class="n">  44400556</span><span class="g">  38853299</span>
+<span class="b">         0</span><span class="n">  48860415</span><span class="n">  44400556</span><span class="g">  38853299</span>
+<span class="b">         0</span><span class="n">  39183011</span><span class="n">  35606481</span><span class="g">  31157927</span>
+<span class="b">         0</span><span class="n">  21744930</span><span class="n">  19760106</span><span class="g">  17291345</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=1.91311e+07
+block 12 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">  22980255</span><span class="n">  20419354</span><span class="g">  17291345</span>
+<span class="b">         0</span><span class="n">  41408988</span><span class="n">  36794405</span><span class="g">  31157927</span>
+<span class="b">         0</span><span class="n">  51636164</span><span class="n">  45881873</span><span class="g">  38853299</span>
+<span class="b">         0</span><span class="n">  51636164</span><span class="n">  45881873</span><span class="g">  38853299</span>
+<span class="b">         0</span><span class="n">  41408988</span><span class="n">  36794405</span><span class="g">  31157927</span>
+<span class="b">         0</span><span class="n">  22980255</span><span class="n">  20419354</span><span class="g">  17291345</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">  22980255</span><span class="n">  20419354</span><span class="g">  17548213</span>
+<span class="b">         0</span><span class="n">  41408988</span><span class="n">  36794405</span><span class="g">  31620787</span>
+<span class="b">         0</span><span class="n">  51636164</span><span class="n">  45881873</span><span class="g">  39430476</span>
+<span class="b">         0</span><span class="n">  51636164</span><span class="n">  45881873</span><span class="g">  39430476</span>
+<span class="b">         0</span><span class="n">  41408988</span><span class="n">  36794405</span><span class="g">  31620787</span>
+<span class="b">         0</span><span class="n">  22980255</span><span class="n">  20419354</span><span class="g">  17548213</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=2.23609e+07
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=10
+block 10 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  19760106</span><span class="n">  17291345</span><span class="n">  13826207</span><span class="g">   9680248</span>
+<span class="g">  35606481</span><span class="n">  31157927</span><span class="n">  24913964</span><span class="g">  17443204</span>
+<span class="g">  44400556</span><span class="n">  38853299</span><span class="n">  31067205</span><span class="g">  21751319</span>
+<span class="g">  44400556</span><span class="n">  38853299</span><span class="n">  31067205</span><span class="g">  21751319</span>
+<span class="g">  35606481</span><span class="n">  31157927</span><span class="n">  24913964</span><span class="g">  17443204</span>
+<span class="g">  19760106</span><span class="n">  17291345</span><span class="n">  13826207</span><span class="g">   9680248</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=3.18035e+06
+block 12 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  19760106</span><span class="n">  17548213</span><span class="n">  13884292</span><span class="g">   9680248</span>
+<span class="g">  35606481</span><span class="n">  31620787</span><span class="n">  25018631</span><span class="g">  17443204</span>
+<span class="g">  44400556</span><span class="n">  39430476</span><span class="n">  31197722</span><span class="g">  21751319</span>
+<span class="g">  44400556</span><span class="n">  39430476</span><span class="n">  31197722</span><span class="g">  21751319</span>
+<span class="g">  35606481</span><span class="n">  31620787</span><span class="n">  25018631</span><span class="g">  17443204</span>
+<span class="g">  19760106</span><span class="n">  17548213</span><span class="n">  13884292</span><span class="g">   9680248</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  20419354</span><span class="n">  17548213</span><span class="n">  13884292</span><span class="g">   9684628</span>
+<span class="g">  36794405</span><span class="n">  31620787</span><span class="n">  25018631</span><span class="g">  17451096</span>
+<span class="g">  45881873</span><span class="n">  39430476</span><span class="n">  31197722</span><span class="g">  21761161</span>
+<span class="g">  45881873</span><span class="n">  39430476</span><span class="n">  31197722</span><span class="g">  21761161</span>
+<span class="g">  36794405</span><span class="n">  31620787</span><span class="n">  25018631</span><span class="g">  17451096</span>
+<span class="g">  20419354</span><span class="n">  17548213</span><span class="n">  13884292</span><span class="g">   9684628</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=6.95316e-310
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 9 i=10
+block 10 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  13826207</span><span class="n">   9680248</span><span class="n">   5057637</span><span class="b">         0</span>
+<span class="g">  24913964</span><span class="n">  17443204</span><span class="n">   9113547</span><span class="b">         0</span>
+<span class="g">  31067205</span><span class="n">  21751319</span><span class="n">  11364407</span><span class="b">         0</span>
+<span class="g">  31067205</span><span class="n">  21751319</span><span class="n">  11364407</span><span class="b">         0</span>
+<span class="g">  24913964</span><span class="n">  17443204</span><span class="n">   9113547</span><span class="b">         0</span>
+<span class="g">  13826207</span><span class="n">   9680248</span><span class="n">   5057637</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 11 mydiff=49497.8
+block 12 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  13826207</span><span class="n">   9684628</span><span class="n">   5057115</span><span class="b">         0</span>
+<span class="g">  24913964</span><span class="n">  17451096</span><span class="n">   9112607</span><span class="b">         0</span>
+<span class="g">  31067205</span><span class="n">  21761161</span><span class="n">  11363235</span><span class="b">         0</span>
+<span class="g">  31067205</span><span class="n">  21761161</span><span class="n">  11363235</span><span class="b">         0</span>
+<span class="g">  24913964</span><span class="n">  17451096</span><span class="n">   9112607</span><span class="b">         0</span>
+<span class="g">  13826207</span><span class="n">   9684628</span><span class="n">   5057115</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 13 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">  13884292</span><span class="n">   9684628</span><span class="n">   5057115</span><span class="b">         0</span>
+<span class="g">  25018631</span><span class="n">  17451096</span><span class="n">   9112607</span><span class="b">         0</span>
+<span class="g">  31197722</span><span class="n">  21761161</span><span class="n">  11363235</span><span class="b">         0</span>
+<span class="g">  31197722</span><span class="n">  21761161</span><span class="n">  11363235</span><span class="b">         0</span>
+<span class="g">  25018631</span><span class="n">  17451096</span><span class="n">   9112607</span><span class="b">         0</span>
+<span class="g">  13884292</span><span class="n">   9684628</span><span class="n">   5057115</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+block 14 diff=0
+		</pre>
+		</td> 
+	</tr>
+</table>
+<!-- end bbinclude -->
+<hr class="normal">
+</body>
+</html>

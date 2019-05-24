@@ -1,0 +1,155 @@
+#!/usr/bin/perl
+use strict;
+use Cwd;
+use Term::ANSIColor;
+#http://www.aplawrence.com/Unix/perlgetopts.html
+use Getopt::Long;
+sub stamp;
+sub show_usage;
+my ($oflag ,$verboseornoverbose, $help, $i,$o,$base,$silent,$svn);
+my ($io , $optionalinteger);
+my ($nodate);
+GetOptions("verbose!"=>\$verboseornoverbose,
+		 "h"=>\$help,
+		 "n"=>\$nodate,
+		 "s"=>\$silent,
+		 "svn"=>\$svn,
+		 "b=s",\$base,
+		 "i=s",\$i,
+		 "o=s",\$o,
+		 "io=s"=> \$io,
+		 "oi=s"=> \$io);
+
+my $whoami=getlogin();
+######################
+my $command="gzip -q ";
+if( ! $silent) {
+$command="gzip  ";
+}
+
+$command=$command." -r ";
+my $exclude=" -x *.svn* -x *CVS* -x *CVSROOT* -x *.DS_Store* -x __MACOSX*";
+
+if($svn) {
+#	$command=$command."--exclude .DS_Store  -r ";
+	$exclude=" -x *.DS_Store*"
+}
+else {
+#$command=$command."--exclude *.svn* --exclude *CVS* --exclude *CVSROOT* --exclude *.DS_Store* --exclude __MACOSX*  -r ";
+}
+my $myname="tkaiser";
+#my $myname=$whoami;
+my $mybase="./";
+######################
+if($help){
+	show_usage();
+}
+if($io) {
+	$i=$io;
+	$o=$io;
+}
+if ($ARGV[0]){
+	$i=" ";
+	foreach (@ARGV) {
+		$i=$i.+" ".$_;
+	}
+}
+
+if(!($base)) {
+	$base=$mybase;
+}
+chomp($base);
+if(rindex($base,"/") != 1){
+	$base=$base."/";
+}
+
+my $host;
+if($o) {
+	$host=$o;
+}
+else {
+	$host=`hostname -s`;
+	chomp($host);
+}
+my $time=stamp();
+if($nodate){
+	$time="";
+}
+
+my $fname;
+if($whoami eq $myname){
+	$fname=$time.$host.".zip";
+}
+else {
+	$fname=$time.$host."_".$whoami.".zip";
+}
+$fname=$base.$fname;
+if($i) {
+	$command=$command.$fname." ".$i;
+}
+else {
+	$command=$command.$fname." *";
+}
+
+$command=$command.$exclude;
+
+if( ! $silent) {
+	print $command,"\n";
+}
+my $output=`$command`;
+if( ! $silent) {
+	print $output."\n";
+}
+
+
+
+sub stamp {
+#       ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+    my $now=time();
+        my ($sec,$min,$hour,$mday,$mon) = localtime($now);
+#       my ($sec,$min,$hour,$mday,$mon) = gmtime($now);
+        $mon++;
+    my $the_time=sprintf("%2.2d%2.2d_%2.2d%2.2d%2.2d",$mon,$mday,$hour,$min,$sec);
+        return ($the_time);
+}
+
+sub show_usage() {
+print color 'bold';
+print "NAME";
+print color 'reset';
+print "\n";
+print "     ",$0," - create a date/time stamped archive\n\n";
+print color 'bold';
+print "SYNOPSIS";
+print color 'reset';
+print "\n";
+print "     ",$0, "[Options] [file]\n\n";
+print color 'bold';
+print "DESCRIPTION";
+print color 'reset';
+print "\n";
+print "     All arguments are optional.  If run without arguments\n";
+print "     the program will create an archive of the current directory\n";
+print "     into a date/time/\"machine name\" stamped file.  The archive\n";
+if($mybase eq "./"){
+	print "     will be placed in the current directory.\n\n";
+}
+else {
+	print "     will be placed in $mybase.\n\n";
+}
+print "     You can list the files to place in the archive on the command line\n\n";
+
+print "     The following options are available:\n\n";
+print "         -h               show this help and quit\n";
+print "         -s               work silently\n";
+print "         -n               don't time stamp the file name\n";
+print "         -svn             include svn and CVS directories\n";
+print "         -b directory     directory in which to place the archive\n";
+print "         -i file          file or directory to archive\n";
+print "         -o name          replace the machine name in the archive with this name\n";
+print "         -io file_name    combination of -i and -o using the same value for each\n";
+print "\n\n";
+
+exit(0);
+
+}

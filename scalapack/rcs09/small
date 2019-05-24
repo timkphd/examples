@@ -1,0 +1,420 @@
+  matrix generated  8.000001311302185E-003  of size           99
+ beam=   89.76364       94.76364       99.76363    
+          99  did solve  1.000002026557922E-003     using :cgesv     
+ matrix generation time  8.000001311302185E-003
+ matrix solve time   1.000002026557922E-003
+ total computaion time   1.799999922513962E-002
+  matrix generated  2.899999916553497E-002  of size          199
+ beam=   89.76364       94.76364       99.76363    
+         199  did solve  2.000000327825546E-003     using :cgesv     
+ matrix generation time  2.899999916553497E-002
+ matrix solve time   2.000000327825546E-003
+ total computaion time   4.800000041723251E-002
+  matrix generated  6.200000271201134E-002  of size          299
+ beam=   89.76364       94.76364       99.76363    
+         299  did solve  6.999999284744263E-003     using :cgesv     
+ matrix generation time  6.200000271201134E-002
+ matrix solve time   6.999999284744263E-003
+ total computaion time   9.500000253319740E-002
+  matrix generated  0.109000001102686       of size          399
+ beam=   89.76364       94.76364       99.76363    
+         399  did solve  1.599999889731407E-002     using :cgesv     
+ matrix generation time  0.109000001102686     
+ matrix solve time   1.599999889731407E-002
+ total computaion time   0.155000001192093     
+  matrix generated  0.168999999761581       of size          499
+ beam=   89.76364       94.76364       99.76363    
+         499  did solve  2.900000289082527E-002     using :cgesv     
+ matrix generation time  0.168999999761581     
+ matrix solve time   2.900000289082527E-002
+ total computaion time   0.234999999403954     
+  matrix generated  0.241999998688698       of size          599
+ beam=   89.76364       94.76364       99.76363    
+         599  did solve  4.900000244379044E-002     using :cgesv     
+ matrix generation time  0.241999998688698     
+ matrix solve time   4.900000244379044E-002
+ total computaion time   0.335000000894070     
+  matrix generated  0.327000003308058       of size          699
+ beam=   89.76364       94.76364       99.76363    
+         699  did solve  7.699999958276749E-002     using :cgesv     
+ matrix generation time  0.327000003308058     
+ matrix solve time   7.699999958276749E-002
+ total computaion time   0.456000000238419     
+  matrix generated  0.432000000029802       of size          799
+ beam=   89.76364       94.76364       99.76363    
+         799  did solve  0.112999998033047          using :cgesv     
+ matrix generation time  0.432000000029802     
+ matrix solve time   0.112999998033047     
+ total computaion time   0.603000000119209     
+  matrix generated  0.537999998778105       of size          899
+ beam=   89.76364       94.76364       99.76363    
+         899  did solve  0.157999999821186          using :cgesv     
+ matrix generation time  0.537999998778105     
+ matrix solve time   0.157999999821186     
+ total computaion time   0.760999999940395     
+  matrix generated  0.662999998778105       of size          999
+ beam=   89.76364       94.76364       99.76363    
+         999  did solve  0.214000001549721          using :cgesv     
+ matrix generation time  0.662999998778105     
+ matrix solve time   0.214000001549721     
+ total computaion time   0.949999999254942     
+  matrix generated  0.951999999582767       of size         1199
+ beam=   89.76364       94.76364       99.76363    
+        1199  did solve  0.359000001102686          using :cgesv     
+ matrix generation time  0.951999999582767     
+ matrix solve time   0.359000001102686     
+ total computaion time    1.39900000020862     
+  matrix generated   1.29399999976158       of size         1399
+ beam=   89.76364       94.76364       99.76363    
+        1399  did solve  0.557000000029802          using :cgesv     
+ matrix generation time   1.29399999976158     
+ matrix solve time   0.557000000029802     
+ total computaion time    1.95099999755621     
+  matrix generated   1.68599999696016       of size         1599
+ beam=   89.76364       94.76364       99.76363    
+        1599  did solve  0.817000001668930          using :cgesv     
+ matrix generation time   1.68599999696016     
+ matrix solve time   0.817000001668930     
+ total computaion time    2.61799999698997     
+  matrix generated   2.13100000098348       of size         1799
+ beam=   89.76364       94.76364       99.76363    
+        1799  did solve   1.14600000157952          using :cgesv     
+ matrix generation time   2.13100000098348     
+ matrix solve time    1.14600000157952     
+ total computaion time    3.40599999949336     
+  matrix generated   2.62900000065565       of size         1999
+ beam=   89.76364       94.76364       99.76363    
+        1999  did solve   1.56000000238419          using :cgesv     
+ matrix generation time   2.62900000065565     
+ matrix solve time    1.56000000238419     
+ total computaion time    4.33300000056624     
+  matrix generated   3.78299999982119       of size         2399
+ beam=   89.76364       94.76364       99.76363    
+        2399  did solve   2.65300000086427          using :cgesv     
+ matrix generation time   3.78299999982119     
+ matrix solve time    2.65300000086427     
+ total computaion time    6.60700000077486     
+  matrix generated   5.15099999681115       of size         2799
+ beam=   89.76364       94.76364       99.76363    
+        2799  did solve   4.16600000113249          using :cgesv     
+ matrix generation time   5.15099999681115     
+ matrix solve time    4.16600000113249     
+ total computaion time    9.51599999889731     
+  matrix generated   6.71099999919534       of size         3199
+ beam=   89.76364       94.76364       99.76363    
+        3199  did solve   6.15100000053644          using :cgesv     
+ matrix generation time   6.71099999919534     
+ matrix solve time    6.15100000053644     
+ total computaion time    13.0879999995232     
+  matrix generated   8.50000000000000       of size         3599
+ beam=   89.76364       94.76364       99.76363    
+        3599  did solve   8.68200000375509          using :cgesv     
+ matrix generation time   8.50000000000000     
+ matrix solve time    8.68200000375509     
+ total computaion time    17.4380000010133     
+  matrix generated   10.4670000001788       of size         3999
+ beam=   89.76364       94.76364       99.76363    
+        3999  did solve   11.8310000002384          using :cgesv     
+ matrix generation time   10.4670000001788     
+ matrix solve time    11.8310000002384     
+ total computaion time    22.5820000022650     
+  matrix generated  6.999999284744263E-003  of size           99
+ beam=   89.76364       94.76364       99.76363    
+          99  did solve  1.999996602535248E-003     using :cgesv     
+ matrix generation time  6.999999284744263E-003
+ matrix solve time   1.999996602535248E-003
+ total computaion time   1.999999955296516E-002
+  matrix generated  2.899999916553497E-002  of size          199
+ beam=   89.76364       94.76364       99.76363    
+         199  did solve  1.700000092387199E-002     using :cgesv     
+ matrix generation time  2.899999916553497E-002
+ matrix solve time   1.700000092387199E-002
+ total computaion time   6.199999898672104E-002
+  matrix generated  6.300000101327896E-002  of size          299
+ beam=   89.76364       94.76364       99.76363    
+         299  did solve  5.599999800324440E-002     using :cgesv     
+ matrix generation time  6.300000101327896E-002
+ matrix solve time   5.599999800324440E-002
+ total computaion time   0.142999999225140     
+  matrix generated  0.109000001102686       of size          399
+ beam=   89.76364       94.76364       99.76363    
+         399  did solve  0.143000002950430          using :cgesv     
+ matrix generation time  0.109000001102686     
+ matrix solve time   0.143000002950430     
+ total computaion time   0.285000000149012     
+  matrix generated  0.170000001788139       of size          499
+ beam=   89.76364       94.76364       99.76363    
+         499  did solve  0.301999997347593          using :cgesv     
+ matrix generation time  0.170000001788139     
+ matrix solve time   0.301999997347593     
+ total computaion time   0.510000001639128     
+  matrix generated  0.243999999016523       of size          599
+ beam=   89.76364       94.76364       99.76363    
+         599  did solve  0.570000000298023          using :cgesv     
+ matrix generation time  0.243999999016523     
+ matrix solve time   0.570000000298023     
+ total computaion time   0.857999999076128     
+  matrix generated  0.328999999910593       of size          699
+ beam=   89.76364       94.76364       99.76363    
+         699  did solve  0.978999998420477          using :cgesv     
+ matrix generation time  0.328999999910593     
+ matrix solve time   0.978999998420477     
+ total computaion time    1.35899999737740     
+  matrix generated  0.427000001072884       of size          799
+ beam=   89.76364       94.76364       99.76363    
+         799  did solve   1.57600000128150          using :cgesv     
+ matrix generation time  0.427000001072884     
+ matrix solve time    1.57600000128150     
+ total computaion time    2.06300000101328     
+  matrix generated  0.539999999105930       of size          899
+ beam=   89.76364       94.76364       99.76363    
+         899  did solve   2.41000000014901          using :cgesv     
+ matrix generation time  0.539999999105930     
+ matrix solve time    2.41000000014901     
+ total computaion time    3.01599999889731     
+  matrix generated  0.672000002115965       of size          999
+ beam=   89.76364       94.76364       99.76363    
+         999  did solve   3.51499999687076          using :cgesv     
+ matrix generation time  0.672000002115965     
+ matrix solve time    3.51499999687076     
+ total computaion time    4.26000000163913     
+  matrix generated  0.953999999910593       of size         1199
+ beam=   89.76364       94.76364       99.76363    
+        1199  did solve   6.75600000098348          using :cgesv     
+ matrix generation time  0.953999999910593     
+ matrix solve time    6.75600000098348     
+ total computaion time    7.79600000008941     
+  matrix generated   1.29699999839067       of size         1399
+ beam=   89.76364       94.76364       99.76363    
+        1399  did solve   11.4530000016093          using :cgesv     
+ matrix generation time   1.29699999839067     
+ matrix solve time    11.4530000016093     
+ total computaion time    12.8509999997914     
+  matrix generated   1.69099999964237       of size         1599
+ beam=   89.76364       94.76364       99.76363    
+        1599  did solve   17.6669999994338          using :cgesv     
+ matrix generation time   1.69099999964237     
+ matrix solve time    17.6669999994338     
+ total computaion time    19.4730000011623     
+  matrix generated   2.13899999856949       of size         1799
+ beam=   89.76364       94.76364       99.76363    
+        1799  did solve   25.6640000008047          using :cgesv     
+ matrix generation time   2.13899999856949     
+ matrix solve time    25.6640000008047     
+ total computaion time    27.9320000000298     
+  matrix generated   2.63700000196695       of size         1999
+ beam=   89.76364       94.76364       99.76363    
+        1999  did solve   35.6739999987185          using :cgesv     
+ matrix generation time   2.63700000196695     
+ matrix solve time    35.6739999987185     
+ total computaion time    38.4550000019372     
+  matrix generated   3.79300000146031       of size         2399
+ beam=   89.76364       94.76364       99.76363    
+        2399  did solve   62.8149999976158          using :cgesv     
+ matrix generation time   3.79300000146031     
+ matrix solve time    62.8149999976158     
+ total computaion time    66.7790000028908     
+  matrix generated   5.15799999982119       of size         2799
+ beam=   89.76364       94.76364       99.76363    
+        2799  did solve   100.868999999017          using :cgesv     
+ matrix generation time   5.15799999982119     
+ matrix solve time    100.868999999017     
+ total computaion time    106.225999996066     
+  matrix generated   6.72899999842048       of size         3199
+ beam=   89.76364       94.76364       99.76363    
+        3199  did solve   151.768999997526          using :cgesv     
+ matrix generation time   6.72899999842048     
+ matrix solve time    151.768999997526     
+ total computaion time    158.727999996394     
+  matrix generated   8.51199999824166       of size         3599
+ beam=   89.76364       94.76364       99.76363    
+        3599  did solve   217.678000003099          using :cgesv     
+ matrix generation time   8.51199999824166     
+ matrix solve time    217.678000003099     
+ total computaion time    226.467999998480     
+  matrix generated   10.4879999980330       of size         3999
+ beam=   89.76364       94.76364       99.76363    
+        3999  did solve   300.300000000745          using :cgesv     
+ matrix generation time   10.4879999980330     
+ matrix solve time    300.300000000745     
+ total computaion time    311.072999998927     
+  matrix generated  6.999999284744263E-003  of size           99
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.5960000008345     
+ Shutting down CULA
+          99  did solve  4.000000655651093E-003     using :cula      
+ matrix generation time  6.999999284744263E-003
+ matrix solve time   4.000000655651093E-003
+ total computaion time    14.6829999983311     
+  matrix generated  2.699999883770943E-002  of size          199
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3709999993443     
+ Shutting down CULA
+         199  did solve  7.999997586011887E-003     using :cula      
+ matrix generation time  2.699999883770943E-002
+ matrix solve time   7.999997586011887E-003
+ total computaion time    14.5539999976754     
+  matrix generated  5.999999865889549E-002  of size          299
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3720000013709     
+ Shutting down CULA
+         299  did solve  1.399999856948853E-002     using :cula      
+ matrix generation time  5.999999865889549E-002
+ matrix solve time   1.399999856948853E-002
+ total computaion time    14.6649999991059     
+  matrix generated  0.105000000447035       of size          399
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3379999995232     
+ Shutting down CULA
+         399  did solve  1.999999955296516E-002     using :cula      
+ matrix generation time  0.105000000447035     
+ matrix solve time   1.999999955296516E-002
+ total computaion time    14.7769999988377     
+  matrix generated  0.162999998778105       of size          499
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3899999968708     
+ Shutting down CULA
+         499  did solve  3.500000014901161E-002     using :cula      
+ matrix generation time  0.162999998778105     
+ matrix solve time   3.500000014901161E-002
+ total computaion time    14.9609999991953     
+  matrix generated  0.232999999076128       of size          599
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3379999995232     
+ Shutting down CULA
+         599  did solve  3.299999982118607E-002     using :cula      
+ matrix generation time  0.232999999076128     
+ matrix solve time   3.299999982118607E-002
+ total computaion time    15.0399999991059     
+  matrix generated  0.315999999642372       of size          699
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3909999988973     
+ Shutting down CULA
+         699  did solve  5.400000140070915E-002     using :cula      
+ matrix generation time  0.315999999642372     
+ matrix solve time   5.400000140070915E-002
+ total computaion time    15.2699999995530     
+  matrix generated  0.412000000476837       of size          799
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3520000018179     
+ Shutting down CULA
+         799  did solve  4.899999871850014E-002     using :cula      
+ matrix generation time  0.412000000476837     
+ matrix solve time   4.899999871850014E-002
+ total computaion time    15.3909999988973     
+  matrix generated  0.520999997854233       of size          899
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.4049999974668     
+ Shutting down CULA
+         899  did solve  7.800000160932541E-002     using :cula      
+ matrix generation time  0.520999997854233     
+ matrix solve time   7.800000160932541E-002
+ total computaion time    15.6569999977946     
+  matrix generated  0.644000001251698       of size          999
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3430000022054     
+ Shutting down CULA
+         999  did solve  6.899999827146530E-002     using :cula      
+ matrix generation time  0.644000001251698     
+ matrix solve time   6.899999827146530E-002
+ total computaion time    15.7760000005364     
+  matrix generated  0.921999998390675       of size         1199
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.2619999982417     
+ Shutting down CULA
+        1199  did solve  0.111000001430511          using :cula      
+ matrix generation time  0.921999998390675     
+ matrix solve time   0.111000001430511     
+ total computaion time    16.1779999993742     
+  matrix generated   1.25399999693036       of size         1399
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.2970000021160     
+ Shutting down CULA
+        1399  did solve  0.147999998182058          using :cula      
+ matrix generation time   1.25399999693036     
+ matrix solve time   0.147999998182058     
+ total computaion time    16.7489999979734     
+  matrix generated   1.64300000295043       of size         1599
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3139999993145     
+ Shutting down CULA
+        1599  did solve  0.177999999374151          using :cula      
+ matrix generation time   1.64300000295043     
+ matrix solve time   0.177999999374151     
+ total computaion time    17.2810000032187     
+  matrix generated   2.06699999794364       of size         1799
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3289999999106     
+ Shutting down CULA
+        1799  did solve  0.206000000238419          using :cula      
+ matrix generation time   2.06699999794364     
+ matrix solve time   0.206000000238419     
+ total computaion time    17.9389999993145     
+  matrix generated   2.55499999970198       of size         1999
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.2919999994338     
+ Shutting down CULA
+        1999  did solve  0.259999997913837          using :cula      
+ matrix generation time   2.55499999970198     
+ matrix solve time   0.259999997913837     
+ total computaion time    18.5649999976158     
+  matrix generated   3.67599999904633       of size         2399
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.2839999981225     
+ Shutting down CULA
+        2399  did solve  0.359000001102686          using :cula      
+ matrix generation time   3.67599999904633     
+ matrix solve time   0.359000001102686     
+ total computaion time    20.0399999991059     
+  matrix generated   5.00499999895692       of size         2799
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.3179999999702     
+ Shutting down CULA
+        2799  did solve  0.493999999016523          using :cula      
+ matrix generation time   5.00499999895692     
+ matrix solve time   0.493999999016523     
+ total computaion time    21.8279999978840     
+  matrix generated   6.53000000119209       of size         3199
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.4570000022650     
+ Shutting down CULA
+        3199  did solve  0.661999996751547          using :cula      
+ matrix generation time   6.53000000119209     
+ matrix solve time   0.661999996751547     
+ total computaion time    23.9609999991953     
+  matrix generated   8.25099999830127       of size         3599
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.2719999998808     
+ Shutting down CULA
+        3599  did solve  0.864000000059605          using :cula      
+ matrix generation time   8.25099999830127     
+ matrix solve time   0.864000000059605     
+ total computaion time    26.0130000002682     
+  matrix generated   9.94500000029802       of size         3999
+ beam=   89.76364       94.76364       99.76363    
+ Initializing CULA
+ Calling CULA_cgesv   14.2630000002682     
+ Shutting down CULA
+        3999  did solve   1.12500000000000          using :cula      
+ matrix generation time   9.94500000029802     
+ matrix solve time    1.12500000000000     
+ total computaion time    28.2060000002384     

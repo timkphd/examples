@@ -1,0 +1,51 @@
+#!/bin/bash
+export SCRIPT=$0
+export START=`pwd`
+cat $START/$SCRIPT
+rm -rf fftw-3.3.7.tar.gz*
+wget http://www.fftw.org/fftw-3.3.7.tar.gz
+tar -xzf fftw-3.3.7.tar.gz
+cd fftw-3.3.7
+
+module purge
+module load PrgEnv/devtoolset-6
+
+#load different modules for mio an aun
+hostname | grep mio
+if [ $? -eq 0 ]; then
+module load MPI/openmpi/3.0.0/gcc
+BASE=/sw/libs/fftw/3.3.7/gcc_2
+else
+module load  openmpi/gcc/3.0.0
+BASE=/opt/lib/fftw/3.3.7/gcc
+fi
+
+rm -rf $BASE
+mkdir $BASE
+cat $START/$SCRIPT > $BASE/build_script
+
+for PRE in float double  ; do
+STAMP=`date +"%g%m%d%H%M%S"`
+/opt/utility/tymer $STAMP.time  doing  $PRE
+/opt/utility/tymer $STAMP.time  configure 
+
+if [ "$PRE" == "float" ] ;then
+#./configure CC=gcc  --enable-float --enable-openmp --enable-mpi --prefix=$BASE/$PRE  >& $STAMP.config
+./configure CC=gcc  --enable-float --enable-openmp --enable-mpi --prefix=$BASE  >& $STAMP.config
+else
+#./configure CC=gcc                 --enable-openmp --enable-mpi --prefix=$BASE/$PRE  >& $STAMP.config
+./configure CC=gcc                 --enable-openmp --enable-mpi --prefix=$BASE  >& $STAMP.config
+fi
+
+/opt/utility/tymer $STAMP.time  make clean 
+make clean >& /dev/null
+
+/opt/utility/tymer $STAMP.time  make 
+make >& $STAMP.make
+
+/opt/utility/tymer $STAMP.time  make install 
+make install >& $STAMP.install
+/opt/utility/tymer $STAMP.time  done 
+done
+
+

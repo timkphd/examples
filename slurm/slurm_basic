@@ -1,0 +1,25 @@
+#!/bin/bash 
+#SBATCH --job-name="sample"
+#SBATCH --nodes=2
+#SBATCH -n 8
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:15:00
+#SBATCH --out=%J.out
+#SBATCH --error=%J.error
+
+#supress warning message for some versions of MPI
+export LD_LIBRARY_PATH=/opt/lib/extras:$LD_LIBRARY_PATH
+
+# Go to the directory from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+echo running stf_01
+srun  $SLURM_SUBMIT_DIR/stf_01 < st.in > stf.out 
+
+echo running stc_01
+srun  $SLURM_SUBMIT_DIR/stc_01 < st.in
+
+export OMP_NUM_THREADS=4
+echo running glorified hello world
+srun --ntasks=4 --cpus-per-task=$OMP_NUM_THREADS $SLURM_SUBMIT_DIR/phostone -s 10000000 -F > hello.out

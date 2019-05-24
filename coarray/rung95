@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -l nodes=2:ppn=8
+#PBS -l walltime=02:00:00
+#PBS -N testIO
+#PBS -o out.$PBS_JOBID
+#PBS -e err.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+#-----------------------------------------------------
+
+cd $PBS_O_WORKDIR
+
+
+#save a nicely sorted list of nodes
+sort -u  $PBS_NODEFILE > mynodes.$PBS_JOBID
+
+echo "running the CAF example"
+./pi  --g95 images=8 < input
+

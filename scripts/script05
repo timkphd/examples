@@ -1,0 +1,33 @@
+#!/bin/bash
+#PBS -l nodes=2:ppn=8
+#PBS -l naccesspolicy=singleuser
+#PBS -l walltime=00:05:00
+#PBS -N testIO
+#PBS -o out.$PBS_JOBID
+#PBS -e err.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+#PBS -m abe
+#PBS -M joeminer@mines.edu
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+
+#our list of nodes
+sort -u  $PBS_NODEFILE > mynodes.$PBS_JOBID
+
+#save a copy of this sciprt
+cat $0 > runscript.$PBS_JOBID
+
+#save our PBS environment, the path to our mpiexec command, and executable
+printenv | grep PBS > env.$PBS_JOBID
+which mpiexec >> env.$PBS_JOBID
+which ./c01 >> env.$PBS_JOBID
+
+#mail us the environment and other "stuff"
+mail <  env.$PBS_JOBID -s $PBS_JOBID  joeminer@mines.edu
+
+mpiexec  -np 16 ./c01
+
+
+

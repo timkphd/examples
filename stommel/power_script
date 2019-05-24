@@ -1,0 +1,52 @@
+#!/bin/bash -x
+#SBATCH --job-name="hybrid"
+#comment = "glorified hello world"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks=4
+#SBATCH -p ppc
+##SBATCH --exclusive
+#SBATCH --time=00:05:00
+#SBATCH --export=NONE
+#SBATCH --get-user-env=10L
+
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+
+# Run the job.
+export OMP_NUM_THREADS=4
+export ARGS=" -a -F"
+export ARGS="-F"
+
+export MYID=$SLURM_JOBID
+
+cat $0 > $MYID.script
+
+######################
+
+
+######################
+
+
+######################
+
+
+######################
+
+echo running "IBM MPI" version
+EXE="./a.out " 
+module purge
+export MP_RESD=poe
+export MP_HOSTFILE=$MYID.list
+#export MP_LABELIO=yes
+printenv > ibm.$MYID.env
+
+./expands > $MP_HOSTFILE
+
+poe $EXE $ARGS -procs $SLURM_NTASKS < st.in > ibm.$MYID
+
+unset MP_RESD
+unset MP_HOSTFILE
+

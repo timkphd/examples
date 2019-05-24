@@ -1,0 +1,12 @@
+#!/bin/sh
+#icc auto.c -mkl
+cd $1
+source $1/toset
+export OFFLOAD_DEVICES=0,1,2,3
+export OFFLOAD_REPORT=2
+export MIC_OMP_NUM_THREADS=236
+#export MIC_KMP_AFFINITY=compact,granularity=fine
+#export MIC_PLACE_THREADS=59C,4t
+#export MIC_USE_2MB_BUFFERS=16K
+$1/offit > $1/$2.ssh
+

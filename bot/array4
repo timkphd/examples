@@ -1,0 +1,63 @@
+#!/bin/bash -e
+#SBATCH --job-name="array_job"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=2
+#SBATCH --time=48:00:00
+#SBATCH -o outz-%j
+##SBATCH -e errz-%j
+##SBATCH --exclusive
+#SBATCH --share
+#SBATCH --export=ALL
+
+##SBATCH --mem=1000
+
+#----------------------
+# example invocation
+# sbatch --array=1-18 array
+module purge
+module load StdEnv
+module load PrgEnv/python/gcc/2.7.11
+
+cd $SLURM_SUBMIT_DIR
+
+if [[ $SLURM_ARRAY_JOB_ID ]] ; then
+	JOB_ID=$SLURM_ARRAY_JOB_ID
+	SUB_ID=$SLURM_ARRAY_TASK_ID
+else
+	JOB_ID=$SLURM_JOB_ID
+	SUB_ID=0
+fi
+
+export FLIST=list
+export DOPRINT=yes
+#export DOPRINT=no
+
+#Make our directories if needed
+mkdir -p $SLURM_ARRAY_JOB_ID
+cd $SLURM_ARRAY_JOB_ID
+
+#just an example
+#The following line creates a file that contains a parameter space, a set of integers on each line.
+#This should be run befor the script.
+#for a in `seq 0 2 10` ; do for b in `seq 1 20` ; do for c in `seq 5 5 55` ; do echo $a $b $c >> pars; done; done; done
+
+#The next line is similar but we add a random value between 1-100, maybe for Monte Carlo type simulations
+#T=100;B=1;DIFF=$(($T-$B+1)); for a in 1 2 3 ; do for b in 100 8000 10000 ; do for c in `seq 1 5000` ; do echo $a $b $c $(($(($RANDOM%$DIFF))+$B))  >> pars; done; done; done
+#
+#The next two lines pick line $SLURM_ARRAY_TASK_ID from our file containing the parameters
+cmd=`echo $SLURM_ARRAY_TASK_ID"q;d"`
+aline=`sed -e $cmd $SLURM_SUBMIT_DIR/pars`
+#
+#These lines show how we might create a command line or a directory name based on the parameters
+cl=`echo $aline | awk '{print("-v x " $1 " -v y " $2 " -v z " $3)}'`
+dir=`echo $aline | awk '{print($1"/"$2"/"$3)}'`
+echo "SLURM_ARRAY_TASK_ID=" $SLURM_ARRAY_TASK_ID "CL=" $cl "DIR=" $dir
+mkdir -p $dir
+cd $dir
+srun -n 2 $SLURM_SUBMIT_DIR/p_array $cl > out.dat
+
+wait
+
+
+
+

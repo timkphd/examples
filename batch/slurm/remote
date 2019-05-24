@@ -1,0 +1,87 @@
+#!/bin/bash -x
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks=16
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:02:00
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=joeuser@mines.edu
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the  one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+
+# Create a "base name" for a directory 
+# in which our job will run
+# For production runs this should be in $SCRATCH
+MYBASE=$SLURM_SUBMIT_DIR
+#MYBASE=$SCRATCH/mc2_tests
+
+# We could create a directoy for our run based on the date/time
+export NEW_DIR=`date +%y%m%d%H%M%S`
+# But here we create a directoy for our run based on the $JOBID and go there
+mkdir -p $MYBASE/$JOBID
+cd $MYBASE/$JOBID
+odir=`pwd`
+export ODIR=`pwd`
+# Create a link back to our starting directory
+ln -s $SLURM_SUBMIT_DIR submit
+cp $SLURM_SUBMIT_DIR/data.tgz .
+tar -xzf data.tgz
+
+if [ -n "$JOBTMP" ] ; then
+  echo using $JOBTMP from environment
+else
+  export JOBTMP=~/scratch/local_sim
+fi
+
+
+#get a list of nodes...
+export nlist=`/opt/utility/expands`
+# For each node...
+for i in $nlist
+do 
+# Create my temporary directory in /scratch on each node
+  ssh $i mkdir -p $JOBTMP/$NEW_DIR
+# Copy my data
+  echo $USER@$i:$JOBTMP/$NEW_DIR
+  scp * $USER@$i:$JOBTMP/$NEW_DIR
+done
+
+# save a copy of our nodes
+/opt/utility/expands > nlist.$JOBID
+/opt/utility/expands > flist.$JOBID
+
+#save a copy of this sciprt
+cat $0 > runscript.$JOBID
+
+#save our environment
+printenv >> env.$JOBID
+ls -lt >> env.$JOBID
+
+#Go to our working directory
+cd $JOBTMP/$NEW_DIR
+
+
+export APP=$SLURM_SUBMIT_DIR/sinkfile
+match $ODIR/flist.$JOBID -p"$APP" > appfile
+mpiexec -app appfile  >& screen.$JOBID
+
+#for each node...
+for i in $nlist
+do 
+# Copy files from our local space on each node back to
+# my working directory creating a subdirectory for each node.
+  mkdir -p $ODIR/$i
+  scp -r $USER@$i:$JOBTMP/$NEW_DIR/* $USER@aun.mines.edu:$ODIR/$i
+##### or #####
+# ssh -r $USER@$i cp -r $JOBTMP/$NEW_DIR/* $SLURM_SUBMIT_DIR/$i 
+
+
+# Remove the temporary directory
+ssh $i rm -r $JOBTMP/$NEW_DIR
+done

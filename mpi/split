@@ -1,0 +1,35 @@
+#!/bin/bash -x
+#SBATCH --job-name="match"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --ntasks=16
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:02:00
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+
+echo $SLURM_JOB_NODELIST > nodes.$JOBID
+#create a shortlist of nodes
+/opt/utility/expands $SLURM_JOB_NODELIST | sort -u > shortlist
+
+#run match to create a mpiexec appfile
+/opt/utility/match shortlist -p"$SLURM_SUBMIT_DIR/helloc $SLURM_SUBMIT_DIR/hellof" 2 4 > appfile
+
+#run the job using mpiexec
+mpiexec -app appfile > outone.$JOBID
+
+#run match_split to create a srun applist and hostlist
+/opt/utility/match_split appfile applist hostlist
+
+#run the job using srun
+export SLURM_HOSTFILE=hostlist
+srun -n6 --multi-prog applist > out2.$JOBID
+
+

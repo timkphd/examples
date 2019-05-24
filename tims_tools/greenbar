@@ -1,0 +1,160 @@
+#!/usr/bin/python
+import sys
+header="""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Untitled</title>
+
+<style type="text/css">
+BODY
+{
+	background-color: #DDD;
+}
+pre
+{
+	color: black;
+	font-size: 9pt;
+	font-family: monospace;
+}
+.bluebar
+{
+font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+border-collapse:collapse;
+}
+.bluebar td, .bluebar th 
+{
+font-size:1.0em;
+border:1px solid #888;
+padding:3px 7px 2px 2px;
+background-color:#f0f0f0;
+}
+.bluebar th 
+{
+font-size:1.4em;
+text-align:left;
+padding-top:5px;
+padding-bottom:4px;
+background-color: #646490
+;
+
+color:#fff;
+}
+.bluebar tr.alt td 
+{
+color:#000;
+background-color:#DCDCFF;
+}
+
+.greenbar
+{
+font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+border-collapse:collapse;
+}
+.greenbar td, .greenbar th 
+{
+font-size:1.0em;
+border:1px solid #98bf21;
+padding:3px 7px 2px 2px;
+background-color:#f0f0f0;
+}
+.greenbar th 
+{
+font-size:1.4em;
+text-align:left;
+padding-top:5px;
+padding-bottom:4px;
+background-color:#A7C942;
+color:#fff;
+}
+.greenbar tr.alt td 
+{
+color:#000;
+background-color:#EAF2D3;
+}
+    </style>
+</head>
+<body>
+"""
+data="""run	nodes	tpn	total<br>tasks	build	time
+out16_128	8	16	128	build4	1.00567062124997619
+out16_128	8	16	128	build6	1.00576529374995971
+out16_128	8	16	128	build3	0.409357148750004285
+out16_128	8	16	128	build5	0.352833823750074771
+out16_128	8	16	128	build7	0.401254814999902010
+out16_128	8	16	128	xxxxxx	0.271314396875002473
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+out32_256	8	32	256	build4	0.601276714999983142
+out32_256	8	32	256	build6	0.604261700624988407
+out32_256	8	32	256	build3	0.289758434375016805
+out32_256	8	32	256	build5	0.257383043749996432
+out32_256	8	32	256	build7	0.284165476249995663
+out32_256	8	32	256	xxxxxx	0.202702161875002673
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+out64_512	8	64	512	build4	0.434167001875039205
+out64_512	8	64	512	build6	0.437082638125048106
+out64_512	8	64	512	build3	0.244894383749993949
+out64_512	8	64	512	build5	0.224447588750081195
+out64_512	8	64	512	build7	0.234532178124936763
+out64_512	8	64	512	xxxxxx	0.185435976250005297
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+out16_256	16	16	256	build4	0.502780612499975632
+out16_256	16	16	256	build6	0.502186156875040979
+out16_256	16	16	256	build3	0.204321289999995770
+out16_256	16	16	256	build5	0.176915456249957970
+out16_256	16	16	256	build7	0.198380052500056081
+out16_256	16	16	256	xxxxxx	0.130373099374999413
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+out32_512	16	32	512	build4	0.301681075000033161
+out32_512	16	32	512	build6	0.304176504999986719
+out32_512	16	32	512	build3	0.146377503124995201
+out32_512	16	32	512	build5	0.129078950624943900
+out32_512	16	32	512	build7	0.141917822500090551
+out32_512	16	32	512	xxxxxx	0.104801515624998842
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+out64_1024	16	64	1024	build4	0.217833231875033562
+out64_1024	16	64	1024	build6	0.216368220624985952
+out64_1024	16	64	1024	build3	0.130517695000008871
+out64_1024	16	64	1024	build5	0.113919514374970277
+out64_1024	16	64	1024	build7	0.127768148124914660
+out64_1024	16	64	1024	xxxxxx	0.104237118750006630
+"""
+color="green"
+if len(sys.argv) > 1:
+	f=open(sys.argv[1])
+	data=f.read()
+print header
+if len(sys.argv) > 2:
+	color=sys.argv[2]
+if(color=="green"):
+	print '<table class="greenbar">'
+else:
+	print '<table class="bluebar">'
+lines=data.split("\n")
+#print lines
+head=lines[0]
+head=head.replace("\t","</th><th>")
+head="<tr><th>"+head+"</th></tr>"
+print head
+ic=0
+for l in lines[1:]:
+	if len(l) < 1 :
+		continue
+	l=l.replace("\t","</td><td>")
+	if ic == 0:
+		ic=1
+		l='<tr class="alt"><td>'+l+"</td></tr>"
+	else:
+		ic=0
+		l='<tr><td>'+l+"</td></tr>"
+	print l
+print "</table>"
+		
+print "</body>"
+print "</html>"

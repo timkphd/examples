@@ -1,0 +1,42 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#comment = "glorified hello world"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks=4
+#SBATCH -p ppc
+#SBATCH --gres=gpu:kepler:4
+##SBATCH --exclusive
+#SBATCH --time=00:05:00
+#SBATCH --export=NONE
+#SBATCH --get-user-env=10L
+
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+module purge
+module load PGI
+
+#Note: We could do our make inside the script
+#      at this point.
+#      This will not work on most platforms
+#      but will work on our Power nodes.
+#
+#      make 
+#      make cuda
+#
+
+echo "gpucount= " `./gpucount` > gpucount.out
+./c_threads_cuda < input > c_threads_cuda.out
+./f_threads_cuda < input > f_threads_cuda.out
+./f_laplace2d_acc > f_laplace2d_acc.out
+./c_laplace2d_acc > c_laplace2d_acc.out
+
+./mult 100 100 100 > mult.out
+
+export OMP_PROC_BIND=close
+export OMP_PLACES='{0:8},{8:8},{16:8},{24:8},{32:8},{40:8},{48:8},{56:8},{64:8},{72:8},{80:8},{88:8},{96:8},{104:8},{112:8},{120:8},{128:8},{136:8},{144:8},{152:8}'
+export OMP_NUM_THREADS=20
+./f_laplace2d_omp > f_laplace2d_omp.out
+

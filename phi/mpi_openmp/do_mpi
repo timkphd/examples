@@ -1,0 +1,31 @@
+#!/bin/sh
+#SBATCH --time=1
+#SBATCH --nodes=1
+#SBATCH -n 20
+#SBATCH --export=ALL
+#SBATCH -p phi
+#SBATCH --overcommit
+#SBATCH --exclusive
+#SBATCH --error=%J.error
+#SBATCH --out=%J.out
+cd $SLURM_SUBMIT_DIR
+echo $SLURM_JOB_NODELIST
+cat $0 > $SLURM_JOB_ID.script
+#printenv
+
+srun hostname | sort -u > $SLURM_JOB_ID.hosts
+
+#ssh $PHI1 /u/pa/ru/tkaiser/phi/runcommand
+
+PHI1=`head -1 $SLURM_JOB_ID.hosts`
+MIC=$SLURM_SUBMIT_DIR/helloc.mic
+X86=$SLURM_SUBMIT_DIR/helloc.x86
+
+#next line preservs the temp file that micrun creates
+export RM_TMP=False
+export RUN_ENV="I_MPI_FABRICS=shm:tcp"
+micrun  -n 4 -host $PHI1 $X86 : -n 4 -host $PHI1-mic0 $MIC : -n 4 -host $PHI1-mic1 $MIC : -n 4 -host $PHI1-mic2 $MIC : -n 4 -host $PHI1-mic3 $MIC
+#micrun   -n 4 -host $PHI1-mic0 $MIC : -n 4 -host $PHI1-mic1 $MIC : -n 4 -host $PHI1-mic2 $MIC : -n 4 -host $PHI1-mic3 $MIC
+
+date
+

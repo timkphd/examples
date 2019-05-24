@@ -1,0 +1,23 @@
+#!/bin/bash -x
+#SBATCH --job-name="ppong"
+#comment = "communications test"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=16
+#SBATCH --ntasks=32
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=10:00:00
+#SBATCH -o bscript_out.%j
+
+## Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+JOBID=`echo $SLURM_JOBID`
+mkdir bscript_$JOBID
+cd bscript_$JOBID
+
+echo "trying runjob"
+export OMP_NUM_THREADS=4
+printenv OMP_NUM_THREADS > env_$JOBID
+srun --label  $SLURM_SUBMIT_DIR/ppong.exe > output
+echo "got to the bottom"
+

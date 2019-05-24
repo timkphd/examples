@@ -1,0 +1,3 @@
+#!/bin/bash
+source /home/nbcr08/Track2_Programming/tkaiser/THKbashrc
+/home/nbcr08/Track2_Programming/tkaiser/tkaiser/mpi/p_ex01.py

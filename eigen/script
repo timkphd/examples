@@ -1,0 +1,60 @@
+#!/bin/bash -x
+#SBATCH --job-name="eigen"
+#comment = "that is exact..."
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks=1
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=10:00:00
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+
+# Create a "base name" for a directory in which our job will run
+# For production runs this should be in $SCRATCH
+MYBASE=$SLURM_SUBMIT_DIR
+
+# Create a directoy for our run based on the $JOBID and go there
+mkdir -p $MYBASE/$JOBID
+cd $MYBASE/$JOBID
+
+# Create a link back to our starting directory
+ln -s $SLURM_SUBMIT_DIR submit
+
+
+# Save a copy of our environment and script
+cat $0 > script.$JOBID
+printenv  > env.$JOBID
+
+# This is the path to our program which
+# we assume is in our starting directory
+EXE=$SLURM_SUBMIT_DIR/eigen
+
+
+############ Set up the run ###############
+export OMP_NUM_THREADS=8
+export MATRIX=$SLURM_SUBMIT_DIR/sort2.in
+RANGE="3.0 7.0 8"
+###########################################
+
+# Run the job.
+# The echo will go into the standard output for this job
+# The standard output file will end up in the directory
+# from which the job was launched.
+
+
+echo "running job"
+srun -n 1 $EXE $RANGE <  $MATRIX > output.$JOBID
+echo "OMP_NUM_THREADS=" $OMP_NUM_THREADS >> output.$JOBID
+echo "job has finished"
+# This output will also go into the standard output file
+echo "run in" `pwd` " produced the files:"
+ls -lt 
+
+cp $SLURM_SUBMIT_DIR/slurm-$SLURM_JOBID.out .
+
+

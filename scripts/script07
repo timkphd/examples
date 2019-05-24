@@ -1,0 +1,39 @@
+#!/bin/bash
+#PBS -l nodes=2:ppn=8
+#PBS -l naccesspolicy=singleuser
+#PBS -l walltime=00:05:00
+#PBS -N testIO
+#PBS -o testIOo.$PBS_JOBID
+#PBS -e testIOe.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+# Save a nicely sorted list of nodes with no repeats
+sort -u  $PBS_NODEFILE > shortlist
+
+# Get our list of nodes
+export nlist=`cat shortlist`
+
+# For each node...
+for i in $nlist
+do 
+# Create my temporary directory in /state/partion1 on each node
+  ssh $i mkdir /state/partition1/$USER
+done
+
+
+# Run the program that writes to the temporary directory
+mpiexec -np 16 ./f03
+
+#for each node...
+for i in $nlist
+do 
+# Copy files from /state/partion1 on each node back to
+# my working directory with a subdirectory for each node.
+  mkdir -p $PBS_O_WORKDIR/$i
+  scp -r $USER@$i:/state/partition1/$USER $USER@ra.mines.edu:$PBS_O_WORKDIR/$i
+# Remove the temporary directory
+  ssh $i rm -r /state/partition1/$USER
+done

@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+import sys
+import os
+head="""<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>MAN PAGE for 98765</title>
+	<meta name="generator" content="mantohtml" />
+</head>
+<body>
+<pre>
+"""
+tail="""
+</pre>
+<h3>Generation:</h3>
+<pre>
+mantohtml 98765
+</pre>
+
+</body>
+</html>
+"""
+pages=sys.argv[1:]
+
+for p in pages:
+	command="man "+p+"| col -bx"
+	f=os.popen(command,"r")
+	ind=f.read()
+	ind=ind.replace("<","&lt;")
+	ind=ind.replace(">","&gt;")
+	f.close()
+	f=open(p+".html","w")
+	f.write(head.replace("98765",p))
+	f.write(ind)
+	f.write(tail.replace("98765",p))
+

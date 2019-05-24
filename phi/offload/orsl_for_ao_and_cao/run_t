@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+#icc -O0 -std=c99 -Wall -g -mkl -openmp t.c -o a.out
+
+export MKL_MIC_ENABLE=1
+#export OFFLOAD_DEVICES=0,1,2,3
+export OFFLOAD_REPORT=2
+
+# Host side settings
+export KMP_AFFINITY=${KMP_AFFINITY:-scatter,granularity=fine}
+
+# Common settings
+export OFFLOAD_DEVICES=${OFFLOAD_DEVICES:-0}
+
+# Offload compiler settings
+export MIC_ENV_PREFIX=MIC
+export MIC_KMP_AFFINITY=${MIC_KMP_AFFINITY:-balanced,granularity=fine}
+
+# MKL settings
+export MKL_MIC_ENABLE=${MKL_MIC_ENABLE:-1}
+export MKL_MIC_MAX_MEMORY=${MKL_MIC_MAX_MEMORY:-4096}
+
+./t.out "$@"

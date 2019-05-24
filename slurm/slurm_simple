@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name="sample"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks=8
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=10:00:00
+
+#supress warning message for some versions of MPI
+export LD_LIBRARY_PATH=/opt/lib/extras:$LD_LIBRARY_PATH
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+#export OMP_NUM_THREADS=2
+
+#run an application
+srun $SLURM_SUBMIT_DIR/hello

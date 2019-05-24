@@ -1,0 +1,23 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8
+#PBS -W x=NACCESSPOLICY:SINGLEUSER
+#PBS -l walltime=24:00:00
+#PBS -N testIO
+#PBS -o outx8.$PBS_JOBID
+#PBS -e errx8.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+#PBS -m abe
+#PBS -M joeuser@mines.edu
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+sort -u  $PBS_NODEFILE > mynodes.$PBS_JOBID
+
+export APP=fillmem
+
+
+for INPUT in  sinput1 sinput2 sinput3 sinput4 ; do
+      ./$APP  < $INPUT >> $APP.$INPUT.$PBS_JOBID &
+done
+wait

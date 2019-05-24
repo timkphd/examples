@@ -1,0 +1,5 @@
+#g95
+FORT=g95
+FOPT= 
+ENVFILE=g95env.f90
+

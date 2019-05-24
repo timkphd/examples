@@ -1,0 +1,31 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=00:05:00
+#PBS -N testIO
+#PBS -o stdout
+#PBS -e stderr
+#PBS -V
+#PBS -m abe
+##PBS -M joeminer@mines.edu
+#----------------------
+cd $PBS_O_WORKDIR
+sort -u $PBS_NODEFILE > shortlist
+
+rm cent1 cent2
+
+mpiexec -n 4 c02 30 cent1 &
+
+mpiexec -n 4 f02 40 cent2 &
+
+while [ ! -f cent1 ]
+do
+echo "looking for cent1" >> guard
+sleep 10
+done
+
+while [ ! -f cent2 ]
+do
+echo "looking for cent2" >> guard
+sleep 10
+done
+

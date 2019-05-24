@@ -1,0 +1,128 @@
+rm results
+cp true source.dat
+./airfoil.py 50
+./fourd.mkl >> results
+./airfoil.py 100
+./fourd.mkl >> results
+./airfoil.py 150
+./fourd.mkl >> results
+./airfoil.py 200
+./fourd.mkl >> results
+./airfoil.py 250
+./fourd.mkl >> results
+./airfoil.py 300
+./fourd.mkl >> results
+./airfoil.py 350
+./fourd.mkl >> results
+./airfoil.py 400
+./fourd.mkl >> results
+./airfoil.py 450
+./fourd.mkl >> results
+./airfoil.py 500
+./fourd.mkl >> results
+./airfoil.py 600
+./fourd.mkl >> results
+./airfoil.py 700
+./fourd.mkl >> results
+./airfoil.py 800
+./fourd.mkl >> results
+./airfoil.py 900
+./fourd.mkl >> results
+./airfoil.py 1000
+./fourd.mkl >> results
+./airfoil.py 1200
+./fourd.mkl >> results
+./airfoil.py 1400
+./fourd.mkl >> results
+./airfoil.py 1600
+./fourd.mkl >> results
+./airfoil.py 1800
+./fourd.mkl >> results
+./airfoil.py 2000
+./fourd.mkl >> results
+
+
+cp true source.dat
+./airfoil.py 50
+./fourd.intel >> results
+./airfoil.py 100
+./fourd.intel >> results
+./airfoil.py 150
+./fourd.intel >> results
+./airfoil.py 200
+./fourd.intel >> results
+./airfoil.py 250
+./fourd.intel >> results
+./airfoil.py 300
+./fourd.intel >> results
+./airfoil.py 350
+./fourd.intel >> results
+./airfoil.py 400
+./fourd.intel >> results
+./airfoil.py 450
+./fourd.intel >> results
+./airfoil.py 500
+./fourd.intel >> results
+./airfoil.py 600
+./fourd.intel >> results
+./airfoil.py 700
+./fourd.intel >> results
+./airfoil.py 800
+./fourd.intel >> results
+./airfoil.py 900
+./fourd.intel >> results
+./airfoil.py 1000
+./fourd.intel >> results
+./airfoil.py 1200
+./fourd.intel >> results
+./airfoil.py 1400
+./fourd.intel >> results
+./airfoil.py 1600
+./fourd.intel >> results
+./airfoil.py 1800
+./fourd.intel >> results
+./airfoil.py 2000
+./fourd.intel >> results
+
+
+cp false source.dat
+./airfoil.py 50
+./fourd.cuda >> results
+./airfoil.py 100
+./fourd.cuda >> results
+./airfoil.py 150
+./fourd.cuda >> results
+./airfoil.py 200
+./fourd.cuda >> results
+./airfoil.py 250
+./fourd.cuda >> results
+./airfoil.py 300
+./fourd.cuda >> results
+./airfoil.py 350
+./fourd.cuda >> results
+./airfoil.py 400
+./fourd.cuda >> results
+./airfoil.py 450
+./fourd.cuda >> results
+./airfoil.py 500
+./fourd.cuda >> results
+./airfoil.py 600
+./fourd.cuda >> results
+./airfoil.py 700
+./fourd.cuda >> results
+./airfoil.py 800
+./fourd.cuda >> results
+./airfoil.py 900
+./fourd.cuda >> results
+./airfoil.py 1000
+./fourd.cuda >> results
+./airfoil.py 1200
+./fourd.cuda >> results
+./airfoil.py 1400
+./fourd.cuda >> results
+./airfoil.py 1600
+./fourd.cuda >> results
+./airfoil.py 1800
+./fourd.cuda >> results
+./airfoil.py 2000
+./fourd.cuda >> results

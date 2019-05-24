@@ -1,0 +1,20 @@
+BASE_PATH=/opt/intel/Compiler/11.1/069
+FFTW_I_PATH=-I$(BASE_PATH)/mkl/include/fftw
+FFTW_L_PATH=-L$(BASE_PATH)/mkl/lib/em64t
+FFTW_FLIB=-lfftw2xf_intel
+FFTW_CLIB=-lfftw2xc_intel
+
+all: test2_c test2_f
+
+test2_c: test2.c
+	icc test2.c -o test2_c $(FFTW_I_PATH) $(FFTW_L_PATH) $(FFTW_CLIB) -mkl 
+
+test2_f: test2.f
+	ifort test2.f -o test2_f $(FFTW_I_PATH) $(FFTW_L_PATH) $(FFTW_FLIB) -mkl 
+
+test2: test2_c test2_f
+	./test2_c
+	./test2_f
+
+clean:
+	rm -f test2_c test2_f

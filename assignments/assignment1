@@ -1,0 +1,23 @@
+Assignment #1:
+
+The program doint.* calculates the integral of
+a polynomial over a given range.  The coefficients
+and the range are input along with tolerance 
+parameters.
+
+Rewrite as an MPI program that works on any
+number of processors.  Each processor calculates
+an equal portion of the integral in parallel. Each
+then should print its given range and portion of
+the integral.  The root processor then prints the
+value of the whole integral as the sum of the
+individual parts.
+
+
+Extra challenge:
+  Have the first processor do its portion of
+the calculation then pass the results to the
+second processor which adds its portion and
+so on and have the last processor print the
+final value.
+

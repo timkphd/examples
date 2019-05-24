@@ -1,0 +1,11 @@
+Normal scripts review (script01)
+Getting output before the job ends (script02)
+N < 8 tasks per node and other mappings (script03)
+Different executables on different nodes (script04)
+Notifications (script05)
+Keeping a record of what you did (script05)
+Multiple mpiexec commands per script (script06)
+Using local disk space (script07)
+
+match - script referenced in script03 and 04
+

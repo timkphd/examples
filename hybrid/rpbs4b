@@ -1,0 +1,27 @@
+#!/bin/tcsh
+#PBS -l nodes=2:ppn=8
+#PBS -l naccesspolicy=singlejob
+#PBS -l walltime=00:20:00
+#PBS -N testIO
+#PBS -o outx8.$PBS_JOBID.pbs
+#PBS -e errx8.$PBS_JOBID.pbs
+#PBS -r n
+#PBS -V 
+##PBS -q ALLNODES
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+#save a nicely sorted lisst of nodes
+sort -u -t- -n --key=2 --key=3 -u $PBS_NODEFILE > shortlist
+
+#generate our program mapping to run "short" 
+echo `pwd`/short > oneprogram
+match shortlist oneprogram 4 > applist
+
+#set the number of threads to use
+setenv OMP_NUM_THREADS 2
+
+mpiexec  -app applist
+
+
+

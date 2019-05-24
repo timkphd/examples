@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=00:02:00
+#PBS -N testIO
+#PBS -o stdout
+#PBS -e stderr
+#PBS -V
+#PBS -m abe
+#PBS -M joeuser@mines.edu
+#----------------------
+cd $PBS_O_WORKDIR
+cla=" 1234"
+cls=$cla
+for (( c=1; c<=4096; c++ )); do 
+  cls="$cls $cla" 
+  ~/a.out $cls
+done
+

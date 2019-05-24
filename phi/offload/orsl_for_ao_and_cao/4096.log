@@ -1,0 +1,30 @@
+# ./run 0 0 4096
+Coprocessor access: serial
+Manual synchronization: off
+N: 4096
+Host/AO 4096x4096 DGEMM:   630.80 GFlops
+Offload 4096x4096 DGEMM:   475.65 GFlops
+real 17.06
+user 26.91
+sys 2.07
+
+# ./run 1 0 4096
+Coprocessor access: concurrent
+Manual synchronization: off
+N: 4096
+Offload 4096x4096 DGEMM:   288.14 GFlops
+Host/AO 4096x4096 DGEMM:   472.66 GFlops
+real 13.81
+user 19.58
+sys 5.13
+
+# ./run 1 1 4096
+Coprocessor access: concurrent
+Manual synchronization: on
+N: 4096
+Host/AO 4096x4096 DGEMM:   168.10 GFlops
+Offload 4096x4096 DGEMM:   467.55 GFlops
+real 14.98
+user 35.97
+sys 19.91
+

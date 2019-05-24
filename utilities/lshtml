@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+import os
+import sys
+###    USAGE    ###
+### tar -xzf examples.tgz 
+### ls
+### examples	examples.tgz
+### ~/bin/lshtml http://osage.mines.edu/~tkaiser/examples > ../myindex.html
+### mv ../myindex.html index.html
+
+def dohtmldir(rootPath,base,path,dir):
+	#use css to do indents
+	level=2
+	selector="<p class=\"pin"+str(level)+"\">"
+	endln="</p>"
+	if (len(base) > 0):
+		path=path[len(rootPath):]
+	path=path+"/"+dir+"/index.html"
+	link='<a href="'+base+path+'">'+dir+"</a>"
+	return selector+link+endln
+
+
+
+
+#base=""
+#for root, dirs, files in os.walk(rootPath):
+#	if len(dirs) > 0 :
+#		for d in dirs:
+#			print dohtmldir(rootPath,base,root,d)
+
+
+def dohead():
+	head="""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <style type="text/css">	
+    p { width: 6in; text-align: justify; margin: .25in; }
+    p.pin0  {margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin1  {margin-left: 2.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin2  {margin-left: 4.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin3  {margin-left: 6.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin4  {margin-left: 8.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin5  {margin-left: 10.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin6  {margin-left: 12.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin7  {margin-left: 14.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin8  {margin-left: 16.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin9  {margin-left: 18.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin10 {margin-left: 20.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    h.hin0  {margin-left: 0.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin1  {margin-left: 2.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin2  {margin-left: 4.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin3  {margin-left: 6.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin4  {margin-left: 8.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin5  {margin-left: 10.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin6  {margin-left: 12.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin7  {margin-left: 14.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin8  {margin-left: 16.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin9  {margin-left: 18.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin10 {margin-left: 20.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+   </style>
+   <title>Listing</title>
+</head>
+<body>
+"""
+	print (head)
+def dotail():
+	tail="""
+</body>
+</html>
+"""
+	print (tail)
+
+def dohtml(rootPath,base,path,file):
+	# get the directory level, assume "/"
+	sep="/"
+	level=len(path)-len(path.replace(sep,""))
+	#use css to do indents
+	selector="<p class=\"pin"+str(level)+"\">"
+	endln="</p>"
+	if (len(base) > 0):
+		path=path[len(rootPath):]
+	link='<a href="'+base+path+"\">"+file+"</a>"
+	return selector+link+endln
+
+def dodir(path):
+	sep="/"
+	level=len(path)-len(path.replace(sep,""))
+	#use css to do indents
+	selector="<h3 class=\"hin"+str(level)+"\">"
+	endln="</h3>"
+	return selector+path+endln
+	
+	
+from stat import ST_SIZE
+dohead()
+lastroot=""
+mybase=""
+if( len(sys.argv) > 1):
+	mybase=sys.argv[1]
+rootPath="/Users/tkaiser/examples/gpu_parallel"
+rootPath="."
+for root, dirs, files in os.walk(rootPath):
+	if(root.find(".svn") == -1):
+		for f in files:
+			if root != lastroot:
+				print (dodir(root))
+				lastroot=root
+	#        print( os.path.join(root, f))
+			if(f.find(".") != 0):
+				link=dohtml(rootPath,mybase,os.path.join(root, f),f)
+				stat=os.stat(os.path.join(root, f))
+				thesize="  "+str(stat[ST_SIZE])
+				link=link.replace("</p>",thesize+"</p>")
+				print (link)
+        
+dotail()

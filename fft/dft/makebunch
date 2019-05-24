@@ -1,0 +1,11 @@
+for C in Blues RdGy gist_gray BrBG RdPu gist_heat BuGn RdYlGn gist_ncar \
+         CMRmap Set1 gist_yarg Greens Set2 gnuplot2 Greys Spectral gray \
+         OrRd YlGnBu jet Oranges YlOrRd nipy_spectral PRGn afmhot ocean \
+         Paired autumn prism Pastel2 bone rainbow PuBu brg summer PuBuGn \
+         bwr terrain PuOr coolwarm winter PuRd cubehelix Purples gist_earth ;
+do
+export CMAP=$C
+export TITLE=$C
+./mkview.py fft.out
+mv fft.out.png $C.png
+done

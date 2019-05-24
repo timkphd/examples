@@ -1,0 +1,32 @@
+#!/bin/sh
+#SBATCH --time=5
+#SBATCH --nodes=1
+#SBATCH -n 20
+#SBATCH --export=ALL
+#SBATCH -p phi
+#SBATCH --overcommit
+#SBATCH --out=out.%J 
+#SBATCH --error=error.%J
+
+
+cd $SLURM_SUBMIT_DIR
+#echo $SLURM_JOB_NODELIST
+cat $0 > script.$SLURM_JOB_ID
+#printenv
+
+#from
+# http://software.intel.com/en-us/articles/intel-math-kernel-library-intel-mkl-compiler-assisted-offload-and-automatic-offload-example
+#
+
+export OFFLOAD_INIT=on_start 
+srun hostname | sort -u > hosts.$SLURM_JOB_ID
+
+./run_s 1 4096 > 1_4096.$SLURM_JOB_ID
+./run_s 0 4096 > 0_4096.$SLURM_JOB_ID
+./run_t 0 0 4096 > 0_0_4096.$SLURM_JOB_ID
+./run_t 0 1 4096 > 0_1_4096.$SLURM_JOB_ID
+./run_t 1 0 4096 > 1_0_4096.$SLURM_JOB_ID
+./run_t 1 1 4096 > 1_1_4096.$SLURM_JOB_ID
+
+date
+

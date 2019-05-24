@@ -1,0 +1,14 @@
+#!/bin/bash
+unset OLD_DIR
+export NEW_DIR=do_hybrid
+jid=`sbatch $NEW_DIR | awk '{print $NF }'`
+echo $jid
+
+for job in do_mpi do_openmp ; do
+  export OLD_DIR=$NEW_DIR
+  export NEW_DIR=$job
+  jid=`sbatch --dependency=afterok:$jid $NEW_DIR | awk '{print $NF }'`
+  echo $jid
+done
+
+

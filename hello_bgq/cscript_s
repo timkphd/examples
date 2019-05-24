@@ -1,0 +1,23 @@
+#!/bin/bash -x
+#SBATCH --job-name="python"
+#comment = "I like snakes"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=16
+#SBATCH --ntasks=32
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=10:00:00
+#SBATCH -o cscript_out.%j
+
+## Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+JOBID=`echo $SLURM_JOBID`
+mkdir cscript_$JOBID
+cd cscript_$JOBID
+
+echo "trying runjob"
+export OMP_NUM_THREADS=4
+printenv OMP_NUM_THREADS > env_$JOBID
+srun --label  /bgsys/tools/Python-2.6/bin/python  $SLURM_SUBMIT_DIR/small.py > output
+echo "got to the bottom"
+

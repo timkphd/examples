@@ -1,0 +1,4 @@
+ &input
+ ly_ratio = 1.0, delta_t = .1, nx =15, ny=15, numx = 5, numy =5, 
+ numt=20, init_f=1, diff_f =3
+ /

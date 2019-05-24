@@ -1,0 +1,23 @@
+#!/bin/bash -x
+#SBATCH --job-name="atest"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks=1
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:05:00
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+export OMP_NUM_THREADS=4
+
+# Run the job.
+  srun ./omp_fft
+
+# You can also use the following format to set 
+# --nodes            - # of nodes to use
+# --ntasks-per-node  - ntasks = nodes*ntasks-per-node
+# --ntasks           - total number of MPI tasks
+#srun --nodes=$NODES --ntasks=$TASKS --ntasks-per-node=$TPN $EXE > output.$JOBID
+

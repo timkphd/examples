@@ -1,0 +1,27 @@
+#!/bin/bash -x
+#SBATCH --job-name="array"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks=1
+#SBATCH --share
+#SBATCH --export=ALL
+#SBATCH --time=00:02:00
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+
+echo $SLURM_JOB_NODELIST > nodes.$JOBID
+
+export INPUT=sinput${SLURM_ARRAY_TASK_ID}
+export APP=fillmemc
+
+
+/opt/utility/expands $SLURM_JOB_NODELIST >  $APP.$INPUT.nodes.$JOBID
+cat $INPUT >  $APP.$INPUT.input.$JOBID
+export OMP_NUM_THREADS=2
+srun  ./$APP  < $INPUT >> $APP.$INPUT.output.$JOBID.$SLURM_ARRAY_JOB_ID.$SLURM_ARRAY_TASK_ID

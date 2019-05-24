@@ -1,0 +1,20 @@
+UNAME := $(shell uname)
+MNAME := $(shell uname -s)
+ifeq ($(UNAME),Darwin)
+OBJS=fmemopen.o getit.o
+EXTRA=fmemopen.c
+else
+OBJS=getit.o
+endif
+
+CC=gcc -DMACHINE=$(MNAME)
+
+tiff: fmemopen.o tiff3.c
+	$(CC) tiff3.c fmemopen.o  -o tiff
+
+
+clean:
+	rm -rf tiff *tif *o mpi_tiff
+
+mpi_tiff:mpi_tiff.c fmemopen.c fmemopen.h
+	mpicc -DMACHINE=$(MNAME) -g mpi_tiff.c $(EXTRA)  -o mpi_tiff

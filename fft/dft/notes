@@ -1,0 +1,29 @@
+The python program rand.py creates a time
+varying spectrum.  The output is 
+# of sine waves in the signal
+start time, end time, amplitude, frequency, flag
+...
+...
+dt,maximum time
+
+flag indicates is -1,0,1 for decreasing amplitude,
+constant amplitude, increasing amplitude.
+
+The output of this program goes into dosig.  Dosig
+creates a signal.
+
+segment reads the signal and produces ffts for
+segments of the data.  It reads in the total number
+of points, the size of each fft, the offset between
+segments and file names.  See drive.in
+
+The output can be viewed using the program imagej.
+The input settings for imagej are given in the file
+imagej_setup
+
+Or
+
+./mkview.py fft.out
+
+
+

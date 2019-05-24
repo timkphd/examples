@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>index.html</title>
+	<meta name="generator" content="BBEdit 11.5" />
+	<style type="text/css">
+	p.a { width: 6in; text-align: justify; 
+	    margin-left: 0.0em; margin-bottom: 2.0em; margin-top: 0.1em; }
+	h4 {margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 0.5em;}
+	img { width: 25px;}
+	</style>
+</head>
+<body>
+<h3>Instructions</h3>
+<p class="a">
+	These examples exercise the GPUs on the Power nodes
+in various ways.  To build/run these examples:
+</p>
+
+<ol>
+	<li>
+		In a new directory, download the examples
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+wget http://geco.mines.edu/prototype/Show_me_Power8_and_GPU_examples/gpu/gpu.tgz 
+</span>
+	</li>
+	<li>
+		Uncompress it
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+tar -xzf gpu.tgz
+</span>
+	</li>
+	<li>
+		Get an interactive session on ppc001 or ppc002.
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+srun -N 1 --tasks-per-node=1 -p ppc-build --share --time=1:00:00 --gres=gpu:kepler:4 --pty bash
+</span>
+	</li>
+	<li>
+		Run the script buildit.  This sets up the environment and does a make.
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+./buildit
+</span>
+	</li>
+	<li>
+		Exit the interactive session.
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+exit
+</span>
+	</li>
+	<li>
+	Run the batch script
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+sbatch -p ppc power_script
+</span>
+	</li>
+</ol>
+
+<h4>buildit  <a href="buildit"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>  
+<p class="a">
+A script that sets up the environment and then does a make
+</p>
+
+<h4>Makefile  <a href="Makefile"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>  
+<p class="a">
+Makefile for the examples.
+</p>
+
+<h4>gpucount.c  <a href="gpucount.c"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4> 
+<p class="a">
+	This program returns the number of GPUs detected on a
+node.  It should be 4 for ppc001 and ppc002.  If not,
+there is a problem with your environment.
+</p>
+
+
+<h4>simple.f90  <a href="simple.f90"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4> 
+<p class="a">
+A very simple OpenAcc program.
+</p>
+<h4>laplace2d.c  <a href="laplace2d.c"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a><br>
+laplace2d.f90  <a href="laplace2d.f90"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a> </h4>
+<p class="a">
+	Jacobi relaxation Calculation in OpenAcc and OpenMP This is
+from the Nvidia workshop.
+</p>
+<h4>timer.h  <a href="timer.h"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4> 
+<p class="a">
+Timer code for laplace2d.c.
+</p>
+
+<h4>multi.cu  <a href="multi.cu"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a> <br> 
+multShare.h  <a href="multShare.h"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a><br> 
+multi_cuda.cu  <a href="multi_cuda.cu"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>  
+
+<p class="a">
+A matrix multiply in Cuda from<br>
+<a href="https://www.shodor.org/media/content/petascale/materials/UPModules/matrixMultiplication/moduleDocument.pdf">https://www.shodor.org/media/content/petascale/materials/UPModules/matrixMultiplication/moduleDocument.pdf</a>
+</p>
+
+<h4>simpleCUFFT.cu  <a href="simpleCUFFT.cu"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a> <br> 
+MakeFFT  <a href="MakeFFT"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>  
+
+<p class="a">
+cuFFT library example<br>
+See: <a href="https://developer.nvidia.com/gpu-accelerated-libraries">https://developer.nvidia.com/gpu-accelerated-libraries</a></p>
+
+
+
+
+<h4>testinput.cu  <a href="testinput.cu"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a> <br> 
+testinput.f90  <a href="testinput.f90"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>  
+<p class="a">
+	C and Fortran Cuda programs.  The CPU code accepts
+the Grid and Block dimensions then calls the kernel.  We
+note that the number of threads for the kernel is the
+product of the grid and block dimensions.  The kernel
+simply fills in an array of length 6*(# threads). The
+first element of each set of 6  is a thread number.  Then
+we have: blockIdx.x, blockIdx.y, threadIdx.x,
+threadIdx.y, and threadIdx.z.  Finally, the CPU prints 
+this array. The file "input" is for this program.
+</p>
+
+<h4>input  <a href="input"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>
+<p class="a">
+	Input for testinput.cu and testinput.f90
+</p>
+
+<h4>power_script  <a href="power_script"><img  alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4> 
+<p class="a">
+A script for running the examples.
+</p>
+
+</body>
+</html>

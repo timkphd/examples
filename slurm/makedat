@@ -1,0 +1,3 @@
+#!/bin/bash 
+rm -rf list ; for a in `seq -w 1 1 330` ; do echo dir_$a >> list ;done
+rm -rf pars ; for a in `seq 0 2 10` ; do for b in `seq 1 5` ; do for c in `seq 5 5 55` ; do echo $a $b $c >> pars; done; done; done

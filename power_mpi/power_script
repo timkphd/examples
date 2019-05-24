@@ -1,0 +1,85 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#comment = "glorified hello world"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks=4
+#SBATCH -p ppc
+##SBATCH --exclusive
+#SBATCH --time=00:05:00
+#SBATCH --export=NONE
+#SBATCH --get-user-env=10L
+
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+
+# Run the job.
+export OMP_NUM_THREADS=4
+export ARGS=" -a -F"
+export ARGS="-F"
+
+export MYID=$SLURM_JOBID
+
+cat $0 > $MYID.script
+
+######################
+
+echo running "old" version
+EXE="./phostone.old" 
+module purge
+module load GCC/4.8.5-system
+module load OpenMPI
+printenv > old.$MYID.env
+srun   --mpi=pmi2 --export=ALL $EXE $ARGS > old.$MYID
+
+######################
+
+echo running "xlc" version
+EXE="./phostone.xlc" 
+module purge
+module load GCC/4.8.5-system
+module load OpenMPI
+printenv > xlc.$MYID.env
+srun   --mpi=pmi2 --export=ALL $EXE $ARGS > xlc.$MYID
+
+######################
+
+echo running "new" version
+EXE="./phostone.pgi" 
+module purge
+module load PGI
+module load OpenMPI
+printenv > pgi.$MYID.env
+
+#srun   --mpi=pmi2 --export=ALL $EXE $ARGS > pgi.$MYID
+/software/apps/pgi-16.7/openmpi/1.10.1/bin/mpirun -n 4 ./phostone.pgi  > pgi.$MYID
+
+######################
+
+echo running "new" version
+EXE="./phostone.new" 
+module purge
+module load StdEnv
+printenv > new.$MYID.env
+
+srun   --mpi=pmi2 --export=ALL $EXE $ARGS > new.$MYID
+
+######################
+
+echo running "IBM MPI" version
+EXE="./phostone.ibm" 
+module purge
+export MP_RESD=poe
+export MP_HOSTFILE=$MYID.list
+#export MP_LABELIO=yes
+printenv > ibm.$MYID.env
+
+./expands > $MP_HOSTFILE
+
+poe $EXE $ARGS -procs $SLURM_NTASKS > ibm.$MYID
+
+unset MP_RESD
+unset MP_HOSTFILE
+

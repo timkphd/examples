@@ -1,0 +1,25 @@
+#!/bin/csh -f
+which mpicc | grep mvapich2 > /dev/null
+if($?)then
+	echo "error:  not running mpich2   mpicc=" `which mpicc`
+	exit (0)
+endif
+if($# == 0)then
+	mpdtrace -l
+	exit
+endif
+if($1 == "stop" || $1 == "halt")then
+	echo "halting mpich"
+	mpdallexit
+	exit
+endif
+if($1 == "start")then
+	if($# == 2)then
+		mpdboot -n $2 -f /Users/tkaiser/bin/mpd.hosts
+	else
+#		mpdboot -n 1 -f /Users/tkaiser/bin/mpd.hosts
+		mpdboot --ncpus=8
+#		mpdboot --ncpus=16
+	endif
+	mpdtrace -l
+endif

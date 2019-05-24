@@ -1,0 +1,13 @@
++ cd /bins/tkaiser/slurm/toslurm
+++ echo 1970
++ JOBID=1970
++ mkdir ascript_1970
++ cd ascript_1970
++ echo 'trying runjob'
+trying runjob
++ export OMP_NUM_THREADS=4
++ OMP_NUM_THREADS=4
++ printenv OMP_NUM_THREADS
++ srun --label /bins/tkaiser/slurm/toslurm/docol.exe
++ echo 'got to the bottom'
+got to the bottom

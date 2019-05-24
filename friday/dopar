@@ -1,0 +1,16 @@
+#!/bin/csh
+#PBS -l nodes=2:ppn=8
+#PBS -l walltime=02:00:00
+#PBS -N testIO
+#PBS -o stdout
+#PBS -e stderr
+#PBS -V
+#----------------------
+cd $PBS_O_WORKDIR
+sort -u -t- -n --key=2 --key=3 -u $PBS_NODEFILE > shortlist
+head -1 shortlist | tail -1 > one
+head -2 shortlist | tail -1 > two
+match one myprogram 4 > appone
+match two myprogram 4 > apptwo
+mpiexec -app appone &
+mpiexec -app apptwo

@@ -1,0 +1,37 @@
+#!/bin/bash
+#SBATCH --job-name="atest"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=00:02:00
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+#SBATCH --export=ALL
+#SBATCH --exclusive
+##SBATCH --mail-type=ALL
+##SBATCH --mail-user=joeuser@mines.edu
+
+#----------------------
+cd $SLURM_SUBMIT_DIR
+#srun -n 8 /opt/utility/phostname -F
+
+export torun="psgesv_f"
+for myprog in $torun; do 
+  echo
+  echo running: $myprog
+  srun -n 6 ./$myprog 
+done
+
+export torun="ex1_c ex1_f  pdpttr_c pdpttr_f"
+for myprog in $torun; do 
+  echo
+  echo running: $myprog
+  srun -n 4 ./$myprog 
+done
+
+export torun="lin_c lin_f"
+for myprog in $torun; do 
+  echo
+  echo running: $myprog
+  srun -n 4 ./$myprog < in.dat
+done
+

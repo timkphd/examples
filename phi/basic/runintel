@@ -1,0 +1,19 @@
+#!/bin/sh
+#SBATCH --time=1
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --export=ALL
+##SBATCH -p phi
+##SBATCH -p batch
+#SBATCH --overcommit
+cd $SLURM_SUBMIT_DIR
+echo $SLURM_JOB_NODELIST
+cat $0 > $SLURM_JOB_ID.script
+printenv
+srun hostname | sort -u > hosts.$SLURM_JOB_ID
+
+
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+srun  -n 16 $SLURM_SUBMIT_DIR/helloc
+
+

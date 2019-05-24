@@ -1,0 +1,7 @@
+##### Instructions:
+
+source ../../modules
+make
+sbatch runfile
+
+

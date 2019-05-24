@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>OpenMP Examples</title>
+	<meta name="generator" content="BBEdit 8.7">
+</head>
+<body>
+<h3><a href="atomic.c">atomic.c</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>atomic</dd>
+		<dd>parallel</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Expansion on example A.12 from the standards document</li>
+	<li>Broke early compilers</li>
+	<li>Uses Atomic to avoid race conditions while updating different elements of an array in parallel</li>
+</ul>
+
+
+<h3><a href="commonMaintain.f90">commonMaintain.f90</a>
+&nbsp;&nbsp;<a href="commonInModMaintain2.f90">commonInModMaintain2.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel</dd>
+		<dd>parallel private</dd>
+		<dd>threadprivate</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Complex usage of threadprivate</li>
+	<li>Threadprivate of common blocks, also in a module</li>
+	<li>Shows how to maintain data between parallel regions</li>
+</ul>
+
+<h3><a href="critical.f90">critical.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel</dd>
+		<dd>critical</dd>
+		<dd>threadprivate</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Shows how to use critical so that only one thread is in a parallel section</li>
+</ul>
+
+
+<h3><a href="module.f90">module.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel</dd>
+		<dd>critical</dd>
+		<dd>parallel private</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Each thread allocates its own array</li>
+	<li>Array data is saved between parallel sections</li>
+	<li>Thread private derived type</li>
+	<li>Broke early compilers</li>
+</ul>
+
+<h3><a href="invertc.c">invertc.c</a></h3>
+<h3><a href="invertf.f90">invertf.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>omp parallel sections</dd>
+		<dd>sections</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>High level parallelizm, not loop level</li>
+	<li>Does a collection of independent matrix inversions in parallel</li>
+	<li>Very interesting to run with different numbers of threads</li>
+</ul>
+
+<h3><a href="task.f90">task.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>omp parallel</dd>
+		<dd>task</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>High level parallelizm, not loop level</li>
+	<li>Does a collection of independent matrix inversions in parallel</li>
+	<li>Very interesting to run with different numbers of threads</li>
+</ul>
+
+
+<h3><a href="module.f90">module.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel</dd>
+		<dd>critical</dd>
+		<dd>parallel private</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Each thread allocates its own array</li>
+	<li>Array data is saved between parallel sections</li>
+	<li>Thread private derived type</li>
+	<li>Broke early compilers</li>
+</ul>
+
+<h3><a href="withoutcrit.f90">withoutcrit.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Shows what can happen if you don't use a critical directive when you should</li>
+	<li>Results are nondeterministic</li>
+	<li>Don't do this</li>
+	<li>See withcrit.f90</li>
+</ul>
+
+
+<h3><a href="withcrit.f90">withcrit.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel</dd>
+		<dd>critical</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Corrected version of withoutcrit.f90</li>
+	<li>Always returns the expected result</li>
+	<li>See withoutcrit.f90</li>
+</ul>
+
+
+<h3><a href="withprivate.f90">withprivate.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel</dd>
+		<dd>private</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>A variation of withoutcrit.f90</li>
+	<li>Always returns the expected result</li>
+	<li>See withoutcrit.f90</li>
+</ul>
+
+
+<h3><a href="omp_fft.f90">omp_fft.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel do</dd>
+		<dd>private</dd>
+		<dd>schedule (runtime)</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Does 2d FFT by parsing out 1d FFT using a parallel do</li>
+	<li>Pseudo high level parallelizm</li>
+	<li>Can experiment with runtime specification of scheduling</li>
+</ul>
+
+
+<h3><a href="private.c">private.c</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel for copyin() schedule()</dd>
+		<dd>private</dd>
+		<dd>threadprivate</dd>
+		<dd>critical</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>A complex test of thread private with a do loop</li>
+	<li>We do various manipulations of private pointers and structures</li>
+	<li>Can experiment with runtime specification of scheduling</li>
+</ul>
+
+<h3><a href="schedule.c">schedule.c</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel for schedule(static,1)</dd>
+		<dd>parallel for schedule(static,2)</dd>
+		<dd>parallel for schedule(dynamic,1)</dd>
+		<dd>parallel for schedule(dynamic,2)</dd>
+		<dd>barrier</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Shows the effect of different schule directives</li>
+	<li>Threads are given balanced amount of work</li>
+	<li>Threads are given different amount of work</li>
+</ul>
+
+<h3><a href="schedule.c">schedule.c</a></h3>
+<h3><a href="schedule.c">schedule.c</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>parallel for schedule(static,1)</dd>
+		<dd>parallel for schedule(static,2)</dd>
+		<dd>parallel for schedule(dynamic,1)</dd>
+		<dd>parallel for schedule(dynamic,2)</dd>
+		<dd>barrier</dd>
+</dl>
+
+<h4>Notes</h4>
+<ul>
+	<li>Shows the effect of different schule directives</li>
+	<li>Threads are given balanced amount of work</li>
+	<li>Threads are given different amount of work</li>
+</ul>
+
+
+
+<h3><a href="singleSubsectionc.c">singleSubsectionc.c</a>&nbsp;&nbsp;<a href="singleSubsectionf.f90">singleSubsectionf.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>omp parallel shared() default() private()</dd>
+		<dd>single</dd>
+		<dd>critical</dd>
+</dl>
+<dl>
+	<dt>Notes</dt>
+		<dd>Use single so an array only gets allocated one time</dd>
+		<dd>Shows how to do seudo loop level parallelizm without the for/do directive</dd>
+		<dd>	show</dd>
+</dl>
+<h3><a href="sortc.c">sortc.c</a>&nbsp;&nbsp;<a href="sortf.f90">sortf.f90</a></h3>
+<dl>
+	<dt>Directives</dt>
+		<dd>section</dd>
+		<dd>sections</dd>
+		<dd>threadprivate</dd>
+</dl>
+<dl>
+	<dt>Notes</dt>
+		<dd>Does a parallel recursive merge sort by handing out sections of the array to threads</dd>
+</dl>
+
+<h3><a href="openmp.pdf">openmp.pdf</a> - a somewhat dated guide to OpenMP programming</h3>
+<h3><a href="makefile">makefile</a> - Makefile for the Intel compilers</h3>
+<h3><a href="openmp.tar">openmp.tar</a> - a tar file with all of these files</h3>
+</body>
+</html>

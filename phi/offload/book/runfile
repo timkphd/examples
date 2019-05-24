@@ -1,0 +1,39 @@
+#!/bin/bash
+#SBATCH --time=10
+#SBATCH --nodes=1
+#SBATCH -n 1
+#SBATCH --export=ALL
+#SBATCH -p phi
+#SBATCH --overcommit
+#SBATCH --cpus-per-task=12
+##SBATCH --cpu_bind=none
+#SBATCH --out=%J.out
+#SBATCH --error=%J.error
+
+cd $SLURM_SUBMIT_DIR
+echo $SLURM_JOB_NODELIST
+cat $0 > $SLURM_JOB_ID.script
+
+srun hostname | sort -u > $SLURM_JOB_ID.hosts
+#source ~/toset
+
+#export SLURM_JOB_CPUS_PER_NODE=12
+#export SLURM_CPUS_ON_NODE=12
+export OMP_NUM_THREADS=12
+export MKL_NUM_THREADS=12
+export OFFLOAD_DEVICES=0,1,2,3
+export OFFLOAD_REPORT=2
+export MIC_OMP_NUM_THREADS=236
+printenv > $SLURM_JOB_ID.env
+#export MIC_KMP_AFFINITY=compact,granularity=fine
+#export MIC_PLACE_THREADS=59C,4t
+#export MIC_USE_2MB_BUFFERS=16K
+
+# note:  This program runs for several minutes
+#        and does not produce any output until
+#        it finishes.
+
+srun ./offit > $SLURM_JOB_ID.offit_srun
+./offit > $SLURM_JOB_ID.offit_direct
+#ssh `head -1 $SLURM_JOB_ID.hosts` $SLURM_SUBMIT_DIR/subscript $SLURM_SUBMIT_DIR  $SLURM_JOB_ID
+

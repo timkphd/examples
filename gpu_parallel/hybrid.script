@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --time=00:01:00
+#SBATCH --partition=sgpu
+##SBATCH --qos=testing
+#SBATCH --output=sample-%j.out
+
+cd $SLURM_SUBMIT_DIR
+cat $0 > script.$SLURM_JOB_ID
+printenv env.$SLURM_JOB_ID
+
+module purge
+
+module load intel/17.4 
+module load impi/17.3
+module load cuda/9.1.85
+
+mpirun -n 2 ./mpigpu < input > mpirun.out
+srun --mpi=pmi2  -n 2 ./mpigpu < input > srun.out
+#srun             -n 2 ./mpigpu < input > nopmi2.out
+

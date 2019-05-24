@@ -1,0 +1,35 @@
+Assignment #2:
+
+This is an optimization project.  We want a faster program.
+
+Select one of the MPI versions of the Stommel programs, stf_01.f90
+or stc_01.c, for examples.
+
+(a) Modify it so that the copy in do_jacobi from new_psi to
+psi is not required.  That is eliminate the following lines:
+
+##Fortran Version 
+    psi(i1:i2,j1:j2)=new_psi(i1:i2,j1:j2)
+
+##C Version:
+    for( i=i1;i<=i2;i++)
+        for(j=j1;j<=j2;j++)
+           psi[i][j]=new_psi[i][j];
+
+(b) Modify the program so that it quits when the solution
+has converged, instead of continuing for a fixed number of
+iterations.
+
+(c) Convert this program to a multigrid type application.  We
+currently start with an initial grid size of (N x N) and an
+initial guess of the solution of the constant 1.0.  
+
+We want to start with a smaller grid size say (N1 x N1) and 
+the initial guess of 1.0.  Run the calculation allowing it to
+converge.  The use this solution as an initial guess for a
+second grid (N2 x N2) and run to convergence.  Continue this
+process with increasing grid sizes until you reach your desired
+size.  Typically N(n+1) = 2*N(n).  Do this for a final grid size
+of 512 x 512 and compare the total number of iterations required
+and the run times to the original program on the same grid size.
+

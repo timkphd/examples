@@ -1,0 +1,15 @@
+#!/bin/bash
+make cleanall
+
+echo
+echo
+echo "Building PESSL examples"
+module purge
+#compilers are in the Makefile
+make
+echo
+echo
+echo
+
+
+

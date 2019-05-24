@@ -1,0 +1,30 @@
+#!/bin/bash
+# Script for running multiple programs
+# on the same node with multiple qsub
+# commands. Can reuse the same script
+# but with different input files.
+# Note that we must define the input
+# file INPUT in the shell before we
+# run the script.  For example
+# export INPUT=myinput
+#PBS -l nodes=1
+#PBS -l naccesspolicy=singleuser
+#PBS -l walltime=24:00:00
+#PBS -N testIO
+#PBS -o outx8.$PBS_JOBID
+#PBS -e errx8.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+#PBS -m abe
+#PBS -M joeuser@mines.edu
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+sort -u  $PBS_NODEFILE > mynodes.$PBS_JOBID
+
+#export INPUT=sinput
+export APP=fillmemc
+
+sort -u  $PBS_NODEFILE >  $APP.$INPUT.$PBS_JOBID
+      
+./$APP  < $INPUT >> $APP.$INPUT.$PBS_JOBID

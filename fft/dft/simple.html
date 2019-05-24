@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<style type="text/css">	
+	code { color: black; font-family: courier; font-size: small;white-space: pre; }
+	</style>
+	<title>Simple FFT</title>
+</head>
+<body>
+<h2>A simple MKL dft example</h2>
+<h4>The Program</h4>
+<code>
+    program dofft
+! Fortran example.
+! Compile line:
+! ifort -mkl $MKLROOT/include/mkl_dfti.f90  -O3 tfft.f90 -o tfft
+! 1D complex to complex, and real to conjugate-even
+    Use MKL_DFTI
+    integer count0,count1,count2,count3,count4, COUNT_RATE, COUNT_MAX
+!    integer,parameter::mysize=32,mysize2=34
+    integer,parameter::mysize=13200000,mysize2=13200002
+    Complex :: X(mysize)
+    Real :: Y(mysize2)
+    Real :: rp,cp
+    integer ic
+    type(DFTI_DESCRIPTOR), POINTER :: My_Desc1_Handle, My_Desc2_Handle
+    Integer :: Status
+!...put input data into X(1),...,X(mysize); Y(1),...,Y(mysize)
+    call SYSTEM_CLOCK(COUNT0, COUNT_RATE, COUNT_MAX)
+    do i=1,mysize
+      x(i)=i*i
+      y(i)=i*i
+    end do
+    call SYSTEM_CLOCK(COUNT1) 
+! Perform a complex to complex transform
+    Status = DftiCreateDescriptor( My_Desc1_Handle, DFTI_SINGLE, DFTI_COMPLEX, 1, mysize )
+    Status = DftiCommitDescriptor( My_Desc1_Handle )
+    Status = DftiComputeForward( My_Desc1_Handle, X )
+    Status = DftiFreeDescriptor(My_Desc1_Handle)
+    call SYSTEM_CLOCK(COUNT2) 
+    write(*,*)"! result is given by {X(1),X(2),...,X(mysize)}",mysize
+    do i=1,32
+        write(*,*)x(i)
+    end do
+! Perform a real to complex conjugate-even transform
+    call SYSTEM_CLOCK(COUNT3) 
+    Status = DftiCreateDescriptor(My_Desc2_Handle, DFTI_SINGLE, DFTI_REAL, 1, mysize)
+    Status = DftiCommitDescriptor(My_Desc2_Handle)
+    Status = DftiComputeForward(My_Desc2_Handle, Y)
+    Status = DftiFreeDescriptor(My_Desc2_Handle)
+    write(*,*)"! result is given in CCS format.",mysize
+    call SYSTEM_CLOCK(COUNT4) 
+    ic=0
+    do i=1,34
+    	if(ic == 0)then
+    	  rp=y(i)
+    	  ic=1
+    	else
+    	  cp=y(i)
+          write(*,*)rp,cp,sqrt(rp*rp+cp*cp)
+          ic=0
+        endif
+    end do
+    write(*,*)
+    write(*,*)"create time      ",real(count1-count0)/real(count_rate)
+    write(*,*)"complex fft time ",real(count2-count1)/real(count_rate)
+    write(*,*)"real fft time    ",real(count4-count3)/real(count_rate)
+    write(*,*)COUNT0, COUNT_RATE, COUNT_MAX
+    end program
+</code>
+<h4>The output</h4>
+<pre>
+[joeuser@mio ~]$ ifort -mkl /opt/intel/Compiler/11.1/069/mkl/include/mkl_dfti.f90  -O3 tfft.f90 -o tfft
+[joeuser@mio ~]$ time  ./tfft
+ ! result is given by {X(1),X(2),...,X(mysize)}    13200000
+ (1.7730923E+13,0.0000000E+00)
+ (1.7446027E+13,1.9753042E+11)
+ (1.7093966E+13,-3.7699525E+11)
+ (1.7116364E+13,-2.3974992E+11)
+ (1.7038317E+13,-7.7040701E+11)
+ (1.7161915E+13,-1.0190662E+12)
+ (1.7383966E+13,-1.2149359E+12)
+ (1.7242302E+13,-9.0108291E+11)
+ (1.7247130E+13,-1.4704303E+12)
+ (1.7126056E+13,-1.4101582E+12)
+ (1.7166515E+13,-1.5824674E+12)
+ (1.6942285E+13,-1.8940757E+12)
+ (1.7082696E+13,-2.1610364E+12)
+ (1.6776820E+13,-2.1391819E+12)
+ (1.6949650E+13,-2.5145461E+12)
+ (1.6967011E+13,-2.6454393E+12)
+ (1.6772682E+13,-2.8971762E+12)
+ (1.6893744E+13,-3.3956202E+12)
+ (1.6929710E+13,-3.2509521E+12)
+ (1.6854558E+13,-3.5018677E+12)
+ (1.6913384E+13,-3.6026856E+12)
+ (1.6748391E+13,-3.6752002E+12)
+ (1.6722822E+13,-4.1134210E+12)
+ (1.7060456E+13,-4.1464292E+12)
+ (1.6739862E+13,-4.3872158E+12)
+ (1.6399241E+13,-4.6021885E+12)
+ (1.6903680E+13,-4.7756545E+12)
+ (1.6731350E+13,-4.9025138E+12)
+ (1.6588980E+13,-5.2084385E+12)
+ (1.6398804E+13,-5.2677826E+12)
+ (1.6378313E+13,-5.6077273E+12)
+ (1.6590991E+13,-5.8234493E+12)
+ ! result is given in CCS format.    13200000
+  1.7730925E+13  0.0000000E+00  1.7730925E+13
+  1.7446017E+13  1.9759786E+11  1.7447135E+13
+  1.7093959E+13 -3.7698195E+11  1.7098116E+13
+  1.7116372E+13 -2.3972702E+11  1.7118050E+13
+  1.7038314E+13 -7.7040819E+11  1.7055722E+13
+  1.7161918E+13 -1.0190387E+12  1.7192145E+13
+  1.7383960E+13 -1.2149336E+12  1.7426363E+13
+  1.7242300E+13 -9.0108225E+11  1.7265829E+13
+  1.7247128E+13 -1.4704297E+12  1.7309697E+13
+  1.7126058E+13 -1.4101586E+12  1.7184016E+13
+  1.7166519E+13 -1.5824621E+12  1.7239302E+13
+  1.6942281E+13 -1.8940596E+12  1.7047825E+13
+  1.7082698E+13 -2.1610381E+12  1.7218846E+13
+  1.6776819E+13 -2.1391721E+12  1.6912649E+13
+  1.6949654E+13 -2.5145497E+12  1.7135161E+13
+  1.6967011E+13 -2.6454340E+12  1.7172007E+13
+  1.6772681E+13 -2.8971767E+12  1.7021059E+13
+ 
+ create time        9.4300002E-02
+ complex fft time   0.2244000    
+ real fft time      0.4496000    
+   625117131       10000  2147483647
+
+real	0m0.924s
+user	0m2.879s
+sys	0m0.205s
+[joeuser@mio ~]$</pre>
+</body>
+</html>

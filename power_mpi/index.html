@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>index.html</title>
+	<meta name="generator" content="BBEdit 11.5" />
+	<style type="text/css">
+	p.a { width: 6in; text-align: justify; 
+	    margin-left: 0.0em; margin-bottom: 2.0em; margin-top: 0.1em; }
+	h4 {margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 0.5em;}
+	
+	</style>
+</head>
+<body>
+<h3>Instructions</h3>
+<p class="a">
+	These examples  show how to build and run several versions of MPI
+on the Power nodes.  To build/run these examples:
+</p>
+
+<ol>
+	<li>
+		In a new directory, download the examples
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+wget http://geco.mines.edu/prototype/Show_me_Power8_and_GPU_examples/mpiversions/mpiversions.tgz 
+</span>
+	</li>
+	<li>
+		Uncompress it
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+tar -xzf mpiversions.tgz
+</span>
+	</li>
+	<li>
+		Get an interactive session on ppc001 or ppc002.
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+srun -N 1 --tasks-per-node=1 -p ppc-build --share --time=1:00:00  --pty bash
+</span>
+	</li>
+	<li>
+		Run the script buildit.  This sets up the environment and does a make.
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+./buildit
+</span>
+	</li>
+	<li>
+		Exit the interactive session.
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+exit
+</span>
+	</li>
+	<li>
+	Run the batch script
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+sbatch -p ppc power_script
+</span>
+	</li>
+</ol>
+
+<h4>buildit  <a href="buildit"><img width="25px; alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>  
+<p class="a">
+A script that sets up the environment and then does a make
+</p>
+
+<h4>Makefile  <a href="Makefile"><img width="25px; alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>  
+<p class="a">
+Makefile for the examples.
+</p>
+
+<h4>phostone.c  <a href="phostone.c"><img width="25px; alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4> 
+<pre>
+/************************************************************
+ * This is a glorified hello world program. Each processor 
+ * prints name, rank, and other information as described below.
+ * ************************************************************/
+phostone arguments:
+          -h : Print this help message
+
+no arguments : Print a list of the nodes on which the command is run.
+
+ -f or -1    : Same as no argument but print MPI task id and Thread id
+               If run with OpenMP threading enabled OMP_NUM_THREADS > 1
+               there will be a line per MPI task and Thread.
+
+ -F or -2    : Add columns to tell first MPI task on a node and and the
+               numbering of tasks on a node. (Hint: pipe this output in
+               to sort -r
+
+ -a          : Print a listing of the environmental variables passed to
+               MPI task. (Hint: use the -l option with SLURM to prepend MPI
+               task #.)
+</pre>
+
+<h4>power_script <a href="power_script"><img width="25px; alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4> 
+<p class="a">
+A script for running the examples.
+</p>
+ 
+
+<h4>Versions Built:</h4>  
+<dl>
+	<dt>phostone.ibm</dt>
+		<dd>     phostone with the IBM version of MPI</dd>
+
+	<dt>phostone.old</dt>
+		<dd>     phostone with gcc 4.8.5 and OpenMPI</dd>
+
+
+	<dt>phostone.new</dt>
+		<dd>     phostone with gcc 5.2.1 and OpenMPI</dd>
+
+	<dt>phostone.xlc</dt>
+		<dd>     phostone with xlc and OpenMPI</dd>
+</dl>
+
+
+</body>
+</html>

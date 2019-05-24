@@ -1,0 +1,114 @@
+ Intializing matrix data 
+
+size=     8192,  GFlops=  399.641
+ Intializing matrix data 
+
+[MKL] [MIC --] [AO Function]	SGEMM
+[MKL] [MIC --] [AO SGEMM Workdivision]	0.10 0.23 0.23 0.23 0.23
+[MKL] [MIC 00] [AO SGEMM CPU Time]	5.485016 seconds
+[MKL] [MIC 00] [AO SGEMM MIC Time]	0.681744 seconds
+[MKL] [MIC 00] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 00] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 01] [AO SGEMM CPU Time]	5.485016 seconds
+[MKL] [MIC 01] [AO SGEMM MIC Time]	0.709404 seconds
+[MKL] [MIC 01] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 01] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 02] [AO SGEMM CPU Time]	5.485016 seconds
+[MKL] [MIC 02] [AO SGEMM MIC Time]	0.696200 seconds
+[MKL] [MIC 02] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 02] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 03] [AO SGEMM CPU Time]	5.485016 seconds
+[MKL] [MIC 03] [AO SGEMM MIC Time]	0.660093 seconds
+[MKL] [MIC 03] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 03] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC --] [AO Function]	SGEMM
+[MKL] [MIC --] [AO SGEMM Workdivision]	0.10 0.23 0.23 0.23 0.23
+[MKL] [MIC 00] [AO SGEMM CPU Time]	0.916372 seconds
+[MKL] [MIC 00] [AO SGEMM MIC Time]	0.259707 seconds
+[MKL] [MIC 00] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 00] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 01] [AO SGEMM CPU Time]	0.916372 seconds
+[MKL] [MIC 01] [AO SGEMM MIC Time]	0.261321 seconds
+[MKL] [MIC 01] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 01] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 02] [AO SGEMM CPU Time]	0.916372 seconds
+[MKL] [MIC 02] [AO SGEMM MIC Time]	0.271553 seconds
+[MKL] [MIC 02] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 02] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 03] [AO SGEMM CPU Time]	0.916372 seconds
+[MKL] [MIC 03] [AO SGEMM MIC Time]	0.257780 seconds
+[MKL] [MIC 03] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 03] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC --] [AO Function]	SGEMM
+[MKL] [MIC --] [AO SGEMM Workdivision]	0.10 0.23 0.23 0.23 0.23
+[MKL] [MIC 00] [AO SGEMM CPU Time]	0.889444 seconds
+[MKL] [MIC 00] [AO SGEMM MIC Time]	0.260521 seconds
+[MKL] [MIC 00] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 00] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 01] [AO SGEMM CPU Time]	0.889444 seconds
+[MKL] [MIC 01] [AO SGEMM MIC Time]	0.260708 seconds
+[MKL] [MIC 01] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 01] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 02] [AO SGEMM CPU Time]	0.889444 seconds
+[MKL] [MIC 02] [AO SGEMM MIC Time]	0.272534 seconds
+[MKL] [MIC 02] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 02] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 03] [AO SGEMM CPU Time]	0.889444 seconds
+[MKL] [MIC 03] [AO SGEMM MIC Time]	0.256901 seconds
+[MKL] [MIC 03] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 03] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC --] [AO Function]	SGEMM
+[MKL] [MIC --] [AO SGEMM Workdivision]	0.10 0.23 0.23 0.23 0.23
+[MKL] [MIC 00] [AO SGEMM CPU Time]	0.912100 seconds
+[MKL] [MIC 00] [AO SGEMM MIC Time]	0.259134 seconds
+[MKL] [MIC 00] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 00] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 01] [AO SGEMM CPU Time]	0.912100 seconds
+[MKL] [MIC 01] [AO SGEMM MIC Time]	0.261359 seconds
+[MKL] [MIC 01] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 01] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 02] [AO SGEMM CPU Time]	0.912100 seconds
+[MKL] [MIC 02] [AO SGEMM MIC Time]	0.274758 seconds
+[MKL] [MIC 02] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 02] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 03] [AO SGEMM CPU Time]	0.912100 seconds
+[MKL] [MIC 03] [AO SGEMM MIC Time]	0.257382 seconds
+[MKL] [MIC 03] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 03] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC --] [AO Function]	SGEMM
+[MKL] [MIC --] [AO SGEMM Workdivision]	0.10 0.23 0.23 0.23 0.23
+[MKL] [MIC 00] [AO SGEMM CPU Time]	0.888828 seconds
+[MKL] [MIC 00] [AO SGEMM MIC Time]	0.258490 seconds
+[MKL] [MIC 00] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 00] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 01] [AO SGEMM CPU Time]	0.888828 seconds
+[MKL] [MIC 01] [AO SGEMM MIC Time]	0.261199 seconds
+[MKL] [MIC 01] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 01] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 02] [AO SGEMM CPU Time]	0.888828 seconds
+[MKL] [MIC 02] [AO SGEMM MIC Time]	0.273866 seconds
+[MKL] [MIC 02] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 02] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 03] [AO SGEMM CPU Time]	0.888828 seconds
+[MKL] [MIC 03] [AO SGEMM MIC Time]	0.257545 seconds
+[MKL] [MIC 03] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 03] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC --] [AO Function]	SGEMM
+[MKL] [MIC --] [AO SGEMM Workdivision]	0.10 0.23 0.23 0.23 0.23
+[MKL] [MIC 00] [AO SGEMM CPU Time]	0.913057 seconds
+[MKL] [MIC 00] [AO SGEMM MIC Time]	0.259583 seconds
+[MKL] [MIC 00] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 00] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 01] [AO SGEMM CPU Time]	0.913057 seconds
+[MKL] [MIC 01] [AO SGEMM MIC Time]	0.261584 seconds
+[MKL] [MIC 01] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 01] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 02] [AO SGEMM CPU Time]	0.913057 seconds
+[MKL] [MIC 02] [AO SGEMM MIC Time]	0.273943 seconds
+[MKL] [MIC 02] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 02] [AO SGEMM MIC->CPU Data]	67108864 bytes
+[MKL] [MIC 03] [AO SGEMM CPU Time]	0.913057 seconds
+[MKL] [MIC 03] [AO SGEMM MIC Time]	0.257992 seconds
+[MKL] [MIC 03] [AO SGEMM CPU->MIC Data]	335544320 bytes
+[MKL] [MIC 03] [AO SGEMM MIC->CPU Data]	67108864 bytes
+size=     8192,  GFlops= 1214.700

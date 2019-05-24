@@ -1,0 +1,42 @@
+#!/bin/bash
+#PBS -l nodes=5:ppn=16
+#PBS -l walltime=00:02:00
+#PBS -N testIO
+#PBS -o out.$PBS_JOBID
+#PBS -e err.$PBS_JOBID
+#PBS -V
+##PBS -m abe
+##PBS -M joeuser@mines.edu
+#----------------------
+
+# Go to the directoy from which our job was launched
+cd $PBS_O_WORKDIR
+
+# Create a short JOBID base on the one provided by the scheduler
+# The sed command strips off the machine info part of the full id
+JOBID=`echo $PBS_JOBID|sed -e 's/\..*//'`
+
+# Create a "base name" for a directory in which our job will run
+# For production runs this should be in $SCRATCH
+MYBASE=$PBS_O_WORKDIR
+#MYBASE=$SCRATCH/aun_tests
+
+# Create a directoy for our run based on the $JOBID and go there
+mkdir -p $MYBASE/$JOBID
+cd $MYBASE/$JOBID
+
+# Save a copy of our environment and script
+printenv > env.$JOBID
+cat $0 > script.$JOBID
+
+# Run the job.
+# The echo will go into the standard output for this job
+# The standard output file will end up in the directory
+# from which the job was launched.
+echo "running job"
+mpiexec  -np 80 $PBS_O_WORKDIR/helloc > output.$PBS_JOBID
+echo "job has finished"
+
+# This output will also go into the standard output file
+echo "run in" `pwd` " produced the files:"
+ls -lt 

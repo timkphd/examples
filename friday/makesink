@@ -1,0 +1,17 @@
+all: segment sinkf sinkfile
+
+sinkf: sinkfile.o sinkf.f90
+	mpif90 sinkf.f90 sinkfile.o -o sinkf
+
+sinkfile.o: sinkfile.c
+	mpicc -DDO_LOCAL_FILE_TEST -c sinkfile.c
+
+sinkfile:sinkfile.c
+	mpicc -DDO_LOCAL_FILE_TEST -DDO_C_TEST sinkfile.c -o sinkfile
+
+segment:
+	od -vAn -d -N1048576 < /dev/urandom > segment
+
+clean:
+	rm -rf segment sinkf sinkfile sinkfile.o fmpi.mod
+

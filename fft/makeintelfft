@@ -1,0 +1,48 @@
+/opt/utility/tymer makefft
+cat ${BASH_SOURCE[0]}
+START=`pwd`
+MYROOT=/opt/intel/2018/compilers_and_libraries_2018.1.163/linux/mkl
+MKLROOT=/opt/intel/2018/compilers_and_libraries_2018.1.163/linux/mkl
+
+mkdir -p $START/fftstuff
+rm -rf $START/fftstuff/*a  $START/fftstuff/obj_*
+cp ${BASH_SOURCE[0]} $START/fftstuff/build_script
+which mpicc > $START/fftstuff/compilers
+which icc >> $START/fftstuff/compilers
+
+cd $MKLROOT/interfaces/fftw2x_cdft
+make libintel64 mpi=intelmpi  PRECISION=MKL_SINGLE INSTALL_DIR=$START/fftstuff interface=ilp64
+make libintel64 mpi=intelmpi  PRECISION=MKL_DOUBLE INSTALL_DIR=$START/fftstuff interface=ilp64
+make libintel64 mpi=intelmpi  PRECISION=MKL_SINGLE INSTALL_DIR=$START/fftstuff interface=lp64
+make libintel64 mpi=intelmpi  PRECISION=MKL_DOUBLE INSTALL_DIR=$START/fftstuff interface=lp64
+
+
+cd $MKLROOT/interfaces/fftw3x_cdft
+make libintel64 mpi=intelmpi   INSTALL_DIR=$START/fftstuff interface=ilp64
+make libintel64 mpi=intelmpi   INSTALL_DIR=$START/fftstuff interface=lp64
+
+
+
+cd $MKLROOT/interfaces/fftw2xc
+make libintel64 PRECISION=MKL_DOUBLE INSTALL_DIR=$START/fftstuff
+make libintel64 PRECISION=MKL_SINGLE INSTALL_DIR=$START/fftstuff
+
+cd $MKLROOT/interfaces/fftw2xf
+make libintel64 PRECISION=MKL_SINGLE INSTALL_DIR=$START/fftstuff
+make libintel64 PRECISION=MKL_DOUBLE INSTALL_DIR=$START/fftstuff
+
+
+cd $MKLROOT/interfaces/fftw3xf
+make libintel64  INSTALL_DIR=$START/fftstuff
+make libintel64  INSTALL_DIR=$START/fftstuff INTERFACE=ilp64 INSTALL_LIBNAME=libfftw3xf_ilp64.a
+
+cd $MKLROOT/interfaces/fftw3xc
+make libintel64  INSTALL_DIR=$START/fftstuff
+make libintel64  INSTALL_DIR=$START/fftstuff INTERFACE=ilp64 INSTALL_LIBNAME=libfftw3xc_ilp64.a
+
+#sudo mkdir $MKLROOT/lib/intel64/fftw
+#sudo cp -r $START/fftstuff/* $MKLROOT/lib/intel64/fftw
+
+cd $START
+/opt/utility/tymer makefft
+

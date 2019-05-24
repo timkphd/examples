@@ -1,0 +1,31 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#comment = "glorified hello world"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks=4
+#SBATCH -p ppc
+##SBATCH --exclusive
+#SBATCH --time=00:05:00
+#SBATCH --export=NONE
+#SBATCH --get-user-env=10L
+
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+module purge
+module load StdEnv
+
+#Note: We could do our make inside the script
+#      at this point.
+#      This will not work on most platforms
+#      but will work on our Power nodes.
+#
+#      make 
+#
+
+export OMP_NUM_THREADS=4
+
+srun --mpi=pmi2 --export=ALL  ./helloc
+

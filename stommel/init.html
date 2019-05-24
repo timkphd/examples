@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Example Output</title>
+<style type="text/css">
+table,th,td
+{
+border:1px solid black;
+padding: 10px;
+vertical-align:top;
+}
+span.b {color: red;}
+span.n {color: black}
+span.g {color: blue }
+
+</style>
+</head>
+<body>
+<h3>Example Stommel Code Output</h3>
+<p>
+Data generated running stc_01d.c with the input file st.mini
+</p>
+<!-- #bbinclude "i00.html" -->
+<table>
+	<tr>
+		<th>Program</th> <th>Task 0</th> <th>Task 1</th> <th>Task 2</th>
+	</tr>
+	<tr>
+		<td>
+		<pre>
+    mpi_err=MPI_Comm_rank(MPI_COMM_WORLD,&myid);
+sprintf(fname,"f%2.2d",myid);
+fout=fopen(fname,"w");	
+<span class="b">fprintf(fout,"block 1 myid=%d\n",myid);</span>
+
+/* ! find id of neighbors using the communicators defined above */
+  mytop   = myid-1;if( mytop    < 0         )mytop   = MPI_PROC_NULL;
+  mybot   = myid+1;if( mybot    == numnodes)mybot   = MPI_PROC_NULL;
+<span class="b">fprintf(fout,"block 2 mytop=%d mybot=%d\n",mytop,mybot);</span>
+    if(myid == mpi_master) {
+        scanf("%d %d",&nx,&ny);
+        scanf("%lg %lg",&lx,&ly);
+        scanf("%lg %lg %lg",&alpha,&beta,&gamma);
+        scanf("%d",&steps);
+        printf("%d %d\n",nx,ny);
+        printf("%g %g\n",lx,ly);
+        printf("%g %g %g\n",alpha,beta,gamma);
+        printf("%d\n",steps);
+    }
+<span class="b">fprintf(fout,"block 3 nx=%d ny=%d lx=%g 
+ly=%g alpha=%g beta=%g gamma=%g\n",nx,ny,lx,ly,alpha,beta,gamma);</span>
+    mpi_err=MPI_Bcast(&nx,   1,MPI_INT,   mpi_master,MPI_COMM_WORLD);
+    mpi_err=MPI_Bcast(&ny,   1,MPI_INT,   mpi_master,MPI_COMM_WORLD);
+    mpi_err=MPI_Bcast(&steps,1,MPI_INT,   mpi_master,MPI_COMM_WORLD);
+    mpi_err=MPI_Bcast(&lx,   1,MPI_DOUBLE,mpi_master,MPI_COMM_WORLD);
+    mpi_err=MPI_Bcast(&ly,   1,MPI_DOUBLE,mpi_master,MPI_COMM_WORLD);
+    mpi_err=MPI_Bcast(&alpha,1,MPI_DOUBLE,mpi_master,MPI_COMM_WORLD);
+    mpi_err=MPI_Bcast(&beta, 1,MPI_DOUBLE,mpi_master,MPI_COMM_WORLD);
+    mpi_err=MPI_Bcast(&gamma,1,MPI_DOUBLE,mpi_master,MPI_COMM_WORLD);
+<span class="b">fprintf(fout,"block 4 nx=%d ny=%d lx=%g ly=%g 
+alpha=%g beta=%g gamma=%g\n",nx,ny,lx,ly,alpha,beta,gamma);</span>
+
+/* calculate the constants for the calculations */
+    dx=lx/(nx+1);
+    dy=ly/(ny+1);
+    dx2=dx*dx;
+    dy2=dy*dy;
+    bottom=2.0*(dx2+dy2);
+    a1=(dy2/bottom)+(beta*dx2*dy2)/(2.0*gamma*dx*bottom);
+    a2=(dy2/bottom)-(beta*dx2*dy2)/(2.0*gamma*dx*bottom);
+    a3=dx2/bottom;
+    a4=dx2/bottom;
+    a5=dx2*dy2/(gamma*bottom);
+    a6=pi/(ly);
+<span class="b">fprintf(fout,"block 5 a1=%g a2=%g a3=%g 
+a4=%g a5=%g\n",a1,a2,a3,a4,a5);</span>
+/* set the indices for the interior of the grid */
+/* we stripe the grid across the processors */
+    j1=1;
+    j2=nx;
+    di=(FLT)ny/(FLT)numnodes;
+    i1=mint(1.0+myid*di);
+    i2=mint(1.0+(myid+1)*di)-1;
+    if(myid == mpi_master)printf("numnodes= %d\n",numnodes);
+    printf("myid= %d mytop=  %d mybot=  %d\n",myid,mytop,mybot);
+    printf("myid= %d holds [%d:%d][%d:%d]\n",myid,i1,i2,j1,j2);
+<span class="b">fprintf(fout,"block 6 i1=%d i2=%d j1=%d j2=%d\n",i1,i2,j1,j2);</span>
+/* allocate the grid to (i1-1:i2+1,j1-1:j2+1) this includes boundary cells */
+    psi=    matrix((INT)(i1-1),(INT)(i2+1),(INT)(j1-1),(INT)(j2+1));
+    new_psi=matrix((INT)(i1-1),(INT)(i2+1),(INT)(j1-1),(INT)(j2+1));
+    the_for=matrix((INT)(i1-1),(INT)(i2+1),(INT)(j1-1),(INT)(j2+1));
+/* set initial guess for the value of the grid */
+    for(i=i1-1;i<=i2+1;i++)
+        for(j=j1-1;j<=j2+1;j++)
+          psi[i][j]=1.0;
+/* set boundary conditions */
+    bc(psi,i1,i2,j1,j2);
+<span class="b">mat_out(fout,"block 7 psi",psi,i1-1,i2+1,j1-1,j2+1,nx,ny);</span>
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 1 myid=0
+
+
+
+
+
+
+block 2 mytop=-2 mybot=1
+
+
+
+
+
+
+
+
+
+
+
+block 3 nx=6 ny=6 lx=2e+06 ly=2e+06 alpha=1e-09 beta=2.25e-11 gamma=3e-06
+
+
+
+
+
+
+
+
+
+block 4 nx=6 ny=6 lx=2e+06 ly=2e+06 alpha=1e-09 beta=2.25e-11 gamma=3e-06
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+block 5 a1=0.517857 a2=-0.0178571 a3=0.25 a4=0.25 a5=6.80272e+15
+
+
+
+
+
+
+
+
+
+
+block 6 i1=1 i2=2 j1=1 j2=6
+
+
+
+
+
+
+
+
+
+
+
+block 7 psi[0:3][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 1 myid=1
+
+
+
+
+
+
+block 2 mytop=0 mybot=2
+
+
+
+
+
+
+
+
+
+
+
+block 3 nx=0 ny=0 lx=1.25999e-312 ly=0 alpha=0 beta=6.9533e-310 gamma=2.04109e-314
+
+
+
+
+
+
+
+
+
+block 4 nx=6 ny=6 lx=2e+06 ly=2e+06 alpha=1e-09 beta=2.25e-11 gamma=3e-06
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+block 5 a1=0.517857 a2=-0.0178571 a3=0.25 a4=0.25 a5=6.80272e+15
+
+
+
+
+
+
+
+
+
+
+block 6 i1=3 i2=4 j1=1 j2=6
+
+
+
+
+
+
+
+
+
+
+
+block 7 psi[2:5][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="g">         1</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+		</pre>
+		</td> 
+		<td>
+		<pre>
+
+block 1 myid=2
+
+
+
+
+
+
+block 2 mytop=1 mybot=-2
+
+
+
+
+
+
+
+
+
+
+
+block 3 nx=0 ny=0 lx=6.95318e-310 ly=2.04109e-314 alpha=0 beta=6.95318e-310 gamma=6.95318e-310
+
+
+
+
+
+
+
+
+
+block 4 nx=6 ny=6 lx=2e+06 ly=2e+06 alpha=1e-09 beta=2.25e-11 gamma=3e-06
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+block 5 a1=0.517857 a2=-0.0178571 a3=0.25 a4=0.25 a5=6.80272e+15
+
+
+
+
+
+
+
+
+
+
+block 6 i1=5 i2=6 j1=1 j2=6
+
+
+
+
+
+
+
+
+
+
+
+block 7 psi[4:7][0:7]
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="g">         1</span><span class="n">         1</span><span class="n">         1</span><span class="b">         0</span>
+<span class="b">         0</span><span class="b">         0</span><span class="b">         0</span><span class="b">         0</span>
+		</pre>
+		</td> 
+	</tr>
+</table>
+<!-- end bbinclude -->
+</body>
+</html>

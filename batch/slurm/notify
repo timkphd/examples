@@ -1,0 +1,35 @@
+#!/bin/bash -x
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --ntasks=16
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:02:00
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=joeuser@mines.edu
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+
+# Save a copy of our environment and script
+echo $SLURM_JOB_NODELIST > nodes.$JOBID
+cat $0 > script.$JOBID
+printenv  > env.$JOBID
+
+#mail us the environment and other "stuff"
+####  mail <  env.$JOBID -s $JOBID  $USER@mines.edu
+#ssh $SLURM_SUBMIT_HOST "mail <  $MYBASE/$JOBID/env.$JOBID -s $JOBID  $SLURM_JOB_USER@mines.edu"
+mkdir -p ~/tmail
+cp env.$JOBID ~/tmail
+export MAIL_HOST=$SLURM_SUBMIT_HOST
+export MAIL_HOST=mindy.mines.edu
+ssh mindy.mines.edu "mail <  ~/tmail/env.$JOBID -s $JOBID  $SLURM_JOB_USER@mines.edu"
+
+srun /opt/utility/phostname -F > output.$JOBID

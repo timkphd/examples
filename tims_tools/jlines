@@ -1,0 +1,21 @@
+#!/Users/tkaiser/anaconda/bin/python
+import sys
+kmax=3
+if len(sys.argv) > 1:
+	kmax=int(sys.argv[1])
+f=sys.stdin.readlines()
+k=""
+j=0
+for l in f:
+	l=l.rstrip()
+	k=k+" "+l
+	j=j+1
+	if(j == kmax):
+		print(k)
+		k=""
+		j=0
+if j > 0 :
+	try:
+		print(k)
+	except:
+		pass

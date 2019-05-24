@@ -1,0 +1,30 @@
+#!/bin/bash -x
+#SBATCH --job-name="hybrid"
+#comment = "glorified hello world"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --ntasks=16
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:05:00
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Run the job.
+
+export OMP_NUM_THREADS=2
+
+EXEC=/opt/utility/phostname 
+
+srun $EXEC -1 > output.$SLURM_JOBID
+
+# You can also use the following format to set 
+# --nodes            - # of nodes to use
+# --ntasks-per-node  - ntasks = nodes*ntasks-per-node
+# --ntasks           - total number of MPI tasks
+#srun --nodes=$NODES --ntasks=$TASKS --ntasks-per-node=$TPN $EXE > > output.$SLURM_JOBID
+
+export OMP_NUM_THREADS=4
+srun --nodes=2 --ntasks-per-node=2 --ntasks=4 $EXEC -2 >> output.$SLURM_JOBID
+

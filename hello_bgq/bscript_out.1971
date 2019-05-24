@@ -1,0 +1,13 @@
++ cd /bins/tkaiser/slurm/toslurm
+++ echo 1971
++ JOBID=1971
++ mkdir bscript_1971
++ cd bscript_1971
++ echo 'trying runjob'
+trying runjob
++ export OMP_NUM_THREADS=4
++ OMP_NUM_THREADS=4
++ printenv OMP_NUM_THREADS
++ srun --label /bins/tkaiser/slurm/toslurm/ppong.exe
++ echo 'got to the bottom'
+got to the bottom

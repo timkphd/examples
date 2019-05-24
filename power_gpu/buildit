@@ -1,0 +1,33 @@
+#!/bin/bash
+make clean
+
+echo
+echo
+echo "Building OPENACC GPU examples"
+module purge
+module load PGI
+echo "nvcc= " `which nvcc`
+echo "pgcc= " `which pgcc`
+echo "pgf90=" `which pgf90`
+make 
+echo
+echo
+echo
+module load XL
+make f_laplace2d_omp
+
+echo "Building CUDA GPU examples"
+module purge
+module load PGI
+echo "nvcc= " `which nvcc`
+echo "pgcc= " `which pgcc`
+echo "pgf90=" `which pgf90`
+make cuda
+echo
+
+echo "Building Cuda Matrix multiply"
+make mult
+
+echo "Building device query"
+make -f MakeQ
+

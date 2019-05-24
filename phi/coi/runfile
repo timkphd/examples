@@ -1,0 +1,21 @@
+#!/bin/sh
+#SBATCH --time=1
+#SBATCH --nodes=1
+#SBATCH -n 20
+#SBATCH --export=ALL
+#SBATCH -p phi
+#SBATCH --overcommit
+cd $SLURM_SUBMIT_DIR
+echo $SLURM_JOB_NODELIST
+cat $0 > $SLURM_JOB_ID.script
+#printenv
+
+srun hostname | sort -u > hosts.$SLURM_JOB_ID
+export LD_LIBRARY_PATH=/opt/intel/mic/coi/host-linux-release/lib:$LD_LIBRARY_PATH 
+export LD_LIBRARY_PATH=/opt/intel/lib/mic:$LD_LIBRARY_PATH
+export MIC_OMP_NUM_THREADS=20
+export OMP_NUM_THREADS=20
+#ssh `head -1 hosts.$SLURM_JOB_ID` $SLURM_SUBMIT_DIR/release/hello_world_source_host $SLURM_SUBMIT_DIR/release/hello_world_sink_mic < /dev/null
+$SLURM_SUBMIT_DIR/release/hello_world_source_host $SLURM_SUBMIT_DIR/release/hello_world_sink_mic < /dev/null
+
+

@@ -1,0 +1,1 @@
+alias  p8='srun -N 1 --tasks-per-node=1 -p ppc-build --share --time=1:00:00  --pty bash'

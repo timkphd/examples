@@ -1,0 +1,35 @@
+#!/bin/bash
+#PBS -l nodes=2:ppn=8
+#PBS -l walltime=08:00:00
+#PBS -N test_2
+#PBS -o outx.$PBS_JOBID
+#PBS -e errx.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+##PBS -m abe
+##PBS -M tkaiser@mines.edu
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+# get a short and full list of all of my nodes
+sort -u  $PBS_NODEFILE > mynodes.$PBS_JOBID
+sort   $PBS_NODEFILE > allmynodes.$PBS_JOBID
+
+# select one of these programs to run
+# the rest of the lines are commented
+# out
+#export MYPROGRAM=info_p
+#export MYPROGRAM=info_c
+export MYPROGRAM=info_f
+
+# create a list of nodes that can be used by the
+# Mio command beorun.  This next line takes the
+# names form the file and strips off the "n" to
+# just give us an node number.  It then puts a
+# ":" between the numbers
+export NLIST=`awk  '{ sum=sum":"substr($1,2);  }; END { print substr(sum,2) }' allmynodes.$PBS_JOBID`
+echo $NLIST
+echo "running" $PBS_O_WORKDIR/$MYPROGRAM
+beorun --no-local --map $NLIST  $PBS_O_WORKDIR/$MYPROGRAM
+
+

@@ -1,0 +1,44 @@
+rm results
+cp true source.dat
+./airfoil.py 50
+./fourd.mkl >> results
+./airfoil.py 100
+./fourd.mkl >> results
+./airfoil.py 150
+./fourd.mkl >> results
+./airfoil.py 200
+./fourd.mkl >> results
+./airfoil.py 250
+./fourd.mkl >> results
+./airfoil.py 300
+./fourd.mkl >> results
+./airfoil.py 350
+./fourd.mkl >> results
+./airfoil.py 400
+./fourd.mkl >> results
+./airfoil.py 450
+./fourd.mkl >> results
+./airfoil.py 500
+./fourd.mkl >> results
+
+cp false source.dat
+./airfoil.py 50
+./fourd.mkl >> results
+./airfoil.py 100
+./fourd.mkl >> results
+./airfoil.py 150
+./fourd.mkl >> results
+./airfoil.py 200
+./fourd.mkl >> results
+./airfoil.py 250
+./fourd.mkl >> results
+./airfoil.py 300
+./fourd.mkl >> results
+./airfoil.py 350
+./fourd.mkl >> results
+./airfoil.py 400
+./fourd.mkl >> results
+./airfoil.py 450
+./fourd.mkl >> results
+./airfoil.py 500
+./fourd.mkl >> results

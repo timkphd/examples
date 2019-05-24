@@ -1,0 +1,19 @@
+#!/bin/bash -e
+#SBATCH --job-name="bot_job"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --cpus-per-task=1
+#SBATCH --time=00:05:00
+##SBATCH -o outz-%j
+#SBATCH --share
+#SBATCH --export=ALL
+#SBATCH --partition=shas
+
+
+module load python/3.5.1
+module load intel/17.4
+module load  impi/17.3
+
+tar -xzf laser.tgz
+rm -rf laser/*png
+mpiexec -n 8 ./simple.py < flist

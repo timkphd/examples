@@ -1,0 +1,39 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --ntasks=8
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:05:00
+##SBATCH --mail-type=ALL
+##SBATCH --mail-user=tkaiser@mines.edu
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+
+export OMP_NUM_THREADS=2
+export LD_LIBRARY_PATH=/u/pa/ru/tkaiser/examples/examples/hybrid:$LD_LIBRARY_PATH
+
+
+module purge
+module load StdEnv
+srun -n 8 ./a.out.old < st.in
+srun -n 8 ./StomOmpf_02d.old < st.in
+
+module purge
+module load PrgEnv/intel/15.0.090
+#module load PrgEnv/intel/13.0.1 
+module load PrgEnv/mpi/openmpi/intel/1.10.1
+
+#export	KMP_AFFINITY="norespect,verbose"
+#export KMP_AFFINITY=verbose,scatter
+mpiexec  -n 8 ./a.out.new< st.in
+mpiexec  -n 8 ./StomOmpf_02d.new < st.in
+
+srun   -n 8 ./a.out.new < short.in
+srun   -n 8 ./StomOmpf_02d.new < short.in
+
+
+

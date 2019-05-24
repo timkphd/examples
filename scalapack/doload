@@ -1,0 +1,9 @@
+module load PrgEnv/libs/essl-5.1
+module load PrgEnv/libs/lapack-3.5_xl-O2
+module load PrgEnv/IBM/XLF/14.1.bgq
+module load PrgEnv/IBM/VACPP/12.1.bgq
+module load PrgEnv/libs/scalapack-2.0.2_xl
+module load PrgEnv/libs/arpack_lapack_essl
+#
+module load PrgEnv/Debug/ddt-5.0
+#module load PrgEnv/Debug/ddt-4.2

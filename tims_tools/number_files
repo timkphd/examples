@@ -1,0 +1,27 @@
+#!/bin/bash
+# rename all files in a directory with a number sequence
+#
+# get the list of files in a directory as an array
+ARRAY=(`ls`)
+# how many files
+count=`echo ${ARRAY[*]} | wc -w`
+
+# decrement because arrays start at 0
+count=$((count -1))
+
+# get our range with leading 0s
+range=`seq -w  0 $count`
+
+# do it
+for c in $range ; do
+# we have to do the next hack because with leading 
+# zeros the array thinks we are counting in octal
+# and dies after 007
+ z=`echo $c | sed "s/^0*//"`
+# if we have cleared the string set it to 0
+ if [ -z "$z" ] ; then
+   z=0
+ fi
+ echo ${ARRAY[$z]} l_$c
+ mv ${ARRAY[$z]} l_$c
+done

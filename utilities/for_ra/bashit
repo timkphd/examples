@@ -1,0 +1,52 @@
+scp bash_profile rawork0100@ra:~/.bash_profile
+scp bash_profile rawork0101@ra:~/.bash_profile
+scp bash_profile rawork0102@ra:~/.bash_profile
+scp bash_profile rawork0103@ra:~/.bash_profile
+scp bash_profile rawork0104@ra:~/.bash_profile
+scp bash_profile rawork0105@ra:~/.bash_profile
+scp bash_profile rawork0106@ra:~/.bash_profile
+scp bash_profile rawork0107@ra:~/.bash_profile
+scp bash_profile rawork0108@ra:~/.bash_profile
+scp bash_profile rawork0109@ra:~/.bash_profile
+scp bash_profile rawork0110@ra:~/.bash_profile
+scp bash_profile rawork0111@ra:~/.bash_profile
+scp bash_profile rawork0112@ra:~/.bash_profile
+scp bash_profile rawork0113@ra:~/.bash_profile
+scp bash_profile rawork0114@ra:~/.bash_profile
+scp bash_profile rawork0115@ra:~/.bash_profile
+scp bash_profile rawork0116@ra:~/.bash_profile
+scp bash_profile rawork0117@ra:~/.bash_profile
+scp bash_profile rawork0118@ra:~/.bash_profile
+scp bash_profile rawork0119@ra:~/.bash_profile
+scp bash_profile rawork0120@ra:~/.bash_profile
+
+exit
+
+ssh rawork0100@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0101@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0102@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0103@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0104@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0105@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0106@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0107@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0108@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0109@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0110@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0111@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0112@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0113@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0114@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0115@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0116@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0117@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0118@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0119@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+ssh rawork0120@ra "rm -rf *;  mkdir bin; cp /lustre/home/tkaiser/bin/mpich bin"
+
+exit
+
+
+
+
+4034tambor

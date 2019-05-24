@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Join Examples</title>
+	<meta name="generator" content="BBEdit 11.0" />
+</head>
+<body>
+
+<p>
+Some example runs of MPI "join" programs.  These were run 
+on my home box using MPICH 3.3.x.  Got the same results using 
+PGI-mpich on OSX. Note that there is a backslash in front of
+the $s in the string for ./sl
+</p>
+
+<ol>
+	<li>These were run on my home box using MPICH 3.3.x.  </li>
+	<li>Got the same results using PGI-mpich on OSX. </li>
+	<li>Platform MPI worked on AuN. It appeared that<br>
+	this was running over IB with the port:<br>
+	server available at 172.20.101.1:55655</li>
+	<li>Portland Group MPI also works on AuN<br>"tag#0\$description#node001\$port#59333\$ifname#172.20.101.1$"</li>
+	
+</ol>
+
+<h2>example2.c "run as two separate MPI worlds"</h2>
+<h3>Window 1:</h3>
+<pre>
+tkaiser@gray:~/examples/mpi/join> mpiexec -n 1 ./example2 1
+Running this program with 1 processes
+gray 51624
+ready to try join 1
+did join 1 0 0
+did  MPI_Sendrecv 0 0 0 1
+errs=0
+</pre>
+<h3>Window 2</h3>
+<pre>
+tkaiser@gray:~/examples/mpi/join> mpiexec -n 1 ./example2 0 gray 51624
+Running this program with 1 processes
+ready to try join 0
+did join 1 0 0
+did  MPI_Sendrecv 0 0 1024 1025
+errs=0
+</pre>
+
+<h2>example2.c "run as two separate MPI tasks"</h2>
+<h3>Window 1:</h3>
+<pre>
+tkaiser@gray:~/examples/mpi/join> mpiexec -n 2 ./example2
+ready to try join 0
+ready to try join 1
+did join 1 0 0
+did  MPI_Sendrecv 0 0 1024 1025
+errs=0
+did join 1 0 0
+did  MPI_Sendrecv 0 0 0 1
+errs=0
+tkaiser@gray:~/examples/mpi/join> 
+</pre>
+
+<h2> cl.c and sl.c</h2>
+<h3>Window 1:</h3>
+<pre>
+tkaiser@gray:~/examples/mpi/join> mpiexec -n 1 ./cl
+server available at tag#0$description#gray$port#40210$ifname#127.0.0.2$
+did accept size= 1
+1234
+-1234
+tkaiser@gray:~/examples/mpi/join> 
+</pre>
+<h3>Window 2:</h3>
+<pre>
+tkaiser@gray:~/examples/mpi/join> mpiexec -n 1 ./sl "tag#0\$description#gray\$port#40210\$ifname#127.0.0.2$"
+did connect
+/* Action to perform */
+/* etc */
+tkaiser@gray:~/examples/mpi/join> 
+</pre>
+<h2> client_mpi.c and server_mpi.c</h2>
+<h3>Window 1:</h3>
+<pre>
+tkaiser@gray:~/examples/mpi/join> mpiexec -n 1 ./server_aun 45678
+C says Hello from    0 on gray
+Listening on port 45678 45678
+MPI_Comm_join returned 0
+new size 1  new rank 0
+did  MPI_Sendrecv 0 0 1024 1025
+</pre>
+<h3>Window 2:</h3>
+<pre>
+tkaiser@gray:~/examples/mpi/join> mpiexec -n 1 ./client_aun gray 45678
+C says Hello from    0 on gray
+MPI_Comm_join returned 0
+new size 1  new rank 0
+did  MPI_Sendrecv 0 0 0 1
+</pre>
+
+
+<h3>AuN and Mc2</h3>
+
+<h4>Try 1</h4>
+
+<pre>
+[tkaiser@mc2 join]$ srun -n 1 ./client_mc2 172.25.101.1 45678
+C says Hello from    0 on Task 0 of 1 (0,0,0,0,0,0)  R00-M0-N00-J07
+client_mc2: /bgsys/source/srcV1R2M2.3650/comm/lib/dev/mpich2/src/mpid/pamid/src/misc/mpid_unimpl.c:32: MPID_Open_port: Assertion `0' failed.
+2014-12-11 09:56:28.783 (WARN ) [0xfffa93e8f90] 36166:ibm.runjob.client.Job: terminated by signal 6
+2014-12-11 09:56:28.783 (WARN ) [0xfffa93e8f90] 36166:ibm.runjob.client.Job: abnormal termination by signal 6 from rank 0
+[tkaiser@mc2 join]$
+
+[tkaiser@node001 join]$ mpiexec -n 1 ./server_aun 45678
+C says Hello from    0 on node001
+Listening on port 45678 45678
+
+Fatal error in MPI_Comm_join: Internal MPI error!, error stack:
+MPI_Comm_join(195): MPI_Comm_join(fd=14, intercomm=0x7fffd71bce0c) failed
+MPI_Comm_join(160): recv from the socket failed (errno 104)
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   EXIT CODE: 1
+=   CLEANING UP REMAINING PROCESSES
+=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
+===================================================================================
+[tkaiser@node001 join]$ 
+</pre>
+
+<h4>Try 2</h4>
+
+<pre>
+[tkaiser@node001 join]$ mpiexec -n 1 ./cl_aun                                                                       
+server available at tag#0$description#node001$port#34758$ifname#172.20.101.1$
+
+[tkaiser@mc2 join]$ srun -n 1 ./sl_mc2 "tag#0\$description#node001\$port#34758\$ifname#172.20.101.1$"
+sl_mc2: /bgsys/source/srcV1R2M2.3650/comm/lib/dev/mpich2/src/mpid/pamid/src/misc/mpid_unimpl.c:51: MPID_Comm_connect: Assertion `0' failed.
+2014-12-11 10:11:47.549 (WARN ) [0xfffb5f68f90] 36168:ibm.runjob.client.Job: terminated by signal 6
+2014-12-11 10:11:47.549 (WARN ) [0xfffb5f68f90] 36168:ibm.runjob.client.Job: abnormal termination by signal 6 from rank 0
+</pre>
+
+
+<h3>AuN - Osage</h3>
+<pre>
+osage:join tkaiser$ /opt/pgi/osx86-64/2014/mpi/mpich/bin/mpiexec -n 1 ./cl_osage 
+server available at tag#0$description#osage.Mines.EDU$port#64847$ifname#138.67.4.206$
+did accept size= 1
+1234
+-1234
+osage:join tkaiser$ 
+
+
+[tkaiser@node001 join]$ mpiexec -n 1 ./sl_aun "tag#0\$description#osage.Mines.EDU\$port#64847\$ifname#138.67.4.206$"
+did connect
+/* Action to perform */
+/* etc */
+[tkaiser@node001 
+</pre>
+
+
+<h3>Mc2 - Mc2</h3>
+
+<pre>
+[tkaiser@mc2 join]$ srun -n 1 ./server_mc2 45678
+C says Hello from    0 on Task 0 of 1 (0,0,0,0,0,0)  R00-M0-N00-J07
+Listening on port 45678 45678
+server_mc2: /bgsys/source/srcV1R2M2.3650/comm/lib/dev/mpich2/src/mpid/pamid/src/misc/mpid_unimpl.c:32: MPID_Open_port: Assertion `0' failed.
+2014-12-11 11:00:38.530 (WARN ) [0xfff7ca28f90] 36177:ibm.runjob.client.Job: terminated by signal 6
+2014-12-11 11:00:38.530 (WARN ) [0xfff7ca28f90] 36177:ibm.runjob.client.Job: abnormal termination by signal 6 from rank 0
+[tkaiser@mc2 join]$ 
+
+[tkaiser@mc2 join]$ srun -n 1 ./client_mc2 ionode3 45678
+C says Hello from    0 on Task 0 of 1 (0,0,0,0,0,0)  R00-M0-N00-J26
+client_mc2: /bgsys/source/srcV1R2M2.3650/comm/lib/dev/mpich2/src/mpid/pamid/src/misc/mpid_unimpl.c:32: MPID_Open_port: Assertion `0' failed.
+2014-12-11 11:00:38.514 (WARN ) [0xfff827e8f90] 36178:ibm.runjob.client.Job: terminated by signal 6
+2014-12-11 11:00:38.514 (WARN ) [0xfff827e8f90] 36178:ibm.runjob.client.Job: abnormal termination by signal 6 from rank 0
+[tkaiser@mc2 join]$ 
+
+</pre>
+
+
+
+<h3>Some Notes:</h3>
+
+From:  bgq_code_devel_tools_interface_redp465.pdf
+
+<p class="pin0">
+<b>3.1.2 Job information</b>
+</p>
+
+<p class="pin0">
+Information about the job is placed in the /jobs directory on the I/O node. When a job starts, jobctld creates a directory in /jobs using the job identifier. When a job ends, jobctld removes the directory. The job information directory contains the following objects:
+</p>
+
+<p class="pin0">
+<b>exe</b> A symbolic link to the executable. The value comes from the runjob –exe parameter.
+</p>
+
+<p class="pin0">
+<b>wdir</b> A symbolic link to the initial working directory. The value comes from the runjob –cwd parameter.
+</p>
+
+<p class="pin0">
+<b>cmdline</b> A file containing the argument strings. Each string is terminated by a null byte. The end of the strings is denoted by two null bytes. The value
+comes from the runjob –args parameters.
+</p>
+
+<p class="pin0">
+<b>environ</b> A file containing the environment variable strings. Each string is terminated by a null byte. The end of the strings is denoted by two null
+bytes. The value comes from the runjob –envs parameters. 
+</p>
+
+<p class="pin0">
+<b>loginuid</b> A file containing the login user ID value as a string.
+</p>
+
+<p class="pin0">
+<b>logingids</b> A file containing the login group ID values as strings. Each string is terminated by a null byte. The end of the strings is denoted by two null
+bytes.
+</p>
+
+<p class="pin0">
+<b>toolctl_rank</b> A directory with symbolic links to the tool control service data-channel local sockets to enable attaching to a specific rank in the job.
+</p>
+
+<p class="pin0">
+<b>toolctl_node</b> A directory with symbolic links to the tool control service data-channel local sockets to enable attaching to all ranks in the job. The naming of the symbolic links matches the PID field within the MPIR_PROCDESC
+structure as discussed in 2.1.3, “MPIR_proctable” on page 6. The MPIR_PROCDESC entries are ordered by rank, and each MPIR_PROCDESC structure contains an I/O node address and a PID value that represents the local socket to the compute node. Therefore, the relationships between processes within a compute node, compute
+</p>
+
+
+
+<h3>Global variable definition:</h3>
+<pre>
+              extern "C" MPIR_PROCDESC *MPIR_proctable;
+</pre>
+
+<p>
+The runjob program gets information about the compute nodes that form the job. The content in Example 2-1 on page 7 is used to build the proctable.
+</p>
+<h3>Example 2-1 MPIR_PROCDESC type definition</h3>
+<pre>
+typedef struct {
+    char * host_name; /* IP address of I/O node controlling the
+    compute node that process is running on */ char * executable_name;/* name of executable */
+    int pid;/* A number representing a compute node within the job */ } MPIR_PROCDESC;
+</pre>
+<p>
+The pid is a value that corresponds to a symbolic link in the /jobs/toolctl_node/ directory within the I/O node to the data channel of a compute node. By using the index into this array of objects and by using the pid field within the objects, the association between ranks and compute nodes can be determined. For more information, see 3.1.2, “Job information” on page 12.
+</p>
+<pre>
+[tkaiser@mc2 join]$ cat /etc/hosts | grep io
+172.25.201.11	R00-ID-J00 ID-J00 ionode1
+172.25.201.12	R00-ID-J01 ID-J01 ionode2
+172.25.201.13	R00-ID-J02 ID-J02 ionode3
+172.25.201.14	R00-ID-J03 ID-J03 ionode4
+172.25.201.15	R00-ID-J04 ID-J04 ionode5
+172.25.201.16	R00-ID-J05 ID-J05 ionode6
+172.25.201.17	R00-ID-J06 ID-J06 ionode7
+172.25.201.18	R00-ID-J07 ID-J07 ionode8
+[tkaiser@mc2 join]$ 
+
+used the following to verify that the port was open on ionode6
+
+sudo lsof -i
+sudo netstat -lptu
+sudo netstat -tulpn
+</pre>
+
+
+<ul>
+	<li>See: https://wiki.mpich.org/mpich/index.php/BGQ</li>
+	<li>See: http://runtime.bordeaux.inria.fr/Download/Publis/AumMerNam_IPDPS.pdf</li>
+	<li>See: http://www.mpich.org/static/downloads/3.1/mpich-3.1-README.txt</li>
+</ul>
+
+</body>
+</html>

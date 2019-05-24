@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -l nodes=4:ppn=12
+#PBS -l walltime=15:00:00
+#PBS -N ben_abby
+#PBS -o stdout.$PBS_JOBID
+#PBS -e stderr.$PBS_JOBID
+#PBS -V
+#PBS -M joeuser@mines.edu
+#PBS -m abe
+
+cd $PBS_O_WORKDIR
+
+#
+export NEW_DIR=`date +%y%m%d%H%M%S`
+#
+export NEW_DIR=`echo $PBS_JOBID | sed -e 's/\..*//'`
+
+mkdir $NEW_DIR
+cd $NEW_DIR
+export ODIR=`pwd`
+
+cp $PBS_O_WORKDIR/data.tgz .
+tar -xzf data.tgz
+
+mpiexec -np 48 $PBS_O_WORKDIR/sinkfile 
+

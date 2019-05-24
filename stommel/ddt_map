@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --job-name="atest"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=00:02:00
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+#SBATCH --export=ALL
+##SBATCH --mail-type=ALL
+##SBATCH --mail-user=joeuser@mines.edu
+
+#----------------------
+cd $SLURM_SUBMIT_DIR
+export MPICC=/opt/openmpi/1.6.5/intel/bin/mpicc
+export MPICC=/opt/intel/impi/5.0.3.048/intel64/bin/mpicc
+
+export LD_LIBRARY_PATH=/opt/ddt/forge/5.0/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/u/pa/ru/tkaiser/lib:$LD_LIBRARY_PATH
+export PATH=/opt/ddt/forge/5.0/bin:$PATH
+export LANG=C
+export LIBRARY_PATH=/u/pa/ru/tkaiser/lib:$LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/lib/xstuff:$LD_LIBRARY_PATH
+
+
+#map --profile --np=4 ./stc_01 < st.in
+#/opt/ddt/forge/5.0/bin/map --profile mpiexec  -n 8 ./stc_01 < st.in
+#/opt/ddt/forge/5.0/bin/map --profile mpiexec  -n 8 ./stc_02.g < st.in
+map --profile --processes=8 ./stc_02.g < st.in
+

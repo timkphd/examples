@@ -1,0 +1,19 @@
+MANPATH=`/usr/bin/manpath`
+export  MANPATH
+
+#python
+PATH=/home/tkaiser/bin/python2.5.2/bin:$PATH
+
+#mpi
+PATH=/share/apps/mpich_intel10/gcc/bin:$PATH
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/share/apps/mpich_intel10/gcc/lib:/share/apps/mpich_intel10/gcc/lib/shared
+MANPATH=/share/apps/mpich_intel10/gcc/man:$MANPATH
+
+#intel stuff
+source /share/apps/intel/fce/10.0.023/bin/ifortvars.sh
+source /share/apps/intel/cce/10.0.023/bin/iccvars.sh
+source /share/apps/intel/mkl/9.1/tools/environment/mklvarsem64t.sh
+
+export PATH
+export LD_LIBRARY_PATH
+export  MANPATH

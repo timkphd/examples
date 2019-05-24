@@ -1,0 +1,37 @@
+#!/bin/bash -e
+#SBATCH --job-name="array_job"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=48:00:00
+#SBATCH -o outz-%j
+##SBATCH -e errz-%j
+##SBATCH --exclusive
+#SBATCH --share
+#SBATCH --export=ALL
+
+##SBATCH --mem=1000
+
+#----------------------
+# example invocation
+# sbatch --array=1-18 array
+
+cd $SLURM_SUBMIT_DIR
+export RASPA_DIR=/opt/raspa/
+
+if [[ $SLURM_ARRAY_JOB_ID ]] ; then
+	JOB_ID=$SLURM_ARRAY_JOB_ID
+	SUB_ID=$SLURM_ARRAY_TASK_ID
+else
+	JOB_ID=$SLURM_JOB_ID
+	SUB_ID=0
+fi
+
+
+dir=`head -n $SLURM_ARRAY_TASK_ID list | tail -1`
+cd $dir
+srun -n 1 /u/pa/ru/tkaiser/scratch/raspa/src/simulate
+
+
+
+
+

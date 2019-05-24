@@ -1,0 +1,18 @@
+#!/bin/csh
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=00:10:00
+#PBS -N testIO
+#PBS -o out.pbs
+#PBS -e err.pbs
+#PBS -r n
+#PBS -V 
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+foreach NUM (1 2 4) 
+    setenv OMP_NUM_THREADS $NUM
+    echo "OMP_NUM_THREADS=" $OMP_NUM_THREADS
+    echo "intel"
+    ./invertc
+    echo " "
+end

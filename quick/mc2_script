@@ -1,0 +1,73 @@
+#!/bin/bash -x
+#SBATCH --job-name="hybrid"
+#comment      = “glorified hello world"
+#SBATCH --nodes=64
+#SBATCH --ntasks-per-node=16
+#SBATCH --ntasks=1024
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=10:00:00
+
+
+export  "XLSMPOPTS=spins=0:yields=0:stack=264000"
+export  "BG_PROCESSESPERNODE=1"
+export  "BG_SHAREDMEMSIZE=64"
+export  "OMP_NUM_THREADS=64 "
+export  "BG_THREADLAYOUT=1"
+export  "PAMID_COLLECTIVES=1"
+export  "PAMID_MAX_CONTEXTS=4"
+#envs+="  PAMID_BCAST=I0:RectangleDput:"
+export  "PAMID_COLLECTIVE_BCAST=I0:RectangleDput:"
+export  "USE_FAST_WAKEUP=TRUE"
+export  "ATOMICS_OPT_LEVEL=5"
+export  "OMP_WAIT_POLICY=ACTIVE"
+#envs+="  BG_IPIMESSAGEPOLL=1"
+
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+
+# Create a "base name" for a directory in which our job will run
+# For production runs this should be in $SCRATCH
+MYBASE=$SLURM_SUBMIT_DIR
+#MYBASE=$SCRATCH/mc2_tests
+
+# Create a directoy for our run based on the $JOBID and go there
+mkdir -p $MYBASE/$JOBID
+cd $MYBASE/$JOBID
+
+# Create a link back to our starting directory
+ln -s $SLURM_SUBMIT_DIR submit
+
+export OMP_NUM_THREADS=1
+
+# Save a copy of our environment and script
+cat $0 > script.$JOBID
+printenv  > env.$JOBID
+
+# This is the path to our program which
+# we assume is in our starting directory
+EXE=$SLURM_SUBMIT_DIR/helloc
+
+# Run the job.
+# The echo will go into the standard output for this job
+# The standard output file will end up in the directory
+# from which the job was launched.
+echo "running job"
+srun $EXE > output.$JOBID
+echo "job has finished"
+# This output will also go into the standard output file
+echo "run in" `pwd` " produced the files:"
+ls -lt 
+
+#
+# You can also use the following format to set 
+# --nodes            - # of nodes to use
+# --ntasks-per-node  - ntasks = nodes*ntasks-per-node
+# --ntasks           - total number of MPI tasks
+#srun --nodes=$NODES --ntasks=$TASKS --ntasks-per-node=$TPN $EXE > output.$JOBID
+
+

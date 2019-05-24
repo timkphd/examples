@@ -1,0 +1,38 @@
+#!/bin/bash
+#SBATCH --time=01:00:00
+#SBATCH --partition=ppc
+#SBATCH --overcommit
+##SBATCH --exclusive
+#SBATCH --nodes=1
+##SBATCH --nodelist=ppc002
+#SBATCH --gres=gpu:4
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --export=ALL
+#SBATCH --out=%J.out
+#SBATCH --err=%J.msg
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Make a copy of our script
+cat $0 > $SLURM_JOB_ID.src
+
+# Set up our environment
+source /etc/profile
+module purge
+module load XL
+module load MPICH
+
+export OMP_NUM_THREADS=8
+jobs="StomOmpf_00g
+StomOmpf_00f
+StomOmpf_00e
+StomOmpf_00d
+StomOmpf_00c
+StomOmpf_00b
+StomOmpf_00a
+StomOmpf_00x"
+for j in $jobs ; do
+srun ./$j < input > $j.out
+done

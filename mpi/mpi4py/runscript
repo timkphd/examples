@@ -1,0 +1,52 @@
+#!/bin/bash 
+#SBATCH --job-name="mpi4py"
+#comment = "script for mpi4py tests"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:10:00
+
+
+if [ ! -z "$SLURM_CLUSTER_NAME" ] ; then
+
+	echo "Running slurm"
+	RUN=srun
+# We are going to use the Intel version of mpi4py
+	module purge
+
+	echo $SLURM_NODELIST | grep node > /dev/null
+	if [ $? == 0 ]; then
+	echo "For AuN"
+		module load PrgEnv/intel/18.0
+		module load impi/intel/5.0.1.035
+		module load PrgEnv/python/com/intel/python3/3.6-intel-2018.3
+	else
+	echo "for Mio"
+		module load Compiler/intel/18.0
+		module load MPI/impi/2018.1/intel
+		module load Compiler/python/2/2.7/comercial/intel/2018_1 
+	fi
+
+	# Go to the directoy from which our job was launched
+	cd $SLURM_SUBMIT_DIR
+else
+	echo "Not running slurm"
+	RUN="mpiexec -n 4"
+fi
+
+which python
+
+# These are the examples that do not require stdin
+EXES="P_ex00.py P_ex01b.py P_ex01.py P_ex02.py
+P_ex03I.py P_ex03.py P_ex04.py P_ex05.py
+P_ex06.py P_ex07.py P_ex08.py P_ex09.py
+P_ex10.py P_ex12.py P_ex13.py"
+
+for X in $EXES ; do
+  OUT=`echo $X | sed "s/py/out/"`
+  echo running $X
+  $RUN ./$X > $OUT
+done
+
+

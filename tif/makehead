@@ -1,0 +1,15 @@
+UNAME := $(shell uname)
+MNAME := $(shell uname -n)
+ifeq ($(UNAME),Darwin)
+OBJS=fmemopen.o getit.o
+else
+OBJS=getit.o
+endif
+
+CC=gcc -DMACHINE=$(MNAME)
+
+header: $(OBJS)
+	gcc $(OBJS) -o header -lm
+
+clean:
+	rm -rf header fmemopen.o getit.o

@@ -1,0 +1,24 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=08:00:00
+#PBS -N test_1
+#PBS -o outx.$PBS_JOBID
+#PBS -e errx.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+##PBS -m abe
+##PBS -M tkaiser@mines.edu
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+# get a short  list of all of my nodes
+sort -u  $PBS_NODEFILE > mynodes.$PBS_JOBID
+
+for P in test2_c   test2_f    test_c    test_f ; do
+  export MYPROGRAM=$P
+  echo "running" $PBS_O_WORKDIR/$MYPROGRAM
+  $PBS_O_WORKDIR/$MYPROGRAM
+done
+
+
+

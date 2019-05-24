@@ -1,0 +1,75 @@
+#!/bin/bash
+#PBS -l nodes=4:ppn=12
+#PBS -l walltime=15:00:00
+#PBS -N ben_abby
+#PBS -o stdout.$PBS_JOBID
+#PBS -e stderr.$PBS_JOBID
+#PBS -V
+#PBS -M joeuser@mines.edu
+#PBS -m abe
+
+if [ -n "$JOBTMP" ] ; then
+  echo using $JOBTMP from environment
+else
+  export JOBTMP=/scratch
+fi
+
+cd $PBS_O_WORKDIR
+
+# create a directory for this run
+#export NEW_DIR=`date +%y%m%d%H%M%S`
+export NEW_DIR=`echo $PBS_JOBID | sed -e 's/\..*//'`
+mkdir $NEW_DIR
+cd $NEW_DIR
+export ODIR=`pwd`
+
+cp $PBS_O_WORKDIR/data.tgz .
+tar -xzf data.tgz
+####################################################
+#get a list of nodes...
+export nlist=`sort -u  $PBS_NODEFILE`
+
+# For each node...
+for i in $nlist
+do 
+# Create my temporary directory in /scratch on each node
+  ssh $i mkdir $JOBTMP/$NEW_DIR
+# Copy my data
+  echo $USER@$i:$JOBTMP/$NEW_DIR
+  scp * $USER@$i:$JOBTMP/$NEW_DIR
+done
+
+# save a copy of our nodes
+sort  -u $PBS_NODEFILE > nlist.$PBS_JOBID
+cat $PBS_NODEFILE > flist.$PBS_JOBID
+
+#save a copy of this sciprt
+cat $0 > runscript.$PBS_JOBID
+
+#save our environment
+printenv >> env.$PBS_JOBID
+ls -lt >> env.$PBS_JOBID
+
+#Go to our working directory
+cd $JOBTMP/$NEW_DIR
+####################################################
+export APP= $PBS_O_WORKDIR/sinkfile
+
+match $ODIR/flist.$PBS_JOBID -p"$APP" > appfile
+
+mpiexec -app appfile  >& screen.$PBS_JOBID
+####################################################
+#for each node...
+for i in $nlist
+do 
+# Copy files from /scratch on each node back to
+# my working directory with a subdirectory for each node.
+  mkdir -p $ODIR/$i
+  scp -r $USER@$i:$JOBTMP/$NEW_DIR/* $USER@mio.mines.edu:$ODIR/$i
+##### or #####
+
+# ssh -r $USER@$i cp -r $JOBTMP/$NEW_DIR/* $PBS_O_WORKDIR/$i 
+
+# Remove the temporary directory
+  ssh $i rm -r $JOBTMP/$NEW_DIR
+done

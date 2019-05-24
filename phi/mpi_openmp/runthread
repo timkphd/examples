@@ -1,0 +1,5 @@
+#!/bin/ash
+cd $1
+export OMP_NUM_THREADS=50
+export LD_LIBRARY_PATH=/opt/intel/lib/mic
+./StomOmpf_00d.mic < st.in

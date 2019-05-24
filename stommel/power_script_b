@@ -1,0 +1,35 @@
+#!/bin/bash -x
+#SBATCH --job-name="hybrid"
+#comment = "glorified hello world"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --ntasks=4
+#SBATCH -p ppc
+##SBATCH --exclusive
+#SBATCH --time=01:05:00
+#SBATCH --export=NONE
+#SBATCH --get-user-env=10L
+
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+
+# Run the job.
+export OMP_NUM_THREADS=4
+export ARGS=" -a -F"
+export ARGS="-F"
+
+export MYID=$SLURM_JOBID
+
+cat $0 > $MYID.script
+
+######################
+
+echo running "old" version
+EXE="./stf_03"
+module purge
+module load XL
+module load OpenMPI
+printenv > old.$MYID.env
+srun   --cpu_bind=verbose --mpi=pmi2 --export=ALL $EXE < st.in > old.$MYID

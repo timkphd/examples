@@ -1,0 +1,7 @@
+rm -rf *tgz */*tar
+tar --exclude .svn --exclude CVS --exclude CVSROOT --exclude .DS_Store -czf examples.tgz *
+for x in hybrid mpi openmp stommel ; do cd $x; make clean ; rm *tar; tar --exclude .svn --exclude CVS --exclude CVSROOT --exclude .DS_Store  -cf $x.tar * ; cd ..; done
+
+echo RUN 
+echo svn update 
+echo to restore *png files

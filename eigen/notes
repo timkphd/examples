@@ -1,0 +1,54 @@
+This routine requires a recent version of the compiler
+so do a:
+
+module load PrgEnv/intel/15.0.090
+
+
+Then just type make.  The simple driver will be built
+and run producing
+
+[tkaiser@aun001 mkl]$ make
+ifort eigen.f90 sort.o -m64  -w -fpp -liomp5 -lpthread -lm -ldl -mkl -o eigen
+./eigen 3.0 7.0 8 < sort2.in
+ Search interval    3.00000000000000          7.00000000000000     
+ The initial guess of subspace dimension to be used           8
+  Testing dfeast_scsrev 
+Intel MKL Extended Eigensolvers: double precision driver
+Intel MKL Extended Eigensolvers: List of input parameters fpm(1:64)-- if different from default
+Intel MKL Extended Eigensolvers: fpm(1)=1
+Search interval [3.000000000000000e+00;7.000000000000000e+00]
+Intel MKL Extended Eigensolvers: Size subspace 8
+#Loop | #Eig  |    Trace     | Error-Trace |  Max-Residual
+0,6,2.570747125938336e+01,1.000000000000000e+00,6.483030719936262e-06
+1,6,2.570747126011604e+01,1.046685278132437e-10,3.388508407206631e-11
+2,6,2.570747126011604e+01,0.000000000000000e+00,7.638457984968689e-16
+Intel MKL Extended Eigensolvers have successfully converged (to desired tolerance).
+  FEAST OUTPUT INFO            0
+ Number of eigenvalues found            6
+  Computed    
+  Eigenvalues 
+   3.17157287525381     
+   4.00000000000000     
+   4.00000000000000     
+   4.12924848418909     
+   4.40664990067315     
+   6.00000000000000     
+[tkaiser@aun001 mkl]$ 
+
+
+This is the same data set that is used in the example dexample_sparse_f.f.
+
+******************* NOTE *******************
+
+ You need to enter Search interval and 
+ initial guess of subspace dimension
+ to be used  on the command line
+ For example:
+ 3.0 7.0 8
+
+
+Routine documentation can be found at:
+
+http://mindy.mines.edu/Intel/mkl/mklman/index.htm
+under "Extended Eigensolver Routines"
+

@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <style type="text/css">	
+    p { width: 6in; text-align: justify; margin: .25in; }
+    p.pin0  {margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin1  {margin-left: 2.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin2  {margin-left: 4.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin3  {margin-left: 6.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin4  {margin-left: 8.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin5  {margin-left: 10.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin6  {margin-left: 12.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin7  {margin-left: 14.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin8  {margin-left: 16.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin9  {margin-left: 18.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin10 {margin-left: 20.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    h.hin0  {margin-left: 0.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin1  {margin-left: 2.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin2  {margin-left: 4.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin3  {margin-left: 6.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin4  {margin-left: 8.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin5  {margin-left: 10.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin6  {margin-left: 12.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin7  {margin-left: 14.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin8  {margin-left: 16.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin9  {margin-left: 18.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin10 {margin-left: 20.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+   </style>
+   <title>MPI Examples</title>
+</head>
+<body>
+   <h2>MPI Examples</h2>
+<h3><a href="./c_ex00.c">c_ex00.c</a> <a href="./f_ex00.f">f_ex00.f</a></h3> 
+<pre>
+This is a simple hello world program. Each processor prints out 
+it's rank and the size of the current MPI run (Total number of
+processors).
+</pre>
+
+<h3><a href="./c_ex01.c">c_ex01.c</a> <a href="./f_ex01.f">f_ex01.f</a></h3> 
+<pre>
+This is a simple send/receive program in MPI
+</pre>
+
+<h3><a href="./c_ex02.c">c_ex02.c</a> <a href="./f_ex02.f">f_ex02.f</a></h3> 
+<pre>
+Shows how to use probe & get_count to find the size of an
+incomming message                                        
+</pre>
+ 
+<h3><a href="./c_ex03.c">c_ex03.c</a> <a href="./f_ex03.f">f_ex03.f</a></h3> 
+<pre>
+This is a simple isend/ireceive program in MPI
+</pre>
+
+<h3><a href="./c_ex04.c">c_ex04.c</a> <a href="./f_ex04.f">f_ex04.f</a></h3> 
+<pre>
+This is a simple broadcast program in MPI
+</pre>
+
+<h3><a href="./c_ex05.c">c_ex05.c</a> <a href="./f_ex05.f">f_ex05.f</a></h3> 
+<pre>
+This program shows how to use MPI_Scatter and MPI_Gather
+Each processor gets different data from the root processor
+by way of mpi_scatter.  The data is summed and then sent back
+to the root processor using MPI_Gather.  The root processor
+then prints the global sum. 
+</pre>
+
+<h3><a href="./c_ex06.c">c_ex06.c</a> <a href="./f_ex06.f">f_ex06.f</a></h3> 
+<pre>
+This program shows how to use MPI_Scatter and MPI_Reduce
+Each processor gets different data from the root processor
+by way of mpi_scatter.  The data is summed and then sent back
+to the root processor using MPI_Reduce.  The root processor
+then prints the global sum. 
+</pre>
+
+<h3><a href="./c_ex07.c">c_ex07.c</a> <a href="./f_ex07.f">f_ex07.f</a></h3> 
+<pre>
+This program shows how to use MPI_Alltoall.  Each processor
+send/rec a different  random number to/from other processors.  
+</pre>
+
+<h3><a href="./c_ex08.c">c_ex08.c</a> <a href="./f_ex08.f">f_ex08.f</a></h3> 
+<pre>
+This program shows how to use MPI_Gatherv.  Each processor sends a
+different amount of data to the root processor.  We use MPI_Gather
+first to tell the root how much data is going to be sent.
+</pre>
+
+<h3><a href="./c_ex09.c">c_ex09.c</a> <a href="./f_ex09.f">f_ex09.f</a></h3> 
+<pre>
+This program shows how to use MPI_Alltoallv.  Each processor
+send/rec a different and random amount of data to/from other
+processors.  
+We use MPI_Alltoall to tell how much data is going to be sent.
+</pre>
+
+<h3><a href="./c_ex10.c">c_ex10.c</a> <a href="./f_ex10.f">f_ex10.f</a></h3> 
+<pre>
+This program is designed to show how to set up a new communicator. 
+We set up a communicator that includes all but one of the processors,
+The last processor is not part of the new communcator, TIMS_COMM_WORLD
+We use the routine MPI_Group_rank to find the rank within the new
+connunicator.  For the last processor the rank is MPI_UNDEFINED because
+it is not part of the communicator.  For this processor we call get_input
+</pre>
+<h3><a href="./c_ex11.c">c_ex11.c</a> <a href="./f_ex11.f">f_ex11.f</a></h3> 
+<pre>
+ Shows how to use MPI_Type_vector to send noncontiguous blocks of data
+ and MPI_Get_count and MPI_Get_elements to see the number of elements sent
+</pre>
+
+<h3><a href="./c_ex12.c">c_ex12.c</a> <a href="./f_ex12.f">f_ex12.f</a></h3> 
+<pre>
+Shows a short cut method to create a collection of communicators.
+All processors with the "same color" will be in the same communicator.
+In this case the color is either 0 or 1 for even or odd processors.
+Index gives rank in new communicator.
+</pre>
+
+<h3><a href="./c_ex13.c">c_ex13.c</a> <a href="./f_ex13.f">f_ex13.f</a></h3> 
+<pre>
+This program shows how to use MPI_Gatherv.  Each processor sends a
+different amount of data to the root processor.  We use MPI_Gather
+first to tell the root how much data is going to be sent.
+</pre>
+
+<p class="pin1"><a href="./run_script">run_script</a> Slurm run script</p>
+<p class="pin1"><a href="./makefile">makefile</a> Makefile for the examples</p>
+<p class="pin1"><a href="./hellof.f">hellof.f</a> Another hello world example</p>
+<p class="pin1"><a href="./helloc.c">helloc.c</a> Another hello world example</p>
+<p class="pin1"><a href="./ex10.in">ex10.in</a> Input for example 10</p>
+<p class="pin1"><a href="./workerwaspc.c">workerwaspc.c</a> Manager/worker paradigm example</p>
+<p class="pin1"><a href="./workerwaspf.f">workerwaspf.f</a> Manager/worker paradigm example</p>
+<p class="pin1"><a href="./testall2all.f90">testall2all.f90</a> An example of how to do MPIall2all</p>
+<p class="pin1"><a href="./mpi.tar">mpi.tar</a> Contains all of these examples</p>
+
+</body>
+</html>
+

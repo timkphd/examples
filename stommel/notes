@@ -1,0 +1,70 @@
+  st_00  serial stommel model with no mpi
+
+  st_01  mpi with 1d decomposition
+
+  st_02  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+
+  st_03  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+
+  st_04  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+Uses asyncronous communication with MPI_ISEND and MPI_IRECV.
+
+  st_05  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+Uses MPI_Sendrecv for communication.
+
+  st_06  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+Uses MPI data types with MPI_TYPE_CONTIGUOUS 
+and MPI_TYPE_VECTOR along with MPI_SEND and MPI_RECV
+
+  st_07  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+Uses Presistent communications with MPI_SEND_INIT and MPI_RECV_INIT
+
+  st.in  normal input file
+
+  st.short short running input file
+
+
+
+plotit:
+ This program will convert a Plot3D 
+ file into a pair of files suitable for use with GNUplot
+
+Usage:
+
+golden % plotit
+ This program will convert a Plot3D 
+ file into a pair of files suitable for use with GNUplot
+
+ Please Enter the Plot3D format input file name: out3d_000
+
+ Dimensions of input file: NI:   202 NJ:   202 NK:     1
+0   5.08452e+07
+
+ You should now be able to execute the command:
+                "gnuplot gnuplot_commandfile"
+ to get a 2D XY contour plot and postscript printable output.
+
+
+ Normal Termination.
+golden %
+golden %
+golden % gnuplot gnuplot_commandfile
+
+generates a file plotfile.ps which can be seen which ghostview.
+
+
+script files:
+makefile
+runf and runc  are pbs files
+

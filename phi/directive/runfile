@@ -1,0 +1,19 @@
+#!/bin/sh
+#SBATCH --time=10
+#SBATCH --nodes=1
+#SBATCH -n 20
+#SBATCH --export=ALL
+#SBATCH -p phi
+#SBATCH --overcommit
+cd $SLURM_SUBMIT_DIR
+echo $SLURM_JOB_NODELIST
+cat $0 > $SLURM_JOB_ID.script
+#printenv
+
+srun hostname | sort -u > hosts.$SLURM_JOB_ID
+
+#export LD_LIBRARY_PATH=/opt/intel/mic/coi/host-linux-release/lib:$LD_LIBRARY_PATH 
+export LD_LIBRARY_PATH=/opt/intel/2016/compilers_and_libraries_2016.1.150/linux/compiler/lib/mic:$LD_LIBRARY_PATH 
+echo 1234 > k.in
+./dooff < k.in
+

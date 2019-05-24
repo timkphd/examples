@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH --job-name="atest"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=00:02:00
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+#SBATCH --export=ALL
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=joeuser@mines.edu
+#----------------------
+JOBID=`echo $SLURM_JOB_ID`
+cd $SLURM_SUBMIT_DIR
+
+srun -n 8 ./c_ex00 > my_out.$JOBID

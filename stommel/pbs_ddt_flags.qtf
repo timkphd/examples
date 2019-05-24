@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Name: PBS
+#
+# submit: qsub
+# display: qstat
+# job regexp: our job (\d+) 
+# cancel: qdel JOB_ID_TAG
+# use num_nodes: yes
+# 
+# WALL_CLOCK_LIMIT_TAG: {type=text,label="Wall Clock Limit",default="00:30:00",mask="09:09:09"}
+# QUEUE_TAG: {type=text,label="Queue",default=debug}
+
+# DDT will generate a submission script from this by replacing these tags:
+#        TAG NAME         |         DESCRIPTION           |        EXAMPLE
+# ---------------------------------------------------------------------------
+# PROGRAM_TAG             | target path and filename      | /users/ned/a.out
+# PROGRAM_ARGUMENTS_TAG   | arguments to target program   | -myarg myval
+# NUM_PROCS_TAG           | total number of processes     | 16
+# NUM_NODES_TAG           | number of compute nodes       | 8
+# PROCS_PER_NODE_TAG      | processes per node            | 2
+# NUM_THREADS_TAG         | OpenMP threads per proc       | 4
+# DDT_DEBUGGER_ARGUMENTS_TAG | arguments to be passed to ddt-debugger
+# MPIRUN_TAG              | name of mpirun executable     | mpirun
+# AUTO_MPI_ARGUMENTS_TAG  | mpirun arguments              | -np 4
+# EXTRA_MPI_ARGUMENTS_TAG | extra mpirun arguments        | -x FAST=1
+#
+# Note that NUM_NODES_TAG and PROCS_PER_NODE_TAG are only valid if DDT is
+# set to 'use NUM_NODES' in the queue options. If not, they will be replaced
+# with the number of processes and 1 respectively.
+
+#PBS -l walltime=WALL_CLOCK_LIMIT_TAG,nodes=NUM_NODES_TAG:ppn=PROCS_PER_NODE_TAG
+#PBS -V
+#PBS -o PROGRAM_TAG-ddt.output
+#PBS -e PROGRAM_TAG-ddt.error
+
+cd $PBS_O_WORKDIR
+#sort -u  $PBS_NODEFILE > ~/.ddt/nodes
+printenv > ~/myenv
+which mpiexec >> myenv
+which mpirun >> myenv
+
+MPIRUN_TAG AUTO_MPI_ARGUMENTS_TAG EXTRA_MPI_ARGUMENTS_TAG DDTPATH_TAG/bin/ddt-debugger DDT_DEBUGGER_ARGUMENTS_TAG PROGRAM_TAG PROGRAM_ARGUMENTS_TAG
+#/opt/lib/openmpi/1.4.2/intel/11.1db/bin/mpiexec AUTO_MPI_ARGUMENTS_TAG EXTRA_MPI_ARGUMENTS_TAG DDTPATH_TAG/bin/ddt-debugger DDT_DEBUGGER_ARGUMENTS_TAG PROGRAM_TAG PROGRAM_ARGUMENTS_TAG
+

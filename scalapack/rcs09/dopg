@@ -1,0 +1,44 @@
+rm results_pg
+cp true source.dat
+./airfoil.py 50
+./fourd.pg >> results_pg
+./airfoil.py 100
+./fourd.pg >> results_pg
+./airfoil.py 150
+./fourd.pg >> results_pg
+./airfoil.py 200
+./fourd.pg >> results_pg
+./airfoil.py 250
+./fourd.pg >> results_pg
+./airfoil.py 300
+./fourd.pg >> results_pg
+./airfoil.py 350
+./fourd.pg >> results_pg
+./airfoil.py 400
+./fourd.pg >> results_pg
+./airfoil.py 450
+./fourd.pg >> results_pg
+./airfoil.py 500
+./fourd.pg >> results_pg
+
+cp false source.dat
+./airfoil.py 50
+./fourd.pg >> results_pg
+./airfoil.py 100
+./fourd.pg >> results_pg
+./airfoil.py 150
+./fourd.pg >> results_pg
+./airfoil.py 200
+./fourd.pg >> results_pg
+./airfoil.py 250
+./fourd.pg >> results_pg
+./airfoil.py 300
+./fourd.pg >> results_pg
+./airfoil.py 350
+./fourd.pg >> results_pg
+./airfoil.py 400
+./fourd.pg >> results_pg
+./airfoil.py 450
+./fourd.pg >> results_pg
+./airfoil.py 500
+./fourd.pg >> results_pg

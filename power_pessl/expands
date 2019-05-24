@@ -1,0 +1,122 @@
+#! /usr/bin/env python
+import os
+import sys
+def do_help():
+	print sys.argv[0]
+	print "     Options:"
+	print "        Without arguments"
+	print "           If SLURM_NODELIST is defined"
+	print "           use it to find the node list as"
+	print "           described below."
+	print "      "
+	print "           Note: SLURM_NODELIST is defined"
+	print "           by slurm when running a parallel"
+        print "           job so this command in realy only"
+        print "           inside a batch script or when" 
+        print "           running interactive parallel jobs"
+	print "      "
+	print "        -h"
+	print "           Show this help"
+	print "      "
+	print "     Usage:"
+	print "        Takes an optional single command line argument,"
+	print "        the environmental variable SLURM_NODELIST"
+	print "        defined within a slurm job." 
+	print "      "
+	print "        SLURM_NODELIST is a compressed list of nodes"
+	print "        assigned to a job.  This command returns an expanded"
+	print "        list similar to what is defined in the PBS_NODES_FILE"
+	print "        under pbs."
+	print "      "
+	print "     Example:"
+	print "[joeuser@mio001 utility]$ printenv SLURM_NODELIST"
+	print "compute[004-005]"
+	print "[joeuser@mio001 utility]$ ",sys.argv[0]," $SLURM_NODELIST"
+	print "compute004"
+	print "compute004"
+	print "compute004"
+	print "compute004"
+	print "compute005"
+	print "compute005"
+	print "compute005"
+	print "compute005"
+	print "      "
+	print "     Author:"
+	print "        Timothy H. Kaiser, Ph.D."
+	print "        February 2014"
+	exit()
+
+def getnlist(nlist):
+	nlist=nlist.replace("]","")
+	nlist=nlist.split("[")
+	if len(nlist) > 1 :
+			head=nlist[0]
+			tail=nlist[1]
+	else:
+			return nlist
+	nlist=nlist[1]
+	tail=tail.split(",")
+	nlist=[]
+	for t in tail:
+		if t.find("-") < 0:
+			nlist.append(head+t)
+		else:
+			sub=t.split("-")
+			if len(sub) > 1 :
+				start=int(sub[0])
+				end=int(sub[1])+1
+				for s in range(start,end):
+					k="%3.3d" % (s)
+					k=head+k
+					nlist.append(k)
+	return nlist
+
+def getnlist_org(nlist):
+        nlist=nlist.split("[")
+        if len(nlist) > 1 :
+                head=nlist[0]
+                tail=nlist[1]
+        else:
+                return nlist
+        tail=tail.split(",")
+        nlist=[]
+        for t in tail:
+                t=t.replace("]","")
+                sub=t.split("-")
+                if len(sub) > 1 :
+                        start=int(sub[0])
+                        end=int(sub[1])+1
+                        for s in range(start,end):
+                                k="%3.3d" % (s)
+                                k=head+k
+                                nlist.append(k)
+        return nlist
+
+def getscores(node):
+        command='scontrol show nodes -o A_NODE | sed "s/.*CPUTot=//" | sed "s/CPULoad=.*//"'
+        command=command.replace("A_NODE",node)
+        cf=os.popen(command,"r")
+        cflines=cf.readline()
+        return(int(cflines))
+
+if len(sys.argv) < 2:
+	mylist=os.getenv("SLURM_NODELIST","")
+	if (len(mylist) == 0):
+		do_help()
+	else:
+		nodes=getnlist(mylist)
+else:
+	if sys.argv[1] == "-help" or sys.argv[1] == "--help" or sys.argv[1] == "-h" or sys.argv[1] == "--h" :
+		do_help()
+	nodes=getnlist(sys.argv[1])
+expand=[]
+repeat=os.getenv("SLURM_NTASKS_PER_NODE","")
+repeat=int(repeat)
+for n in nodes:
+#	nc=getscores(n)
+	nc=repeat
+	for i in range(0,nc):
+		expand.append(n)
+for x in expand:
+	print x
+

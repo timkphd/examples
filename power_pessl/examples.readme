@@ -1,0 +1,619 @@
+!***********************************************************************
+!*    LICENSED MATERIALS - PROPERTY OF IBM                             *
+!*    "RESTRICTED MATERIALS OF IBM"                                    *
+!*                                                                     *
+!*    5765-C41                                                         *
+!*    (C) COPYRIGHT IBM CORP. 1995, 2005. ALL RIGHTS RESERVED.         *
+!*                                                                     *
+!*    U.S. GOVERNMENT USERS RESTRICTED RIGHTS - USE, DUPLICATION       *
+!*    OR DISCLOSURE RESTRICTED BY GSA ADP SCHEDULE CONTRACT WITH       *
+!*    IBM CORP.                                                        *
+!***********************************************************************
+The example routines are divided into two sections.  The first
+are samples of common message passing routines on distributed data.
+The second are samples of using the sparse matrix solver.
+
+CONTENTS
+1 DISTRIBUTED DATA
+2 SPARSE MATRIX
+2.1 PDE Finite Difference pde77 and pde90
+2.2 NIST Sample using Harwell-Boeing exchange format data
+
+1 DISTRIBUTED DATA
+
+A fortran 90 example source code library of utility routines is provided
+as an example for users.  This example subroutine library gives the
+user a simplified interface to some very commonly used message
+passing routines including:
+
+   library initializion
+    initutils - blacs initialization and initialization of library
+                variables. This must be the first routine called
+                in order to use the remainder of the library.
+    exitutils - performs a blacs grid exit and marks the library as
+                unitialized.
+                
+   scatter operation
+    scatter - scatter a matrix on a single node to a distributed matrix
+
+   gather operation
+    gather - gather a matrix onto a single node from a distributed matrix
+
+   nearest neighbor communication
+    sendnorthborder - sends top row of each block to north processor
+    sendwestborder - sends first column of each block to west processor
+    sendsouthhborder - sends last row of each block to south processor
+    sendeastborder - sends last column of each block to east processor
+    rcvnorthborder - receives last row of each block from north processor
+    rcvwestborder - receives last column of each block from west processor
+    rcvsouthhborder - receives top row of each block from south processor
+    rcveastborder - receives first column of each block from east processor
+
+   array creation and descriptor vector initialization
+    create_array - allocates memory for array an initializes array descriptor
+
+   global to local mapping routines
+    g2l - creates global to local index arrays
+    l2g - creates local to global index arrays
+    number_row_blocks - returns number of local row blocks in an array
+    number_col_blocks - returns number of local column blocks in an array
+    last_row_block_size - returns size of last local row block in an array
+    last_col_block_size - returns size of last local column block an in array
+
+These routines simplify a number of common tasks within a message passing
+program, provided the library is first initialized with a call to
+initutils. The library is structured as a module with generic interfaces
+to all of the routines above, allowing their use with both short or 
+long precision real or complex data. Two example programs, image.f and
+pdgexmp.f also use some of these routines and are included as examples
+for setting up real to complex Fourier transforms and linear equation solvers.
+
+
+To use the library, code the statement
+
+      use putilities
+
+as the first line after the program or subroutine statement. The initutils
+must be called before any other sample library routine can be used.
+A very simple program, simple.f, is provided as and example for setting
+up distributed data.
+
+1.1 Running
+
+The diffusion code is self contained.  A sample script to run
+it is supplied, run.script.
+
+1.2 Description of source
+
+The following routines (with source code) are included:
+
+         subroutine initutils(status,nprs,npcs)
+         integer,intent(out)             :: status
+         integer, optional,intent(inout) :: nprs, npcs
+!
+! This routine initializes blacs with the processor configuration
+! nearest to a square grid if the optional arguments are not given.
+! If nprs or npcs are provided, they are used to determine the 
+! processor shape.  If both are provided, their product must be equal
+! to the number of processors in the current job.
+!
+!        Subroutine arguments:
+!          
+!          status :: integer, required, output
+!                    Returns initialization status
+!                      0: properly initialized
+!                      1: initialization failed
+!
+!          nprs ::   integer, optional, input 
+!                    Number of row processor requested
+!
+!          npcs ::   integer, optional, input 
+!                    Number of column processor requested
+!
+!        Comments:
+!          This routine must be called before any other routine in 
+!          this sample library can be used. A user is able to create
+!          another processor grid, but cannot use initutils to do
+!          so. Calling this routine twice will cause the first grid
+!          to be exited
+!
+__________________________________________________________________________ 
+
+       subroutine exitutils
+!
+!      This subroutine exits from the current blacs grid and
+!      marks the utilities as uninitialized
+!
+__________________________________________________________________________ 
+
+
+
+       integer function p_context()
+!
+!      This function returns the blacs context for these utilities.
+!
+__________________________________________________________________________ 
+
+       subroutine g2l(desc,il,jl)
+       integer           desc(:), il(:), jl(:)
+!
+!
+!
+!      This function returns the local indices corresponding to the
+!      global indices on the processor where it is called
+!
+!        Subroutine arguments:
+!
+!        desc :: integer array, input, required
+!           The array descriptor for the array to
+!           which the indices correspond.
+!
+!        il  ::  integer array, output, required
+!        jl  ::  integer array, output, required
+!
+!            The index (il(i), jl(j)) in the local array, corresponds to
+!            the index (i,j) in the global array. If the global array
+!            element is not on the current processor, il(i)  or jl(j) will
+!            be set to -1.
+!
+!
+__________________________________________________________________________ 
+
+       subroutine l2g(desc,ig,jg)
+       integer           desc(:), ig(:), jg(:)
+!
+!      This function returns the global indices corresponding to the
+!      local indices on the processor where it is called
+!
+!        Subroutine arguments:
+!
+!        desc :: integer array, input, required
+!           The array descriptor for the array to
+!           which the indices correspond.
+!
+!        ig  ::  integer array, output, required
+!        jg  ::  integer array, output, required
+!
+!            The index (i,j) in the local array, corresponds to
+!            the index (ig(i),jg(j)) in the global array. 
+!
+!
+__________________________________________________________________________ 
+
+      integer function number_row_blocks(desc,prow)
+       integer :: desc(:)
+       integer, optional :: prow
+!
+!      This subroutine returns the number of local row
+!      blocks contained on the local part of a distributed matrix
+!
+!        Subroutine arguments:
+!
+!        desc :: integer array, input, required
+!           The array descriptor for the array to
+!           which the number of blocks applies.
+! 
+!        prow :: integer, input, optional
+!           The processor row containing the local array. Defaults to
+!           the current row processor
+!
+!
+
+      integer function number_col_blocks(desc,pcol)
+       integer :: desc(:)
+       integer, optional :: pcol
+!
+!      This subroutine returns the number of local column
+!      blocks contained on the local part of a distributed matrix
+!
+!        Subroutine arguments:
+!
+!        desc :: integer array, input, required
+!           The array descriptor for the array to
+!           which the number of blocks applies.
+!
+!        pcol :: integer, input, optional
+!           The processor column containing the local array. Defaults to
+!           the current column processor.
+!
+__________________________________________________________________________ 
+
+      integer function last_row_block_size(desc,prow)
+        integer,           intent(in) :: desc(:)
+        integer, optional, intent(in) :: prow
+!
+!     This subroutine returns the size of the last row block for
+!     the local portion of a distributed array.  All other blocks
+!     have the size desc(3). Since last block will in general be 
+!     incomplete, its size will be between 1 and desc(3).
+!
+!        Subroutine arguments:
+!
+!        desc :: integer array, input, required
+!           The array descriptor for the array to
+!           which the last block size applies.
+!
+!        prow :: integer, input, optional
+!           the processor row containing the local array. Defaults to
+!           the current row processor
+!
+__________________________________________________________________________ 
+
+      integer function last_col_block_size(desc,pcol)
+        integer,           intent(in) :: desc(:)
+        integer, optional, intent(in) :: pcol
+!
+!     This subroutine returns the size of the last column block for
+!     the local portion of a distributed array.  All other blocks
+!     have the size desc(4). Since last block will in general be
+!     incomplete, its size will be between 1 and desc(4).
+!
+!        Subroutine arguments:
+!
+!        desc :: integer array, input, required
+!           The array descriptor for the array to
+!           which the last block size applies.
+!
+!        pcol :: integer, input, optional
+!           the processor column containing the local array. Defaults to
+!           the current column processor
+!
+__________________________________________________________________________ 
+
+         subroutine broadcast(a,trow,tcol)
+!
+!   This subroutine broadcasts a scalar or an array from one
+!   processor to all other processors
+!
+!        Subroutine arguments:
+!
+!          a :: input or output, integer, real or complex scalar or array
+!            This scalar or array sent by one processor and recieved
+!            by all others
+!
+!          trow :: input, integer
+!            Row processor number of sending processor
+!
+!          tcol :: input, integer
+!            Column processor number of sending processor
+!
+        Subroutine array_create(array,desc,m,n)
+        Subroutine array_create(array,desc,m,n,block_type,mblock,nblock,
+                                row_source, col_source)
+!
+!   This subroutine dynamically allocates space for the local portion
+!   of a distributed matrix and also initializes the corresponding
+!   array descriptor. Only the first four arguments are required, with the 
+!   rest being optional.
+!
+!        Subroutine arguments:
+!
+!          array :: output, required, fortran 90 pointer to array
+!            The pointer for this array (real or complex) must be
+!            unallocated upon entry and will be initialized to contain
+!            the exact number of local rows and columns required for 
+!            the local portion of a distributed matrix.
+!           
+!          desc :: output, required, integer array 
+!            An array containing at least 8 elements is initialized to 
+!            correspond to the distributed matrix.
+!
+!          m    :: input, required, integer
+!            The number of rows in the global matrix
+!       
+!          n    :: input, required, integer
+!            The number of columns in the global matrix
+!       
+!          block_type :: integer, input, optional
+!            Array type, currently either block cyclic or block are
+!            supported and will default to block cyclic. The 
+!            putilities module includes the following parameters:
+!               CREATE_BLOCK = 1
+!               CREATE_CYCLIC = 2
+!
+!          mblock, nblock :: integer, input optional
+!            For block cyclic distributions these are the row and
+!            column block sizes, defaults to 70 for each one.
+!
+!          row_source, col_source :: integer, input optional
+!            The column and row process number of the first block
+!            of the distributed array. Defaults to 0,0.
+!
+!
+__________________________________________________________________________ 
+
+        subroutine gather(a,a_d,a_glob,trow,tcol)
+!
+!       This subroutine will take a distibuted matrix, a, and gather
+!       all of the pieces of the array into a single array on a 
+!       target processor.
+!
+!        Subroutine arguments:
+!
+!          a :: real or complex array, input, required
+!            a is the distributed array to be gathered.
+!
+!         a_d :: integer, input,required
+!            a_d is the descriptor array corresponding to a.
+!
+!         a_glob :: output, required, real or complex array
+!            a_glob is an array with dimension (a_d(1),a_d(2))
+!            containing all the pieces of a on output. The array
+!            need only be nonzero size on the processor (trow,tcol)
+!            where it is gathered.
+!
+!         trow  :: input, required, integer
+!            Processor row where array is to be gathered.
+!
+!         tcol  :: input, required, integer
+!            Processor column where array is to be gathered.
+!
+__________________________________________________________________________ 
+
+        subroutine scatter(a,a_d,a_glob,trow,tcol)
+!
+!       This subroutine will take a matrix, a_glob, on processor
+!       (trow,tcol) and distribute it over all the participating
+!       processors.
+!
+!        Subroutine arguments:
+!
+!          a :: real or complex array, output, required
+!            a is the distributed array into which the array a_glob is
+!            scattered.
+!
+!         a_d :: integer, input,required
+!            a_d is the descriptor array corresponding to a.
+!
+!         a_glob :: input, required, real or complex array
+!            a_glob is the array with dimension (a_d(1),a_d(2)) 
+!            containing all the pieces of a on input. The array
+!            need only be nonzero size on the processor (trow,tcol)
+!            from which it is scattered.
+!
+!         trow  :: input, required, integer
+!            Processor row source of scattering matrix.
+!
+!         tcol  :: input, required, integer
+!            Processor column source of scattering matrix.
+!
+__________________________________________________________________________ 
+
+
+       subroutine sendeastborder(a,desca,send_buffer)
+       subroutine rcveastborder(a,desca,rcv_buffer)
+       subroutine sendwestborder(a,desca,send_buffer)
+       subroutine rcvwestborder(a,desca,rcv_buffer)
+       subroutine sendnorthborder(a,desca,send_buffer)
+       subroutine rcvnorthborder(a,desca,rcv_buffer)
+       subroutine sendsouthborder(a,desca,send_buffer)
+       subroutine rcvsouthborder(a,desca,rcv_buffer)
+!
+!    arguments:
+!
+!      a:     real or complex input array containing distributed matrix.
+!
+!      desca: integer array descriptor corresponding to a.
+!
+!      send_buffer: Real or complex matrix of the same type as a. 
+!           For north-south communication, it must have at least as 
+!           many columns as a and have at least as many rows as the 
+!           number of row blocks that the matrix a contains on the 
+!           receiving processor. For east-west communication, it
+!           must have at least as many rows as a and have at
+!           least as many columns as the number of column blocks that
+!           the matrix a contains on the receiving processor
+
+!      rcv_buffer:  Real or complex matrix of the same type as a.
+!           For north-south communication, it must have at least as
+!           many columns as a and have at least as many rows at the
+!           of row blocks that the matrix a contains on the current 
+!           processor.  For east-west communication, it must have at 
+!           as many rows as a and have at least as many columns as the 
+!           number of column blocks that the matrix a contains on the
+!           current processor
+!
+!
+!  These routines send and receive the border blocks to neighboring
+!  processors. Sending
+!  or receiving north and south will send or receive the first or last
+!  row of each block from the neighboring row processor. Sending or
+!  receiving east and west will send or receive the first or last column
+!  of each block from the neighboring column processor. The send buffer
+!  is buffer used to send to the neighboring processor and has rows
+!  or columns of data copied from the matix a. The receive buffer contains the
+!  data sent or received from the neighboring processor.  A few examples
+!  are given below
+!
+!               Global matrix
+!  |------------------------------------------------------------|
+!  |       [A1]       |   [A2]      |   [A3]      |   [A4]      |
+!  |     block 0,0    | block 0,1   | block 0,2   | block 0,3   |
+!  |      on 0, 0     |  on 0,1     |  on 0,0     |  on 0,1     |
+!  |------------------|-------------|-------------|-------------|
+!  |       [B1]       |   [B2]      |   [B3]      |   [B4]      |
+!  |     block 1,0    | block 1,1   | block 1,2   | block 1,3   |
+!  |      on 1,0      |  on 1,1     |  on 1,0     |  on 1,1     |
+!  |------------------|-------------|-------------|-------------|
+!  |       [C1]       |   [C2]      |   [C3]      |   [C4]      |
+!  |     block 2, 0   | block 2,1   | block 2,2   | block 2,3   |
+!  |     on 0, 0      |  on 0,1     |  on 0,0     |  on 0,1     |
+!  |------------------|-------------|-------------|-------------|
+!  |       [D1]       |   [D2]      |   [D3]      |   [D4]      |
+!  |     block 3, 0   | block 3,1   |  block 3,2  |  block 3,3  |
+!  |     on 1, 0      |  on 1,1     |  on 1,0     |  on 1,1     |
+!  |------------------|-------------|-------------|-------------|
+!  |       [E1]       |   [E2]      |   [E3]      |   [E4]      |
+!  |     block 4, 0   | block 4,1   | block 4,2   | block 4,3   |
+!  |     on 0, 0      |  on 0,1     |  on 0,0     |  on 0,1     |
+!  |                  |             |             |             |
+!  |------------------------------------------------------------|
+!
+!   Sendnorth executed on processor (0,0) will create a
+!   send array containing two rows as follows:
+!     row 1: the top rows of blocks C1 and C3
+!     row 2: the top rows of blocks E1 and E3
+!   This matrix will be then sent to  processor (1,0).
+!
+!   Sendnorth executed on processor (1,1) will create a
+!   send array containing three rows as follows:
+!     row 1: the top rows of blocks B2 and B4
+!     row 2: the top rows of blocks D2 and D4
+!     row 3: a row of zeros
+!   This matrix will be then sent to  processor (0,1).
+!
+!   Sendeast executed on processor (0,0) will create a
+!   send array containing two columns as follows:
+!     row 1: the last columns of blocks A1, C1 and E1
+!     row 2: the last columns of blocks A3, C3 and E3
+!   This matrix will be then sent to  processor (0,1)
+!
+!   Sendeast executed on processor (1,1) will create a
+!   send array containing two columns as follows:
+!     row 1: a column of zeros
+!     row 2: the last columns of blocks B2 and D2
+!   This matrix will be then sent to  processor (1,0)
+
+
+2 SPARSE MATRIX
+
+2.1 PDE Finite Difference pde77 and pde90
+
+The sample program showing how to use the Sparse Matrix
+iterative solver is given in Fortran 77 and 90 to solve
+a Partial Differential Equation.
+
+2.1.1  Description
+
+This sample program shows how to build and solve a sparse linear
+system using the subroutines in the sparse section of Parallel
+ESSL. The matrix and RHS are generated
+in  parallel, so that there is no serial bottleneck.
+
+The program solves a linear system based on the partial differential equation
+
+  b1 dd(u)  b2 dd(u)    b3 dd(u)    a1 d(u)   a2 d(u)  a3 d(u)
+ -  ------ -  ------ -  ------ -  -----  -  ------  -  ------ + a4 u
+     dxdx     dydy       dzdz        dx       dy         dz
+
+ = 0
+
+with  Dirichlet boundary conditions on the unit cube
+
+   0<=x,y,z<=1
+
+The equation is discretized with finite differences and uniform stepsize;
+the resulting  discrete  equation is
+
+( u(x,y,z)(2b1+2b2+2b3+a1+a2+a3)+u(x-1,y,z)(-b1-a1)+u(x,y-1,z)(-b2-a2)+
+ + u(x,y,z-1)(-b3-a3)-u(x+1,y,z)b1-u(x,y+1,z)b2-u(x,y,z+1)b3)*(1/h**2)
+
+ + u(x,y,z-1)(-b3-a3)-u(x+1,y,z)b1-u(x,y+1,z)b2-u(x,y,z+1)b3)*(1/h**2)
+
+
+In this sample program the index space of the discretized
+computational domain is first numbered sequentially in a standard way,
+then the corresponding vector is distributed according to an HPF BLOCK
+distribution directive.
+
+Boundary conditions are set in a very simple way, by adding in
+correspondence of boundary points equations of the form
+
+  Xj = Bj
+
+
+2.1.2  Running
+
+
+  Usage: pde90 methd prec dim [istopc itmax itrace]
+    or 
+  Usage: pde77 methd prec dim [istopc itmax itrace]
+
+  Where:
+      methd:    CGSTAB TFQMR CGS
+      prec :    ILU DIAGSC NONE
+      dim       number of points along each axis
+                the size of the resulting linear 
+                system is dim**3
+      istopc    Stopping criterion 1 2 or 3  [1]  
+      itmax     Maximum number of iterations [500]
+      itrace         0  (no tracing, default) or 
+                     >= 0 do tracing every ITRACE
+                     iterations 
+
+2.2 NIST Sample using Harwell-Boeing exchange format data
+
+The sample program showing how to use the Sparse Matrix
+iterative solver is given in Fortran 77 and 90 to solve
+a Partial Differential Equation.
+
+2.2.1  Description
+
+
+This sample program shows how to build and solve a sparse linear
+system using the subroutines in the sparse section of Parallel
+ESSL; the matrices are read from file using the Harwell-Boeing
+exchange format. Details on the format and sample matrices are
+available from
+
+ http://math.nist.gov/MatrixMarket/
+
+The user can choose between different data distribution strategies.
+These are equivalents to the HPF BLOCK and  CYCLIC(N) distributions;
+they do not take into account the sparsity pattern of the input
+matrix.
+
+From the command line, you can specify a file containing the input
+matrix, an iterative method and a preconditioner, and a data 
+distribution to be used.
+
+This sample program uses the following subroutines:
+
+-  One of the following data dirtribution subroutines:
+   -  PART_BLOCK, which implemsnts a block data distribution
+   -  PARTBCYC, which implements a block cyclic data distribution
+   -  PARTRAND, which implements a random data distribution
+
+-  READ_MAT, a serial module, reads a matrix in Harwell-Boeing format
+   from a file
+
+-  MAT_DIST, a utility module, scatters a sparse matrix across a process grid
+   according to a user-specified data distribution
+
+-  DESYM, a utility subroutine, takes a matrix stored in symmetric format
+   (that is, stores only the upper or lower triangle) and converts it into
+   full storage format, assuming storage-by-rows representation.
+
+NOTE:  The performance of iterative methods depends heavily on the choice
+   of data distribution.  The random data distribution is usually not a 
+   good choice.  It is provided to serve as a template to help you
+   implement a graph partitioning data distribution, which you can
+   do by substituting the call to the random number generator in the
+   PARTRAND initializaiton routine with a call to a graph partitioning
+   package.  The data distributions based on graph partitioning and/or
+   physical considerations usually give the best performance; in general,
+   experimentation is required to determine the best data distribution
+   for your particular application.
+
+
+2.2.2  Running
+
+  Use: hb_sample mtrx_file methd prec [ptype itmax istopc itrace]
+  Where:
+      mtrx_file      is stored in HB format
+      methd          may be: CGSTAB CGS TFQMR
+      prec           may be: ILU DIAGSC NONE
+      ptype          Partition strategy default 0
+                    >0: CYCLIC(ptype)   
+                     0: BLOCK partition 
+                    -1: Random partition  
+      itmax          Max iterations [500]        
+      istopc         Stopping criterion [1]      
+      itrace         0  (no tracing, default) or 
+                     >= 0 do tracing every ITRACE
+                     iterations 
+
+A matrix in the Harwell-Boeing format is supplied for
+testing, mat.example.  It is the matrix from Example 1 
+(Fortran 90 and Fortran 77) in Appendix "Sample Programs
+for the Fortran 90 and Fortran 77 Sparse Subroutines."

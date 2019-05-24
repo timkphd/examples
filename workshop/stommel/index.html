@@ -1,0 +1,113 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>Finite difference code examples</title>
+	<meta name="generator" content="BBEdit 9.3">
+</head>
+<body>
+
+	<h2>Finite difference code examples</h2>
+
+<h3>Version Description:</h3>
+<pre>
+  <b>st_00</b>  serial stommel model with no mpi
+
+  <b>st_01</b>  mpi with 1d decomposition
+
+  <b>st_02</b>  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+
+  <b>st_03</b>  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+
+  <b>st_04</b>  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+Uses asyncronous communication with MPI_ISEND and MPI_IRECV.
+
+  <b>st_05</b>  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+Uses MPI_Sendrecv for communication.
+
+  <b>st_06</b>  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+Uses MPI data types with MPI_TYPE_CONTIGUOUS 
+and MPI_TYPE_VECTOR along with MPI_SEND and MPI_RECV
+
+  <b>st_07</b>  2d decomposition using communcator
+routines MPI_COMM_SPLIT
+processor 0 outputs the grid uses MPI_Gatherv
+Uses Presistent communications with MPI_SEND_INIT and MPI_RECV_INIT
+</pre>
+<h3>Other files:</h3>
+<dl>
+	<dt>st.in</dt>
+		<dd>normal input file</dd>
+
+	<dt>st.short</dt>
+		<dd>short running input file</dd>
+
+	<dt>makefile </dt>
+		<dd>makefile</dd>
+
+	<dt>run_script</dt>
+		<dd>slurm run scipt</dd>
+
+	<dt>interp.py, surface.py, plotit.c</dt>
+		<dd>ploting programs</dd>
+
+	<dt>stommel.tar</dt>
+		<dd>contains all of the examples</dd>
+</dl>
+
+<table>
+<tr>
+<td>
+	<table>
+
+    <tr><td>       644</td>     <td> Feb 5 14:22</td>     <td><a href="makefile">makefile</a></td></tr>
+    <tr><td>      1765</td>     <td> Feb 5 14:22</td>     <td><a href="notes">notes</a></td></tr>
+    <tr><td>      1825</td>     <td> Feb 8 10:13</td>     <td><a href="interp.py">interp.py</a></td></tr>
+    <tr><td>      1042</td>     <td> Feb 8 10:13</td>     <td><a href="surface.py">surface.py</a></td></tr>
+    <tr><td>      4326</td>     <td> Feb 5 14:22</td>     <td><a href="plotit.c">plotit.c</a></td></tr>
+    <tr><td>       564</td>     <td> Feb 5 14:22</td>     <td><a href="run_script">run_script</a></td></tr>
+    <tr><td>      5896</td>     <td> Feb 5 14:22</td>     <td><a href="stc_00.c">stc_00.c</a></td></tr>
+    <tr><td>      9408</td>     <td> Feb 5 14:22</td>     <td><a href="stc_01.c">stc_01.c</a></td></tr>
+    <tr><td>     12119</td>     <td> Feb 5 14:22</td>     <td><a href="stc_02.c">stc_02.c</a></td></tr>
+    <tr><td>     13442</td>     <td> Feb 5 14:22</td>     <td><a href="stc_03.c">stc_03.c</a></td></tr>
+    <tr><td>     13788</td>     <td> Feb 5 14:22</td>     <td><a href="stc_04.c">stc_04.c</a></td></tr>
+    <tr><td>     13266</td>     <td> Feb 5 14:22</td>     <td><a href="stc_05.c">stc_05.c</a></td></tr>
+    <tr><td>     15616</td>     <td> Feb 5 14:22</td>     <td><a href="stc_06.c">stc_06.c</a></td></tr>
+    <tr><td>     14116</td>     <td> Feb 5 14:22</td>     <td><a href="stc_07.c">stc_07.c</a></td></tr>
+    <tr><td>      7783</td>     <td> Feb 5 14:22</td>     <td><a href="stf_00.f90">stf_00.f90</a></td></tr>
+    <tr><td>     12898</td>     <td> Feb 5 14:22</td>     <td><a href="stf_01.f90">stf_01.f90</a></td></tr>
+    <tr><td>     16039</td>     <td> Feb 5 14:22</td>     <td><a href="stf_02.f90">stf_02.f90</a></td></tr>
+    <tr><td>     17680</td>     <td> Feb 5 14:22</td>     <td><a href="stf_03.f90">stf_03.f90</a></td></tr>
+    <tr><td>     18262</td>     <td> Feb 5 14:22</td>     <td><a href="stf_04.f90">stf_04.f90</a></td></tr>
+    <tr><td>     16823</td>     <td> Feb 5 14:22</td>     <td><a href="stf_05.f90">stf_05.f90</a></td></tr>
+    <tr><td>     17576</td>     <td> Feb 5 14:22</td>     <td><a href="stf_06.f90">stf_06.f90</a></td></tr>
+    <tr><td>     18020</td>     <td> Feb 5 14:22</td>     <td><a href="stf_07.f90">stf_07.f90</a></td></tr>
+    <tr><td>        54</td>     <td> Feb 5 14:22</td>     <td><a href="st.in">st.in</a></td></tr>
+    <tr><td>    266240</td>     <td> Feb 5 14:24</td>     <td><a href="stommel.tar">stommel.tar</a></td></tr>
+    <tr><td>        50</td>     <td> Feb 5 14:22</td>     <td><a href="st.short">st.short</a></td></tr>
+
+</table>
+</td>
+<td>
+<table>
+<tr><th>Output from stf_00.f90/surface.py and stf_00.f90/interp.py</th></tr>
+<tr><td><img height="300" src="out_surface.png" alt=""></td></tr>
+<tr><td><img height="300" src="out_interp.png" alt=""></td></tr>
+
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+

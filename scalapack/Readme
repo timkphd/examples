@@ -1,0 +1,40 @@
+This page gives a number of Intel Math Kernel Library (MKL)
+	examples, in particular calls to routines that are part of
+	the SCALAPACK group of routines. There is a tar file that can
+	be downloaded to RA that contains the source for the various
+	programs, most in both C and Fortran, a Makefile, and a pbs
+	script. The source for the examples, the Makefile and an run
+	script can extracted from the tar file. You then do a make
+	and submit the script to RA to run the example.
+
+The first example is psgesv.f90. The original source was
+	downloaded from
+	http://acts.nersc.gov/scalapack/hands-on/example4.html but it
+	was modified to be free format compliant. This example is
+	designed to run using 6 processing cores.
+
+The second example is ex1.f90 and ex1.c This example was
+	discussed in the RA introductory workshops see:
+	http://geco.mines.edu/workshop/class2. Ex1 is designed to run
+	using 4 processing cores and again calls psgesv as its main
+	routine.
+
+The third example pdpttr_2.f90 and pdpttr_2.c shows the use of
+	the ScaLAPACK routines PDPTTRF and PPPTTRS to factor and
+	solve a symmetric positive definite tridiagonal system of
+	linear equations Tx = b, in two distinct contexts, with two
+	processors each and distinct right-hand sides. These examples
+	were obtained from
+	http://acts.nersc.gov/scalapack/hands-on/etc.html. This web
+	page and its links are an excelent resource on SCALAPACK.
+
+The final example, linsolve.f90 and linsolve.c goes back to
+	PSGESV, but it is a more complete example. It also calls
+	PSGEMV, PSAXPY, and PSNRM2 and does so in the context of a
+	MPI program. This example is from chapter 15 of Pacheco,
+	Peter S. Parallel Programming with MPI. San Francisco: Morgan
+	Kaufmann, 1997. It has variable matrix sizes and processor
+	layouts.
+
+See the directories casestudy and rcs09 for more examples.
+

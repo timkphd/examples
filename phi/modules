@@ -1,0 +1,6 @@
+#source this file
+
+module purge
+module load PrgEnv/intel/15.0.090
+module load utility
+module load PrgEnv/mpi/intel/intel/5.0.3

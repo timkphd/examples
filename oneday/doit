@@ -1,0 +1,16 @@
+svn update
+rm -rf *.tar  *zip
+
+tarup index.html data introduction  libs scripts1  scripts2  tricks makefile doit
+mv *`hostname -s`.tar cwp.tar
+
+tarup pdf
+mv *`hostname -s`.tar pdf.tar
+
+zipup index.html data introduction  libs scripts1  scripts2  tricks makefile
+mv *`hostname -s`.zip cwp.zip
+
+zipup pdf
+mv *`hostname -s`.zip pdf.zip
+
+

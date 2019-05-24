@@ -1,0 +1,43 @@
+#!/bin/bash
+#SBATCH --job-name="atest"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=01:00:00
+#SBATCH --exclusive
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+#SBATCH --export=ALL
+
+#----------------------
+cd $SLURM_SUBMIT_DIR
+module purge
+module load StdEnv
+###############
+# http://compgroups.net/comp.unix.shell/bash-changing-stdout/497180
+# set up our redirects of stdout and stderr
+                            # 1 and 2 are file descriptors for  
+                            # stdout and stderr
+                            # 3 and 4 are descriptors to logfile
+                            # we will use 3 for stdout 4 for stderr
+exec 3>>logfile.`date +"%y%m%d%H%M%S"` 
+                            # anything that goes to 4 will go to 3
+                            # which is our file we have created
+exec 4>&3 
+exec 5>&1 6>&2              # save "pointers" to stdin and stdout
+exec 1>&3 2>&4              # redirect stdin and stdout to file
+###############
+# normal commands
+                            # this line goes to stdout 
+echo this is a test from stdout
+                            # this line goes to stderr 
+echo this is a test from stderr >&2
+                            # error message goes to stderr 
+ls file_that_does_not_exist
+ls
+srun -n 8 /opt/utility/phostname -F -s 10000000 > myout.$SLURM_JOBID
+srun -n 8 /opt/utility/phostname -F -s 10000000 
+###############
+exec 1>&5 2>&6              # restore original stdin and stdout
+3>&- 4>&-                   # close logfile descriptors
+5>&- 6>&-                   # close saved stdin and stdout
+

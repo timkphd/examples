@@ -1,0 +1,47 @@
+#!/bin/bash
+##@job_name     = hybrid
+#@comment      = “glorified hello world"
+#@output       = $(job_name)_$(jobid)_$(stepid).out
+#@error        = $(job_name)_$(jobid)_$(stepid).err
+#@environment  = COPY_ALL
+#@job_type     = bluegene
+#@notification = never
+#@bg_size      = 64
+#@bg_connectivity = torus 
+#@wall_clock_limit = 00:10:00 
+#@queue
+
+# Go to the directoy from which our job was launched
+cd $LOADL_STEP_INITDIR
+
+# Create a short JOBID base on the one provided by the scheduler
+# The sed command strips off the machine info part of the full id
+JOBID=`echo $LOADL_STEP_ID | sed -e "s/mc2.local.//"`
+
+# Create a "base name" for a directory in which our job will run
+# For production runs this should be in $SCRATCH
+MYBASE=$LOADL_STEP_INITDIR
+#MYBASE=$SCRATCH/mc2_tests
+
+# Create a directoy for our run based on the $JOBID and go there
+mkdir -p $MYBASE/$JOBID
+cd $MYBASE/$JOBID
+
+export OMP_NUM_THREADS=1
+
+# Save a copy of our environment and script
+cat $0 > script.$JOBID
+printenv  > env.$JOBID
+
+# Run the job.
+# The echo will go into the standard output for this job
+# The standard output file will end up in the directory
+# from which the job was launched.
+echo "running job"
+runjob --np  1024  --ranks-per-node 16 --exp-env OMP_NUM_THREADS --exe $LOADL_STEP_INITDIR/helloc > output.$JOBID
+echo "job has finished"
+
+# This output will also go into the standard output file
+echo "run in" `pwd` " produced the files:"
+ls -lt 
+

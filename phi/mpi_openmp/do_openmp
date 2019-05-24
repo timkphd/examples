@@ -1,0 +1,22 @@
+#!/bin/sh
+#SBATCH --time=1
+#SBATCH --nodes=1
+#SBATCH -n 20
+#SBATCH --export=ALL
+#SBATCH -p phi
+#SBATCH --overcommit
+#SBATCH --exclusive
+#SBATCH --error=%J.error
+#SBATCH --out=%J.out
+
+cd $SLURM_SUBMIT_DIR
+echo $SLURM_JOB_NODELIST
+cat $0 > $SLURM_JOB_ID.script
+#printenv
+
+srun hostname | sort -u > $SLURM_JOB_ID.hosts
+
+ssh `head -1 $SLURM_JOB_ID.hosts`-mic0 $SLURM_SUBMIT_DIR/runthread $SLURM_SUBMIT_DIR
+
+date
+

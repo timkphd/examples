@@ -1,0 +1,35 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=08:00:00
+#PBS -N testIO
+#PBS -o outx8.$PBS_JOBID
+#PBS -e errx8.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+##PBS -m abe
+##PBS -M joeuser@mines.edu
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+sort -u  $PBS_NODEFILE > mynodes.$PBS_JOBID
+echo "1024 100 1" > sum_input
+echo " running pointer"
+for N in  1 2 4 8 ; do
+  export OMP_NUM_THREADS=$N 
+  for M in 1 2 4 8 ; do
+#  for M in 8 ; do
+    export MKL_NUM_THREADS=$M
+    printenv | grep NUM_THREADS  
+    ./pointer < sum_input 
+  done
+done
+
+echo "running invertc"
+for N in  1 2 4 8 ; do
+  export OMP_NUM_THREADS=$N
+  ./invertc 
+done
+
+
+
+

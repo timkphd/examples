@@ -1,0 +1,11 @@
+both: copypapi multipapi
+
+copypapi:copypapi.f90
+	 mpif90 -I/opt/papi/include -L/opt/papi/lib copypapi.f90 -lpapi -o copypapi
+
+multipapi:multipapi.f90
+	 mpif90 -I/opt/papi/include -L/opt/papi/lib multipapi.f90 -lpapi -o multipapi
+
+
+clean:
+	rm -rf multipapi copypapi

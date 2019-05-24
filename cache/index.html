@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Cache Blocking</title>
+</head>
+<body>
+<pre>
+/************************************************************
+
+Shows the effects of cache blocking on a matrix multiply like
+operation.
+
+Ref: http://cseweb.ucsd.edu/classes/wi12/cse240A-a/cache2.pdf
+
+If this program seg faults on startup you need to increase your
+stack size.  On some machines (OSX) the compile line shown
+below will fix the issue.  On others you may need to run ulimit.
+
+cc -Wl,-stack_size,0x10000000,-stack_addr,0xc0000000 -O3 block.c
+
+Timothy H. Kaiser, Ph.D.
+Director of Research and High Performance Computing
+Director Golden Energy Computing Organization
+tkaiser@mines.edu
+
+************************************************************/
+/****
+[tkaiser@mio cache]$ date
+Fri Jan 11 09:50:43 MST 2013
+
+[tkaiser@mio cache]$ icc -O3 block.c 
+[tkaiser@mio cache]$ ./a.out
+Array size 1024 x 1024
+Memory usage 24576 Kbytes
+did y and z
+                Time       Test       Blocking
+                           Value      Factor  
+did normal       11.334    257.647
+did blocking      2.173    257.647    B=32
+did normal       11.736    257.647
+did blocking      2.636    257.647    B=64
+did normal       11.466    257.647
+did blocking      2.880    257.647    B=128
+did normal       11.689    257.647
+did blocking      2.919    257.647    B=256
+[tkaiser@mio cache]$ 
+****/
+</pre>
+</body>
+</html>
+

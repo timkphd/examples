@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>index.html</title>
+	<meta name="generator" content="BBEdit 11.5" />
+	<style type="text/css">
+	p.a { width: 6in; text-align: justify; 
+	    margin-left: 0.0em; margin-bottom: 2.0em; margin-top: 0.1em; }
+	h4 {margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 0.5em;}
+	
+	</style>
+</head>
+<body>
+<h3>Instructions</h3>
+<p class="a">
+	These examples exercise the IBM Parallel Engineering and Scientific Subroutine Library.  In particular, to build/run these examples:
+</p>
+
+<ol>
+<ol>
+	<li>
+		In a new directory, download the examples:
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+wget http://geco.mines.edu/prototype/Show_me_Power8_and_GPU_examples/pessl/pessl.tgz 
+</span>
+	</li>
+	<li>
+		Uncompress the pessl.tgz file:
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+tar -xzf pessl.tgz
+</span>
+	</li>
+	<li>
+		Get an interactive session on ppc001 or ppc002:
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+srun -N 1 --tasks-per-node=1 -p ppc-build --share --time=1:00:00  --pty bash
+</span>
+	</li>
+	<li>
+		Run the script ‘buildit’.  This sets up the environment and does a ‘make’:
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+./buildit
+</span>
+	</li>
+	<li>
+		Exit the interactive session:
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+exit
+</span>
+	</li>
+	<li>
+	Run the batch script ‘power_script’:
+<br><span style="color:blue; font-family:Courier;font-size:small;">
+sbatch -p ppc power_script
+</span>
+	</li>
+</ol>
+
+
+<h4>buildit  <a href="buildit"><img width="25px; alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>  
+<p class="a">
+A script that sets up the environment and then does a ‘make’.
+</p>
+
+<h4>Makefile  <a href="Makefile"><img width="25px; alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4>  
+<p class="a">
+	Makefile for the examples. By default, the following
+programs are built but there are several other that can
+be created from this makefile.
+</p>
+
+<h4>diffusion</h4> 
+<p class="a">
+	Purpose; to find the cooling rate for a specified
+set of points in an anisotropic rectangular beam,
+immersed in a constant heat bath with a temperature of 0.
+ 
+</p>
+ 
+<h4>pdgexmp</h4>
+<p class="a">
+	Calculate the performance of linear algebra solvers
+for different block sizes, matrix sizes and processor
+configurations.
+</p>
+
+<h4>simple</h4>  
+<p class="a">
+	Program designed to show how to use the sample
+utilities.  This program will sum two distributed arrays
+and compare the results to the same calculation done on a
+single processor.
+</p>
+
+<h4>power_script  <a href="power_script"><img width="25px; alt="" src="http://geco.mines.edu/prototype/images/text.png"></a></h4> 
+<p class="a">
+A script for running the examples.
+</p>
+
+<h4>All of the files in the pessl.tgz  <a href="pessl.tgz"><img width="25px; alt="" src="http://geco.mines.edu/prototype/images/tgz.png"></a></h4>  
+
+<pre>
+broadcast.f      expands      mat.example   pdgexmp.inp
+buildit          fourier.f    northsouth.f  pmatgen.f
+cdata.f          hb_sample.f  param.f       power_script
+create.f         image.f      partbcyc.f    putilities.f
+delete.f         index.f      part_block.f  read_mat.f
+desym.f          index.html   partrand.f    scalemod.f
+diffusion.f      init.f       pdata.f       scatter_gather.f
+diffus.naml      main.f       pde77.f       simple.f
+eastwest.f       Makefile     pde90.f
+examples.readme  mat_dist.f   pdgexmp.f
+</pre>
+</body>
+</html>

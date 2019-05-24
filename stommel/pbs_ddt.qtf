@@ -1,0 +1,24 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8 
+#PBS -l walltime=00:10:00 
+#PBS -N testIO 
+#PBS -o stdout 
+#PBS -e stderr 
+#PBS -r n 
+#PBS -V 
+#----------------------------------------------------- 
+export DDT_NO_TIMEOUT
+cd $PBS_O_WORKDIR 
+
+#save a nicely sorted list of nodes 
+sort -u $PBS_NODEFILE  > mynodes.$PBS_JOBID 
+cp mynodes.$PBS_JOBID ~/.ddt/nodes
+
+#for openmpi
+#mpiexec -n 4 ./stc_06.g < st.in
+
+#for openmpi and ddt Intel 10
+#DDTPATH_TAG/bin/ddt-client DDT_DEBUGGER_ARGUMENTS_TAG mpiexec -np  NUM_PROCS_TAG EXTRA_MPI_ARGUMENTS_TAG PROGRAM_TAG  PROGRAM_ARGUMENTS_TAG
+#for openmpi and ddt Intel 11
+MPIRUN_TAG AUTO_MPI_ARGUMENTS_TAG EXTRA_MPI_ARGUMENTS_TAG DDTPATH_TAG/bin/ddt-debugger DDT_DEBUGGER_ARGUMENTS_TAG PROGRAM_TAG PROGRAM_ARGUMENTS_TAG
+

@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+import os
+import sys
+bonk="""
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Listing</title>
+	<meta name="generator" content="lstohtml" />
+</head>
+<body>
+"""
+print(bonk)
+f=os.popen("ls -l ","r")
+files=f.readlines()
+f.close()
+print ("""	<table>
+""")
+for f in files:
+	f=f.strip("\n")
+	f=f.split()
+	if len(f) > 7:
+		s=f[4]
+		d=f[5]+" "+f[6]+" "+f[7]
+		n=f[8]
+		c1= "    <tr><td>%10s</td>" % (s)
+		c2= "    <td>%12s</td>" % (d)
+		c3= "    <td><a href=\"%s\">%s</a></td></tr>" % (n,n)
+		if(int(s) > 0):
+			print (c1,c2,c3)
+print("""
+</table>
+</body>
+</html>
+""")

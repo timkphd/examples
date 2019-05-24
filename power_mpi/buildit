@@ -1,0 +1,40 @@
+#!/bin/bash
+make clean
+
+echo "Building phostone with the IBM version of MPI"
+module purge
+echo "MPI=" `which mpcc`
+make phostone.ibm
+echo
+
+echo "Building phostone with gcc 4.8.5 and OpenMPI"
+module purge
+module load GCC/4.8.5-system
+module load OpenMPI
+echo "MPI=" `which mpicc`
+make phostone.old
+echo
+
+
+echo "Building phostone with gcc 5.2.1 and OpenMPI"
+module purge
+module load StdEnv
+echo "MPI=" `which mpicc`
+make phostone.new
+echo
+
+echo "Building phostone with xlc and OpenMPI"
+module purge
+module load XL
+module load OpenMPI
+echo "MPI=" `which mpicc`
+make phostone.xlc
+
+echo "Building phostone with PGI and OpenMPI"
+module purge
+module load PGI
+module load OpenMPI
+echo "MPI=" `which mpicc`
+make phostone.pgi
+
+

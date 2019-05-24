@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<meta name="generator" content="BBEdit 12.1" />
+	<style type="text/css">	
+		    h3 {color: blue;  margin-bottom:.05in; margin-top:.5in;}
+		    td {color: blue; font-size: large; font-weight: bold;}
+		    td.h {color: black; font-size: large; font-weight: bold;}
+		    p {margin-top:.05in; width:5in}
+		    dd {width:5in}
+		    dt{color:pink;}
+			li.a { color: green; } 
+/* usage <p> */
+			pre.red { color: red; font-family: courier; font-size: small; }
+			</style>
+</head>
+<body>
+<p>
+A collection of programs for a MPI with mpi4py workshop.  Under each file 
+there is a description and a list of routine used with "new" ones in green
+</p>
+
+<dl>
+	<dt>Most written by:</dt>
+		<dd>	Timothy H. Kaiser, Ph.D.<br>tkaiser@mines.edu</dd>
+</dl>
+
+<h3><a href="mpi4py.tgz">mpi4py.tgz</a></h3>
+<p> *tgz file containing all of the files listed below.</p>
+
+<h3><a href="P_ex00.py">P_ex00.py</a></h3>
+<p>Hello world</p>
+<ul>
+	<li class="a">MPI.COMM_WORLD</li>
+	<li class="a">Get_rank()</li>
+	<li class="a">Get_size()</li>
+	<li class="a" >MPI.Finalize()</li>
+</ul>
+<h3><a href="P_ex01.py">P_ex01.py</a> , <a href="f_ex01.f90">f_ex01.f90</a></h3>
+<p>Blocking Send and Receive</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li class="a">comm.Send()</li>
+	<li class="a" >comm.Recv()</li>
+	<li>MPI.Finalize</li>
+</ul>
+<h3><a href="P_ex01b.py">P_ex01b.py</a></h3>
+<p>Blocking Send and Receive <i>Character Data</i></p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li class="a">comm.Send()</li>
+	<li class="a">comm.Recv()</li>
+	<li>MPI.Finalize</li>
+</ul>
+<h3><a href="P_ex02.py">P_ex02.py</a></h3>
+<p>Blocking Send and Receive with probe to find size</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li>comm.Send()</li>
+	<li class="a" >comm.probe()</li>
+	<li class="a" >mystat.Get_count()</li>
+	<li>comm.Recv()</li>
+	<li>MPI.Finalize</li>
+</ul>
+<h3><a href="P_ex03.py">P_ex03.py</a></h3>
+<p>Nonblocking Send and Receive with wait</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li class="a" >comm.isend()</li>
+	<li class="a" >comm.irecv()</li>
+	<li class="a" >req.wait()</li>
+	<li>MPI.Finalize</li>
+</ul>
+<h3><a href="P_ex03I.py">P_ex03I.py</a></h3>
+<p>Nonblocking Send and Receive with wait</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li class="a" >comm.Isend()</li>
+	<li class="a" >comm.Irecv()</li>
+	<li class="a" >req.wait()</li>
+	<li>MPI.Finalize</li>
+</ul>
+
+<h3><a href="P_ex04.py">P_ex04.py</a></h3>
+<p>Broadcast of an array of integers and a string</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li class="a" >comm.bcast()</li>
+	<li class="a" >comm.Bcast()</li>
+	<li>MPI.Finalize</li>
+</ul>
+
+<h3><a href="P_ex05.py">P_ex05.py</a></h3>
+<p>
+This program shows how to use MPI_Scatter and MPI_Gather.
+Each processor gets different data from the root processor
+by way of mpi_scatter.  The data is summed and then sent back
+to the root processor using MPI_Gather.  The root processor
+then prints the global sum. 
+</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li>comm.bcast()</li>
+	<li class="a" >comm.Scatter()</li>
+	<li class="a" >comm.gather()</li>
+	<li class="a" >comm.Gather()</li>
+	<li>MPI.Finalize</li>
+</ul>
+
+<h3><a href="P_ex06.py">P_ex06.py</a></h3>
+<p>
+This program shows how to use MPI_Scatter and MPI_Reduce
+Each processor gets different data from the root processor
+by way of mpi_scatter.  The data is summed and then sent back
+to the root processor using MPI_Reduce.  The root processor
+then prints the global sum. 
+</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li>comm.bcast()</li>
+	<li>comm.Scatter()</li>
+	<li class="a" >comm.reduce()</li>
+	<li class="a" >comm.Reduce()</li>
+	<li>MPI.Finalize</li>
+</ul>
+
+<h3><a href="P_ex07.py">P_ex07.py</a></h3>
+<p>
+This program shows how to use MPI_Alltoall.  Each processor
+send/rec a different random number to/from other processors. 
+</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li class="a" >comm.Alltoall()</li>
+	<li>MPI.Finalize</li>
+</ul>
+
+<h3><a href="P_ex08.py">P_ex08.py</a></h3>
+<p>
+This program shows how to use MPI_Gatherv.  Each processor sends a
+different amount of data to the root processor.  We use MPI_Gather
+first to tell the root how much data is going to be sent.
+</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li class="a" >comm.gather</li>
+	<li class="a" >comm.Gatherv</li>
+	<li>MPI.Finalize</li>
+</ul>
+
+
+<h3><a href="P_ex09.py">P_ex09.py</a></h3>
+<p>
+ This program shows how to use Alltoallv
+ Each processor gets amounts of data from each other processor.
+ It is an extension to example P_ex07.py.  In mpi4py the 
+ displacement array can be calculated automatically from 
+ the rcounts array.  We show how it would be done in 
+ "normal" MPI.  See also P_ex08.py for how this can be 
+ done
+</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li>comm.Alltoall()</li>
+	<li class="a" >comm.Alltoallv()</li>
+	<li>MPI.Finalize</li>
+</ul>
+
+
+<h3><a href="P_ex10.py">P_ex10.py</a> , <a href="ex10.in">ex10.in</a></h3>
+<p>
+Pass a "token" from one task to the next with
+a single task reading token from a file.
+</p>
+
+<p>
+An extensive program.  We first create a new
+communicator that contains every task except the
+zeroth one.  This is done by first defining a group,
+new_group.  We define new_group based on the group
+associated with mpi_comm_world, old_group and an 
+array, will_use.  Will_use contains a list of tasks
+to be included in the new group.  It does not 
+contain the zeroth one.  
+The new communicator is sub_comm_world.
+</p>
+
+<p>
+There are other ways to create communicator but this
+is one of the more general methods.
+</p>
+
+<p>
+Next, we have break of the task not in the communicator
+to call the routine get_input.  This routine will do
+input from a file ex10.in.  The file contains a list
+of integers.  The task will send the integer to the 
+first task in the new communicator.
+</p>
+
+<p>
+The remaining tasks which are port of sub_comm_world 
+call the routine pass_token.  Pass_token "just" receives
+a value from the previous processor and passes it on
+to the next.
+</p>
+
+<p>
+There is a minor subtlety in pass_token.  We are using
+both our new communicator and MPI_COMM_WORLD.  The tasks
+that are port of the new communicator use it to pass 
+data.  We note that the task that is injecting values
+into the stream is not part of the new communicator
+so it must use MPI_COMM_WORLD.  Thus we do a probe on
+WORLD, which is actually MPI_COMM_WORLD looking for a
+message.  When we get it we send it on using the new
+communicator.  
+</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li class="a" >WORLD.Iprobe()</li>
+	<li class="a" >comm.Get_group()</li>
+	<li class="a" >old_group.Incl()</li>
+	<li class="a" >comm.Create()</li>
+	<li class="a" >new_group.Get_rank()</li>	
+	<li>MPI.Finalize</li>
+</ul>
+
+<h3><a href="P_ex12.py">P_ex12.py</a></h3>
+<p>
+This program shows how to use mpi_comm_split
+</p>
+
+<p>
+Split will create a set of communicators.  All of the
+tasks with the same value of color will be in the same
+communicator.  In this case we get two sets one for 
+odd tasks and one for even tasks.  Note they have the
+same name on all tasks, new_comm, but there are actually
+two different values (sets of tasks) in each one.
+</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li class="a">comm.Split</li>
+	<li>comm.bcast</li>
+	<li>MPI.Finalize</li>
+</ul>
+
+<h3><a href="P_ex13.py">P_ex13.py</a></h3>
+<p>
+This program shows how to use Scatterv.  Each processor gets a
+different amount of data from the root processor.  We use MPI_Gather
+first to tell the root how much data is going to be sent.
+</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li>comm.gather</li>
+	<li class="a">comm.Scatterv</li>
+	<li>MPI.Finalize</li>
+</ul>
+
+
+<h3><a href="simple.py">simple.py</a> , <a href="flist">flist </a></h3>
+<p>
+This is a bag-of-tasks program.  We define a manager task
+that distributes work to workers.  Actually, the workers
+request input data.  The manager sits in a loop calling
+Iprobe waiting for requests for work.  
+</p>
+
+<p>
+In this case the manager reads input. The input is a list
+of file names.  It will send a entry from the list as 
+requested.  When the worker is done processing it will
+request a new file name from the manager.  This continues
+until the manager runs out of files to process.  The 
+manager subroutine is just "manager"
+</p>
+
+<p>
+The worker subroutine is "worker". It receives file names 
+form the manager.
+</p>
+
+<p>
+
+The files in this case are outputs from an optics program
+tracking a laser beam as it propagates through the atmosphere.
+The workers read in the data and then create an image of the
+data by calling the routine mkview.plotit.  This should worker
+with arbitrary 2d files except the size in mkview.plotit is
+currently hard coded to 64 x 64.  
+</p>
+
+<p>
+We use the call to "Split" to create a seperate communicator
+for the workers.  This is not important in this example but
+could be if you wanted multiple workers to work together.  
+</p>
+
+<p>
+To get the data...
+</p>
+
+<pre>
+curl http://hpc.mines.edu/examples/laser.tgz | tar -xz
+</pre>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li>comm.gather</li>
+	<li>comm.Send()</li>
+	<li>comm.Recv()</li>
+	<li class="a">MPI.Status()</li>
+	<li class="a">comm.Iprobe()</li>
+	<li class="a">gotfrom=status.source </li>
+	<li class="a">MPI.Get_processor_name()</li>
+	<li class="a">MPI_COMM_WORLD.barrier()</li>
+
+	<li>MPI.Finalize</li>
+</ul>
+
+<h3><a href="P_ex02.py">makefile</a></h3>
+<p>
+makefile for the Fortran and C examples that work with some of the
+python examples.  Also will download the data for the simple.py example.
+</p>
+
+
+<table>
+	<tr>
+		<td class="h" >File</td> <td class="h">Comment</td>
+	</tr>
+	<tr>
+		<td><a href="ccalc.c">ccalc.c</a></td> <td>parallel</td>
+	</tr>
+	<tr>
+		<td><a href="stc_03.c">stc_03.c</a></td> <td>parallel</td>
+	</tr>
+	<tr>
+		<td><a href="pcalc.py">pcalc.py</a></td> <td>parallel</td>
+	</tr>
+	<tr>
+		<td><a href="sto_00.py">stp_00.py</a></td> <td>serial</td>
+	</tr>
+	<tr>
+		<td><a href="stp.py">stp.py</a></td> <td>parallel</td>
+	</tr>
+	<tr>
+		<td><a href="tiny.in">tiny.in</a></td> <td>tiny input file</td>
+	</tr>
+	<tr>
+		<td><a href="small.in">small.in</a></td> <td>small input file</td>
+	</tr>
+	<tr>
+		<td><a href="st.in">st.in</a></td> <td>regular input file</td>
+	</tr>
+</table>
+
+<p>
+We have a finite difference model that will serve to demonstrate what a computational 
+scientist needs to do to take advantage of Distributed Memory computers using MPI.
+</p>
+
+<p>
+The model we are using is a two dimensional solution to a model problem for Ocean 
+Circulation, the Stommel Model.  It has Wind-driven circulation in a homogeneous 
+rectangular ocean under the influence of surface winds, linearized bottom friction, 
+flat bottom and Coriolis force.
+</p>
+
+<p>
+Solution: intense crowding of streamlines towards the western boundary caused by 
+the variation of the Coriolis parameter with latitude.
+</p>
+
+<p>
+For a description of the Fortran and C versions of this program see:
+<br><a href="http://geco.mines.edu/prototype/Show_me_some_local_HPC_tutorials/stoma.pdf">http://geco.mines.edu/prototype/Show_me_some_local_HPC_tutorials/stoma.pdf</a>
+<br><a href="http://geco.mines.edu/prototype/Show_me_some_local_HPC_tutorials/stomb.pdf">http://geco.mines.edu/prototype/Show_me_some_local_HPC_tutorials/stomb.pdf</a>
+<br>The python version, stp.py, follows this C version except it does a 1d
+decomposition.  
+</p>
+
+<p>
+The C version is 1500x faster than the python version.
+</p>
+
+<p>
+pcalc.py and ccalc.c are similar except they create a new communicator
+that contains N-1 tasks.  These tasks do the calculation and pass data
+to the remaining task to be plotted.  Thus we can have "C" do the heavy
+calculation and python do plotting.    
+</p>
+
+
+<h3><a href="mpi1.py">mpi1.py</a></h3>
+<pre style="background-color: rgb(247, 247, 247); padding: 1em;"><code>
+<span style="color: rgb(150, 122, 178);">#!/usr/bin/env&nbsp;python</span><span style="color: rgb(20, 20, 20);">
+</span><span style="color: rgb(56, 79, 244);">from</span><span style="color: rgb(20, 20, 20);">&nbsp;</span><span style="color: rgb(20, 20, 20);">mpi4py</span><span style="color: rgb(20, 20, 20);">&nbsp;</span><span style="color: rgb(56, 79, 244);">import</span><span style="color: rgb(20, 20, 20);">&nbsp;</span><span style="color: rgb(20, 20, 20);">MPI</span><span style="color: rgb(20, 20, 20);">
+</span><span style="color: rgb(150, 122, 178);">#&nbsp;A&nbsp;very&nbsp;simple&nbsp;send/recv&nbsp;example&nbsp;from&nbsp;the&nbsp;page:
+#&nbsp;http://mpi4py.scipy.org/docs/usrman/tutorial.html
+#&nbsp;See&nbsp;this&nbsp;page&nbsp;for&nbsp;other&nbsp;examples.
+#
+#&nbsp;Shows&nbsp;auto&nbsp;pickling&nbsp;of&nbsp;data.</span><span style="color: rgb(20, 20, 20);">
+</span><span style="color: rgb(20, 20, 20);">comm</span><span style="color: rgb(20, 20, 20);">&nbsp;=&nbsp;</span><span style="color: rgb(20, 20, 20);">MPI</span><span style="color: rgb(20, 20, 20);">.</span><span style="color: rgb(20, 20, 20);">COMM_WORLD</span><span style="color: rgb(20, 20, 20);">
+</span><span style="color: rgb(20, 20, 20);">rank</span><span style="color: rgb(20, 20, 20);">&nbsp;=&nbsp;</span><span style="color: rgb(20, 20, 20);">comm</span><span style="color: rgb(20, 20, 20);">.</span><span style="color: rgb(20, 20, 20);">Get_rank</span><span style="color: rgb(20, 20, 20);">()
+
+</span><span style="color: rgb(56, 79, 244);">if</span><span style="color: rgb(20, 20, 20);">&nbsp;</span><span style="color: rgb(20, 20, 20);">rank</span><span style="color: rgb(20, 20, 20);">&nbsp;==&nbsp;</span><span style="color: rgb(187, 95, 11);">0</span><span style="color: rgb(20, 20, 20);">:
+&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: rgb(20, 20, 20);">data</span><span style="color: rgb(20, 20, 20);">&nbsp;=&nbsp;{</span><span style="color: rgb(189, 22, 107);">'a'</span><span style="color: rgb(20, 20, 20);">:&nbsp;</span><span style="color: rgb(187, 95, 11);">7</span><span style="color: rgb(20, 20, 20);">,&nbsp;</span><span style="color: rgb(189, 22, 107);">'b'</span><span style="color: rgb(20, 20, 20);">:&nbsp;</span><span style="color: rgb(187, 95, 11);">3.14</span><span style="color: rgb(20, 20, 20);">}
+&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: rgb(20, 20, 20);">comm</span><span style="color: rgb(20, 20, 20);">.</span><span style="color: rgb(20, 20, 20);">send</span><span style="color: rgb(20, 20, 20);">(</span><span style="color: rgb(20, 20, 20);">data</span><span style="color: rgb(20, 20, 20);">,&nbsp;</span><span style="color: rgb(20, 20, 20);">dest</span><span style="color: rgb(20, 20, 20);">=</span><span style="color: rgb(187, 95, 11);">1</span><span style="color: rgb(20, 20, 20);">,&nbsp;</span><span style="color: rgb(20, 20, 20);">tag</span><span style="color: rgb(20, 20, 20);">=</span><span style="color: rgb(187, 95, 11);">11</span><span style="color: rgb(20, 20, 20);">)
+</span><span style="color: rgb(56, 79, 244);">elif</span><span style="color: rgb(20, 20, 20);">&nbsp;</span><span style="color: rgb(20, 20, 20);">rank</span><span style="color: rgb(20, 20, 20);">&nbsp;==&nbsp;</span><span style="color: rgb(187, 95, 11);">1</span><span style="color: rgb(20, 20, 20);">:
+&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: rgb(20, 20, 20);">data</span><span style="color: rgb(20, 20, 20);">&nbsp;=&nbsp;</span><span style="color: rgb(20, 20, 20);">comm</span><span style="color: rgb(20, 20, 20);">.</span><span style="color: rgb(20, 20, 20);">recv</span><span style="color: rgb(20, 20, 20);">(</span><span style="color: rgb(20, 20, 20);">source</span><span style="color: rgb(20, 20, 20);">=</span><span style="color: rgb(187, 95, 11);">0</span><span style="color: rgb(20, 20, 20);">,&nbsp;</span><span style="color: rgb(20, 20, 20);">tag</span><span style="color: rgb(20, 20, 20);">=</span><span style="color: rgb(187, 95, 11);">11</span><span style="color: rgb(20, 20, 20);">)
+&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: rgb(56, 79, 244);">print</span><span style="color: rgb(20, 20, 20);">(</span><span style="color: rgb(20, 20, 20);">data</span><span style="color: rgb(20, 20, 20);">)
+</span></code></pre>
+
+<h3><a href="mkview.py">mkview.py</a> , <a href="surface.py">surface.py</a></h3>
+<p>
+These are not MPI programs but graphics programs based on the 
+<ul>
+	<li>https://matplotlib.org/examples/mplot3d/surface3d_demo.html</li>
+	<li>https://matplotlib.org/examples/images_contours_and_fields/interpolation_methods.html</li>
+</ul>
+</p>
+<p>
+mkview.py can be called as a standalone program or plotit can be imported.  
+This routine is used in the bag of tasks program simple to generate plots.
+</p>
+<p>
+surface.py is the basis of the plotting routine in the plot_extra procedure in wtire_grid.py.
+</p>
+
+<h3><a href="pwrite.py">pwrite.py</a></h3>
+<p>
+pwrite.py is a small MPI program designed to be run in conjunction with 
+either ccalc.c or pcalc.py.  If you are using mpiexec to lanuch your programs
+these might be launched together using one of the commands:
+</p>
+
+<pre>
+mpiexec -n 5 ./ccalc    : -n 1 ./pwrite.py &lt; cut.in
+mpiexec -n 5 ./pcalc.py : -n 1 ./pwrite.py &lt; cut.in
+</pre>
+
+<p>
+pcalc.py and ccalc.c are versions of the finite difference program discussed above.  
+pcalc.py and ccalc.c create a new communicator that contains N-1 tasks.  These tasks 
+do the calculation and pass data to the remaining task to be plotted.  The remaining 
+task is pwrite.py.
+</p>
+<ul>
+	<li>MPI.COMM_WORLD</li>
+	<li>Get_rank()</li>
+	<li>Get_size()</li>
+	<li>world.Get_group()</li>
+	<li>old_group.Incl()</li>
+	<li>world.Create(new_group)</li>
+	<li class="a">world.barrier()</li>
+	<li>MPI.Finalize</li>
+</ul>
+<h3><a href="write_grid.py">write_grid.py</a></h3>
+<p>
+write_grid.py contains three procedures write_each, write_one, write_extra, plot_extra.   
+These are different output routines for the finite difference code discussed above.  
+</p>
+<dl>
+	<dt>write_each</dt>
+		<dd>	Each MPI task writes its portion of the grid in a separate file.  Could be called from stp.py</dd>
+	<dt>write_one</dt>
+		<dd>	Each MPI task sends its portion of the grid to a single task and it is written as a single file. Could be called from stp.py</dd>
+	<dt>write_extra</dt>
+		<dd>	This could be called from the "extra" MPI task pwrite.py.  This routine collects the data from all other tasks and prints it.</dd>
+	<dt>plot_extra</dt>
+		<dd>	This could be called from the "extra" MPI task pwrite.py.  This routine collects the data from all other tasks and plots it using mkview.py</dd>
+</dl>
+
+
+<p>
+Write_one, write_extra, and plot_extra all work the same way.  They collect data to a single 
+task a line at a time using a combination of Gather and GatherV.  For a give line, each 
+processor tells the writing processor  how much, if any of the line it holds using the 
+Gather.  The the Gatherv is used to actually transfer the data.  For write_one and write_extra
+each line is printed as it is gathered.  The routine plot_extra collects the whole grid  
+before plotting it.  Write_each opens a file with the name based on the task id.  Each task writes 
+its portion of the grid to its file.
+</p>
+
+<ul>
+	<li>comm.Get_rank()</li>
+	<li>comm.Get_size()</li>
+	<li>comm.Gather()</li>
+	<li>comm.Gatherv() </li>
+</ul>
+
+
+<h3><a href="runscript">runscript</a></h3>
+<p>
+A slurm test script for the P*py examples.  It runs on Mio at Mines and using the Intel version of MPI an mpi4py.
+</p>
+
+<h3>Formatted examples </h3>
+<a href="HTML">HTML</a>
+</body>
+</html>

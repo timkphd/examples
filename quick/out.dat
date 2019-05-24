@@ -1,0 +1,171 @@
+[joeuser@mio001 quick]$ srun -N 1 --tasks-per-node=1 ./phostname -h
+phostname arguments:
+          -h : Print this help message
+
+no arguments : Print a list of the nodes on which the command is run.
+
+ -f or -1    : Same as no argument but print MPI task id and Thread id
+               If run with OpenMP threading enabled OMP_NUM_THREADS > 1
+               there will be a line per MPI task and Thread.
+
+ -F or -2    : Add columns to tell first MPI task on a node and and the
+               numbering of tasks on a node. (Hint: pipe this output in
+               to sort -r
+
+ -a          : Print a listing of the environmental variables passed to
+               MPI task. (Hint: use the -l option with SLURM to prepend MPI
+               task #.)
+[joeuser@mio001 quick]$ srun -N 2 --tasks-per-node=4 ./phostname 
+compute000
+compute000
+compute000
+compute000
+compute001
+compute001
+compute001
+compute001
+
+[joeuser@mio001 quick]$ export OMP_NUM_THREADS=2
+[joeuser@mio001 quick]$ srun -N 2 --tasks-per-node=4 ./phostname -f
+compute000 0000 0000
+compute000 0000 0001
+compute000 0001 0000
+compute000 0001 0001
+compute000 0002 0000
+compute000 0002 0001
+compute000 0003 0000
+compute000 0003 0001
+compute001 0004 0000
+compute001 0004 0001
+compute001 0005 0000
+compute001 0005 0001
+compute001 0006 0000
+compute001 0006 0001
+compute001 0007 0000
+compute001 0007 0001
+
+[joeuser@mio001 quick]$ srun -N 2 --tasks-per-node=4 ./phostname -F
+task    thread             node name  first task    # on node
+0000      0000            compute000        0000         0000
+0000      0001            compute000        0000         0000
+0001      0000            compute000        0000         0001
+0001      0001            compute000        0000         0001
+0002      0000            compute000        0000         0002
+0002      0001            compute000        0000         0002
+0003      0000            compute000        0000         0003
+0003      0001            compute000        0000         0003
+0004      0000            compute001        0004         0000
+0004      0001            compute001        0004         0000
+0005      0000            compute001        0004         0001
+0005      0001            compute001        0004         0001
+0006      0000            compute001        0004         0002
+0006      0001            compute001        0004         0002
+0007      0000            compute001        0004         0003
+0007      0001            compute001        0004         0003
+
+[joeuser@mio001 quick]$ srun -l -N 2 --tasks-per-node=4 ./phostname -a | grep  "^0"
+0: compute000
+0: MKLROOT=/opt/intel/composer_xe_2013_sp1.0.080/mkl
+0: MPI_INCLUDE=/opt/openmpi/1.6.5/intel/include
+0: MANPATH=/opt/openmpi/1.6.5/intel/share/man:/opt/intel/composer_xe_2013_sp1.0.080/man/en_US:/usr/local/share/man:/usr/share/man/overrides:/usr/share/man/en:/usr/share/man
+0: HOSTNAME=mio001
+0: IPPROOT=/opt/intel/composer_xe_2013_sp1.0.080/ipp
+0: INTEL_LICENSE_FILE=/opt/intel/composer_xe_2013_sp1.0.080/licenses:/opt/intel/licenses
+0: TERM=xterm-256color
+0: SHELL=/bin/bash
+0: HISTSIZE=1000
+0: SSH_CLIENT=138.67.4.206 52930 22
+0: LIBRARY_PATH=/opt/openmpi/1.6.5/intel/lib:/opt/intel/composer_xe_2013_sp1.0.080/compiler/lib:/opt/intel/composer_xe_2013_sp1.0.080/compiler/lib/intel64:/opt/intel/composer_xe_2013_sp1.0.080/ipp/lib/intel64:/opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64:/opt/intel/composer_xe_2013_sp1.0.080/tbb/lib/intel64/gcc4.4
+0: FPATH=/opt/intel/composer_xe_2013_sp1.0.080/mkl/include
+0: QTDIR=/usr/lib64/qt-3.3
+0: OLDPWD=/u/pa/ru/joeuser
+0: QTINC=/usr/lib64/qt-3.3/include
+0: MIC_LD_LIBRARY_PATH=/opt/intel/composer_xe_2013_sp1.0.080/compiler/lib/mic:/opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/mic:/opt/intel/composer_xe_2013_sp1.0.080/tbb/lib/mic
+0: SSH_TTY=/dev/pts/18
+0: SVN_EDITOR=vi
+0: USER=joeuser
+0: LD_LIBRARY_PATH=/opt/openmpi/1.6.5/intel/lib:/opt/intel/composer_xe_2013_sp1.0.080/compiler/lib/intel64:/opt/intel/composer_xe_2013_sp1.0.080/ipp/lib/intel64:/opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64:/opt/intel/composer_xe_2013_sp1.0.080/tbb/lib/intel64/gcc4.4
+0: LS_COLORS=rs=0:di=38;5;27:ln=38;5;51:mh=44;38;5;15:pi=40;38;5;11:so=38;5;13:do=38;5;5:bd=48;5;232;38;5;11:cd=48;5;232;38;5;3:or=48;5;232;38;5;9:mi=05;48;5;232;38;5;15:su=48;5;196;38;5;15:sg=48;5;11;38;5;16:ca=48;5;196;38;5;226:tw=48;5;10;38;5;16:ow=48;5;10;38;5;21:st=48;5;21;38;5;15:ex=38;5;34:*.tar=38;5;9:*.tgz=38;5;9:*.arj=38;5;9:*.taz=38;5;9:*.lzh=38;5;9:*.lzma=38;5;9:*.tlz=38;5;9:*.txz=38;5;9:*.zip=38;5;9:*.z=38;5;9:*.Z=38;5;9:*.dz=38;5;9:*.gz=38;5;9:*.lz=38;5;9:*.xz=38;5;9:*.bz2=38;5;9:*.tbz=38;5;9:*.tbz2=38;5;9:*.bz=38;5;9:*.tz=38;5;9:*.deb=38;5;9:*.rpm=38;5;9:*.jar=38;5;9:*.rar=38;5;9:*.ace=38;5;9:*.zoo=38;5;9:*.cpio=38;5;9:*.7z=38;5;9:*.rz=38;5;9:*.jpg=38;5;13:*.jpeg=38;5;13:*.gif=38;5;13:*.bmp=38;5;13:*.pbm=38;5;13:*.pgm=38;5;13:*.ppm=38;5;13:*.tga=38;5;13:*.xbm=38;5;13:*.xpm=38;5;13:*.tif=38;5;13:*.tiff=38;5;13:*.png=38;5;13:*.svg=38;5;13:*.svgz=38;5;13:*.mng=38;5;13:*.pcx=38;5;13:*.mov=38;5;13:*.mpg=38;5;13:*.mpeg=38;5;13:*.m2v=38;5;13:*.mkv=38;5;13:*.ogm=38;5;13:*.mp4=38;5;13:*.m4v=38;5;13:*.mp4v=
+0: 38;5;13:*.vob=38;5;13:*.qt=38;5;13:*.nuv=38;5;13:*.wmv=38;5;13:*.asf=38;5;13:*.rm=38;5;13:*.rmvb=38;5;13:*.flc=38;5;13:*.avi=38;5;13:*.fli=38;5;13:*.flv=38;5;13:*.gl=38;5;13:*.dl=38;5;13:*.xcf=38;5;13:*.xwd=38;5;13:*.yuv=38;5;13:*.cgm=38;5;13:*.emf=38;5;13:*.axv=38;5;13:*.anx=38;5;13:*.ogv=38;5;13:*.ogx=38;5;13:*.aac=38;5;45:*.au=38;5;45:*.flac=38;5;45:*.mid=38;5;45:*.midi=38;5;45:*.mka=38;5;45:*.mp3=38;5;45:*.mpc=38;5;45:*.ogg=38;5;45:*.ra=38;5;45:*.wav=38;5;45:*.axa=38;5;45:*.oga=38;5;45:*.spx=38;5;45:*.xspf=38;5;45:
+0: MKL_TARGET_ARCH=intel64
+0: CPATH=/opt/intel/composer_xe_2013_sp1.0.080/mkl/include:/opt/intel/composer_xe_2013_sp1.0.080/tbb/include
+0: SSH_AUTH_SOCK=/tmp/ssh-eJHFe29080/agent.29080
+0: MPI_LIB=/opt/openmpi/1.6.5/intel/lib
+0: BINS=/bins/joeuser
+0: NLSPATH=/opt/intel/composer_xe_2013_sp1.0.080/compiler/lib/intel64/locale/en_US/%N:/opt/intel/composer_xe_2013_sp1.0.080/ipp/lib/intel64/locale/%l_%t/%N:/opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64/locale/%l_%t/%N:/opt/intel/composer_xe_2013_sp1.0.080/debugger/intel64/locale/%l_%t/%N
+0: MAIL=/var/spool/mail/joeuser
+0: PATH=/opt/openmpi/1.6.5/intel/bin:/opt/intel/composer_xe_2013_sp1.0.080/bin/intel64:/opt/intel/composer_xe_2013_sp1.0.080/debugger/gui/intel64:/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/lpp/mmfs/bin:/opt/utility:/u/pa/ru/joeuser/bin
+0: MPI_BIN=/opt/openmpi/1.6.5/intel/bin
+0: MPI_COMPILER=mpicc
+0: TBBROOT=/opt/intel/composer_xe_2013_sp1.0.080/tbb
+0: PWD=/u/pa/ru/joeuser/examples/examples/quick
+0: _LMFILES_=/usr/share/Modules/modulefiles/utility:/opt/modulefiles/PrgEnv/intel/default:/opt/modulefiles/openmpi/intel/1.6.5
+0: IDB_HOME=/opt/intel/composer_xe_2013_sp1.0.080/bin/intel64
+0: LANG=en_US.UTF-8
+0: MODULEPATH=/usr/share/Modules/modulefiles:/etc/modulefiles:/opt/modulefiles
+0: LOADEDMODULES=utility:PrgEnv/intel/default:openmpi/intel/1.6.5
+0: HISTCONTROL=ignoredups
+0: MPI_SYSCONFIG=/opt/openmpi/1.6.5/intel/etc
+0: SHLVL=1
+0: HOME=/u/pa/ru/joeuser
+0: OMPI_CC=icc
+0: MPI_SUFFIX=_openmpi
+0: MPI_MAN=/opt/openmpi/1.6.5/intel/share/man
+0: DYLD_LIBRARY_PATH=/opt/intel/composer_xe_2013_sp1.0.080/compiler/lib:/opt/intel/composer_xe_2013_sp1.0.080/compiler/lib/intel64
+0: LOGNAME=joeuser
+0: QTLIB=/usr/lib64/qt-3.3/lib
+0: CVS_RSH=ssh
+0: SSH_CONNECTION=138.67.4.206 52930 138.67.132.244 22
+0: MPI_HOME=/opt/openmpi/1.6.5/intel
+0: MODULESHOME=/usr/share/Modules
+0: OMP_NUM_THREADS=2
+0: LESSOPEN=|/usr/bin/lesspipe.sh %s
+0: INCLUDE=/opt/intel/composer_xe_2013_sp1.0.080/ipp/include:/opt/intel/composer_xe_2013_sp1.0.080/mkl/include
+0: G_BROKEN_FILENAMES=1
+0: SCRATCH=/scratch/joeuser
+0: module=() {  eval `/usr/bin/modulecmd bash $*`
+0: }
+0: _=/usr/bin/srun
+0: SLURM_PRIO_PROCESS=0
+0: SRUN_DEBUG=3
+0: SLURM_SUBMIT_DIR=/u/pa/ru/joeuser/examples/examples/quick
+0: SLURM_SUBMIT_HOST=mio001
+0: SLURM_JOB_NAME=/u/pa/ru/joeuser/examples/examples/quick/./phostname
+0: SLURM_JOB_CPUS_PER_NODE=4(x2)
+0: SLURM_NTASKS=8
+0: SLURM_NPROCS=8
+0: SLURM_NTASKS_PER_NODE=4
+0: SLURM_DISTRIBUTION=block
+0: SLURM_LABELIO=1
+0: SLURM_JOB_ID=3818
+0: SLURM_JOBID=3818
+0: SLURM_STEP_ID=0
+0: SLURM_STEPID=0
+0: SLURM_NNODES=2
+0: SLURM_JOB_NUM_NODES=2
+0: SLURM_NODELIST=compute[000-001]
+0: SLURM_TASKS_PER_NODE=4(x2)
+0: SLURM_SRUN_COMM_PORT=36192
+0: SLURM_STEP_NODELIST=compute[000-001]
+0: SLURM_STEP_NUM_NODES=2
+0: SLURM_STEP_NUM_TASKS=8
+0: SLURM_STEP_TASKS_PER_NODE=4(x2)
+0: SLURM_STEP_LAUNCHER_PORT=36192
+0: SLURM_SRUN_COMM_HOST=172.17.0.2
+0: SLURM_TOPOLOGY_ADDR=compute000
+0: SLURM_TOPOLOGY_ADDR_PATTERN=node
+0: TMPDIR=/tmp
+0: SLURM_CPUS_ON_NODE=4
+0: SLURM_CPU_BIND_VERBOSE=quiet
+0: SLURM_CPU_BIND_TYPE=mask_cpu:
+0: SLURM_CPU_BIND_LIST=0x10,0x20,0x04,0x08
+0: SLURM_CPU_BIND=quiet,mask_cpu:0x10,0x20,0x04,0x08
+0: SLURM_TASK_PID=11833
+0: SLURM_NODEID=0
+0: SLURM_PROCID=0
+0: SLURM_LOCALID=0
+0: SLURM_LAUNCH_NODE_IPADDR=172.17.0.2
+0: SLURM_GTIDS=0,1,2,3
+0: SLURM_CHECKPOINT_IMAGE_DIR=/u/pa/ru/joeuser/examples/examples/quick
+0: SLURMD_NODENAME=compute000
+

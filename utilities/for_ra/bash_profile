@@ -1,0 +1,31 @@
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$HOME/bin:/lustre/home/apps/python/2.5.2b/bin:$PATH
+PATH=/lustre/home/apps/utility:$PATH
+
+MYMPI=default
+#MYMPI=mvapich2-1.0.3_IO
+
+export MYMPI
+
+    case $MYMPI in
+    	"mvapich2-1.0.3_IO")
+                LD_LIBRARY_PATH=/lustre/home/apps/mpi/mvapich2-1.0.3_IO/lib:$LD_LIBRARY_PATH
+                MANPATH=/lustre/home/apps/mpi/mvapich2-1.0.3_IO/man:$MANPATH
+                PATH=/lustre/home/apps/mpi/mvapich2-1.0.3_IO/bin:$PATH
+
+    esac
+
+alias doit="qsub -q INTERACTIVE -I -V -l nodes=1"
+
+export PATH
+export LD_LIBRARY_PATH
+export MANPATH
+unset USERNAME

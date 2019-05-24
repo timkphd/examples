@@ -1,0 +1,32 @@
+#!/bin/bash
+#PBS -l nodes=2:ppn=8
+#PBS -l naccesspolicy=singleuser
+#PBS -l walltime=00:05:00
+#PBS -N testIO
+#PBS -o testIOo.$PBS_JOBID
+#PBS -e testIOe.$PBS_JOBID
+#PBS -r n
+#PBS -V 
+#-----------------------------------------------------
+cd $PBS_O_WORKDIR
+
+# Create a directory in $SCRATCH for your run
+# Here we create a directory "tagged" with our
+# job id
+mkdir $SCRATCH/$PBS_JOBID
+echo created $SCRATCH/$PBS_JOBID
+
+
+# Next you might want to copy data and script to the 
+# $SCRATCH/$PBS_JOBID directory 
+cp $0 *data $SCRATCH/$PBS_JOBID
+
+# go to the directory
+cd $SCRATCH/$PBS_JOBID
+
+
+# Run a program that "lives" in your starting
+# directory but the output goes into our 
+# $SCRATCH/$PBS_JOBID directory
+mpiexec -np 8 $PBS_O_WORKDIR/mpiio > out.$PBS_JOBID
+

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>Starting from Scratch</title>
+	<meta name="generator" content="BBEdit 9.3">
+<link href="../../../port.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h3>I am starting from scratch thinking there might be a LAPACK routine that can help me. What do I do?</h3>
+<h4>The following is a example of how someone, "Sue", got a start on solving a problem.</h4>
+<p>The Intel compiler ships with an optimized library called MKL that contains the LAPACK, SCALAPACK and other math routines.  We will use the LAPACK routines from MKL.
+</p>
+<p>The first question to ask is what problem is to be solved.  In this case Sue wanted to compute all eigenvalues and eigenvectors of a real symmetric matrix A.  So she looked at the Intel MKL documentation for a routine that will do this.</p>
+
+<p>
+The MKL documentation is available locally.  The direct link is to the full set of documentation is:
+<a href="http://geco.mines.edu/software/Intel_11/mkl/mkl_documentation.htm">http://geco.mines.edu/software/Intel_11/mkl/mkl_documentation.htm</a>.  From here we want the Reference Manual:  <a href="http://geco.mines.edu/software/Intel_11/mkl/mklman.pdf">http://geco.mines.edu/software/Intel_11/mkl/mklman.pdf</a>.
+</p>
+<p>The reference manual is huge, over 3,000 pages.  You will want to download it to your local machine and look at it locally instead of trying to view it in your web browser.
+</p>
+
+<p>Sue downloaded the manual and looked at it using her favorite program for viewing PDF files.  In her case it was the OSX application "Preview".  She saw in the index Chapter 4 LAPACK Routines: Least Squares and Eigenvalue Problems.  She then went to the subsection "Driver Routines".  Then "Symmetric Eigenproblems".  She found the routine ?syev that "Computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix."  Bingo!
+</p>
+
+<p>Sue then looked at the documentation and started to get a glazed look on her face.  All it gave was a single line showing the calling sequence and a list of all of the input parameters.  How would this look in a real program?
+</p>
+<p>From the documentation she saw that there was a double precision version of this routine called dsyev.  Sue did a Google search on "dsyev example".  The first link that came up was to: <a href="http://www.nag.co.uk/lapack-ex/node71.html">http://www.nag.co.uk/lapack-ex/node71.html</a>.  This page has a link to a real example program in Fortran 77 source form.
+</p>
+<p>
+She downloaded it to RA and converted it to Fortran 90 source form by changing the "*" in the first column to "!" and fixing the continued lines.  Her program was called dsyev.f90.  She also commented out the call to the routine X04CAF because this is just a utility routine that prints a matrix and it is not part of LAPACK. She also downloaded the example data file, calling it dat.in.
+</p>
+
+<p>
+From the Geco MKL  page <a href="http://geco.mines.edu/software/mkl/index.shtml">http://geco.mines.edu/software/mkl/index.shtml</a> she found an example makefile.  She used this to create a new makefile using the recomended libraries.  
+</p>
+
+<pre>
+[sue@ra scalapack]$ cat makefile.mkl
+LIBPATH=/opt/intel/Compiler/11.1/064/mkl/lib/em64t
+LIBS= \
+  $(LIBPATH)/libmkl_scalapack_lp64.a \
+  $(LIBPATH)/libmkl_intel_lp64.a \
+  $(LIBPATH)/libmkl_blacs_openmpi_lp64.a \
+  $(LIBPATH)/libmkl_core.a  \
+  $(LIBPATH)/libmkl_sequential.a \
+  $(LIBPATH)/libmkl_core.a  \
+  $(LIBPATH)/libmkl_sequential.a \
+  $(LIBPATH)/libmkl_core.a  \
+  -lpthread
+
+
+dsyev.ex: dsyev.f90
+	ifort -o dsyev.ex dsyev.f90  $(LIBS)
+</pre>
+<p>
+Note that there is a TAB at the beginning of the ifort line, as required by the make command, not spaces.  Sue is using version 11.1 of the Fortran compiler.  If you are using a different version you will need to change the LIBPATH.
+</p>
+
+<p>
+Finally, she built and ran the program
+</p>
+
+<pre>
+[sue@ra mkl]$ make -f makefile.mkl
+ifort -o dsyev.ex dsyev.f90  /opt/intel/Compiler/11.1/064/mkl/lib/em64t/libmkl_scalapack_lp64.a /opt/intel/Compiler/11.1/064/mkl/lib/em64t/libmkl_intel_lp64.a /opt/intel/Compiler/11.1/064/mkl/lib/em64t/libmkl_blacs_openmpi_lp64.a /opt/intel/Compiler/11.1/064/mkl/lib/em64t/libmkl_core.a /opt/intel/Compiler/11.1/064/mkl/lib/em64t/libmkl_sequential.a /opt/intel/Compiler/11.1/064/mkl/lib/em64t/libmkl_core.a /opt/intel/Compiler/11.1/064/mkl/lib/em64t/libmkl_sequential.a /opt/intel/Compiler/11.1/064/mkl/lib/em64t/libmkl_core.a -lpthread
+[sue@ra mkl]$ 
+[sue@ra mkl]$ ./dsyev.ex < dat.in
+ DSYEV Example Program Results
+ 
+ Eigenvalues
+    -2.0531 -0.5146 -0.2943 12.8621
+ 
+ Error estimate for the eigenvalues
+        1.4E-15
+ 
+ Error estimates for the eigenvectors
+        9.3E-16    6.5E-15    6.5E-15    1.1E-16
+[sue@ra mkl]$ 
+</pre>
+<h3>Sue's files:</h3>
+<ul>
+	<li><a href="dsyev.f90">dsyev.f90</a></li>
+	<li><a href="makefile.mkl">makefile.mkl</a></li>
+	<li><a href="dat.in">dat.in</a></li>
+</ul>
+
+</body>
+</html>

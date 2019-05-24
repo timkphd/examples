@@ -1,0 +1,17 @@
+#!/bin/bash
+# $PBS_NODEFILE defined? (running in batch)
+if [ -n "$PBS_NODEFILE" ] ; then
+# yes defined, test if file exists
+	if [ -a $PBS_NODEFILE ] ; then 
+# yes exists, write it
+		cat $PBS_NODEFILE
+	else
+# $PBS_NODEFILE defined but does not exist, this should not happen
+		echo $PBS_NODEFILE not found
+	fi
+else
+# $PBS_NODEFILE not defined
+# this implies we are not running in batch
+# list all the nodes
+	pbsnodes | grep "^[a-zA-Z]"
+fi

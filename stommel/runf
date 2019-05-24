@@ -1,0 +1,17 @@
+#!/bin/csh 
+#PBS -l nodes=1:ppn=8 
+#PBS -l walltime=00:10:00 
+#PBS -N testIO 
+#PBS -o stfout.pbs 
+#PBS -e stferr.pbs 
+#PBS -r n 
+#PBS -V 
+#------------------- 
+cd $PBS_O_WORKDIR 
+
+echo "version = stf_00"
+stf_00  < st.in
+foreach NUM (stf_01 stf_02 stf_03 stf_04 stf_05 stf_06 stf_07) 
+    echo "version = " $NUM
+    mpiexec -np 4 $PBS_O_WORKDIR/$NUM < st.in
+end

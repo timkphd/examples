@@ -1,0 +1,52 @@
+#!/bin/bash -x
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=10
+#SBATCH --ntasks=10
+##SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=10:00:00
+#SBATCH --partition=ppc
+
+cd $SLURM_SUBMIT_DIR
+
+EXE="./pdgexmp"
+
+# IBM MPI jobs need to be launched with poe instead of srun
+# This flag is required
+export MP_RESD=poe
+
+# poe requires an old style host.list file
+# We set the hostfile name to be a function
+# of the JOB ID
+export MP_HOSTFILE=$SLURM_JOBID.list
+
+# We create the host.list file
+# This program uses:
+# SLURM_NODELIST=ppc[001-002]
+# SLURM_NTASKS_PER_NODE=8
+# to create our host.list file
+
+#/opt/utility/expands > $MP_HOSTFILE
+./expands > $MP_HOSTFILE
+
+export EXE=./pdgexmp 
+echo running $EXE
+rm $EXE.out
+echo $EXE > $EXE.out
+for t in 1 2 4  ; do
+    export OMP_NUM_THREADS=$t
+    echo "OMP_NUM_THREADS=" $OMP_NUM_THREADS >> $EXE.out
+    poe $EXE -procs $SLURM_NTASKS >> $EXE.out
+done
+
+
+for EXE in ./diffusion ./simple ; do
+  echo running $EXE
+  rm $EXE.out
+  echo $EXE > $EXE.out
+    export OMP_NUM_THREADS=1
+    echo "OMP_NUM_THREADS=" $OMP_NUM_THREADS >> $EXE.out
+    poe $EXE -procs $SLURM_NTASKS >> $EXE.out
+done
+
