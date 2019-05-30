@@ -1,0 +1,47 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --time=00:30:00
+##SBATCH --qos=testing 
+#SBATCH --oversubscribe
+#SBATCH --exclusive=user
+#SBATCH --cpus-per-task=12
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Run our program with output put into out.dat
+
+module purge
+module load intel/17.4 jdk/1.8.0 impi/17.3 jpeg mkl
+
+
+
+export RBASE=/projects/timk@colostate.edu/R/builds/3.6.0_17.4_mkl
+export PATH=$RBASE/bin:$PATH
+
+# make a directory for this run
+mkdir $SLURM_JOB_ID
+cd $SLURM_JOB_ID
+cat $0 > script
+cp $SLURM_SUBMIT_DIR/spawn2.R .
+cp $SLURM_SUBMIT_DIR/invert.R .
+cp $SLURM_SUBMIT_DIR/core.so .
+export LD_LIBRARY_PATH=`pwd`:$LD_LIBRARY_PATH
+pwd
+
+export OMP_NUM_THREADS=1
+#export KMP_AFFINITY=disabled
+#export KMP_AFFINITY=scatter
+#export KMP_AFFINITY=compact
+export I_MPI_PIN_PROCESSOR_LIST=allcores:map=scatter
+export I_MPI_PIN_PROCESSOR_LIST=allcores:map=spread
+
+export R_LIBS=$RBASE/local
+for t in 2 4 6 8 10 12 14 16 18 20 22 24 ; do
+echo $t > threads.txt
+echo $t >> out.dat
+srun --mpi=pmi2  -n 1 Rscript $SLURM_SUBMIT_DIR/spawn2.R >> out.dat
+done
+cp $SLURM_SUBMIT_DIR/slurm-$SLURM_JOB_ID* .
