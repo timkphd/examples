@@ -109,26 +109,25 @@ else:
 if len(sys.argv) > 1:
 	f=open(sys.argv[1])
 	data=f.read()
-print header
+print(header)
 if len(sys.argv) > 2:
 	color=sys.argv[2]
 if(color=="green"):
-	print '<table class="greenbar">'
+	print('<table class="greenbar">')
 else:
-	print '<table class="bluebar">'
+	print('<table class="bluebar">')
 lines=data.split("\n")
 #print lines
 head=lines[0]
 head=head.replace("\t","</th><th>")
 head="<tr><th>"+head+"</th></tr>"
-print head
+print(head)
 for l in lines[1:]:
 	if len(l) < 1 :
 		continue
 	l=l.replace("\t","</td><td>")
 	l='<tr><td>'+l+"</td></tr>"
-	print l
-print "</table>"
-		
-print "</body>"
-print "</html>"
+	print(l)
+print("</table>")
+print("</body>")
+print("</html>")
