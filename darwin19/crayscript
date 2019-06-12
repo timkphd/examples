@@ -1,0 +1,41 @@
+#!/bin/bash
+#PBS -N jobname
+#PBS -q medium
+#PBS -j oe
+#PBS -l mppwidth=64
+#PBS -l walltime=12:00:00 
+#PBS q batch
+
+# Go to starting directory
+cd $PBS_O_WORKDIR
+
+# Get short version of our jobid
+JOBID=`echo $PBS_JOBID | sed "s/.sdb//"`
+
+# Make a directory for this run and go there
+mkdir $JOBID
+cd $JOBID
+
+# Copy our input data and our script
+cp $PBS_O_WORKDIR/wing.dat .
+cp $PBS_O_WORKDIR/darwin.in .
+cp $PBS_O_WORKDIR/source.dat .
+cat $0 > script.$JOBID
+
+# Get a list of our noded
+cp $PBS_NODEFILE nodes
+
+# Link to our stdout file in the starting directory
+ln ../jobname.o$JOBID stdout.$JOBID
+
+# Start Tim's timer
+$PBS_O_WORKDIR/tymer times "start of run"
+
+# Do the run
+aprun -n 64 /home/timk/lustrefs/darwin2/darwin
+
+# Stop Tim's timer
+$PBS_O_WORKDIR/tymer times "end of run"
+
+# Copy stdout
+cp ../jobname.o$JOBID .

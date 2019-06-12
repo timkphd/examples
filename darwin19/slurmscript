@@ -1,0 +1,44 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=24
+#SBATCH --time=12:00:00
+##SBATCH --qos=testing
+#SBATCH --output=sample-%j.out
+
+module purge
+module load intel/17.4 impi/17.3 mkl
+
+# Go to starting directory
+cd $SLURM_SUBMIT_DIR
+
+# Get short version of our jobid
+JOBID=`echo $SLURM_JOB_ID`
+
+
+# Make a directory for this run and go there
+mkdir $JOBID
+cd $JOBID
+
+# Copy our input data and our script
+cp $SLURM_SUBMIT_DIR/wing.dat .
+cp $SLURM_SUBMIT_DIR/darwin.in .
+cp $SLURM_SUBMIT_DIR/source.dat .
+cat $0 > script.$JOBID
+
+# Get a list of our nodes
+echo $SLURM_JOB_NODELIST > nodes
+
+# Link to our stdout file in the starting directory
+ln ../sample-$JOBID.out stdout.$JOBID
+
+# Start Tim's timer
+$SLURM_SUBMIT_DIR/tymer times "start of run"
+
+# Do the run
+mpirun -n 24 $SLURM_SUBMIT_DIR/darwin
+
+# Stop Tim's timer
+$SLURM_SUBMIT_DIR/tymer times "end of run"
+
+# Copy stdout
+cp ../sample-$JOBID.out .

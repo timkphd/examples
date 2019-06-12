@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+import sys
+import time
+import os.path
+secs=time.time()
+date=time.asctime()
+delta=0
+delta2=0
+comment=""
+file=""
+if len(sys.argv) > 1:
+	file=sys.argv[1]
+else:
+	s="%17.6f %s %10.3f" % (secs,date,delta)
+	print s
+	quit()
+if file == "-h" or file == "-help" or file == "--h" :
+	print ""
+	print "USAGE:"
+	print ""
+	print sys.argv[0]," [file] [comment]"
+	print ""
+	print "With no input on the command line prints"
+	print "time in seconds and date to the screen."
+	print ""
+	print "With a file name on the command line it reads"
+	print "the file, if it exists, and prints a delta time"
+	print "from the last time this program updated the file"
+	print "and appends the time information to the file."
+	print ""
+	print "If the file does not exist it creates it and"
+	print "write the current time information."
+	print "You can add optional comments that will be added"
+	print "to the end of the line."
+	s="%17.6f %s %10.3f %10.3f" % (secs,date,delta,delta2)
+	print ""
+	print s
+	quit()	
+if len(sys.argv) > 2:
+	for x in sys.argv[2:]:
+		comment=comment+x+" "
+	comment=comment.strip()
+#two cases
+exists=os.path.exists(file)
+# file exists
+if exists :
+# open it for read
+	with open(file, "r") as myfile:
+		lines=myfile.readlines()
+# close it
+    	myfile.close()
+# get the last line
+	if len(lines) > 0 :
+# calculate a delta
+		ll=lines[-1]
+		try:
+			last=ll.split()
+			pre=float(last[0])
+		except:
+			pre=secs
+		ll=lines[0]
+		try:
+			last=ll.split()
+			post=float(last[0])
+		except:
+			post=secs
+	else:
+		pre=secs
+		post=secs
+		
+	delta=secs-pre
+	delta2=secs-post
+# print secs,date,delta
+	s="%17.6f %s %10.3f %10.3f %s" % (secs,date,delta,delta2,comment)
+	print s
+	with open(file, "a") as myfile:
+		myfile.write(s+"\n")
+		myfile.close()
+	quit()
+
+# file does not exist
+else:
+	s="%17.6f %s %10.3f %10.3f %s" % (secs,date,delta,delta2,comment)
+	print s
+#open it
+	with open(file, "w") as myfile:
+		myfile.write(s+"\n")
+		myfile.close()
+	quit()
+
+
+
+
+	
