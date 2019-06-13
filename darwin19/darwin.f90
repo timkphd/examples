@@ -24,8 +24,8 @@ program darwin
             integer , optional, intent(in) :: i
 	end function unique
     end interface
-    call timer(t0)
     call init
+    call timer(t0)
 !    	call system("/usr/bin/uptime")
 !    	call MPI_BARRIER(MPI_COMM_WORLD,ijk)
     in_file="darwin.in"
