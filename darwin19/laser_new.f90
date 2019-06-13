@@ -691,7 +691,7 @@ function fitness(vector)
     real(b8) MPI_Wtime
         
     ts=ccm_time()
-    if (mygen .gt. 101)then
+    if (mygen .gt. scache)then
 !    write(*,*)"checking"
     if (mod(mygen,100).eq. 0)then
         call wipe(root)
@@ -796,7 +796,7 @@ function fitness(vector)
 !    write(*,*)'matrix solve time ',it2
 !    write(*,*)'total computaion time ',ttot,sfit
     invert_t=invert_t+(MPI_Wtime()-dtime_1)
-    if(mygen .gt. 101)then
+    if(mygen .gt. scache)then
       dtime_1=MPI_Wtime()
       call insert(path, -sfit, root)
       insert_t=insert_t+(MPI_Wtime()-dtime_1)
