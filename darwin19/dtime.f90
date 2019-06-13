@@ -17,9 +17,9 @@ contains
             scache=1000000
             INQUIRE(FILE="cache", EXIST=file_exists)
             if(file_exists)then
-                open(23,file="cache")
+                open(32,file="cache")
                 read(32,*)scache
-                close(23)
+                close(32)
             endif
         endif
         call MPI_BCAST(scache,1,MPI_INTEGER,mpi_master,MPI_COMM_WORLD,mpi_err)
