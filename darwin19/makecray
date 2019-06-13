@@ -5,6 +5,7 @@ L1= charles.o darwin.o ga_list_mod.o global.o init.o laser_new.o
 L2= mods.o more_mpi.o mpi.o numz.o  unique.o wtime.o sep_allocate.o dtime.o
 L2= mods.o more_mpi.o mpi.o numz.o  unique.o         sep_allocate.o dtime.o
 L3= malloc_count.o 
+L3=
 OPT= -g -O3 -ffree-form 
 OPT= -g -O3 -ffree-form -fbacktrace -fcheck=all
 OPT= -O3 -ffree-form 
