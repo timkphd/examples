@@ -7,6 +7,7 @@ integer :: scache
 contains
     subroutine dtime_init()
         use mympi
+        use more_mpi
         logical :: file_exists
         insert_t=0
         test_t=0
