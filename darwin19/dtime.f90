@@ -21,7 +21,7 @@ contains
                 close(23)
             endif
         endif
-        call MPI_BCAST(scache,1,MPI_INTEGER,mpi_master,TIMS_COMM_WORLD,mpi_err)
+        call MPI_BCAST(scache,1,MPI_INTEGER,mpi_master,MPI_COMM_WORLD,mpi_err)
     end subroutine
 
     subroutine dtime_report(ifile)
