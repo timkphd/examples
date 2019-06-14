@@ -41,17 +41,17 @@ program darwin
         key%bytes(j)=-1
     enddo
     call insert(key, -1e20, root)
-    write(*,*)"did insert"
+    !write(*,*)"did insert"
     call chuck(input,init_it)
     call timer(t2)
     deallocate(input)
     allocate(input(gene_size))
     input=0
     init_it=.false.
-    write(*,*)"calling chuck again"
+    !write(*,*)"calling chuck again"
     call chuck(input,init_it)
 !    call wipe(root)
-    write(*,*)"back from chuck again"
+    !write(*,*)"back from chuck again"
     if(myid.eq.mpi_master)then
 		write(out1,*)"result=",fitness(input)
 		write(out1,'(4i2)')input

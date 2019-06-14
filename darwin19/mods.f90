@@ -475,7 +475,7 @@ subroutine MY_MERGE(input,n,output,m,root,THETAG,THECOM,MPI_FIT)
   call MPI_COMM_RANK( THECOM, rank, ierr )
   call MPI_COMM_SIZE( THECOM, p, ierr )
   !write(*,*)"my_merge",rank,p,THETAG,THECOM,MPI_FIT
-  write(*,*)"my_merge",rank,p
+  !write(*,*)"my_merge",rank,p
   NTAG=(THETAG+1)
   do ijk=1,n
      if(input(ijk)%proc .ne. rank)&
@@ -553,9 +553,9 @@ subroutine MY_MERGE(input,n,output,m,root,THETAG,THECOM,MPI_FIT)
 ! data=data+new_data
     if(allocated(temp2))deallocate(temp2)
     allocate(temp2(m+count))
-    write(*,*)"merge2-2a",rank
+    !write(*,*)"merge2-2a",rank
     call merge2(data,m,rec,count,temp2)
-    write(*,*)"merge2-2b",rank
+    !write(*,*)"merge2-2b",rank
     deallocate(data);allocate(data(m+count))
     data=temp2
     m=m+count    

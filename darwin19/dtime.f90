@@ -26,7 +26,7 @@ contains
     end subroutine
 
     subroutine dtime_report(ifile)
-        write(ifile,1234)test_t,insert_t,invert_t
+        write(ifile,1234)scache,test_t,insert_t,invert_t
     1234 format("cache start=",i10," test=",f10.2,"  insert=",f10.2,"  invert=",f10.2)
     end subroutine
 end module
