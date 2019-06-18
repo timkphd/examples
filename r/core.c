@@ -6,7 +6,7 @@
 #include <unistd.h> 
 #include <stdio.h> 
 #include <assert.h> 
- 
+/* TO COMPILE: R CMD SHLIB core.c */
 int sched_getcpu(); 
  
 void findcore (int *ic) 
