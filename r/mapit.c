@@ -6,7 +6,8 @@
 #include <unistd.h> 
 #include <stdio.h> 
 #include <assert.h> 
-/* TO COMPILE: R CMD SHLIB core.c */
+/* TO COMPILE: R CMD SHLIB mapit.c */
+/* TO Make an a.out gcc -DDOMAIN mapiit.c */
 int sched_getcpu(); 
  
 void findcore (int *ic) 
@@ -35,7 +36,7 @@ void p_to_c (int * pid ,int *core) {
 	sched_setaffinity(getpid(), sizeof(cpu_set_t), &set);   
 } 
 
-/* 
+#ifdef DOMAIN
 #include <stdio.h> 
 void main(){ 
 int ic,pid; 
@@ -50,4 +51,4 @@ p_to_c(&pid,&ic);
 findcore(&ic); 
 printf("%d\n",ic); 
 } 
-*/
+#endif
