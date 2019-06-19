@@ -1,7 +1,7 @@
 #' A nice timing routine: tymer
 #' 
 #' @param lab A lable for the output
-#' @param reset Rest the timer so dt is measured from current time.
+#' @param reset Reset the timer so dt is measured from current time.
 #' @return Returns time since epoch, date string, dt since last call ,dt since first call and an optional lable.'
 
 #' @examples
