@@ -45,7 +45,7 @@ printf("%d\n",ic);
 ic=ic+1; 
 forcecore(&ic); 
 findcore(&ic); 
-printf("%d\n",ic); 
+printf("%d %d\n",getpid(),ic); 
 scanf("%d %d",&pid,&ic);
 p_to_c(&pid,&ic);
 findcore(&ic); 
