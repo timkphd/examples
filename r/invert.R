@@ -1,4 +1,4 @@
-dyn.load("core.so")
+dyn.load("mapit.so")
  threadfunc <-function() {
  trd=c(0)
  out <- .C("findcore",ic=as.integer(trd),package="thread")
