@@ -72,7 +72,8 @@ subroutine  chuck(result,doinit)
 ! the data structure used to pass startup info to slaves
   type(instance) charles
 ! MPI_CHARLES is the MPI data structure used to pass instance information
-  integer b(3),d(3),t(3),MPI_CHARLES,MPI_SORT
+  integer b(3),t(3),MPI_CHARLES,MPI_SORT
+  INTEGER(KIND=MPI_ADDRESS_KIND) d(3) 
 
   integer j_each,k_total,theid,tsend,ijk
   real(b8) ave_fit,fit_time,dt1,dt2,dt3,dt4,dt5,dt6,sort_time,tot_time
@@ -213,7 +214,9 @@ subroutine  chuck(result,doinit)
   b(1)=1;b(2)=4
   d(1)=0;d(2)=8
   t(1)=MPI_DOUBLE_PRECISION;t(2)=MPI_INTEGER
-  call MPI_TYPE_STRUCT(2,b,d,t,MPI_SORT,mpi_err)
+  !call       MPI_TYPE_STRUCT(2,b,d,t,MPI_SORT,mpi_err)
+  write(*,*)"first call"
+  call MPI_Type_create_struct(2,b,d,t,MPI_SORT,mpi_err)
   call MPI_TYPE_COMMIT(MPI_SORT,mpi_err)
 !  write(out1,*)"MPI_SORT=",MPI_SORT
 
@@ -221,10 +224,13 @@ subroutine  chuck(result,doinit)
   b(1)=3;b(2)=10;b(3)=2
   d(1)=0;d(2)=24;d(3)=64
   t(1)=MPI_DOUBLE_PRECISION;t(2)=MPI_INTEGER;t(3)=MPI_LOGICAL
-  call MPI_TYPE_STRUCT(3,b,d,t,MPI_CHARLES,mpi_err)
+  !call       MPI_TYPE_STRUCT(3,b,d,t,MPI_CHARLES,mpi_err)
+   write(*,*)"second call"
+ call MPI_Type_create_struct(3,b,d,t,MPI_CHARLES,mpi_err)
   call MPI_TYPE_COMMIT(MPI_CHARLES,mpi_err)
 ! broadcast the info to workers
-  call MPI_BCAST(charles,1,MPI_CHARLES,mpi_master,TIMS_COMM_WORLD,mpi_err)
+   write(*,*)"third call"
+ call MPI_BCAST(charles,1,MPI_CHARLES,mpi_master,TIMS_COMM_WORLD,mpi_err)
   invert_rate=charles%invert_rate
   mut_rate=charles%mut_rate;      quit_value=charles%quit_value
   pop_size=charles%pop_size;      generations=charles%generations
@@ -235,6 +241,7 @@ subroutine  chuck(result,doinit)
   hand_out=charles%hand_out      ;the_top=charles%the_top
   do_one=charles%do_one
   call MPI_BCAST(maxtime,1,MPI_DOUBLE_PRECISION,mpi_master,TIMS_COMM_WORLD,mpi_err)
+  write(*,*)"fourth call"
 
 ! seed is a function of processor number
   seed=seed-myid

@@ -8,7 +8,7 @@
 #module purge
 #module load intel/17.4 impi/17.3 mkl
 export LD_LIBRARY_PATH=/opt/intel/lib:/opt/intel/mkl/lib:$LD_LIBRARY_PATH
-
+export DYLD_LIBRARY_PATH=/opt/intel/intelpython3/lib
 # Go to starting directory
 SLURM_SUBMIT_DIR=`pwd`
 cd $SLURM_SUBMIT_DIR
@@ -26,6 +26,7 @@ cd $JOBID
 cp $SLURM_SUBMIT_DIR/wing.dat .
 cp $SLURM_SUBMIT_DIR/darwin.in .
 cp $SLURM_SUBMIT_DIR/source.dat .
+cp echo 100 > cache
 cat $SLURM_SUBMIT_DIR/$0 > script.$JOBID
 
 # Get a list of our nodes

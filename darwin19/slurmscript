@@ -23,6 +23,7 @@ cd $JOBID
 cp $SLURM_SUBMIT_DIR/wing.dat .
 cp $SLURM_SUBMIT_DIR/darwin.in .
 cp $SLURM_SUBMIT_DIR/source.dat .
+echo 100 > cache
 cat $0 > script.$JOBID
 
 # Get a list of our nodes
