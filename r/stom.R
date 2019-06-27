@@ -78,37 +78,44 @@ to<-paste(mycwd,"/",mysub,sep="")
 
 l1<-myid %/% 26 +1
 l2 <- myid %% 26 +1
-rfile<-paste("realsx",letters[l1],letters[l2],sep="")
-ifile<-paste("intsx",letters[l1],letters[l2],sep="")
-afile<-paste("asciix",letters[l1],letters[l2],sep="")
-print(paste(rfile,ifile,afile))
+if(FALSE){
+	rfile<-paste("realsx",letters[l1],letters[l2],sep="")
+	ifile<-paste("intsx",letters[l1],letters[l2],sep="")
+	afile<-paste("asciix",letters[l1],letters[l2],sep="")
+	print(paste(rfile,ifile,afile))
 
-# read in our character data
-chars<-read.csv(afile,header=F)
-lines=nrow(chars)
-names(chars)<-c("le","ct","poly")
+	# read in our character data
+	chars<-read.csv(afile,header=F)
+	lines=nrow(chars)
+	names(chars)<-c("le","ct","poly")
 
-# read in our real data
-reals<-readBin(rfile,what="double",n=lines*10)
-r<-matrix(reals,lines,byrow=T)
-rm(reals)
-rdf=as.data.frame(r)
-rm(r)
-names(rdf) <- c("second","latitude","longitude","depth","SCSN","residual","stdpos","stddepth","stdhorrel","stddeprel")
+	# read in our real data
+	reals<-readBin(rfile,what="double",n=lines*10)
+	r<-matrix(reals,lines,byrow=T)
+	rm(reals)
+	rdf=as.data.frame(r)
+	rm(r)
+	names(rdf) <- c("second","latitude","longitude","depth","SCSN","residual","stdpos","stddepth","stdhorrel","stddeprel")
 
-# read in our integer data
-ints<-readBin(ifile,what="int",n=lines*13)
-i<-matrix(ints,lines,byrow=T)
-rm(ints)
-idf=as.data.frame(i)
-rm(i)
-names(idf) <- c("year","month","day","hour","minute","cuspid","PandS","statino","tod","method","ec","nen","dt")
+	# read in our integer data
+	ints<-readBin(ifile,what="int",n=lines*13)
+	i<-matrix(ints,lines,byrow=T)
+	rm(ints)
+	idf=as.data.frame(i)
+	rm(i)
+	names(idf) <- c("year","month","day","hour","minute","cuspid","PandS","statino","tod","method","ec","nen","dt")
 
-dat=cbind(rdf,idf,chars)
-rm(rdf)
-rm(idf)
-rm(chars)
-
+	dat=cbind(rdf,idf,chars)
+	rm(rdf)
+	rm(idf)
+	rm(chars)
+} else {
+	sfile<-paste("start",letters[l1],letters[l2],sep="")
+	print(paste(myid,sfile))
+	dat<-read.delim(sfile,header=F,sep="")
+	thehead=c("year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly")
+	colnames(dat)<-thehead
+}
 latb<-c(32,42)
 lonb<-c(-114,-125)
 dlat=4
