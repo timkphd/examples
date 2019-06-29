@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>R cheatsheet</title>
+	<style>
+	BODY { background-color: #eee; }
+	code {style=display:block;white-space:pre-wrap}
+	h3
+	{
+		color: deepskyblue;
+	}
+
+</style>
+	<meta name="generator" content="BBEdit 12.6" />
+</head>
+<body>
+<h3>Install packages in a particular library</h3>
+<code>install.packages("doMC", repos="http://cran.r-project.org",lib="/projects/timk@colostate.edu/R/builds/3.6.0_17.4_mkl/local") </code>
+
+<h3>C Code for forcing task to Core</h3>
+
+<code>
+#define _GNU_SOURCE 
+#include &lt;sys/types.h&gt; 
+#include &lt;unistd.h&gt; 
+#include &lt;sched.h&gt; 
+#include &lt;stdlib.h&gt; 
+#include &lt;unistd.h&gt; 
+#include &lt;stdio.h&gt; 
+#include &lt;assert.h> 
+/* TO COMPILE: R CMD SHLIB mapit.c */
+/* TO Make an a.out gcc -DDOMAIN mapiit.c */
+int sched_getcpu(); 
+ 
+void findcore (int *ic) 
+{ 
+    int cpu; 
+    ic[0] = sched_getcpu(); 
+} 
+void forcecore (int *core) { 
+	cpu_set_t set; 
+	pid_t getpid(void); 
+	CPU_ZERO(&amp;set);        // clear cpu mask 
+        int bonk; 
+        bonk=*core; 
+	CPU_SET(bonk, &amp;set);      // set cpu 0 
+	sched_setaffinity(getpid(), sizeof(cpu_set_t), &amp;set);   
+} 
+
+void p_to_c (int * pid ,int *core) { 
+	cpu_set_t set; 
+	pid_t apid;
+	apid=(pid_t)pid;
+	CPU_ZERO(&amp;set);        // clear cpu mask 
+        int bonk; 
+        bonk=*core; 
+	CPU_SET(bonk, &amp;set);      // set cpu 0 
+	sched_setaffinity(getpid(), sizeof(cpu_set_t), &amp;set);  
+} 
+
+#ifdef DOMAIN
+#include &lt;stdio.h> 
+void main(){ 
+int ic,pid; 
+findcore(&amp;ic); 
+printf("%d\n",ic); 
+ic=ic+1; 
+forcecore(&amp;ic); 
+findcore(&amp;ic); 
+printf("%d %d\n",getpid(),ic); 
+scanf("%d %d",&amp;pid,&amp;ic);
+p_to_c(&amp;pid,&amp;ic);
+findcore(&amp;ic); 
+printf("%d\n",ic); 
+} 
+#endif
+
+ threadfunc &lt;-function() {  
+ trd=c(0)  
+ out &lt;- .C("findcore",ic=as.integer(trd),package="thread")  
+ return(out$ic)  
+ }  
+ forceit &lt;-function(core) {  
+ trd=c(core)  
+ out &lt;- .C("forcecore",ic=as.integer(trd),package="core")  
+ return(out$ic)  
+ }  
+ p2c &lt;-function(pid,core) { 
+ cr=c(core) 
+ pr=c(pid) 
+  out &lt;- .C("p_to_c",ip=as.integer(pr),ic=as.integer(cr),package="ptwoc")  
+ return(out$ic)  
+} 
+
+foreach(ijk=1:nt, .combine=cbind) %dopar% { 
+	dyn.load("mapit.so")
+	docore &lt;- 2+((ijk-1) %% 23) 
+	forceit(docore) 
+	one=c(ijk,threadfunc())
+}
+
+
+
+</code>
+<h3>Matrix Inversion</h3>
+
+<code>
+library(tictoc) 
+size &lt;- 4000
+mymat &lt;- matrix(nrow=size, ncol=size)
+dia &lt;- 10
+# For each row and for each column, assign values based on position
+for(i in 1:dim(mymat)[1]) {
+  for(j in 1:dim(mymat)[2]) {
+    mymat[i,j] &lt;- 0.1
+  	if ( i == j) {
+  	  mymat[i,j] &lt;- dia
+  	}
+  	else {
+  	  mymat[i,j] &lt;- 0.1
+  	}
+  }
+}
+tic()
+b=solve(mymat)
+tim&lt;-toc() 
+one=sum(b %*% mymat)/size
+dt=tim[[2]][[1]]-tim[[1]][[1]]
+#dt
+one
+</code>
+
+
+<h3>Simple MPI</h3>
+<code>
+if (!is.loaded("mpi_initialize")) {     
+    library("Rmpi")     
+    }  
+mpi_comm_world&lt;-0 
+myid &lt;- mpi.comm.rank(comm=mpi_comm_world)
+numprocs &lt;- mpi.comm.size(comm=mpi_comm_world)
+myname &lt;- mpi.get.processor.name()
+tag&lt;-1234;
+source&lt;-0;
+destination&lt;-1;
+count&lt;-1;
+paste("I am",myid,"of",numprocs,"on",myname)
+if(myid == source){
+	buffer&lt;-5678.9
+	mpi.send(buffer, 2, destination, tag,  comm=mpi_comm_world)
+	}
+if(myid == destination){
+	x&lt;-1234.5
+	mpi.recv(x, 2, source, tag,  comm=mpi_comm_world, status=0)
+	print(c("got",x))
+	}
+bonk&lt;-mpi.finalize()
+</code>
+
+<h3>Tymer</h3>
+<code>
+#' A nice timing routine: tymer
+#' 
+#' @param lab A lable for the output
+#' @param reset Reset the timer so dt is measured from current time.
+#' @return Returns time since epoch, date string, dt since last call ,dt since first call and an optional lable.'
+
+#' @examples
+
+#'  tymer("first call")
+#' [1] "1560955569.153295  2019-06-19 11:02:10       0.000       0.000  first call"
+#' > tymer("second call")
+#' [1] "1560955569.153295  2019-06-19 11:02:48      37.415      37.415  second call"
+#' > tymer("third call")
+#' [1] "1560955569.153295  2019-06-19 11:03:04      16.503      53.918  third call"
+#' > tymer()
+#' [1] "1560955569.153295  2019-06-19 11:03:18      13.544      67.461  "
+#' 
+#' tymer("do reset",reset=TRUE)
+#' [1] "1560955569.153295  2019-06-19 11:04:46       0.000       0.000  do reset"
+#' > tymer("after reset")
+#' [1] "1560955569.153295  2019-06-19 11:05:01      15.705      15.705  after reset"
+#
+#   devtools::create("/Users/tkaiser/examples/r/bonk")
+#   copy tymer to bonk/R
+#   devtools::document("/Users/tkaiser/examples/r/bonk")
+tymer &lt;-function(lab="",reset=FALSE) {
+	ds=Sys.time()
+	now&lt;-as.numeric(ds)
+	if (!(exists("tymerstart")) || reset) {
+		assign("tymerstart", now, envir = .GlobalEnv)
+		assign("lastt", now, envir = .GlobalEnv)
+		dt1&lt;-0
+		dt2&lt;-0
+	} else {
+		dt1&lt;-now-lastt
+		dt2&lt;-now-tymerstart
+		assign("lastt", now, envir = .GlobalEnv)
+	}
+	b1=format(now,digits=15,nsmall=3,width=15)
+	b2=toString(ds)
+	b3=format(dt1,digits=3, nsmall=3,width=10)
+	b4=format(dt2,digits=3, nsmall=3,width=10)
+	paste(b1,b2,b3,b4,lab,sep="  ")
+}
+
+</code>
+<h3>subsetting, creating matrix from data frame, linear solve</h3>
+<h3>Write and read binary</h3>
+<code>
+> library(datasets)   
+> somedat&lt;-USJudgeRatings   
+> newdata &lt;- subset(somedat,RTEN &lt; 7)   
+> newdata   
+              CONT INTG DMNR DILG CFMG DECI PREP FAMI ORAL WRIT PHYS RTEN   
+BRACKEN,J.J.   7.3  6.4  4.3  6.5  6.0  6.2  5.7  5.7  5.1  5.3  5.5  4.8   
+COHEN,S.S.     7.0  5.9  4.9  5.1  5.4  5.9  4.8  5.1  4.7  4.9  6.8  5.0   
+GRILLO,A.E.    7.0  7.5  6.4  6.8  6.5  7.0  6.6  6.8  6.3  6.6  6.2  6.5   
+HEALEY.A.H.    8.0  7.6  6.6  7.2  6.5  6.5  6.8  6.7  6.4  6.5  6.9  6.7   
+LEVISTER,R.L.  9.6  6.9  5.7  6.6  6.9  6.6  6.2  6.0  5.8  5.8  7.2  6.0   
+MCGRATH,J.F.   7.6  7.3  6.9  6.8  6.7  6.8  6.4  6.3  6.3  6.3  7.4  6.6   
+MIGNONE,A.F.   6.6  7.4  6.2  6.2  5.4  5.7  5.8  5.9  5.2  5.8  4.7  5.2   
+SIDOR,W.J.     7.7  6.2  5.1  5.6  5.6  5.9  5.6  5.6  5.3  5.5  6.3  5.3   
+WALL,R.A.      9.0  7.0  5.9  7.0  7.0  7.2  6.9  6.9  6.5  6.6  7.6  6.6   
+> sq=subset(newdata,,-c(WRIT,PHYS,RTEN))   
+> newdata[,1:9]   ##gives the same thing  
+> a&lt;-matrix(as.matrix(sq),nrow=9)   
+> vec=subset(newdata,,c(RTEN))   
+> y&lt;-matrix(as.matrix(vec),nrow=9)   
+> x&lt;-solve(a,y)   
+> newy=a %*% x   
+> newy   
+      [,1]   
+ [1,]  4.8   
+ [2,]  5.0   
+ [3,]  6.5   
+ [4,]  6.7   
+ [5,]  6.0   
+ [6,]  6.6   
+ [7,]  5.2   
+ [8,]  5.3   
+ [9,]  6.6   
+> sum(y-newy)   
+[1] 1.776357e-15   
+> y-newy   
+               [,1]   
+ [1,]  8.881784e-16   
+ [2,]  0.000000e+00   
+ [3,]  1.776357e-15   
+ [4,] -8.881784e-16   
+ [5,]  0.000000e+00   
+ [6,]  0.000000e+00   
+ [7,] -2.664535e-15   
+ [8,]  2.664535e-15   
+ [9,]  0.000000e+00   
+>  
+ 
+ 
+ 
+writeBin(as.vector(a),"/Users/tkaiser/abin") 
+aback&lt;-readBin(what="double","/Users/tkaiser/abin",n=81) 
+ 
+ 
+ 
+ 
+ 
+hexagon:~ tkaiser$ od -e abin | head 
+0000000     7.300000000000000e+00    7.000000000000000e+00 
+0000020     7.000000000000000e+00    8.000000000000000e+00 
+0000040     9.600000000000000e+00    7.600000000000000e+00 
+0000060     6.600000000000000e+00    7.700000000000000e+00 
+0000100     9.000000000000000e+00    6.400000000000000e+00 
+0000120     5.900000000000000e+00    7.500000000000000e+00 
+0000140     7.600000000000000e+00    6.900000000000000e+00 
+0000160     7.300000000000000e+00    7.400000000000000e+00 
+0000200     6.200000000000000e+00    7.000000000000000e+00 
+0000220     4.300000000000000e+00    4.900000000000000e+00 
+hexagon:~ tkaiser$  
+ 
+</code>
+<h3>Two Axis Plot in R</h3>
+
+<code>
+cray&lt;-read.csv("/Users/tkaiser/CourseFiles/fitness") 
+par(mar = c(5,5,2,5)) 
+with(cray,plot(Generation,Fitness,type="l",col="blue",ylab=NA,xlab =NA,lwd=2,main="Fitness and Generation Time on Summit")) 
+par(new=T) 
+with(cray,plot(Generation,Time,col="red",axes=F,xlab=NA, ylab=NA)) 
+axis(side = 4) 
+legend("bottom",legend=c("Fitness","Time"),lty(2,3),pch=c(16,16),col=c("blue","red")) 
+mtext(side=4,line=3,"Time (Seconds)",col="red",cex=1.5) 
+mtext(side=1,line=3,"Generation",col="black",cex=1.5) 
+mtext(side=2,line=3,"Fitness",col="blue",cex=1.5)
+</code>
+<h3>Make filename as done by linux split</h3>
+<h3>Concat strings</h3>
+<h3>Read Binary files</h3>
+<h3>Create DataFrames from raw data</h3>
+<h3>Add Header to DataFrame</h3>
+<h3>Combine DataFrames</h3>
+<h3>Create Empty DataFrame and add rows</h3>
+<h3>Create vectors from Columns</h3>
+
+<code>
+l1&lt;-myid %/% 26 +1
+l2 &lt;- myid %% 26 +1
+if(FALSE){
+	rfile&lt;-paste("realsx",letters[l1],letters[l2],sep="")
+	ifile&lt;-paste("intsx",letters[l1],letters[l2],sep="")
+	afile&lt;-paste("asciix",letters[l1],letters[l2],sep="")
+	print(paste(rfile,ifile,afile))
+
+	# read in our character data
+	chars&lt;-read.csv(afile,header=F)
+	lines=nrow(chars)
+	names(chars)&lt;-c("le","ct","poly")
+
+	# read in our real data
+	reals&lt;-readBin(rfile,what="double",n=lines*10)
+	r&lt;-matrix(reals,lines,byrow=T)
+	rm(reals)
+	rdf=as.data.frame(r)
+	rm(r)
+	names(rdf) &lt;- c("second","latitude","longitude","depth","SCSN","residual","stdpos","stddepth","stdhorrel","stddeprel")
+
+	# read in our integer data
+	ints&lt;-readBin(ifile,what="int",n=lines*13)
+	i&lt;-matrix(ints,lines,byrow=T)
+	rm(ints)
+	idf=as.data.frame(i)
+	rm(i)
+	names(idf) &lt;- c("year","month","day","hour","minute","cuspid","PandS","statino","tod","method","ec","nen","dt")
+
+	dat=cbind(rdf,idf,chars)
+	rm(rdf)
+	rm(idf)
+	rm(chars)
+	...
+	...
+	df&lt;-data.frame(lat=double(),lon=double(),max=double(),tot=double())
+	df[nrow(df) + 1,]&lt;-c(mylat,mylon,mytot,mymax)
+	...
+	...
+	mytot&lt;-df$tot
+	mymax&lt;-df$max
+</code>
+<h3>Read whitespace delimited file</h3>
+<code>
+l1&lt;-myid %/% 26 +1
+l2 &lt;- myid %% 26 +1
+
+else {
+	sfile&lt;-paste("start",letters[l1],letters[l2],sep="")
+	print(paste(myid,sfile))
+	dat&lt;-read.delim(sfile,header=F,sep="")
+	thehead=c("year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly")
+	colnames(dat)&lt;-thehead
+}
+</code>
+<h3>What variables are defined and clear them</h3>
+<code>
+ls()
+rm(list=ls())
+</code>
+<h3>Getting parts</h3>
+<code>
+library(datasets) 
+somedat&lt;-USJudgeRatings
+somedat &lt;- subset(somedat,RTEN &lt; 7)
+> somdat
+              CONT INTG DMNR DILG CFMG DECI PREP FAMI ORAL WRIT PHYS RTEN
+BRACKEN,J.J.   7.3  6.4  4.3  6.5  6.0  6.2  5.7  5.7  5.1  5.3  5.5  4.8
+COHEN,S.S.     7.0  5.9  4.9  5.1  5.4  5.9  4.8  5.1  4.7  4.9  6.8  5.0
+GRILLO,A.E.    7.0  7.5  6.4  6.8  6.5  7.0  6.6  6.8  6.3  6.6  6.2  6.5
+HEALEY.A.H.    8.0  7.6  6.6  7.2  6.5  6.5  6.8  6.7  6.4  6.5  6.9  6.7
+LEVISTER,R.L.  9.6  6.9  5.7  6.6  6.9  6.6  6.2  6.0  5.8  5.8  7.2  6.0
+MCGRATH,J.F.   7.6  7.3  6.9  6.8  6.7  6.8  6.4  6.3  6.3  6.3  7.4  6.6
+MIGNONE,A.F.   6.6  7.4  6.2  6.2  5.4  5.7  5.8  5.9  5.2  5.8  4.7  5.2
+SIDOR,W.J.     7.7  6.2  5.1  5.6  5.6  5.9  5.6  5.6  5.3  5.5  6.3  5.3
+WALL,R.A.      9.0  7.0  5.9  7.0  7.0  7.2  6.9  6.9  6.5  6.6  7.6  6.6
+
+#delete named columns
+df1 &lt;- somedat[setdiff(colnames(somedat), c('FAMI', 'ORAL'))]
+df2 &lt;- subset(somedat, select=-c(FAMI,ORAL))
+
+#get column by name
+somedat$CONT
+
+#delete rows by number
+somedat[-c(3,4),]
+
+#delete row by name
+library(dplyr)
+row.names.remove &lt;- c("LEVISTER,R.L.","MIGNONE,A.F.")
+somedat[!row.names(somedat) %in% row.names.remove),]
+somedat[!(row.names(somedat) %in% row.names.remove),]
+
+bonk=row.names(somedat) != "COHEN,S.S."
+somedat[bonk,]
+
+somedat[row.names(somedat) != "COHEN,S.S.",]
+
+#delete column by name
+library(dplyr)
+df3 &lt;- select(somedat, -FAMI, -ORAL)
+
+#get col 1 without names (as vector)
+somedat[[1]]
+
+#get col 2 without names (as vector)
+somedat[[2]]
+
+#get col 1 with names (as dataframe)
+somedat[1]
+
+#get col 2 with names (as dataframe)
+somedat[2]
+
+#get 1,1
+somedat[[1,1]]
+somedat[1,1]
+
+#get row 1 as dataframe
+somedat[1,]
+
+#get col 1 without names (as vector)
+somedat[,1]
+
+#subsets as dataframe
+somedat[2:4,]
+somedat[,4:2]
+
+#create a matrix
+a&lt;-matrix(as.matrix(somedat),nrow=9)
+
+#get parts of a matrix
+cbind(a[,1:3],a[,6:7])
+rbind(a[1:4,],a[7:9,])
+</code>
+
+<h3>Dowload page to file</h3>
+
+<code>
+page="http://scedc.caltech.edu/ftp/catalogs/hauksson/Socal_DD/hs_1981_all_comb_K4_A.cat_so_SCSN_v01"
+download.file(page,"quake")
+page="http://scedc.caltech.edu/ftp/catalogs/hauksson/Socal_DD/hs_1981_2011_catalog_v01.format"
+download.file(page,"format")
+</code>
+
+<h3>Install Rmpi</h3>
+<table>   
+	<thead>   
+	<tr>   
+		<th></th> <th><span style="color:black">6.1.0</span></th> <th><span style="color:black">8.2.0</span></th> <th><span style="color:black">17.4</span></th>   
+	</tr>   
+	</thead>   
+	<tbody>   
+	<tr>   
+		<th><span style="color:black">3.5.0</span></th> <td><span style="color:green">impi/5.1.3.210</span></td> <td>openmpi/4.0.0</td> <td><span style="color:green">impi/17.3</span></td>   
+	</tr>   
+	<tr>   
+		<th></th> <td>openmpi/1.10.2 (on build)</td> <td>openmpi_ucx/4.0.0</td> <td></td>   
+	</tr>   
+	<tr>   
+		<th></th> <td>openmpi/2.0.1 (on run)</td> <td></td> <td></td>   
+	</tr>   
+	<tr>   
+		<th></th> <td></td> <td></td> <td></td>   
+	</tr>   
+	<tr>   
+		<th><span style="color:black">3.6.0</span></th> <td><span style="color:green">impi/5.1.3.210</span></td> <td>openmpi/4.0.0</td> <td><span style="color:green">impi/17.3</span></td>   
+	</tr>   
+	<tr>   
+		<th></th> <td>openmpi/1.10.2 (on build)</td> <td>openmpi_ucx/4.0.0</td> <td></td>   
+	</tr>   
+	<tr>   
+		<th></th> <td>openmpi/2.0.1 (warning &amp; timeout)</td> <td></td> <td></td>   
+	</tr>   
+	</tbody>   
+</table>   
+
+<code>
+
+R CMD INSTALL --configure-args=" --with-Rmpi-include='/opt/mpi/openmpi/3.1.2_gcc/include' --with-Rmpi-libpath='/opt/mpi/openmpi/3.1.2_gcc/lib' --with-mpi='/opt/mpi/openmpi/3.1.2_gcc' --with-Rmpi-type='OPENMPI' " Rmpi_0.6-9.tar.gz 
+
+
+[timk@colostate.edu@shas0137 builds]$ cat doit         
+#!/bin/bash         
+export COMPILER=6.1.0         
+export VERSION=3.5.0         
+         
+if [ $# -gt 0 ]; then         
+  export COMPILER=$1         
+  export VERSION=$2         
+fi         
+         
+export CWD=`pwd`         
+         
+module purge          
+ml jdk/1.8.0          
+         
+         
+if [[ $COMPILER = 17* ]] ; then         
+  export CC=icc         
+  export FC=ifort         
+  export CXX=icpc         
+  ml intel/$COMPILER         
+else         
+  export CC=gcc         
+  export FC=gfortran         
+  export CXX=g++         
+  ml gcc/$COMPILER         
+fi         
+         
+export RBASE=/home/timk@colostate.edu/projects/R/builds/${VERSION}_${COMPILER}         
+         
+mkdir ${RBASE}_src         
+cd ${RBASE}_src         
+cat $0 > script         
+         
+wget https://cran.r-project.org/src/base/R-3/R-$VERSION.tar.gz         
+tar -xzf R-$VERSION.tar.gz         
+cd R-$VERSION         
+         
+export CFLAGS="-O2 -fopenmp -fpic"         
+export FCFLAGS="-O2 -fopenmp -fpic"         
+export CXXFLAGS="-O2 -fopenmp -fpic"         
+export LDFLAGS="-fopenmp"         
+         
+export LAP="-L/projects/$USER/lib/lapack/gcc -llibblas -lliblapack"         
+         
+         
+export R_LIBS=$RBASE/local         
+mkdir -p $R_LIBS         
+         
+./configure --with-blas="$LAP" --with-lapack --prefix=$RBASE         
+make         
+make         
+make install   
+</code>
+<h3>Install multidplyr</h3>
+
+<code>
+install.packages("devtools")
+devtools::install_github("hadley/multidplyr")
+</code>
+
+<h3>Complex least square</h3>
+<code>
+
+From https://stackoverflow.com/questions/43787529/polynomial-model-to-data-in-r
+
+set.seed(20)
+q &lt;- seq(from=0, to=20, by=0.1)
+y &lt;- 500 + 0.4 * (q-10)^3
+noise &lt;- rnorm(length(q), mean=10, sd=80)
+noisy.y &lt;- y + noise
+plot(q,noisy.y,col='deepskyblue4',xlab='q',main='Observed data')
+lines(q,y,col='firebrick1',lwd=3)
+
+
+Year &lt;- c(1000,1500,1600,1700,1750,1800,1850,1900,1950,1955,1960,1965,
+          1970,1975,1980,1985,1990,1995,2000,2005,2010,2015)
+Africa &lt;- c(70,86,114,106,106,107,111,133,229,254,285,322,366,416,478,550,
+            632,720,814,920,1044,1186)
+df &lt;- data.frame(Year, Africa)
+
+# Polynomial linear regression of order 5
+model1 &lt;- lm(Africa ~ poly(Year,5), data=df)
+summary(model1)
+
+###########
+Call:
+lm(formula = Africa ~ poly(Year, 5), data = df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-59.639 -27.119 -12.397   9.149  97.398 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)      411.32      10.12  40.643  &lt; 2e-16 ***
+poly(Year, 5)1   881.26      47.47  18.565 3.01e-12 ***
+poly(Year, 5)2   768.50      47.47  16.190 2.42e-11 ***
+poly(Year, 5)3   709.43      47.47  14.945 8.07e-11 ***
+poly(Year, 5)4   628.45      47.47  13.239 4.89e-10 ***
+poly(Year, 5)5   359.04      47.47   7.564 1.14e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 47.47 on 16 degrees of freedom
+Multiple R-squared:  0.9852,    Adjusted R-squared:  0.9805 
+F-statistic: 212.5 on 5 and 16 DF,  p-value: 4.859e-14
+#############
+
+pred &lt;- predict(model1)
+plot(Year, Africa, type="o", xlab="Year", ylab="Africa")
+lines(Year, pred, lwd=2, col="red")
+
+# Polynomial linear regression of order 2
+df2 &lt;- subset(df,Year&gt;1900)
+model2 &lt;- lm(Africa ~ poly(Year,2), data=df2)
+summary(model2)
+
+###########
+Call:
+lm(formula = Africa ~ poly(Year, 2), data = df2)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-9.267 -2.489 -0.011  3.334 12.482 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     586.857      1.677  349.93  &lt; 2e-16 ***
+poly(Year, 2)1 1086.646      6.275  173.17  &lt; 2e-16 ***
+poly(Year, 2)2  245.687      6.275   39.15 3.65e-13 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.275 on 11 degrees of freedom
+Multiple R-squared:  0.9997,    Adjusted R-squared:  0.9996 
+F-statistic: 1.576e+04 on 2 and 11 DF,  p-value: &lt; 2.2e-16
+###########
+
+df2$pred &lt;- predict(model2)
+plot(df2$Year, df2$Africa, type="o", xlab="Year", ylab="Africa")
+lines(df2$Year, df2$pred, lwd=2, col="red")
+
+
+
+df3 &lt;- data.frame(Year=c(1925, 1963, 1978, 1988, 1998))
+df3$pred &lt;- predict(model2, newdata=df3)
+df3
+
+  Year     pred
+1 1925 286.4863
+2 1963 301.1507
+3 1978 451.7210
+4 1988 597.6301
+5 1998 779.9623
+</code>
+<h3>Simple least square and mine with log fit</h3>
+<code>
+https://www.cyclismo.org/tutorial/R/linearLeastSquares.html
+
+
+m&lt;-c(2,3,4,5,6,7,8)
+c&lt;-c(1.4,4.7,9.6,20,41,86,178)
+line(m,c)
+line(m,log10(c))
+
+
+m&lt;-c(2,3,4,5,6,7,8)
+i&lt;-c(1.4,4.7,9.6,20,41,86,178)
+z&lt;-log10(i)
+myfit&lt;-lm(z~m)
+a&lt;-myfit$coefficients[[1]]
+b&lt;-myfit$coefficients[[2]]
+
+m&lt;-m[-c(1)]
+i&lt;-i[-c(1)]
+z&lt;-z[-c(1)]
+myfit&lt;-lm(z~m)
+a2&lt;-myfit$coefficients[[1]]
+b2&lt;-myfit$coefficients[[2]]
+
+m&lt;-c(2,3)
+i&lt;-c(1.4,4.7)
+z&lt;-log10(i)
+myfit&lt;-lm(z~m)
+a3&lt;-myfit$coefficients[[1]]
+b3&lt;-myfit$coefficients[[2]]
+
+for (input in seq(1,3,.1)){
+print(paste(input,quake(a3,b3,input)))}
+
+m&lt;-c(1,2)
+i&lt;-c(.1,1.4)
+z&lt;-log10(i)
+myfit&lt;-lm(z~m)
+a4&lt;-myfit$coefficients[[1]]
+b4&lt;-myfit$coefficients[[2]]
+
+for (input in seq(.1,2,.1)){
+print(paste(input,quake(a4,b4,input)))}
+
+quake1 &lt;-function(x){
+	if(x &lt; 0.1){x=0.1}
+	if(x &gt;=0.1 &amp;&amp; x &lt;=2.0){
+		a&lt;-(-2.146128)
+		b&lt;-1.146128
+	}
+	if(x &lt;= 3.0) {
+		a&lt;-(-0.9058116)
+		b&lt;-0.5259698
+	} else {
+		a&lt;-(-0.279157)
+		b&lt;-0.3160013
+		}
+	t&lt;-a+b*x
+	10**t
+}
+
+
+mag&lt;-seq(1,7,.1)
+out&lt;-lapply(mag,quake1)
+
+
+> b2&lt;-myfit$coefficients[[2]]
+> print(paste(input,quake(a2,b2,input)))}
+Error: unexpected '}' in "print(paste(input,quake(a2,b2,input)))}"
+> for (input in seq(2,8,.1)){
++ print(paste(input,quake(a2,b2,input)))}
+[1] "2 2.25343797645115"
+[1] "2.1 2.42351516239755"
+[1] "2.2 2.60642884505773"
+[1] "2.3 2.80314785306658"
+
+...
+...
+
+[1] "7.9 164.912434666885"
+[1] "8 177.359124173682"
+> 
+> 
+> 
+> 
+> 
+> m&lt;-c(2,3)
+> i&lt;-c(1.4,4.7)
+> z&lt;-log10(i)
+> myfit&lt;-lm(z~m)
+> a3&lt;-myfit$coefficients[[1]]
+> b3&lt;-myfit$coefficients[[2]]
+> 
+> 
+> for (input in seq(1,3,.1)){
++     print(paste(input,quake(a3,b3,input)))}
+[1] "1 0.417021276595744"
+[1] "1.1 0.470711919362668"
+[1] "1.2 0.531315123388475"
+[1] "1.3 0.599720866902056"
+[1] "1.4 0.67693371102253"
+[1] "1.5 0.764087552073741"
+[1] "1.6 0.862462273229307"
+[1] "1.7 0.973502540023159"
+[1] "1.8 1.0988390157439"
+[1] "1.9 1.24031230826815"
+[1] "2 1.4"
+[1] "2.1 1.58024715786039"
+[1] "2.2 1.7837007713756"
+[1] "2.3 2.01334862459976"
+[1] "2.4 2.27256317271849"
+[1] "2.5 2.56515106767613"
+[1] "2.6 2.89540906012696"
+[1] "2.7 3.26818709864918"
+[1] "2.8 3.68895955285453"
+[1] "2.9 4.16390560632879"
+[1] "3 4.7"
+> m&lt;-c(1,2)
+> i&lt;-c(.1,1.4)
+> z&lt;-log10(i)
+> myfit&lt;-lm(z~m)
+> a4&lt;-myfit$coefficients[[1]]
+> b4&lt;-myfit$coefficients[[2]]
+> 
+> a4
+[1] -2.146128
+> b4
+[1] 1.146128
+> for (input in seq(.1,2)){
++     print(paste(input,quake(a4,b4,input)))}
+[1] "0.1 0.0093000389594105"
+[1] "1.1 0.130200545431747"
+> 
+> for (input in seq(.1,2,.1)){
++     print(paste(input,quake(a4,b4,input)))}
+[1] "0.1 0.0093000389594105"
+[1] "0.2 0.0121087014505174"
+[1] "0.3 0.0157655953332755"
+[1] "0.4 0.0205268911144867"
+[1] "0.5 0.0267261241912425"
+[1] "0.6 0.0347975594697637"
+[1] "0.7 0.0453066122265688"
+[1] "0.8 0.0589894562356391"
+[1] "0.9 0.0768045937660236"
+[1] "1 0.1"
+[1] "1.1 0.130200545431747"
+[1] "1.2 0.169521820307244"
+[1] "1.3 0.220718334665857"
+[1] "1.4 0.287376475602814"
+[1] "1.5 0.374165738677395"
+[1] "1.6 0.487165832576692"
+[1] "1.7 0.634292571171963"
+[1] "1.8 0.825852387298947"
+[1] "1.9 1.07526431272433"
+[1] "2 1.4"
+> 
+> a2
+[1] -0.279157
+> b2
+[1] 0.3160013
+> a4
+[1] -2.146128
+> b4
+[1] 1.146128
+> a3
+[1] -0.9058116
+> b3
+[1] 0.5259698
+> a2
+[1] -0.279157
+> b2
+[1] 0.3160013
+> quake1 &lt;-function(x){
++     if(x &lt; 0.1){x=0.1}
++     if(x >=0.1 &amp;&amp; x &lt;=2.0){
++         a&lt;-(-2.146128)
++         b&lt;-1.146128
++     }
++     if(x &lt;= 3.0) {
++         a&lt;-(-0.9058116)
++         b&lt;-0.5259698
++     } else {
++         a&lt;-(-0.279157)
++         b&lt;-0.3160013
++     }
++     t&lt;-a+b*x
++     10**t
++ }
+> 
+> mag&lt;-seq(1,7,.1)
+> quake1(6)
+[1] 41.38575
+> out&lt;-lapply(mag,quake1)
+> unlist(out)
+ [1]  0.4170213  0.4707119  0.5313151  0.5997208  0.6769337  0.7640875  0.8624622  0.9735025  1.0988389
+[10]  1.2403122  1.3999999  1.5802470  1.7837006  2.0133484  2.2725629  2.5651508  2.8954087  3.2681867
+[19]  3.6889591  4.1639051  4.6999994  5.0170338  5.3956921  5.8029294  6.2409028  6.7119320  7.2185120
+[28]  7.7633258  8.3492591  8.9794155  9.6571327 10.3860003 11.1698788 12.0129201 12.9195897 13.8946896
+[37] 14.9433848 16.0712298 17.2841983 18.5887150 19.9916896 21.5005530 23.1232971 24.8685171 26.7454568
+[46] 28.7640576 30.9350114 33.2698168 35.7808407 38.4813828 41.3857471 44.5093170 47.8686368 51.4814997
+[55] 55.3670418 59.5458433 64.0400379 68.8734297 74.0716195 79.6621402 85.6746029
+> out&lt;-unlist(out)
+> plot(mag,out)
+> plot(mag,out,type="l")
+> m&lt;-c(2,3,4,5,6,7,8)
+> c&lt;-c(1.4,4.7,9.6,20,41,86,178)
+> line(m,c)
+Coefficients:
+[1]  -56.28   20.32
+line(m, log10(c))
+
+Coefficients:
+[1]  -0.2770   0.3156
+</code>
+<h3>List to vector</h3>
+<code>
+out&lt;-unlist(out)
+plot(m,c,col="red",axes=F)
+plot(mag,out,type="l")
+par(new=T) 
+plot(m,c,col="red",axes=F,xlab=NA, ylab=NA)</code>
+
+<h3>More Parallel stuff &amp; Access a Tibble</h3>
+<code>
+ct&lt;- create_cluster(4)
+par&lt;-partition(dat,cluster=ct)
+par
+
+whack&lt;-par %&gt;% filter(SCSN &gt;= 2 ) %&gt;% filter(SCSN &lt; 3 )%&gt;% count() %&gt;% collect()
+whack &lt;-as.matrix(whack)
+q&lt;-sum(whack[,2])
+
+whack&lt;-par %&gt;% filter(SCSN &gt;= 2 ) %&gt;% filter(SCSN &lt; 3 )%&gt;% count() %&gt;% collect()
+sum(whack$n)
+
+mysum&lt;-data.frame(hour=integer(),quakes=integer())
+for (n in 0:23) {
+    cluster_copy(ct,n)
+    whack&lt;-par %&gt;% filter(hour==n) %&gt;% count() %&gt;% collect()
+#    whack &lt;-as.matrix(whack)
+#    q&lt;-sum(whack[,2])
+####
+#### this is a Tibble so we need to access as below
+	q&lt;-sum(whack$n)
+    print(paste(n,q))
+    mysum[nrow(mysum) + 1,]&lt;-c(n,q)
+}
+
+plot(mysum,type="b")
+
+mysum&lt;-data.frame(mag=double(),quakes=integer())
+for (n in seq(0.5,7,0.5)) {
+    cluster_copy(ct,n)
+    whack&lt;-par %&gt;% filter(SCSN &gt;= n ) %&gt;% filter(SCSN &lt; n+1 )%&gt;% count() %&gt;% collect()
+    whack &lt;-as.matrix(whack)
+    q&lt;-sum(whack[,2])
+    print(paste(n,q))
+    mysum[nrow(mysum) + 1,]&lt;-c(n,q)
+}
+
+dep&lt;-par %&gt;% filter(SCSN &gt;= n ) %&gt;% dplyr::select("depth")
+dep&lt;-par %&gt;% dplyr::select("depth")
+dep %&gt;% summarize(Data1=sum(depth))
+dep &lt;- dep %&gt;% summarize(Data1=sum(depth)) %&gt;% collect() %&gt;% as.matrix()
+tdep&lt;-sum(dep[,2])
+adep/nrow(dat)
+stopCluster(ct)
+ 
+</code>
+
+</body>
+</html>
