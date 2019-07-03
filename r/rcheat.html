@@ -108,6 +108,8 @@ foreach(ijk=1:nt, .combine=cbind) %dopar% {
 library(tictoc) 
 size &lt;- 4000
 mymat &lt;- matrix(nrow=size, ncol=size)
+# should most likely do this instead of the else mymat &lt;- matrix(0.1,nrow=size, ncol=size)
+
 dia &lt;- 10
 # For each row and for each column, assign values based on position
 for(i in 1:dim(mymat)[1]) {
