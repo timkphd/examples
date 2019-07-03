@@ -1,13 +1,13 @@
 source("tymer.R")
 
-do_force<-function(i1,i2,j1,j2){
+do_force<-function(i1,i2,j1,j2,alpha){
 	forf<-matrix(0.0,nrow=((i2-i1)+3),ncol=((j2-j1)+3))
 	r1<-range(0,(i2-i1)+2)
 	r2<-range(0,(j2-j1)+1)
 	for (i in r1[1]:r1[2]){
 		for (j in r2[1]:r2[2]){
 			y<-(j+j1-1)*dy
-			forf[i+1,j+1]<-alpha*sin(y*a6)
+			forf[i+1,j+1]<-(-alpha*sin(y*a6))
 		}
 	}
 	return(forf)
@@ -34,7 +34,7 @@ bc<-function(psi,i1,i2,j1,j2,nx,ny){
 }
 
 
-do_jacobi<-function(psi,i1,i2,j1,j2){
+do_jacobi<-function(psi){
 # does a single Jacobi iteration step
 # input is the grid and the indices for the interior cells
 # new_psi is temp storage for the the updated grid
@@ -53,7 +53,7 @@ do_jacobi<-function(psi,i1,i2,j1,j2){
 	ie=ie-1
 	for (i in is:ie){
 		for (j in js:je){
-			new_psi[i,j]=a1*psi[i+1,j] + a2*psi[i-1,j] + a3*psi[i,j+1] + a4*psi[i,j-1] - a5*forf[i,j]
+			new_psi[i,j]<-a1*psi[i+1,j] + a2*psi[i-1,j] + a3*psi[i,j+1] + a4*psi[i,j-1] - a5*forf[i,j]
 			gdiff<<-gdiff+abs(new_psi[i,j]-psi[i,j])
 			}
 	}
@@ -64,14 +64,14 @@ do_jacobi<-function(psi,i1,i2,j1,j2){
 ngrid<-scan("st.in",integer(),2)
 grid<-scan("st.in",double(),2,skip=1)
 const<-scan("st.in",double(),3,skip=2)
-steps<-scan("st.in",integer(),3,skip=3)
+steps<-scan("st.in",integer(),1,skip=3)
 #bcast should be here
 nx<-ngrid[1]
 ny<-ngrid[2]
 lx<-grid[1]
 ly<-grid[2]
 alpha<-const[1]
-beta<-const[2]
+beta<-const[2] 
 gamma<-const[3]
 
 
@@ -90,9 +90,6 @@ j1<-round(1.0+myid*dj)
 j2<-round(1.0+(myid+1)*dj)-1
 
 
-alpha<<-const[1]
-beta<-const[2] 
-gamma<-const[3]
 dx<<-lx/(nx+1.0)
 dy<<-ly/(ny+1.0)
 dx<<-lx/(nx+1.0)
@@ -112,13 +109,13 @@ psi<-matrix(1.0,nrow=((i2-i1)+3),ncol=((j2-j1)+3))
 psi<-bc(psi)
 
 new_psi<-matrix(0.0,nrow=((i2-i1)+3),ncol=((j2-j1)+3))
-forf<<-do_force(i1,i2,j1,j2)
+forf<<-do_force(i1,i2,j1,j2,alpha)
 
 iout=steps/100
 if(iout  == 0){iout=1}
 tymer(reset=T)
 for(i in 1:steps){
-	psi<-do_jacobi(psi,i1,i2,j1,j2)
+	psi<-do_jacobi(psi)
 	if(myid == 0){
 			if (((i) %% iout) == 0){
 			print(paste(i,gdiff,tymer()))
@@ -126,4 +123,5 @@ for(i in 1:steps){
 	}
 }
 
+writeBin(as.vector(psi),"stom00.out")
 
