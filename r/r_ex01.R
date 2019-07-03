@@ -9,14 +9,14 @@ tag<-1234;
 source<-0;
 destination<-1;
 count<-1;
-paste("I am",myid,"of",numprocs,"on",myname)
+paste("I R am",myid,"of",numprocs,"on",myname)
 if(myid == source){
-	buffer<-5678.9
-	mpi.send(buffer, 2, destination, tag,  comm=mpi_comm_world)
+	buffer<-as.integer(5678)
+	mpi.send(buffer, 1, destination, tag,  comm=mpi_comm_world)
 	}
 if(myid == destination){
-	x<-1234.5
-	x<-mpi.recv(x, 2, source, tag,  comm=mpi_comm_world, status=0)
+	x<-as.integer(1234)
+	x<-mpi.recv(x, 1, source, tag,  comm=mpi_comm_world, status=0)
 	print(c("got",x))
 	}
 bonk<-mpi.finalize()
