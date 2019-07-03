@@ -7,13 +7,30 @@ do_force<-function(i1,i2,j1,j2){
 	for (i in r1[1]:r1[2]){
 		for (j in r2[1]:r2[2]){
 			y<-(j+j1-1)*dy
-			forf[i+1,j+1]<-alpha*sin(y*a6)
+			forf[i+1,j+1]<-(-alpha*sin(y*a6))
 		}
 	}
 	return(forf)
 }
 
-
+getresults<-function(psi,nx,ny){
+	myid <<- mpi.comm.rank(comm=mpi_comm_world)
+	tosend=(nrow(psi)-2)*(ncol(psi)-2)
+	rcounts<-vector("integer",numprocs)
+	rcounts<-mpi.gather(tosend, 1, rcounts,root = 0, comm = mpi_comm_world)
+	typeof(rcounts)
+	typeof(psi)
+	tot<-sum(rcounts)
+	full<-vector("double",tot)
+	full<-mpi.gatherv(psi[(2:(nrow(psi)-1)),(2:(ncol(psi)-1))] ,2, full, rcounts, root = 0, comm = mpi_comm_world)
+	#full<-matrix(full,nrow=nx,ncol=ny)
+	if(myid == 0){writeBin(full,"stom01.out")}
+	#install.packages("plotly", lib="/Library/Frameworks/R.framework/Versions/3.6/Resources/library")
+	#result<-readBin("stom01.out",double(),10000)
+	#grid<-matrix(result,100,100)
+	#library(plotly)
+	#plot_ly(z =grid)
+}
 bc<-function(psi){
 	myid <<- mpi.comm.rank(comm=mpi_comm_world)
 	numprocs <<- mpi.comm.size(comm=mpi_comm_world)
@@ -109,6 +126,9 @@ do_transfer<-function(psi,i1,i2,j1,j2){
 return(psi)
 }
 
+mybind <- function(psi){
+
+}
 is.even <- function(x) x %% 2 == 0
 
 if (!is.loaded("mpi_initialize")) {     
@@ -132,7 +152,7 @@ if (myid != 0) {
 	ngrid<-scan("st.in",integer(),2)
 	grid<-scan("st.in",double(),2,skip=1)
 	const<-scan("st.in",double(),3,skip=2)
-	steps<-scan("st.in",integer(),3,skip=3)
+	steps<-scan("st.in",integer(),1,skip=3)
 	#bcast should be here
 	nx<-ngrid[1]
 	ny<-ngrid[2]
@@ -195,12 +215,13 @@ for(i in 1:steps){
 	mydiff<-gdiff
 	todiff<-mpi.reduce(mydiff, type=2, op="sum",dest = 0, comm = mpi_comm_world)
 	if (((i) %% iout) == 0){
-		#print(paste(myid,mydiff))
+		print(paste(myid,max(psi),min(psi)))
 		if(myid == 0){
 			print(paste(i,todiff,tymer()))
 		}
 	}
 }
+getresults(psi,nx,ny)
 bonk<-mpi.finalize()
 
 
