@@ -16,7 +16,7 @@ if(myid == source){
 	}
 if(myid == destination){
 	x<-1234.5
-	mpi.recv(x, 2, source, tag,  comm=mpi_comm_world, status=0)
+	x<-mpi.recv(x, 2, source, tag,  comm=mpi_comm_world, status=0)
 	print(c("got",x))
 	}
 bonk<-mpi.finalize()
