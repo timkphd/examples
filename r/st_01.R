@@ -1,6 +1,6 @@
 source("tymer.R")
 
-do_force<-function(i1,i2,j1,j2){
+do_force<-function(i1,i2,j1,j2,alpha){
 	forf<-matrix(0.0,nrow=((i2-i1)+3),ncol=((j2-j1)+3))
 	r1<-range(0,(i2-i1)+2)
 	r2<-range(0,(j2-j1)+1)
@@ -38,7 +38,6 @@ bc<-function(psi){
 	myright<-myid+1
 	if(myleft <= -1){myleft<-(-1)}
 	if(myright >= numprocs){myright=(-1)}
-	#print(paste(myid,i1,i2,j1,j2,myleft,myright))
 
 	if(myleft == -1){
 		psi[,1]=0.0
@@ -52,7 +51,7 @@ bc<-function(psi){
 }
 
 
-do_jacobi<-function(psi,i1,i2,j1,j2){
+do_jacobi<-function(psi){
 # does a single Jacobi iteration step
 # input is the grid and the indices for the interior cells
 # new_psi is temp storage for the the updated grid
@@ -205,13 +204,13 @@ psi<-matrix(1.0,nrow=((i2-i1)+3),ncol=((j2-j1)+3))
 print(paste(myid,"covers",i1,i2,j1,j2))
 psi<-bc(psi)
 new_psi<<-matrix(0.0,nrow=((i2-i1)+3),ncol=((j2-j1)+3))
-forf<<-do_force(i1,i2,j1,j2)
+forf<<-do_force(i1,i2,j1,j2,alpha)
 iout=steps/100
 if(iout  == 0){iout=1}
 if(myid == 0){tymer(reset=T)}
 for(i in 1:steps){
 	psi<-do_transfer(psi,i1,i2,j1,j2)
-	psi<-do_jacobi(psi,i1,i2,j1,j2)
+	psi<-do_jacobi(psi)
 	mydiff<-gdiff
 	todiff<-mpi.reduce(mydiff, type=2, op="sum",dest = 0, comm = mpi_comm_world)
 	if (((i) %% iout) == 0){

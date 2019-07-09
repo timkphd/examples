@@ -14,7 +14,7 @@ do_force<-function(i1,i2,j1,j2,alpha){
 }
 
 
-bc<-function(psi,i1,i2,j1,j2,nx,ny){
+bc<-function(psi){
 	myid <<-0
 	numprocs <<- 1
 	myleft<-myid-1

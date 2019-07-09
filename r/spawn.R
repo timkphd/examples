@@ -1,10 +1,8 @@
 # Load the R MPI package if it is not already loaded.   
-if (!is.loaded("mpi_initialize")) {   
-    library("Rmpi")   
-    }   
+if (!is.loaded("mpi_initialize")) { library("Rmpi") }   
    
-print(mpi.universe.size)
-# Spawn 3 slaves (change this number appropriately)   
+print(mpi.universe.size())
+# Spawn 4 slaves (change this number appropriately)   
 mpi.spawn.Rslaves(nslaves=4)   
 #   
 # In case R exits unexpectedly, have it automatically clean up   
@@ -25,4 +23,3 @@ mpi.remote.exec(paste("I am",mpi.comm.rank(),"of",mpi.comm.size()))
 # Tell all slaves to close down, and exit the program   
 mpi.close.Rslaves()   
 mpi.quit()
-
