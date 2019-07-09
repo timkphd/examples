@@ -293,6 +293,20 @@ legend("bottom",legend=c("Fitness","Time"),lty(2,3),pch=c(16,16),col=c("blue","r
 mtext(side=4,line=3,"Time (Seconds)",col="red",cex=1.5) 
 mtext(side=1,line=3,"Generation",col="black",cex=1.5) 
 mtext(side=2,line=3,"Fitness",col="blue",cex=1.5)
+
+
+
+
+plot(full$Lon,full$Lat,xlim=c(-125,-113),ylim=c(32,43),cex = .25, col = "red",xlab="Longitude",ylab ="Latitude")
+par(new=T)
+plot(ca$lon,ca$lat,xlim=c(-125,-113),ylim=c(32,43),type="l",col="blue",lwd=2,xlab=NA,ylab=NA)
+
+
+plot(dat$longitude,dat$latitude,xlim=c(-125,-113),ylim=c(32,43),cex = .25, col = "red",xlab="Longitude",ylab ="Latitude")
+par(new=T)
+plot(ca$lon,ca$lat,xlim=c(-125,-113),ylim=c(32,43),type="l",col="blue",lwd=2,xlab=NA,ylab=NA)
+
+
 </code>
 <h3>Make filename as done by linux split</h3>
 <h3>Concat strings</h3>

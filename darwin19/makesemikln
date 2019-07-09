@@ -1,0 +1,77 @@
+L1= charles.o darwin.o ga_list_mod.o global.o init.o laser_new.o
+L2= mods.o more_mpi.o mpi.o numz.o  unique.o wtime.o sep_allocate.o dtime.o
+L2= mods.o more_mpi.o mpi.o numz.o  unique.o         sep_allocate.o dtime.o
+L3= malloc_count.o 
+L3=
+OPT= -g -O3 -ffree-form 
+OPT= -g -O3 -ffree-form -fbacktrace -fcheck=all
+OPT= -O3 -ffree-form 
+OPT= -O3 
+
+SOPT= -g 
+SOPT= 
+LINK=-L/Users/tkaiser/lapack/lapack-3.8.0 -llapack -lrefblas
+LINK=-fbacktrace -fcheck=all -L/opt/intel/mkl/lib -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -L/opt/intel/lib -liomp5
+LINK=                        -L/opt/intel/intelpython2/lib -L/opt/intel/lib -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread  -liomp5
+#LINK=-mkl
+
+#OPT= -g -free -L/lustre/home/apps/gdb-6.8/lib64 -liberty
+PF90=mpif90 
+SF90=gfortran
+
+darwin: $(L2) $(L1) $(L3)
+	$(PF90) $(SOPT)  $(L1) $(L2) $(L3) $(LINK) -o darwin
+
+.SUFFIXES: .f90
+
+
+.f.o:
+	$(PF90)  $(OPT) -c  $<
+
+.f90.o:
+	$(PF90)  $(OPT) -c  $<
+
+wtime.o : wtime.c
+	$(CC) -DWTIME=wtime_ -c wtime.c
+
+mpi.o: mpi.f90 
+
+numz.o:numz.f90
+
+dtime.o:dtime.f90 numz.o
+
+more_mpi.o: more_mpi.f90 numz.o mpi.o
+
+charles.o: charles.f90 mods.o global.o more_mpi.o mpi.o numz.o
+
+darwin.o: darwin.f90 ga_list_mod.o global.o more_mpi.o mpi.o numz.o mods.o sep_allocate.o dtime.o $(L3)
+
+ga_list_mod.o: ga_list_mod.f90
+
+global.o: global.f90
+
+init.o: init.f90 global.o more_mpi.o mpi.o numz.o
+
+laser_new.o: laser_new.f90 ga_list_mod.o  global.o  more_mpi.o mpi.o numz.o dtime.o
+
+mods.o: mods.f90 mpi.o numz.o  
+
+unique.o:unique.f90 mpi.o numz.o
+
+clean:
+	/bin/rm -rf *o *mod *.dSYM
+
+veryclean:	clean
+	rm -rf darwin  *\.00* sep
+
+
+sep: numz.o sep_allocate.o sep_main.o malloc_count.o 
+	gfortran sep_allocate.o malloc_count.o sep_main.o -ldl -o sep
+
+backup:
+	tar -czf darwin.tgz  *f90 *c malloc_count.h \
+		make* \
+		tymer \
+		macscript crayscript slurmscript \
+		wing.dat source.dat darwin.in
+
