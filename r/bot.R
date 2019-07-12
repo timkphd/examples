@@ -16,23 +16,22 @@
 # The files in this case are outputs from an optics program
 # tracking a laser beam as it propagates through the atmosphere.
 # The workers read in the data and then create an image of the
-# data by calling the routine mkview.plotit.  This should worker
-# with arbitrary 2d files except the size in mkview.plotit is
-# currently hard coded to 64 x 64.  
+# data by calling the routine doplot.  Note we skip the first
+#line of our input which contains a header.
 
-# We use the call to "Split" to create a seperate communicator
-# for the workers.  This is not important in this example but
-# could be if you wanted multiple workers to work together.  
 
 # To get the data...
 
-# curl http://hpc.mines.edu/examples/laser.tgz | tar -xz
+# curl https://petra.acns.colostate.edu/docs/slides/MPI4PY/laser.tgz | tar -xz
 
 
 doplot<-function(infile) {
 	library(gplots)
 	outfile=paste(infile,".png",sep="")
-	im<-read.delim(infile,sep="")
+	bonk=readLines(infile)
+	bonk<-bonk[-1]
+	#im<-read.delim(infile,sep="")
+	im<-read.delim(text=bonk,sep="")
 	mygrid<-data.matrix(im)
 	png(filename=outfile)
 	filled.contour(mygrid)
@@ -56,8 +55,8 @@ worker<-function(THE_COMM_WORLD,managerid){
 		if (buffer == "stop"){return(ic)}
 		ic<-ic+1
 		##### Do something here
-		##### mkview.plotit(fname,x)
-		Sys.sleep(4)
+		doplot(buffer)
+		#Sys.sleep(4)
 		}
 }
 #
@@ -106,7 +105,7 @@ manager<-function(num_used,TODO){
 # do init
 
 MPI.Wtime<-function(){
-return(0.0)
+return(as.double(Sys.time()))
 }
 if (!is.loaded("mpi_initialize")) {     
     library("Rmpi")     
