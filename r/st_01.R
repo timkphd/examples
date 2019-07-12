@@ -214,7 +214,7 @@ for(i in 1:steps){
 	mydiff<-gdiff
 	todiff<-mpi.reduce(mydiff, type=2, op="sum",dest = 0, comm = mpi_comm_world)
 	if (((i) %% iout) == 0){
-		print(paste(myid,max(psi),min(psi)))
+#		print(paste(myid,max(psi),min(psi)))
 		if(myid == 0){
 			print(paste(i,todiff,tymer()))
 		}
