@@ -1,3 +1,4 @@
+# (0) #########
 rm(list=ls())
 library(parallel)
 library(dplyr) 
@@ -9,9 +10,9 @@ print("Use 4 cores for our parallel machine")
 cores=4
 
 
-##########
+# (1) #########
 
-# Do a very simple loop, not in parallel
+print("Do a very simple loop, not in parallel"
 
 nt<-10
 asum=0
@@ -19,8 +20,9 @@ for(ijk in 1:nt ){
 	asum<-asum+ijk
 }
 print(asum)
+#readline(prompt = "NEXT>")
 
-##########
+# (2) #########
 
 print("Do a very simple parallel loop")
 ##
@@ -38,8 +40,9 @@ print(asum)
 print("What happened?")
 
 stopCluster(ct)
-readline(prompt = "NEXT>")
-##########
+#readline(prompt = "NEXT>")
+
+# (3) #########
 
 print("Same as above but explicitly 'return' a value")
 ##
@@ -56,8 +59,9 @@ print(asum)
 print(bsum)
 
 stopCluster(ct)
-readline(prompt = "NEXT>")
-##########
+#readline(prompt = "NEXT>")
+
+# (4) #########
 
 print("Same as above but explicitly 'return' a value as rows")
 ##
@@ -74,8 +78,9 @@ print(asum)
 print(bsum)
 
 stopCluster(ct)
-readline(prompt = "NEXT>")
-##########
+#readline(prompt = "NEXT>")
+
+# (5) #########
 
 print("Same as above but explicitly 'return' a value as columns")
 ##
@@ -92,8 +97,9 @@ print(asum)
 print(bsum)
 
 stopCluster(ct)
-readline(prompt = "NEXT>")
-##########
+#readline(prompt = "NEXT>")
+
+# (6) #########
 
 print("Work on a matrix")
 ##
@@ -115,8 +121,9 @@ print(bsum)
 print(sum(mymat))
 
 stopCluster(ct)
-readline(prompt = "NEXT>")
-##########
+#readline(prompt = "NEXT>")
+
+# (7) #########
 
 print("Same as above but explicitly 'return' a value as columns")
 
@@ -138,8 +145,9 @@ print(bsum)
 print(mymat)
 
 stopCluster(ct)
-readline(prompt = "NEXT>")
-##########
+#readline(prompt = "NEXT>")
+
+# (8) #########
 
 print("We return the matrix")
 
@@ -163,8 +171,9 @@ print(bsum)
 print("BIG QUESTION:  WHY IS THIS DIFFERENT FROM OPENMP?")
 
 stopCluster(ct)
-readline(prompt = "NEXT>")
-##########
+#readline(prompt = "NEXT>")
+
+# (9) #########
 
 print("Not in parallel")
 nt<-10
@@ -177,9 +186,10 @@ bsum<-for(ijk in 1:nt  )  {
 }
 print(bsum)
 print(mymat)
+#readline(prompt = "NEXT>")
 
 
-##########
+# (10) #########
 
 print("A very simple loop, not in parallel")
 bsum=0
@@ -192,8 +202,9 @@ bsum<-for (ijk in 2:nt){
 }
 print(bsum)
 print(myvect)
+#readline(prompt = "NEXT>")
 
-##########
+# (11) #########
 
 print("Same loop 'breaks' in parallel")
 ##
@@ -212,5 +223,7 @@ print(bsum)
 print(myvect)
 
 stopCluster(ct)
-readline(prompt = "NEXT>")
+#readline(prompt = "NEXT>")
+
 ##########
+
