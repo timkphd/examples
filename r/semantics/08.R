@@ -1,26 +1,23 @@
 # (8) #########
 
-print("We return the matrix")
-
+print("Work on a matrix")
 ##
 ct <- create_cluster(cores)  
 registerDoParallel(ct)
 ##
-
-nt<-10
+if(!exists("mymean")){mymean=0}
+nt<-8
 mymat<-matrix(nrow=nt,ncol=nt)
-mymat[1:nt,]<-0
-bsum=0
+mymat[1:nt,]<-mymean
+
 bsum<-foreach(ijk = 1:nt, .combine=cbind ) %dopar% { 
 	set.seed(ijk) 
-	mymat[,ijk]<-rnorm(mymat[,ijk])
-	#junk<-sum(mymat[,ijk])
+# note: the length for rnorm is ignored but needed or you get an error
+	mymat[,ijk]<-rnorm(nt,mean=mymat[,ijk])
+	junk<-c(length(mymat[,ijk]),sum(mymat[,ijk]))
 }
 print(bsum)
-
-
-print("BIG QUESTION:  WHY IS THIS DIFFERENT FROM OPENMP?")
+print(sum(mymat))
 
 stopCluster(ct)
 #readline(prompt = "NEXT>")
-

@@ -19,26 +19,17 @@ nt<-strtoi(linn)
 cl <- makeCluster(nt)
 registerDoParallel(cl)
 size <- 2000
-trials <- nt
 tic()
 ptime <- system.time({
-	r <- foreach(ijk=1:trials, .combine=cbind) %dopar% {
+	r <- foreach(ijk=1:nt, .combine=cbind) %dopar% {
 	    dyn.load("core.so")
-		mymat <- matrix(nrow=size, ncol=size)
+		dia <- 0.1
 		docore <- 1+((ijk-1) %% 23)
 		forceit(docore)
-		dia <- 10
 		# For each row and for each column, assign values based on position
+		mymat <- matrix(10.0,nrow=size, ncol=size)
 		for(i in 1:dim(mymat)[1]) {
-		  for(j in 1:dim(mymat)[2]) {
-			mymat[i,j] <- 0.1
-			if ( i == j) {
-			  mymat[i,j] <- dia
-			}
-			else {
-			  mymat[i,j] <- 0.1
-			}
-		  }
+			  mymat[i,i] <- dia
 		}
 		b <- solve(mymat)
 		one=c(ijk,threadfunc())
@@ -46,7 +37,7 @@ ptime <- system.time({
 })
 tim<-toc() 
 dt=tim[[2]][[1]]-tim[[1]][[1]]
-stats=c("results",trials,dt)
+stats=c("results",nt,dt)
 print(stats)
 #print(r)
 x<-paste(c(c(nt,dt),r[2,]))
@@ -54,8 +45,8 @@ x<-paste(nt,dt,sep=":")
 t<-tempfile(pattern="output")
 v<-strsplit(t,"/")
 con <- file(v[[1]][4],"w")
-vect <- 1:trials
-for(ijk in 1:trials) {
+vect <- 1:nt
+for(ijk in 1:nt) {
 	vect[ijk]=r[2,ijk]
 }
 svect <- sort(vect)

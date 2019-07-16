@@ -1,24 +1,42 @@
 # (6) #########
 
-print("Work on a matrix")
+writeLines("Now for some examples that actually work")
+writeLines("but maybe not the way you expected.")
+writeLines("The export may generate a warning.")
 ##
 ct <- create_cluster(cores)  
 registerDoParallel(ct)
 ##
+if(!exists("doverbose")){doverbose=FALSE}
+nt<-10
+asum<-0
+writeLines("\nasum is zero")
+bsum<-foreach(ijk=1:nt , .combine=cbind, .export=(c('asum'))) %dopar% { 
+	asum<-2**ijk
+	asum
+}
+print(asum)
+print(bsum)
 
 nt<-10
-mymat<-matrix(nrow=nt,ncol=nt)
-mymat[1:nt,]<-0
-asum=0
-bsum=0
-bsum<-foreach(ijk = 1:nt ) %dopar% { 
-	set.seed(ijk) 
-	mymat[,ijk]<-rnorm(mymat[,ijk])
-	junk<-sum(mymat[,ijk])
+asum<-vector(mode="double",length=nt)
+writeLines("\nasum is vector of zero")
+
+bsum<-foreach(ijk=1:nt , .combine=cbind,.export=(c('asum')) ) %dopar% { 
+	asum<-2**ijk
+	asum
 }
+print(asum)
 print(bsum)
-print(sum(mymat))
+
+asum=vector(mode="double",length=nt)+2000
+writeLines("\nasum is vector of 2000")
+bsum<-foreach(ijk=1:nt , .combine=cbind,.export=(c('asum')) ) %dopar% { 
+	asum<-2**ijk
+	asum
+}
+print(asum)
+print(bsum)
 
 stopCluster(ct)
 #readline(prompt = "NEXT>")
-
