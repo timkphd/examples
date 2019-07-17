@@ -1,8 +1,8 @@
 #' A nice timing routine: tymer
 #' 
-#' @param lab A lable for the output
+#' @param lab A label for the output
 #' @param reset Reset the timer so dt is measured from current time.
-#' @return Returns time since epoch, date string, dt since last call ,dt since first call and an optional lable.'
+#' @return Returns time since epoch, date string, dt since last call ,dt since first call and an optional label.'
 
 #' @examples
 
@@ -20,7 +20,7 @@
 #' > tymer("after reset")
 #' [1] "1560955569.153295  2019-06-19 11:05:01      15.705      15.705  after reset"
 #
-#   devtools::create("/Users/tkaiser/examples/r/bonk")
+#   usethis::create_package("/Users/tkaiser/examples/r/bonk")
 #   copy tymer to bonk/R
 #   devtools::document("/Users/tkaiser/examples/r/bonk")
 tymer <-function(lab="",reset=FALSE) {

@@ -90,21 +90,29 @@ if(FALSE){
 	thehead=c("year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly")
 	colnames(dat)<-thehead
 }
-latb<-c(32,42)
-lonb<-c(-114,-125)
-dlat=4
-dlon=8
+#if(myid == 0)print(dat)
+latb<-c(32,33)
+lonb<-c(-115,-121)
+dlon<-abs(4*((lonb[2]-lonb[1])+1))
+#dlon=100
+# dlon should be a multiple of cores
+dlat<-abs(4*((latb[2]-latb[1])+1))
+#dlat=2
 lon.seq<-seq(lonb[1],lonb[2],length=dlon)
 lat.seq<-seq(latb[1],latb[2],length=dlat)
+if(myid == 0){
+	print(lat.seq)
+	print(lon.seq)
+}
 df<-data.frame(lat=double(),lon=double(),tot=double(),max=double())
 if(myid == 0){tymer(reset=T)}
 dorows<-nrow(dat)
 #dorows=10000
-#print(paste(myid,dorows))
 for (i in 1:length(lat.seq)){
 	mylat=lat.seq[i]
 	for(j in 1:length(lon.seq)) {
 		mylon<-lon.seq[j]
+		if(myid == 0)print(mylon)
 		mymax=0.0
 		mytot=0.0
 		for (row in 1:dorows) {
@@ -120,7 +128,7 @@ for (i in 1:length(lat.seq)){
 		#if(myid == 0)print(c(myid,mylat,mylon,mytot))
 		df[nrow(df) + 1,]<-c(mylat,mylon,mytot,mymax)
 	}
-	if(myid == 0){print(tymer())}
+	if(myid==0){print(tymer(paste("done",mylat)))}
 }
 # turn our df into two vectors mymax and mytot
 	mytot<-df$tot
@@ -130,13 +138,22 @@ for (i in 1:length(lat.seq)){
 thetot<-mpi.reduce(mytot, type=2, op="sum",dest = source, comm = mpi_comm_world)
 themax<-mpi.reduce(mymax, type=2, op="max",dest = source, comm = mpi_comm_world)
 
-
 if(myid == source){
-	print(themax)
-	print(" ")
-	print(thetot)
 	# put our values back in df
+	mymax<-matrix(themax,nrow=dlat,ncol=dlon)
+	mymax<-as.data.frame(mymax,row.names=lat.seq)
+	colnames(mymax)<-lon.seq
+	writeLines(" ")
+	mytot<-matrix(thetot,nrow=dlat,ncol=dlon)
+	mytot<-as.data.frame(mytot,row.names=lat.seq)
+	colnames(mytot)<-lon.seq
+	#sanity check
+	writeLines(paste("at",lat.seq[1],lon.seq[1],"sum=",mytot[1,1],"max=",mymax[1,1]))
+	writeLines(paste("at",lat.seq[dlat],lon.seq[dlon],"sum=",mytot[dlat,dlon],"max=",mymax[dlat,dlon]))
+	save(mytot,file="mytotm.Rda")
+	save(mymax,file="mymaxm.Rda")
+	write.csv(mytot,file="mytotm.csv")
+	write.csv(mymax,file="mymaxm.csv")
 }
-
 bonk<-mpi.finalize()
 #bonk<-mpi.exit()
