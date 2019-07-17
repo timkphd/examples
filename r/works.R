@@ -1,4 +1,21 @@
 source("tymer.R")
+quake <-function(x){
+     if(x < 0.1){x=0.1}
+     if(x >=0.1 && x <=2.0){
+        a<-(-2.146128)
+        b<-1.146128
+     }
+     if(x <= 3.0) {
+        a<-(-0.9058116)
+        b<-0.5259698
+     } else {
+        a<-(-0.279157)
+        b<-0.3160013
+     }
+     t<-a+b*x
+     10**t
+}
+
 # assume energy goes as (10^mag)/(d^2.5)
 whack <- function(lat1,lon1,lat2,lon2,mag,dep) {
 	lat1<-lat1*0.01745329
@@ -8,13 +25,13 @@ whack <- function(lat1,lon1,lat2,lon2,mag,dep) {
 	d <- 6377.83 * acos((sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1))
 	d <- sqrt(d*d+dep*dep)
 	if(mag > 0.0){
-	i <-(10^mag)/(d^2.5)
+	i <-(quake(mag))/(d^2.5)
 	} else {
 	i=0
 	}
 	return(i)
 }
-
+if(FALSE){
 # read in our character data
 chars<-read.csv("~/eq/ascii",header=F)
 lines=nrow(chars)
@@ -40,7 +57,13 @@ dat=cbind(rdf,idf,chars)
 rm(rdf)
 rm(idf)
 rm(chars)
-
+}else {
+	sfile<-"start"
+	dat<-read.delim(sfile,header=F,sep="")
+	thehead=c("year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly")
+	colnames(dat)<-thehead
+}
+print(dat)
 library(parallel)
 library(ggplot2)
 library(ggmap)
@@ -68,11 +91,39 @@ lat.seq<-seq(latb[1],latb[2],length=dlat)
 cores=4
 cluster <- create_cluster(cores)  
 registerDoParallel(cluster)  
-df<-data.frame(lat=double(),lon=double(),max=double(),tot=double())
+df<-data.frame(lat=double(),lon=double(),tot=double(),max=double())
 tymer(reset=T)
 k<-0
 j<-0
 jkl=1:length(lat.seq)
+
+if(FALSE){
+for (i in jkl){
+	#print(i)
+	mylat=lat.seq[i]
+	i2<-1:length(lon.seq)
+	for (ijk in i2 ){
+	#print(ijk)
+		mylon<-lon.seq[ijk]
+		mymax=0.0
+		mytot=0.0
+		for (row in 1:nrow(dat)) {
+			slat<-dat[row,"latitude"]
+			slon<-dat[row,"longitude"]
+			mag<-dat[row,"SCSN"]
+			dep<-dat[row,"depth"]
+			ouch<-whack(mylat,mylon,slat,slon,mag,dep)
+			print(c(ouch,mylat,mylon,slat,slon,mag,dep))
+
+			if(ouch > mymax){mymax=ouch}
+			mytot=mytot+ouch
+			}
+		#print(c(mylat,mylon,mytot,mymax))
+		}
+	}
+}
+
+
 for (i in jkl){
 	mylat=lat.seq[i]
 	k<-k+1
@@ -84,11 +135,11 @@ for (i in jkl){
 		mylon<-lon.seq[ijk]
 		for (row in 1:nrow(dat)) {
 #		for (row in 1:1000) {
-			slat=dat[row,"latitude"]
-			slon=dat[row,"longitude"]
-			mag=dat[row,"SCSN"]
-			dep=dat[row,"depth"]
-			ouch=whack(mylat,mylon,slat,slon,mag,dep)
+			slat<-dat[row,"latitude"]
+			slon<-dat[row,"longitude"]
+			mag<-dat[row,"SCSN"]
+			dep<-dat[row,"depth"]
+			ouch<-whack(mylat,mylon,slat,slon,mag,dep)
 			if(ouch > mymax){mymax=ouch}
 			mytot=mytot+ouch
 		}
@@ -98,8 +149,8 @@ for (i in jkl){
 	nresults=length(aset)
 	for (ijk in 1:nresults){
 		df[nrow(df) + 1,] <-aset[[ijk]]
-	}
 }
+	}
 
 stopCluster(cluster)
 tymer()

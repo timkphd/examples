@@ -1,6 +1,6 @@
 source("tymer.R")
 
-quake1 <-function(x){
+quake <-function(x){
      if(x < 0.1){x=0.1}
      if(x >=0.1 && x <=2.0){
         a<-(-2.146128)
@@ -96,11 +96,11 @@ dlat=4
 dlon=8
 lon.seq<-seq(lonb[1],lonb[2],length=dlon)
 lat.seq<-seq(latb[1],latb[2],length=dlat)
-df<-data.frame(lat=double(),lon=double(),max=double(),tot=double())
+df<-data.frame(lat=double(),lon=double(),tot=double(),max=double())
 if(myid == 0){tymer(reset=T)}
-dorows=nrow(dat)
+dorows<-nrow(dat)
 #dorows=10000
-print(paste(myid,dorows))
+#print(paste(myid,dorows))
 for (i in 1:length(lat.seq)){
 	mylat=lat.seq[i]
 	for(j in 1:length(lon.seq)) {
@@ -108,22 +108,24 @@ for (i in 1:length(lat.seq)){
 		mymax=0.0
 		mytot=0.0
 		for (row in 1:dorows) {
-			slat=dat[row,"latitude"]
-			slon=dat[row,"longitude"]
-			mag=dat[row,"SCSN"]
-			dep=dat[row,"depth"]
-			ouch=whack(mylat,mylon,slat,slon,mag,dep)
+			slat<-dat[row,"latitude"]
+			slon<-dat[row,"longitude"]
+			mag<-dat[row,"SCSN"]
+			dep<-dat[row,"depth"]
+			ouch<-whack(mylat,mylon,slat,slon,mag,dep)
+			#print(c(ouch,mylat,mylon,slat,slon,mag,dep))
 			if(ouch > mymax){mymax=ouch}
-			mytot=mytot+ouch
+			mytot<-mytot+ouch
 		}
+		#if(myid == 0)print(c(myid,mylat,mylon,mytot))
 		df[nrow(df) + 1,]<-c(mylat,mylon,mytot,mymax)
 	}
 	if(myid == 0){print(tymer())}
 }
 # turn our df into two vectors mymax and mytot
-
 	mytot<-df$tot
 	mymax<-df$max
+	#print(c(myid,mytot))
 
 thetot<-mpi.reduce(mytot, type=2, op="sum",dest = source, comm = mpi_comm_world)
 themax<-mpi.reduce(mymax, type=2, op="max",dest = source, comm = mpi_comm_world)
@@ -131,6 +133,7 @@ themax<-mpi.reduce(mymax, type=2, op="max",dest = source, comm = mpi_comm_world)
 
 if(myid == source){
 	print(themax)
+	print(" ")
 	print(thetot)
 	# put our values back in df
 }
