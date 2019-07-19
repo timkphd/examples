@@ -108,6 +108,7 @@ df<-data.frame(lat=double(),lon=double(),tot=double(),max=double())
 if(myid == 0){tymer(reset=T)}
 dorows<-nrow(dat)
 #dorows=10000
+dat=subset(dat,,c(latitude,longitude,SCSN,depth))
 for (i in 1:length(lat.seq)){
 	mylat=lat.seq[i]
 	for(j in 1:length(lon.seq)) {
