@@ -17,6 +17,17 @@ quake <-function(x){
      10**t
 }
 
+atin<-function(dis){
+	if(dis > 100.0){
+		y<-5.333253/(dis**2)
+	}else{
+		if(dis < 3.0)dis<-3.0
+		x<-log10(dis)
+		y<-1.56301016+x*(0.54671034+x*(-0.54724666))
+		y<-0.017535744506694952*(10.8**y)
+	}
+}
+
 # assume energy goes as (10^mag)/(d^2.5)
 whack <- function(lat1,lon1,lat2,lon2,mag,dep) {
 	lat1<-lat1*0.01745329
@@ -26,7 +37,8 @@ whack <- function(lat1,lon1,lat2,lon2,mag,dep) {
 	d <- 6377.83 * acos((sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1))
 	d <- sqrt(d*d+dep*dep)
 	if(mag > 0.0){
-	i <-(quake(mag))/(d^2.5)
+#	i <-(quake(mag))/(d^2.5)
+	i <-atin(d)*(quake(mag))
 	} else {
 	i=0
 	}
