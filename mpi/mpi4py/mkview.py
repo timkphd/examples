@@ -55,6 +55,16 @@ methods = [ 'bicubic']
 text=True
 def plotit(f,fname,nxin=64,nyin=64) :
 	print(fname)
+	dolog=os.environ['LOG']
+	try:
+		dolog=os.environ['LOG']
+		if (dolog.find("t") > -1  or dolog.find("T") > -1) :
+			dolog=True
+		else:
+			dolog=False
+	except:
+		dolog=False
+	print("Log=",dolog)
 	if text :
 		grid = np.random.rand(nxin,nyin)
 #		grid = np.random.rand(20,10)
@@ -62,13 +72,14 @@ def plotit(f,fname,nxin=64,nyin=64) :
 		infile=open(input,"r")
 		data=infile.readlines()
 		k=0
-#		for d in data[0:] :
-		for d in data[1:] :
+		for d in data[0:] :
+#		for d in data[1:] :
 			d=d.split()
 #			print(d)
 			j=0
 			for v in d:
 				grid[j][k]=float(v)
+				if(dolog): grid[j][k]=np.log10(grid[j][k])
 				j=j+1
 			k=k+1
 	else:
@@ -115,6 +126,13 @@ def plotit(f,fname,nxin=64,nyin=64) :
 
 if __name__ == '__main__':
 	fname=0
+	try:
+		mysize=os.environ['SIZE']
+	except:
+		mysize="64,64"
+	mysize=mysize.split(",")
+	nx=int(mysize[0])
+	ny=int(mysize[1])
 	for f in sys.argv[1:] :
 		fname=fname+1
-		plotit(f,fname,64,64)
+		plotit(f,fname,nx,ny)

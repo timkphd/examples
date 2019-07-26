@@ -106,10 +106,10 @@ if(FALSE){
 latb<-c(32,33)
 lonb<-c(-115,-121)
 dlon<-abs(4*((lonb[2]-lonb[1])+1))
-#dlon=100
+dlon=4
 # dlon should be a multiple of cores
 dlat<-abs(4*((latb[2]-latb[1])+1))
-#dlat=2
+dlat=4
 lon.seq<-seq(lonb[1],lonb[2],length=dlon)
 lat.seq<-seq(latb[1],latb[2],length=dlat)
 if(myid == 0){
@@ -162,6 +162,8 @@ if(myid == source){
 	colnames(mytot)<-lon.seq
 	#sanity check
 	writeLines(paste("at",lat.seq[1],lon.seq[1],"sum=",mytot[1,1],"max=",mymax[1,1]))
+	writeLines(paste("at",lat.seq[1],lon.seq[dlon],"sum=",mytot[1,dlon],"max=",mymax[1,dlon]))
+	writeLines(paste("at",lat.seq[dlat],lon.seq[1],"sum=",mytot[dlat,1],"max=",mymax[dlat,1]))
 	writeLines(paste("at",lat.seq[dlat],lon.seq[dlon],"sum=",mytot[dlat,dlon],"max=",mymax[dlat,dlon]))
 	save(mytot,file="mytotm.Rda")
 	save(mymax,file="mymaxm.Rda")
@@ -170,3 +172,46 @@ if(myid == source){
 }
 bonk<-mpi.finalize()
 #bonk<-mpi.exit()
+
+
+
+
+
+#semikln:eq timk$ mpiexec -n 4 Rscript ./stom.R
+#[1] "I am 3 of 4 on semikln"
+#[1] "I am 0 of 4 on semikln"
+#[1] "I am 1 of 4 on semikln"
+#[1] "I am 2 of 4 on semikln"
+#[1] "3 startad"
+#[1] "1 startab"
+#[1] "2 startac"
+#[1] "0 startaa"
+#[1] 32.00000 32.33333 32.66667 33.00000
+#[1] -115 -117 -119 -121
+#[1] "1563815405.11472  2019-07-22 11:10:05       0.000       0.000  "
+#[1] -115
+#[1] -117
+#[1] -119
+#[1] -121
+#[1] "1563815429.26368  2019-07-22 11:10:29      24.149      24.149  done 32"
+#[1] -115
+#[1] -117
+#[1] -119
+#[1] -121
+#[1] "1563815451.98032  2019-07-22 11:10:51      22.717      46.866  done 32.3333333333333"
+#[1] -115
+#[1] -117
+#[1] -119
+#[1] -121
+#[1] "1563815474.78575  2019-07-22 11:11:14      22.805      69.671  done 32.6666666666667"
+#[1] -115
+#[1] -117
+#[1] -119
+#[1] -121
+#[1] "1563815497.56085  2019-07-22 11:11:37      22.775      92.446  done 33"
+# 
+#at 32 -115 sum= 11557.6639761954 max= 21.1651123970782
+#at 32 -121 sum= 10096.1418361278 max= 6.71566316741023
+#at 33 -115 sum= 16.6253217611748 max= 0.155219186870698
+#at 33 -121 sum= 24.3447944967846 max= 0.504810265218713
+#semikln:eq timk$ 
