@@ -13,7 +13,7 @@ SOPT=
 LINK=-L/Users/tkaiser/lapack/lapack-3.8.0 -llapack -lrefblas
 LINK=-fbacktrace -fcheck=all -L/opt/intel/mkl/lib -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -L/opt/intel/lib -liomp5
 LINK=                        -L/opt/intel/mkl/lib -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -L/opt/intel/lib -liomp5
-#LINK=-mkl
+LINK=-mkl
 
 #OPT= -g -free -L/lustre/home/apps/gdb-6.8/lib64 -liberty
 PF90=mpif90 

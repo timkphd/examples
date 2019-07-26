@@ -1,19 +1,18 @@
 #!/bin/bash -e
 #SBATCH --job-name="array_job"
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=2
+#SBATCH --ntasks-per-node=12
+#SBATCH --cpus-per-task=1
 #SBATCH --time=00:05:00
-##SBATCH -o outz-%j
 ###### sending output to /dev/null will surpress it
 ###### this is a good idea for array jobs lest it
 ###### create extra output for each subjob
-#SBATCH -o /dev/null
-#SBATCH --share
+##SBATCH -o /dev/null
+#SBATCH --exclusive=user
 #SBATCH --export=ALL
 #SBATCH --partition=shas
 
-#SBATCH --mem=100
+#SBATCH --mem=50000
 
 #----------------------
 # example invocation
@@ -22,11 +21,16 @@
 
 
 module purge
-export _OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+module use /curc/sw/spack-experimental/share/spack/lmod/linux-rhel7-x86_64/Core
+ml intel-parallel-studio/cluster.2019.3
+
+#export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export OMP_NUM_THREADS=1
 
 #run with either the C or python version of our program
 export EXE=invertp.py
 export EXE=invertc
+export EXE=hello
 
 
 # go to our starting directory
@@ -55,9 +59,9 @@ cat $0 > myscript
 
 
 if [ -z ${USEDIRS+x} ]; then
-	# USEDIRS is not set; default to yes
-	export USEDIRS=yes
-	#export USEDIRS=no
+	# USEDIRS is not set; default to no
+	#export USEDIRS=yes
+	export USEDIRS=no
 fi
 
 # Get the name of our LIST, default to list
@@ -95,7 +99,8 @@ else
 # Run our job
 	$SLURM_SUBMIT_DIR/tymer timer start_time
 	echo $input > input
-	$SLURM_SUBMIT_DIR/$EXE $input > output
+	#$SLURM_SUBMIT_DIR/$EXE  $input > output
+	$SLURM_SUBMIT_DIR/$EXE <<< $input > output
 	hostname > node
 	$SLURM_SUBMIT_DIR/tymer timer end_time
 fi
