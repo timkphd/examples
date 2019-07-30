@@ -34,7 +34,9 @@ whack <- function(lat1,lon1,lat2,lon2,mag,dep) {
 	lat2<-lat2*0.01745329
 	lon1<-lon1*0.01745329
 	lon2<-lon2*0.01745329
-	d <- 6377.83 * acos((sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1))
+	ang1<-(sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1)
+	if(ang1 > 1.0)ang1<-1.0
+	d <- 6377.83 * acos(ang1)
 	d <- sqrt(d*d+dep*dep)
 	if(mag > 0.0){
 #	i <-(quake(mag))/(d^2.5)
@@ -91,19 +93,22 @@ ca <- states[which(states$region == "california"),]
 ca<-states[states$region == "california",]
 #plot(ca$lat,ca$lon)
 
- 
-latb<-c(32,33)
-lonb<-c(-115,-121)
-dlon<-abs(4*((lonb[2]-lonb[1])+1))
-dlon=4
-# dlon should be a multiple of cores
-dlat<-abs(4*((latb[2]-latb[1])+1))
+latb<-c(35.0,32.0)
 dlat=4
+lonb<-c(-121.0,-115.0)
+dlon=4
+myinput<-read.table("bounds")
+latb[1]<-as.double(myinput[1,1])
+latb[2]<-as.double(myinput[1,2])
+dlat<-as.integer(myinput[1,3])
+lonb[1]<-as.double(myinput[2,1])
+lonb[2]<-as.double(myinput[2,2])
+dlon<-as.integer(myinput[2,3])
 lon.seq<-seq(lonb[1],lonb[2],length=dlon)
 lat.seq<-seq(latb[1],latb[2],length=dlat)
 if(TRUE){
-	print(lat.seq)
 	print(lon.seq)
+	print(lat.seq)
 }
 
 cores<-4
@@ -125,7 +130,6 @@ for (i in jkl){
 	aset <- foreach (ijk=1:length(lon.seq)) %dopar% {
 		mymax=0.0
 		mytot=0.0
-		row<-100
 		mylon<-lon.seq[ijk]
 		for (row in 1:dorows) {
 			slat<-dat[row,"latitude"]
@@ -144,17 +148,19 @@ for (i in jkl){
 		df[nrow(df) + 1,] <-aset[[ijk]]
 	}
 }
-
 stopCluster(cluster)
 tymer()
+#print(df)
 if(TRUE){
 	# put our values back in df
-	mymax<-matrix(df$max,nrow=dlat,ncol=dlon)
+	mymax<-matrix(df$max,nrow=dlat,ncol=dlon,byrow=TRUE)
 	mymax<-as.data.frame(mymax,row.names=lat.seq)
 	colnames(mymax)<-lon.seq
-	mytot<-matrix(df$tot,nrow=dlat,ncol=dlon)
+	print(mymax)
+	mytot<-matrix(df$tot,nrow=dlat,ncol=dlon,byrow=TRUE)
 	mytot<-as.data.frame(mytot,row.names=lat.seq)
 	colnames(mytot)<-lon.seq
+	print(mytot)
 	#sanity check
 	writeLines(paste("at",lat.seq[1],lon.seq[1],"sum=",mytot[1,1],"max=",mymax[1,1]))
 	writeLines(paste("at",lat.seq[1],lon.seq[dlon],"sum=",mytot[1,dlon],"max=",mymax[1,dlon]))
