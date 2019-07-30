@@ -34,7 +34,9 @@ whack <- function(lat1,lon1,lat2,lon2,mag,dep) {
 	lat2<-lat2*0.01745329
 	lon1<-lon1*0.01745329
 	lon2<-lon2*0.01745329
-	d <- 6377.83 * acos((sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1))
+	ang1<-(sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1)
+	if(ang1 > 1.0)ang1<-1.0
+	d <- 6377.83 * acos(ang1)
 	d <- sqrt(d*d+dep*dep)
 	if(mag > 0.0){
 #	i <-(quake(mag))/(d^2.5)
@@ -103,18 +105,28 @@ if(FALSE){
 	colnames(dat)<-thehead
 }
 #if(myid == 0)print(dat)
-latb<-c(32,33)
-lonb<-c(-115,-122)
+latb<-c(35,32)
+lonb<-c(-115,-121)
 dlon<-abs(4*((lonb[2]-lonb[1])+1))
-dlon=200
+dlon=5
 # dlon should be a multiple of cores
 dlat<-abs(4*((latb[2]-latb[1])+1))
-dlat=100
+dlat=5
+myinput<-read.table("bounds")
+latb[1]<-as.double(myinput[1,1])
+latb[2]<-as.double(myinput[1,2])
+dlat<-as.integer(myinput[1,3])
+lonb[1]<-as.double(myinput[2,1])
+lonb[2]<-as.double(myinput[2,2])
+dlon<-as.integer(myinput[2,3])
+
+
+
 lon.seq<-seq(lonb[1],lonb[2],length=dlon)
 lat.seq<-seq(latb[1],latb[2],length=dlat)
 if(myid == 0){
-	print(lat.seq)
 	print(lon.seq)
+	print(lat.seq)
 }
 df<-data.frame(lat=double(),lon=double(),tot=double(),max=double())
 if(myid == 0){tymer(reset=T)}
@@ -142,14 +154,14 @@ for (row in 1:dorows) {
 	}
 	if(myid == 0) {
 		frow<-frow+1
-		if( (frow %% drow) == 0)print(tymer(frow))
+		#if( (frow %% drow) == 0)print(tymer(frow))
 	}
 }
 if(myid == 0)print(tymer(frow))
 # pack our dataframe so it is like the original code
+for(j in 1:length(lon.seq)) {
 for (i in 1:length(lat.seq)){
 	mylat=lat.seq[i]
-	for(j in 1:length(lon.seq)) {
 		mylon<-lon.seq[j]
 		df[nrow(df) + 1,]<-c(mylat,mylon,mytot[i,j],mymax[i,j])
 	}
@@ -167,19 +179,23 @@ if(myid == source){
 	mymax<-matrix(themax,nrow=dlat,ncol=dlon)
 	mymax<-as.data.frame(mymax,row.names=lat.seq)
 	colnames(mymax)<-lon.seq
+#	mymax<-as.data.frame(mymax,row.names=lon.seq)
+#	colnames(mymax)<-lat.seq
 	writeLines(" ")
 	mytot<-matrix(thetot,nrow=dlat,ncol=dlon)
 	mytot<-as.data.frame(mytot,row.names=lat.seq)
 	colnames(mytot)<-lon.seq
+#	mytot<-as.data.frame(mytot,row.names=lon.seq)
+#	colnames(mytot)<-lat.seq
 	#sanity check
 	writeLines(paste("at",lat.seq[1],lon.seq[1],"sum=",mytot[1,1],"max=",mymax[1,1]))
 	writeLines(paste("at",lat.seq[1],lon.seq[dlon],"sum=",mytot[1,dlon],"max=",mymax[1,dlon]))
 	writeLines(paste("at",lat.seq[dlat],lon.seq[1],"sum=",mytot[dlat,1],"max=",mymax[dlat,1]))
 	writeLines(paste("at",lat.seq[dlat],lon.seq[dlon],"sum=",mytot[dlat,dlon],"max=",mymax[dlat,dlon]))
-	save(mytot,file="mytotm.Rda")
-	save(mymax,file="mymaxm.Rda")
-	write.csv(mytot,file="mytotm.csv")
-	write.csv(mymax,file="mymaxm.csv")
+	save(mytot,file="mytotr.Rda")
+	save(mymax,file="mymaxr.Rda")
+	write.csv(mytot,file="mytotr.csv")
+	write.csv(mymax,file="mymaxr.csv")
 }
 bonk<-mpi.finalize()
 #bonk<-mpi.exit()

@@ -34,7 +34,9 @@ whack <- function(lat1,lon1,lat2,lon2,mag,dep) {
 	lat2<-lat2*0.01745329
 	lon1<-lon1*0.01745329
 	lon2<-lon2*0.01745329
-	d <- 6377.83 * acos((sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1))
+	ang1<-(sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1)
+	if(ang1 > 1.0)ang1<-1.0
+	d <- 6377.83 * acos(ang1)
 	d <- sqrt(d*d+dep*dep)
 	if(mag > 0.0){
 #	i <-(quake(mag))/(d^2.5)
@@ -103,29 +105,38 @@ if(FALSE){
 	colnames(dat)<-thehead
 }
 #if(myid == 0)print(dat)
-latb<-c(32,33)
+latb<-c(35,32)
 lonb<-c(-115,-121)
 dlon<-abs(4*((lonb[2]-lonb[1])+1))
-dlon=4
+dlon=5
 # dlon should be a multiple of cores
 dlat<-abs(4*((latb[2]-latb[1])+1))
-dlat=4
+dlat=5
+myinput<-read.table("bounds")
+latb[1]<-as.double(myinput[1,1])
+latb[2]<-as.double(myinput[1,2])
+dlat<-as.integer(myinput[1,3])
+lonb[1]<-as.double(myinput[2,1])
+lonb[2]<-as.double(myinput[2,2])
+dlon<-as.integer(myinput[2,3])
+
+
+
 lon.seq<-seq(lonb[1],lonb[2],length=dlon)
 lat.seq<-seq(latb[1],latb[2],length=dlat)
 if(myid == 0){
-	print(lat.seq)
 	print(lon.seq)
+	print(lat.seq)
 }
 df<-data.frame(lat=double(),lon=double(),tot=double(),max=double())
 if(myid == 0){tymer(reset=T)}
 dorows<-nrow(dat)
 #dorows=10000
 dat=subset(dat,,c(latitude,longitude,SCSN,depth))
-for (i in 1:length(lat.seq)){
-	mylat=lat.seq[i]
-	for(j in 1:length(lon.seq)) {
-		mylon<-lon.seq[j]
-		if(myid == 0)print(mylon)
+for(j in 1:length(lon.seq)) {
+	mylon<-lon.seq[j]
+	for (i in 1:length(lat.seq)){
+		mylat=lat.seq[i]
 		mymax=0.0
 		mytot=0.0
 		for (row in 1:dorows) {
@@ -141,7 +152,7 @@ for (i in 1:length(lat.seq)){
 		#if(myid == 0)print(c(myid,mylat,mylon,mytot))
 		df[nrow(df) + 1,]<-c(mylat,mylon,mytot,mymax)
 	}
-	if(myid==0){print(tymer(paste("done",mylat)))}
+	if(myid==0){print(tymer(paste("done",mylon)))}
 }
 # turn our df into two vectors mymax and mytot
 	mytot<-df$tot
