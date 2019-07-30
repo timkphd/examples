@@ -85,7 +85,7 @@ library(ggmap)
 library(maps)
 library(mapdata)
 library(dplyr) 
-library(multidplyr) 
+#library(multidplyr) 
 library(doParallel)
 states <- map_data("state")
 ca <- states[which(states$region == "california"),]
@@ -112,7 +112,8 @@ if(TRUE){
 }
 
 cores<-4
-cluster <- create_cluster(cores)  
+#cluster <- create_cluster(cores)  
+cluster <- makeCluster(cores)  
 registerDoParallel(cluster)  
 df<-data.frame(lat=double(),lon=double(),tot=double(),max=double())
 tymer(reset=T)
