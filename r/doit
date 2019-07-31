@@ -1,25 +1,25 @@
-#Parallel Loop example
+echo Parallel Loop example
 Rscript semantics.R
 
-#Eathquake example with parallel loop
+echo Eathquake example with parallel loop
 Rscript works.R
 
-#Eathquake example with with MPI
+echo Eathquake example with with MPI
 mpiexec -n 4 Rscript stom.R
 
-#Eathquake example with with MPI and reordered loops
+echo Eathquake example with with MPI and reordered loops
 mpiexec -n 4 Rscript reorder.R
 
-#Eathquake example in Fortran
+echo Eathquake example in Fortran
 gfortran -O3 fungR.f90
 ./a.out start
 
-#Stommel code in C and MPI
+echo Stommel code in C and MPI
 mpicc -O3 stc_01.c -o stc_01
 mpiexec -n 4 ./stc_01 < st.in
 
-#Stommel code in MPI
+echo Stommel code in MPI
 mpiexec -n 4 Rscript st_01.R
 
-#Bag of tasks program in MPI
+echo Bag of tasks program in MPI
 mpiexec -n 4 Rscript bot.R
