@@ -4,7 +4,7 @@ writeLines("Now for some examples that actually work")
 writeLines("but maybe not the way you expected.")
 writeLines("The export may generate a warning.")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 if(!exists("doverbose")){doverbose=FALSE}

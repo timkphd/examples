@@ -2,7 +2,7 @@
 
 print("Work on a matrix")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 if(!exists("mymean")){mymean=0}

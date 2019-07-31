@@ -2,7 +2,7 @@
 rm(list=ls())
 library(parallel)
 library(dplyr) 
-library(multidplyr) 
+#library(multidplyr) 
 library(doParallel)
 
 
@@ -12,7 +12,7 @@ cores=4
 
 # (1) #########
 
-print("Do a very simple loop, not in parallel"
+print("Do a very simple loop, not in parallel")
 
 nt<-10
 asum=0
@@ -26,7 +26,8 @@ print(asum)
 
 print("Do a very simple parallel loop")
 ##
-ct <- create_cluster(cores)  
+#ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 
@@ -46,7 +47,7 @@ stopCluster(ct)
 
 print("Same as above but explicitly 'return' a value")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 
@@ -65,7 +66,7 @@ stopCluster(ct)
 
 print("Same as above but explicitly 'return' a value as rows")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 
@@ -84,7 +85,7 @@ stopCluster(ct)
 
 print("Same as above but explicitly 'return' a value as columns")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 
@@ -103,7 +104,7 @@ stopCluster(ct)
 
 print("Work on a matrix")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 
@@ -128,7 +129,7 @@ stopCluster(ct)
 print("Same as above but explicitly 'return' a value as columns")
 
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 
@@ -152,7 +153,7 @@ stopCluster(ct)
 print("We return the matrix")
 
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 
@@ -208,7 +209,7 @@ print(myvect)
 
 print("Same loop 'breaks' in parallel")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 

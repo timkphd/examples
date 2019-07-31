@@ -2,7 +2,7 @@
 
 writeLines("We move asum to the right hand size")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 
 asum<-5

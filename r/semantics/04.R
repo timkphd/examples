@@ -2,7 +2,7 @@
 
 print("Same as above but explicitly 'return' a value as rows")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 

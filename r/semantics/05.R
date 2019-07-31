@@ -2,7 +2,7 @@
 
 print("Similar to last run")
 ##
-ct <- create_cluster(cores)  
+ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
 if(!exists("doprint")){doprint=FALSE}
