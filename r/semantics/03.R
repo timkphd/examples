@@ -12,8 +12,8 @@ bsum<-foreach(ijk=1:nt ) %dopar% {
 	asum<-asum+ijk
   #asum
 }
-print(asum)
-print(bsum)
+print(c("asum",asum))
+print(c("bsum",bsum))
 
 stopCluster(ct)
 #readline(prompt = "NEXT>")

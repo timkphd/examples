@@ -1,3 +1,6 @@
+echo make library
+R CMD SHLIB mapit.c
+
 echo Parallel Loop example
 Rscript semantics.R
 
