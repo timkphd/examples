@@ -9,10 +9,32 @@
 /* TO COMPILE: R CMD SHLIB mapit.c */
 /* TO Make an a.out gcc -DDOMAIN mapiit.c */
 int sched_getcpu(); 
- 
+#ifdef __APPLE__
+/* currently dummy routines on APPLE see below for a starting point */
+/* https://yyshen.github.io/2015/01/18/binding_threads_to_cores_osx.html */
+#define SYSCTL_CORE_COUNT   "machdep.cpu.core_count"
+
+typedef struct cpu_set {
+  uint32_t    count;
+} cpu_set_t;
+
+static inline void
+CPU_ZERO(cpu_set_t *cs) { cs->count = 0; }
+
+static inline void
+CPU_SET(int num, cpu_set_t *cs) { cs->count |= (1 << num); }
+
+// static inline int CPU_ISSET(int num, cpu_set_t *cs) { return (cs->count & (1 << num)); }
+
+int sched_getcpu() {
+	return(0);
+}
+void sched_setaffinity(pid_t i, int thesize, cpu_set_t *set) {
+
+}
+#endif
 void findcore (int *ic) 
 { 
-    int cpu; 
     ic[0] = sched_getcpu(); 
 } 
 void forcecore (int *core) { 

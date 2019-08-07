@@ -22,7 +22,7 @@ size <- 2000
 tic()
 ptime <- system.time({
 	r <- foreach(ijk=1:nt, .combine=cbind) %dopar% {
-	    dyn.load("core.so")
+	    dyn.load("mapit.so")
 		dia <- 0.1
 		docore <- 1+((ijk-1) %% 23)
 		forceit(docore)

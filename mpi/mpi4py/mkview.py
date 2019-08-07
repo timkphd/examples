@@ -53,9 +53,9 @@ methods = [None, 'none', 'nearest', 'bilinear', 'bicubic', 'spline16',
 methods = ['nearest', 'bilinear']
 methods = [ 'bicubic']
 text=True
+skipone=True
 def plotit(f,fname,nxin=64,nyin=64) :
 	print(fname)
-	dolog=os.environ['LOG']
 	try:
 		dolog=os.environ['LOG']
 		if (dolog.find("t") > -1  or dolog.find("T") > -1) :
@@ -72,16 +72,22 @@ def plotit(f,fname,nxin=64,nyin=64) :
 		infile=open(input,"r")
 		data=infile.readlines()
 		k=0
-		for d in data[0:] :
-#		for d in data[1:] :
+		j=0
+		if(skipone):
+			st=1
+		else:
+			st=0
+#		for d in data[0:] :
+		for d in data[st:] :
 			d=d.split()
 #			print(d)
-			j=0
+#			print(j,len(d))
+			k=0
 			for v in d:
 				grid[j][k]=float(v)
 				if(dolog): grid[j][k]=np.log10(grid[j][k])
-				j=j+1
-			k=k+1
+				k=k+1
+			j=j+1 
 	else:
 		grid=np.fromfile(f, dtype=np.float32)
 		print("length=",len(grid))
