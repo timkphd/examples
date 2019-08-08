@@ -1,0 +1,41 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=24
+#SBATCH --time=10:00:00
+##SBATCH --qos=testing 
+#SBATCH --oversubscribe
+#SBATCH --exclusive=user
+##SBATCH --cpus-per-task=6
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Run our program with output put into out.dat
+
+module purge
+module load intel/17.4 jdk/1.8.0 impi/17.3 jpeg mkl
+export RBASE=/projects/timk@colostate.edu/R/builds/3.6.0_17.4_mkl
+export PATH=$RBASE/bin:$PATH
+export R_LIBS=$RBASE/local
+
+# make a directory for this run
+mkdir $SLURM_JOB_ID
+cd $SLURM_JOB_ID
+
+#record our environment
+cat $0 > script
+printenv > env
+
+#get stuff
+cp $SLURM_SUBMIT_DIR/bounds .
+cp $SLURM_SUBMIT_DIR/big bounds
+cp $SLURM_SUBMIT_DIR/tymer.R .
+cp $SLURM_SUBMIT_DIR/reorder.R .
+ln -s ../start .
+$SLURM_SUBMIT_DIR/getdat.py $SLURM_NTASKS
+
+
+srun --mpi=pmi2  -n $SLURM_NTASKS  Rscript reorder.R >> out.dat
+
+cp $SLURM_SUBMIT_DIR/slurm-$SLURM_JOB_ID* .
