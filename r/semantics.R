@@ -214,6 +214,7 @@ print(bsum)
 
 stopCluster(ct)
 #readline(prompt = "NEXT>")
+
 # (10) #########
 
 writeLines("We move asum to the right hand size")
@@ -260,6 +261,7 @@ print(bsum[order(bsum[,1]),])
 
 stopCluster(ct)
 #readline(prompt = "NEXT>")
+
 # (11) ######### (skip this one)
 
 print("Work on a matrix")
@@ -283,6 +285,7 @@ print(sum(mymat))
 
 stopCluster(ct)
 #readline(prompt = "NEXT>")
+
 # (12) #########
 
 print("Work on a matrix")
@@ -313,8 +316,6 @@ stopCluster(ct)
 
 ##########
 
-
-
 # (13) #########
 
 print("Not in parallel")
@@ -329,7 +330,6 @@ bsum<-for(ijk in 1:nt  )  {
 print(bsum)
 print(mymat)
 #readline(prompt = "NEXT>")
-
 
 # (14) #########
 
