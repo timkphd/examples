@@ -37,7 +37,7 @@ each=lines//tasks
 tot=each*tasks
 while(tot < lines):
 	lines=lines+1
-	each=lines/tasks
+	each=lines//tasks
 	tot=each*tasks
 
 # Split the file.
