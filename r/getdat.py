@@ -8,7 +8,7 @@ import requests
 import os
 import sys
 # Here's our data
-url = ' http://scedc.caltech.edu/ftp/catalogs/hauksson/Socal_DD/hs_1981_all_comb_K4_A.cat_so_SCSN_v01'
+url = 'http://scedc.caltech.edu/ftp/catalogs/hauksson/Socal_DD/hs_1981_all_comb_K4_A.cat_so_SCSN_v01'
 exists = os.path.isfile('start')
 if exists:
     print("file exixts")
