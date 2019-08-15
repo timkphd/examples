@@ -17,6 +17,29 @@
 <h3>Install packages in a particular library</h3>
 <code>install.packages("doMC", repos="http://cran.r-project.org",lib="/projects/timk@colostate.edu/R/builds/3.6.0_17.4_mkl/local") </code>
 
+<h3>Function to return result from last calculation </h3>
+<code>
+&gt; ans &lt;- function() .Last.value
+&gt; 89*1234
+[1] 109826
+&gt; ans()
+[1] 109826
+&gt; 
+</code>
+
+
+
+<h3>Use read.table to get inputs</h3>
+<code>
+myinput&lt;-read.table("bounds")
+latb[1]&lt;-as.double(myinput[1,1])
+latb[2]&lt;-as.double(myinput[1,2])
+dlat&lt;-as.integer(myinput[1,3])
+lonb[1]&lt;-as.double(myinput[2,1])
+lonb[2]&lt;-as.double(myinput[2,2])
+dlon&lt;-as.integer(myinput[2,3])
+</code>
+
 <h3>C Code for forcing task to Core</h3>
 
 <code>
