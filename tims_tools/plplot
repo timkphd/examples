@@ -1,4 +1,4 @@
-!/usr/bin/env python3
+#!/usr/bin/env python3
 import sys
 from pylab import *
 import math
@@ -43,7 +43,7 @@ lw=float(lw)
 xray={}
 yray={}
 i=0
-if(find(sys.argv,"xkcd")> 0):
+if(sys.argv[0].find("xkcd")> 0):
 	try:
 		xkcd()
 	except:
