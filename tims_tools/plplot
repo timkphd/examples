@@ -43,9 +43,11 @@ lw=float(lw)
 xray={}
 yray={}
 i=0
+dosmall=False
 if(sys.argv[0].find("xkcd")> 0):
 	try:
 		xkcd()
+		dosmall=True	
 	except:
 		print("xkcd not found")
 for pathname in paths:
@@ -119,8 +121,13 @@ if(yrange != "auto"):
 	ymax=float(ymax)
 	ylim(ymin,ymax)
 	
-xlabel(bottom)
-ylabel(side)
+if dosmall:
+	xlabel(bottom,fontsize=10)
+	ylabel(side,fontsize=10)
+else:
+	xlabel(bottom)
+	ylabel(side)
+
 title(top)
 grid(True)
 x=time.localtime()
