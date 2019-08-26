@@ -1,0 +1,51 @@
+date
+matlab -nodisplay<<end
+a = 1
+b = 2
+c = a+b
+hpccLinpack(12000)
+mypl=gcp('nocreate')
+poolsize = mypl.NumWorkers
+X = sprintf('pool size created by hpccLinpack  %d ',poolsize);
+disp(X)
+delete(mypl)
+
+parpool(2)
+mypl=gcp('nocreate')
+poolsize = mypl.NumWorkers
+if poolsize == 0, disp('Pool not open, aborting.'), quit, end
+
+X = sprintf('pool size is  %d ',poolsize);
+disp(X)
+
+hpccLinpack(12000)
+
+delete(mypl)
+
+
+parpool(4)
+mypl=gcp('nocreate')
+poolsize = mypl.NumWorkers
+if poolsize == 0, disp('Pool not open, aborting.'), quit, end
+
+X = sprintf('pool size is  %d ',poolsize);
+disp(X)
+
+hpccLinpack(12000)
+
+delete(mypl)
+
+parpool(8)
+mypl=gcp('nocreate')
+poolsize = mypl.NumWorkers
+if poolsize == 0, disp('Pool not open, aborting.'), quit, end
+
+X = sprintf('pool size is  %d ',poolsize);
+disp(X)
+
+hpccLinpack(12000)
+
+delete(mypl)
+quit
+date
+end

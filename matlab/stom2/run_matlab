@@ -1,0 +1,43 @@
+#!/bin/bash 
+#SBATCH --job-name="invert"
+#SBATCH --nodes=1
+##SBATCH --ntasks-per-node=24
+##SBATCH --ntasks=16
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=01:00:00
+
+# Load Matlab and newer compiler
+# Note: The compiler not needed for most runs.
+module purge
+module load matlab/R2017b
+#module load gcc/8.2.0  This version of gcc is not supported by this version of matlab
+
+# Go to the directoy from which our job was launched.
+cd $SLURM_SUBMIT_DIR
+
+export OMP_NUM_THREADS=16
+
+
+# Make a directory for this run and go there.
+mkdir $SLURM_JOB_ID
+cd $SLURM_JOB_ID
+
+# Save our script.
+cat $0 > script.$SLURM_JOB_ID
+
+# Get our program
+cp $SLURM_SUBMIT_DIR/*.m .
+
+# Run the job with an external timer with values going in file "clock"
+$SLURM_SUBMIT_DIR/tymer clock "starting the job"
+
+matlab -r stom > $SLURM_JOB_ID.out
+
+$SLURM_SUBMIT_DIR/tymer clock "job has finished"
+
+
+# Copy output to this directory
+cp ../slurm-$SLURM_JOB_ID* .
+
+

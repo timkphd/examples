@@ -1,0 +1,46 @@
+#!/bin/bash -x
+#SBATCH --job-name="invert"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+##SBATCH --ntasks=16
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=01:00:00
+
+#export  "OMP_NUM_THREADS=12 "
+export OMP_NUM_THREADS=1
+module load matlab/R2017b
+module load gcc/8.2.0
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Create a short JOBID base on the one provided by the scheduler
+JOBID=`echo $SLURM_JOBID`
+
+# We o run the job in a new directory so we make it, go there, and copy files
+mkdir $JOBID
+cd $JOBID
+cp ../hpc*m .
+cp ../do_invert .
+cp ../rand* .
+# Save a copy of our environment and script
+cat $0 > script.$JOBID
+printenv  > env.$JOBID
+
+# Run the job.
+# The echo will go into the standard output for this job
+# The standard output file will end up in the directory
+# from which the job was launched but we also copy it to
+# our new directory.
+echo "running job"
+./do_invert
+#srun executable_file_name 
+echo "job has finished"
+
+# This output will also go into the standard output file
+echo "run in" `pwd` " produced the files:"
+ls -lt 
+
+# Copy output to this directory
+cp ../slurm-$JOBID.* .

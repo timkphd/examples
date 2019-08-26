@@ -1,0 +1,27 @@
+Run the command 
+
+sbatch run_matlab
+
+
+This submits the job to the queue.
+When the job starts it will create a
+new directory and copy the needed
+files to the directory.  
+
+It will then run the script do_invert.
+This script does a simple addition
+and then runs a matrix inversion in
+parallel using different numbers of
+cores.
+
+This program in unique in that it compiles
+a c++ program on the fly for random
+number generations.
+
+At the end of the run standard out for
+the job is copied to the new directory.
+
+This job is currently rescricted to 
+a single node.
+
+
