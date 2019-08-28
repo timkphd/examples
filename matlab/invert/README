@@ -14,7 +14,7 @@ many time and returns the runtime.
 At the end of the run standard out for
 the job is copied to the new directory.
 
-This job is currently rescricted to 
+This job is currently restricted to 
 a single node.
 
 
