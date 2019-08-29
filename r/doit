@@ -5,16 +5,16 @@ echo Parallel Loop example
 Rscript semantics.R
 
 echo Eathquake example with parallel loop
-Rscript works.R
+Rscript quake01.R
 
 echo Eathquake example with with MPI
-mpiexec -n 4 Rscript stom.R
+mpiexec -n 4 Rscript quake02.R
 
 echo Eathquake example with with MPI and reordered loops
-mpiexec -n 4 Rscript reorder.R
+mpiexec -n 4 Rscript quake03.R
 
 echo Eathquake example in Fortran
-gfortran -O3 fungR.f90
+gfortran -O3 quake.f90
 ./a.out start
 
 echo Stommel code in C and MPI
