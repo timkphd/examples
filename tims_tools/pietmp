@@ -13,3 +13,4 @@ echo $cpu | awk '{printf("CPU => %4.1f C\n", $0/1000)}'
 
 lscpu | grep "MHz"
 sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq | awk '{printf("CPU => %10.4f MHz\n", $0/1000)}'
+# cat /sys/class/thermal/thermal_zone0/temp
