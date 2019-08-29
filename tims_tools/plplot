@@ -133,8 +133,19 @@ grid(True)
 x=time.localtime()
 stime=("%2.2d%2.2d%2.2d%2.2d%2.2d%2.2d" % (x[0]-2000,x[1],x[2],x[3],x[4],x[5]))
 stime=os.getenv("HOME")+"/plots/"+stime+".pdf"
-savefig(stime)
+didsave=False
+didshow=False
+try:
+	savefig(stime)
+	didsave=True
+except:
+	pass
 host=os.getenv("HOSTNAME")
 who=os.getlogin()
 #print who+"@"+host+":"+stime
-show()
+try:
+	show()
+	didshow=True
+except:
+	pass
+print("saved:",didsave," displayed:",didshow)
