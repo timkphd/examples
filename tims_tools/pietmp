@@ -2,13 +2,14 @@
 # Script: my-pi-temp.sh
 # Purpose: Display the ARM CPU and GPU  temperature of Raspberry Pi 2/3 
 # Author: Vivek Gite <www.cyberciti.biz> under GPL v2.x+
+# Mods: Tim Kaiser - improved format
 # -------------------------------------------------------
 cpu=$(</sys/class/thermal/thermal_zone0/temp)
 echo "$(date) @ $(hostname)"
 echo "-------------------------------------------"
-echo "GPU => $(/opt/vc/bin/vcgencmd measure_temp)"
-echo "CPU => temp=$((cpu/1000))'C"
+gpu=`/opt/vc/bin/vcgencmd measure_temp | sed "s/'/ /" | sed "s/temp=//"`
+echo "GPU =>" $gpu
+echo $cpu | awk '{printf("CPU => %4.1f C\n", $0/1000)}'
 
 lscpu | grep "MHz"
-sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq
-
+sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq | awk '{printf("CPU => %10.4f MHz\n", $0/1000)}'
