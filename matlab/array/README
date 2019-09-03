@@ -1,0 +1,98 @@
+This version of the script run_matlab
+and bunch.m are designed to show how
+you can run a collection of matlab jobs
+each getting a different random number
+seed.  This is designed to run as an
+slurm array job.
+
+Run the command 
+
+sbatch --array=1-24 run_matlab 
+
+This submits the job to the queue.
+It will start 24 instances of the 
+run.  
+
+When the job starts it will create a
+new base directory and a sub directory
+for each of the 24 instances and then
+copy the needed files to the directory.  
+
+Each sub job will have in its environment
+a unique value for SLURM_JOB_ID.  In the
+run_matlab script we use the line:
+
+export MYSEED=$SLURM_JOB_ID
+
+The slurm script run_matlab runs the script 
+bunch.m.  This script looks for the value of
+MYSEED and uses it to set the random number
+generator.  If MYSEED is not found it sets
+the seed based on the time since epoch.
+
+After bunch.m sets the seed it returns a
+set of random numbers to check that we get
+a different sequence for each run.  It then
+does a linear solve  many time and returns 
+the runtime.
+
+Here is a example output showing we have started 
+24 jobs:
+
+[timk@colostate.edu@login10 array]$ sbatch --array=1-24 run_matlab 
+Submitted batch job 3049508
+[timk@colostate.edu@login10 array]$ squeue -u $USER
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+         3049508_1      shas array_jo timk@col  R       0:02      1 shas0104
+         3049508_2      shas array_jo timk@col  R       0:02      1 shas0104
+         3049508_3      shas array_jo timk@col  R       0:02      1 shas0104
+         3049508_4      shas array_jo timk@col  R       0:02      1 shas0104
+         3049508_5      shas array_jo timk@col  R       0:02      1 shas0115
+         3049508_6      shas array_jo timk@col  R       0:02      1 shas0115
+         3049508_7      shas array_jo timk@col  R       0:02      1 shas0115
+         3049508_8      shas array_jo timk@col  R       0:02      1 shas0115
+         3049508_9      shas array_jo timk@col  R       0:02      1 shas0115
+        3049508_10      shas array_jo timk@col  R       0:02      1 shas0115
+        3049508_11      shas array_jo timk@col  R       0:02      1 shas0115
+        3049508_12      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_13      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_14      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_15      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_16      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_17      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_18      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_19      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_20      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_21      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_22      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_23      shas array_jo timk@col  R       0:02      1 shas0125
+        3049508_24      shas array_jo timk@col  R       0:02      1 shas0406
+[timk@colostate.edu@login10 array]$ 
+
+After the run the directory 3049508 contains:
+
+
+[timk@colostate.edu@login10 array]$ cd 3049508/
+[timk@colostate.edu@login10 3049508]$ ls
+1  10  11  12  13  14  15  16  17  18  19  2  20  21  22  23  24  3  4  5  6  7  8  9
+
+Each subdirectory contains the files:
+
+
+[timk@colostate.edu@login10 3049508]$ ls 1
+bunch.m  bunch.out  env  myscript  node
+[timk@colostate.edu@login10 3049508]$ 
+
+Here is the see and first set of random numbers from
+sub run 1 and 2.
+
+
+[timk@colostate.edu@login10 3049508]$ grep -A 1 "my seed" 1/bunch.out
+my seed is         3049509
+ 0.4196164   1.067436
+[timk@colostate.edu@login10 3049508]$ grep -A 1 "my seed" 2/bunch.out
+my seed is         3049510
+ 0.6456982  0.1159219
+
+
+
