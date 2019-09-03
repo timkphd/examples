@@ -73,6 +73,7 @@ After the run the directory 3049508 contains:
 
 
 [timk@colostate.edu@login10 array]$ cd 3049508/
+
 [timk@colostate.edu@login10 3049508]$ ls
 1  10  11  12  13  14  15  16  17  18  19  2  20  21  22  23  24  3  4  5  6  7  8  9
 
@@ -81,10 +82,11 @@ Each subdirectory contains the files:
 
 [timk@colostate.edu@login10 3049508]$ ls 1
 bunch.m  bunch.out  env  myscript  node
+
 [timk@colostate.edu@login10 3049508]$ 
 
-Here is the see and first set of random numbers from
-sub run 1 and 2.
+Here is the seed and first set of random numbers from
+sub runs 1 and 2.
 
 
 [timk@colostate.edu@login10 3049508]$ grep -A 1 "my seed" 1/bunch.out
