@@ -24,7 +24,6 @@
   .SOCK  { color: fuchsia;background-color: transparent;}
   .EXEC  { color: green;  background-color: transparent;}
   -->
-.b { color: red; font-weight: normal; }
  </style>
 </head>
 <body>
@@ -56,14 +55,55 @@
 <span class="b">cd ../stom2/</span>
 # Submit the job
 <span class="b">sbatch run_matlab</span>
+# Go to the "array" directory
+<span class="b">cd ../array/</span>
+# Submit the job
+<span class="b">sbatch --array=1-24 run_matlab</span>
 
 </pre>
 
-<p>The README files have descriptions of the examples.
+<p>The README files have descriptions of the examples. Note: the "array" example shows how to submit many matlab 
+jobs at the same time each getting a different random number seed.
 </p>
-<br>
-<br>
+
 	<a href="https://petra.acns.colostate.edu/docs/matlab">https://petra.acns.colostate.edu/docs/matlab</a><br>
+	├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/">array</a><br>
+	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/">bot</a><br>
+	│   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/">others</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/mpi1.py">mpi1.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/pcalc.py">pcalc.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex00.py">P_ex00.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex01b.py">P_ex01b.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex01.py">P_ex01.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex02.py">P_ex02.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex03I.py">P_ex03I.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex03.py">P_ex03.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex04.py">P_ex04.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex05.py">P_ex05.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex06.py">P_ex06.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex07.py">P_ex07.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex08.py">P_ex08.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex09.py">P_ex09.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex10.py">P_ex10.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex12.py">P_ex12.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/P_ex13.py">P_ex13.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/pwrite.py">pwrite.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/stp_00.py">stp_00.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/stp.py">stp.py</a><br>
+	│   │   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/surface.py">surface.py</a><br>
+	│   │   │   └── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/others/write_grid.py">write_grid.py</a><br>
+	│   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/flist">flist</a><br>
+	│   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/laser.tgz">laser.tgz</a><br>
+	│   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/mkview.py">mkview.py</a><br>
+	│   │   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/run_script">run_script</a><br>
+	│   │   └── <a href="https://petra.acns.colostate.edu/docs/matlab/array/bot/simple.py">simple.py</a><br>
+	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/array.job">array.job</a><br>
+	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/doit">doit</a><br>
+	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/invertc.c">invertc.c</a><br>
+	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/invertp.py">invertp.py</a><br>
+	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/makefile">makefile</a><br>
+	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/array/setarray.py">setarray.py</a><br>
+	│   └── <a href="https://petra.acns.colostate.edu/docs/matlab/array/tymer">tymer</a><br>
 	├── <a href="https://petra.acns.colostate.edu/docs/matlab/canned/">canned</a><br>
 	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/canned/do_invert">do_invert</a><br>
 	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/canned/hpccFft.m">hpccFft.m</a><br>
@@ -95,12 +135,13 @@
 	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/stom2/st.in">st.in</a><br>
 	│   ├── <a href="https://petra.acns.colostate.edu/docs/matlab/stom2/stom.m">stom.m</a><br>
 	│   └── <a href="https://petra.acns.colostate.edu/docs/matlab/stom2/tymer">tymer</a><br>
+	├── <a href="https://petra.acns.colostate.edu/docs/matlab/index.html">index.html</a><br>
 	└── <a href="https://petra.acns.colostate.edu/docs/matlab/matlab.tgz">matlab.tgz</a><br>
 	<br><br>
 	</p>
 	<p>
 
-3 directories, 30 files
+6 directories, 64 files
 	<br><br>
 	</p>
 	<hr>
