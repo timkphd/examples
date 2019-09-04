@@ -1,0 +1,171 @@
+##### install a bunch of packages need by other things 
+date
+#First window
+#touch new.log
+#tail -f new.log
+#
+#Second window
+#source new > new.log 2>&1
+
+STD=`pwd`
+sudo apt-get -y update 
+sudo apt-get -y upgrade 
+ 
+sudo apt-get -y install gfortran 
+ 
+sudo apt-get -y install gedit 
+sudo apt-get -y install filezilla 
+ 
+ 
+sudo apt-get -y install libatlas-base-dev 
+sudo apt-get -y install libffi-dev 
+ 
+sudo apt-get -y install mencoder 
+ 
+sudo apt-get -y install tcl8.6
+sudo apt-get -y install tcl8.6-dev
+
+sudo apt-get -y install subversion 
+ 
+sudo pip3 install matplotlib 
+sudo pip3 install xkcd
+ 
+sudo pip2 install cairocffi 
+sudo pip2 install matplotlib 
+sudo pip2 install xkcd
+
+sudo apt-get -y install libatlas-base-dev 
+    
+sudo apt-get -y install libreadline-dev 
+ 
+sudo apt-get -y install libx11-dev 
+sudo apt-get -y install x11-common 
+sudo apt-get -y install libxt-dev 
+ 
+sudo apt-get -y install libbz2-dev 
+sudo apt-get -y install liblzma-dev 
+ 
+sudo apt-get -y install libpcre3-dev 
+sudo apt-get -y install libcurl4-openssl-dev 
+ 
+sudo apt-get -y install nedit 
+
+sudo apt-get -y install apache2
+
+sudo apt-get -y install libjpeg-dev
+sudo apt-get -y install libssl-dev
+ 
+sudo apt-get -y update 
+sudo apt-get -y upgrade
+
+sudo apt-get -y install octave
+echo "graphics_toolkit('gnuplot')" > ~/.octaverc
+ 
+##### install openmpi 
+ 
+wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.1.tar.gz 
+tar -xzf  openmpi-4.0.1.tar.gz 
+cd openmpi-4.0.1 
+./configure 
+make -j 4
+sudo make install 
+ 
+cd ~
+### install mpi4py 
+
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+export PATH=/usr/local/bin:$PATH
+sudo LD_LIBRARY_PATH=/usr/local/lib pip3 install mpi4py
+sudo LD_LIBRARY_PATH=/usr/local/lib pip2 install mpi4py
+ 
+##### install R from source since package version is old
+export VERSION=3.6.1 
+ 
+export RBASE=/home/$USER/R/$VERSION 
+mkdir -p ${RBASE}_src 
+cd ${RBASE}_src 
+ 
+wget https://cran.r-project.org/src/base/R-3/R-$VERSION.tar.gz 
+tar -xzf R-$VERSION.tar.gz 
+cd R-$VERSION 
+ 
+  
+ 
+export CFLAGS="-O2 -fopenmp" 
+export FCFLAGS="-O2 -fopenmp" 
+export CXXFLAGS="-O2 -fopenmp" 
+export LDFLAGS="-fopenmp -lblas -llapack" 
+ 
+export R_LIBS=$RBASE/local 
+mkdir -p $R_LIBS 
+ 
+./configure --with-blas="-L/usr/lib/arm-linux-gnueabihf -lblas" --with-lapack  --prefix=$RBASE 
+ 
+make -j 4
+make install 
+ 
+##### Get Tims examples 
+cd ~
+curl https://codeload.github.com/timkphd/examples/zip/master -o examples.Z  
+unzip examples.Z  
+mv examples-master examples 
+
+##### copy tools to ~/bin
+mkdir ~/bin
+cp -r examples/tims_tools/* ~/bin
+chmod 755 ~/bin/*
+
+
+##### install Rmpi 
+export PATH=$RBASE/bin:$PATH  
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+rm -rf Rmpi_0.6-9.tar.gz 
+ 
+curl https://cran.r-project.org/src/contrib/Rmpi_0.6-9.tar.gz -o Rmpi_0.6-9.tar.gz  
+
+R CMD INSTALL --configure-args=" --with-Rmpi-include='/usr/local/include' --with-Rmpi-libpath='/usr/local/lib' --with-mpi='/usr/local/bin/mpicc' --with-Rmpi-type='OPENMPI' "  Rmpi_0.6-9.tar.gz    
+
+cd ~
+Rscript examples/r/doinstall.R 
+
+cd ~
+##### Update .bashrc 
+cp .bashrc .bashrc.`date +"%y%m%d%H%M"`
+cat << XXX >> .bashrc 
+## alias to enable/disable keys
+alias keys='ssh-add -t 28800 ~/.ssh/forhpc'
+alias killkeys='ssh-add -D'
+export PATH=/home/$USER/bin:\$PATH  
+## point to R
+export VERSION=3.6.1 
+export RBASE=/home/$USER/R/\$VERSION 
+export PATH=$RBASE/bin:\$PATH   
+export R_LIBS=$RBASE/local 
+export LD_LIBRARY_PATH=/usr/local:$LD_LIBRARY_PATH
+XXX
+
+#### Get some ssh and apache templates
+curl https://petra.acns.colostate.edu/pie/config_template -o ssh_template
+curl https://petra.acns.colostate.edu/pie/piChanges -o apache_settings
+
+##### Generate a ssh key for localhost access
+
+ssh-keygen -f $HOME/.ssh/id_rsa  -P ""
+cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
+##### Generate a ssh key with random passphrase for remote access
+pw=`LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | dd bs=10 count=1 2>/dev/null`
+echo "MAKE A NOTE OF THIS PASSPHRASE FOR YOUR SSH KEY"
+echo $pw
+echo "MAKE A NOTE OF THIS PASSPHRASE FOR YOUR SSH KEY"
+ssh-keygen -f $HOME/.ssh/forhpc -trsa -P $pw
+
+echo "##### To do your own passphrase run the following command:"
+echo "ssh-keygen -p -P $pw -f $HOME/.ssh/forhpc"
+
+echo "##### To install the R GUI:"
+echo "Rscript examples/r/ircmdr.R"
+
+date
+
