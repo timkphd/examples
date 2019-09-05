@@ -45,6 +45,18 @@ header="""
 		color: #000;
 		background-color: #ffffff;
 	}
+	.greenbar td:nth-child(300n+0)
+	{
+		text-align: left;
+	}
+	.greenbar td:nth-child(400n+0)
+	{
+		text-align: center;
+	}
+	.greenbar td:nth-child(500n+0)
+	{
+		text-align: right;
+	}
 	
 	.bluebar
 	{
@@ -81,6 +93,25 @@ header="""
 		color: #000;
 		background-color: #ffffff;
 	}
+	
+	bluebar td:nth-child(300n+0)
+	{
+		text-align: left;
+	}
+	.bluebar td:nth-child(400n+0)
+	{
+		text-align: center;
+	}
+	.bluebar td:nth-child(500n+0)
+	{
+		text-align: right;
+	}
+	.narrow
+	{
+		width: 25%;
+		text-align: center;
+	}
+
 
 </style>
 </head>
