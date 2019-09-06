@@ -61,6 +61,10 @@ sudo apt-get -y upgrade
 sudo apt-get -y install octave
 echo "graphics_toolkit('gnuplot')" > ~/.octaverc
  
+sudo apt-get -y install ccrypt
+
+sudo apt-get -y install git-gui
+
 ##### install openmpi 
  
 wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.1.tar.gz 
