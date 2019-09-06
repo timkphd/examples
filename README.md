@@ -59,3 +59,56 @@
 20. oneday
 	* Examples for 1 day HPC class. Includes scripts, tricks, libs (fft and linear)
 
+21. openmp
+	* Lots of OpenMP examples
+
+22. phi
+	* Intel phi examples, including offload, directive, hybrid
+
+23. power_gpu
+	* GPU examples, directive, cuda, fft, hello world
+
+24. quick
+	* Examples for a quick start guid to parallel programming MPI and hybrid
+
+25. r
+	* R examples, parallel for, Stommel, MPI, spawn, install script for parallel stuff
+
+26. scalapack
+	* Scalapack examples, includes RCS code
+
+27. scripts
+	* A bit more complicated slurm scripts, local disk, records, notifications...
+
+28. slurm
+	* Basic to advance slurm scripts including array jobs
+
+29. snoopy
+	* Fortran IV calendar program
+
+30. stommel
+	* Stommel parallel finite difference code, Fortran, C, Python
+
+31. tif
+	* Create large tiff files in parallel
+
+32. tims_tools
+	* Many useful small scripts, including plotting, tymer, source  for X test
+
+33. tree
+	* Source for tree list program
+	
+34. utilities
+	* Old utilities not real useful today.
+	
+35. workshop
+	* Examples for HPC workshop
+	
+36. utilities
+	* Old utilities not real useful today.
+	
+37. parallel.f90 and parallel.py
+	* Shows how to communicate via a file, used to show message passing concept
+	
+38. simple
+	* Basic slurm script
