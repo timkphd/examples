@@ -149,6 +149,11 @@ XXX
 curl https://petra.acns.colostate.edu/pie/config_template -o ssh_template
 curl https://petra.acns.colostate.edu/pie/piChanges -o apache_settings
 
+# get notebook
+mkdir ~/public_html
+cd ~/public_html
+git clone https://github.com/timkphd/notebook.git .
+
 ##### Generate a ssh key for localhost access
 
 ssh-keygen -f $HOME/.ssh/id_rsa  -P ""
