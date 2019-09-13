@@ -25,10 +25,10 @@ int main(int argc,char *argv[]) {
     FLT t4_start,t4_end,e4;
     int n,narg,iarg;
     int diag[5];
-    diag[0]=1;
-    diag[1]=2;
-    diag[2]=3;
-    diag[3]=4;
+    diag[0]=10;
+    diag[1]=20;
+    diag[2]=30;
+    diag[3]=40;
     diag[4]=50;
     iarg=argc;
     if(iarg > 5)iarg=5;
@@ -115,7 +115,7 @@ void mset(FLT **m, int n, int in) {
            if(i == j) {
                m[i][j]=in; 
            } else {
-               m[i][j]=0.1; 
+               m[i][j]=1; 
            }
        }
    
@@ -130,7 +130,7 @@ FLT mcheck(FLT **m, int n, int in) {
            if(i == j) {
                x=x+fabs(m[i][j]-in); 
            } else {
-               x=x+fabs(m[i][j]-0.1); 
+               x=x+fabs(m[i][j]-1); 
            }
        }
    return x;

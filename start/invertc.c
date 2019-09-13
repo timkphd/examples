@@ -16,7 +16,7 @@ void mset(FLT **m, int n, int in);
 FLT mcheck(FLT **m, int n, int in);
 void over(FLT ** mat,int size);
 
-main() {
+int main(int argc,char *argv[]) {
     FLT **m1,**m2,**m3,**m4;
     FLT t0_start;
     FLT t1_start,t1_end,e1;
@@ -83,6 +83,7 @@ main() {
  printf("section 2 start time= %10.5g   end time= %10.5g  error= %g\n",t2_start,t2_end,e2);
  printf("section 3 start time= %10.5g   end time= %10.5g  error= %g\n",t3_start,t3_end,e3);
  printf("section 4 start time= %10.5g   end time= %10.5g  error= %g\n",t4_start,t4_end,e4);
+return 0;
 }
 
 void mset(FLT **m, int n, int in) {

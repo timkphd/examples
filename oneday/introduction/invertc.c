@@ -16,7 +16,7 @@ void mset(FLT **m, int n, int in);
 FLT mcheck(FLT **m, int n, int in);
 void over(FLT ** mat,int size);
 
-main() {
+int main(int argc,char *argv[]) {
     FLT **m1,**m2,**m3,**m4;
     FLT t0_start;
     FLT t1_start,t1_end,e1;
@@ -24,15 +24,15 @@ main() {
     FLT t3_start,t3_end,e3;
     FLT t4_start,t4_end,e4;
     int n;
-    n=500;
+    n=750;
     m1=matrix(1,n,1,n);
     m2=matrix(1,n,1,n);
     m3=matrix(1,n,1,n);
     m4=matrix(1,n,1,n);
-	mset(m1,n,1);
-    mset(m2,n,2);
-    mset(m3,n,3);
-    mset(m4,n,4);
+	mset(m1,n,10);
+    mset(m2,n,20);
+    mset(m3,n,30);
+    mset(m4,n,40);
     
     system_clock(&t0_start);
 
@@ -44,7 +44,7 @@ main() {
 			over(m1,n);
 			over(m1,n);
 			system_clock(&t1_end);
-			e1=mcheck(m1,n,1);
+			e1=mcheck(m1,n,10);
 			t1_start=t1_start-t0_start;
 			t1_end=t1_end-t0_start;
          }
@@ -54,7 +54,7 @@ main() {
 			over(m2,n);
 			over(m2,n);
 			system_clock(&t2_end);
-			e2=mcheck(m2,n,2);
+			e2=mcheck(m2,n,20);
 			t2_start=t2_start-t0_start;
 			t2_end=t2_end-t0_start;
          }
@@ -64,7 +64,7 @@ main() {
            over(m3,n);
            over(m3,n);
            system_clock(&t3_end);
-           e3=mcheck(m3,n,3);
+           e3=mcheck(m3,n,30);
            t3_start=t3_start-t0_start;
            t3_end=t3_end-t0_start;
          }
@@ -74,7 +74,7 @@ main() {
            over(m4,n);
            over(m4,n);
            system_clock(&t4_end);
-           e4=mcheck(m4,n,4);
+           e4=mcheck(m4,n,40);
            t4_start=t4_start-t0_start;
            t4_end=t4_end-t0_start;
          }
@@ -83,6 +83,7 @@ main() {
  printf("section 2 start time= %10.5g   end time= %10.5g  error= %g\n",t2_start,t2_end,e2);
  printf("section 3 start time= %10.5g   end time= %10.5g  error= %g\n",t3_start,t3_end,e3);
  printf("section 4 start time= %10.5g   end time= %10.5g  error= %g\n",t4_start,t4_end,e4);
+return 0;
 }
 
 void mset(FLT **m, int n, int in) {
@@ -92,7 +93,7 @@ void mset(FLT **m, int n, int in) {
            if(i == j) {
                m[i][j]=in; 
            } else {
-               m[i][j]=i+j; 
+               m[i][j]=1; 
            }
        }
    
@@ -107,7 +108,7 @@ FLT mcheck(FLT **m, int n, int in) {
            if(i == j) {
                x=x+fabs(m[i][j]-in); 
            } else {
-               x=x+fabs(m[i][j]-(i+j)); 
+               x=x+fabs(m[i][j]-1); 
            }
        }
    return x;
