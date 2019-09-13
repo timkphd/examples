@@ -62,7 +62,7 @@ int main(int argc, char **argv,char *envp[])
 #else
     char version[40];
 #endif
-    char *myname;
+    char *myname,*cutit;
     int full,envs,iarg,tn,nt,help,slow,vlan,wait;
     long nints;
     double t1,t2,dt;
@@ -89,6 +89,9 @@ int main(int argc, char **argv,char *envp[])
 /* The next line is required for BGQ because the MPI task ID 
    is encoded in the processor name and we don't want it. */
     if (strrchr(myname,32))myname=strrchr(myname,32);
+/* Here we cut off the tail of node name, Summit in this case */
+    cutit = strstr(myname, ".rc.int.colorado.edu");
+    if(cutit)cutit[0]=(char)0;
     slow=0;
     wait=0;
 /* read in command line args from task 0 */

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			Running on Summit
+		</title>
+		<meta name="generator" content="BBEdit 12.6" /> 
+		<script>
+			function includeHTML() {
+			  var z, i, elmnt, file, xhttp;
+			  /*loop through a collection of all HTML elements:*/
+			  z = document.getElementsByTagName("*");
+			  for (i = 0; i < z.length; i++) {
+			    elmnt = z[i];
+			    /*search for elements with a certain atrribute:*/
+			    file = elmnt.getAttribute("w3-include-html");
+			    if (file) {
+			      /*make an HTTP request using the attribute value as the file name:*/
+			      xhttp = new XMLHttpRequest();
+			      xhttp.onreadystatechange = function() {
+			        if (this.readyState == 4) {
+			          if (this.status == 200) {elmnt.innerHTML = this.responseText;}
+			          if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
+			          /*remove the attribute, and call this function once more:*/
+			          elmnt.removeAttribute("w3-include-html");
+			          includeHTML();
+			        }
+			      }      
+			      xhttp.open("GET", file, true);
+			      xhttp.send();
+			      /*exit the function:*/
+			      return;
+			    }
+			  }
+			};
+		</script>
+		<style type="text/css">
+			::-webkit-scrollbar {
+			  -webkit-appearance: none;
+			  width: 10px;
+			}
+			
+			::-webkit-scrollbar-thumb {
+			  border-radius: 5px;
+			  background-color: rgba(0,0,0,.5);
+			  -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+			}
+			
+			object.bx {overflow-y: scroll; border: 5px; width: 100%}
+			div.pre { 
+			  display: block;
+			  font-family: monospace; 
+			  font-size: small;
+			  white-space: pre;
+			  color:blue;
+			
+			}
+			div.box {
+			  border: 5px solid gray;
+			  padding: 0px;
+			  margin: 5px;
+			  width:55%;
+			  background: #f8f8f8;
+			}
+				table {
+			  border: 1px solid #1C6EA4;
+			  background-color: #EEEEEE;
+			  width: 5in;;
+			  text-align: left;
+			  border-collapse: collapse;
+			  margin-left: 0.25in;
+			}
+			table td, table th {
+			  border: 1px solid #AAAAAA;
+			  padding: 3px 2px;
+			}
+			table tbody td {
+			  font-size: 13px;
+			}
+			table tr:nth-child(even) {
+			  background: #D0E4F5;
+			}
+			table thead {
+			  background: #1C6EA4;
+			  background: -moz-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+			  background: -webkit-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+			  background: linear-gradient(to bottom, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+			  border-bottom: 2px solid #444444;
+			}
+			table thead th {
+			  font-size: 15px;
+			  font-weight: bold;
+			  color: #FFFFFF;
+			  border-left: 2px solid #D0E4F5;
+			}
+			table thead th:first-child {
+			  border-left: none;
+			}
+			
+			table tfoot {
+			  font-size: 14px;
+			  font-weight: bold;
+			  color: #111111;
+			  background: #D0E4F5;
+			  background: -moz-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+			  background: -webkit-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+			  background: linear-gradient(to bottom, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+			  border-top: 2px solid #444444;
+			}
+			table tfoot td {
+			  font-size: 14px;
+			}
+			table tfoot .links {
+			  text-align: right;
+			}
+			table tfoot .links a{
+			  display: inline-block;
+			  background: #1C6EA4;
+			  color: #FFFFFF;
+			  padding: 2px 8px;
+			  border-radius: 5px;
+			}
+				body
+			{
+				background-color: ivory;
+			}
+					  .LLink
+			   {
+			     background-color: #E4F5F8;
+			     border:1px solid #C0DEED; 
+			
+			    text-decoration:none !important;
+			  }
+			
+			.f { padding: 0.0cm 0.5cm 0.0cm 0.5cm; border-width: 2px; text-indent: 0cm; text-align: justify; }
+					.b { color: red; font-weight: normal; }
+					.red { color: red; }
+					pre { color: blue; font-size: 9pt; font-family: monospace; }
+					.black { color: black; font-size: 9pt; font-family: monospace; }
+					hr.wide { color: #f00; background-color: #f00; height: 2px; width: 5%; margin-left: 0; }
+					hr { color: #f0F; background-color: blue; width: 66%; height: 3px; }
+					h5 { color: #f0F; }
+					@media print { h6 { page-break-after: always; } }
+					p.a { width: 6in; text-align: justify; 
+					margin-left: 1in;
+					 margin-bottom: .1in;
+					 margin-top: .1in;
+					font-style: italic;
+					font-size: medium; 
+					white-space: normal;
+					font-family: normal;
+					color:black; }
+			
+			
+					/* usage <p class="a"> */
+					pre.red { color: red; font-family: courier; font-size: small; }
+					pre.black { color: black; font-family: courier; font-size: small; }
+					pre { color: blue; font-family: courier; font-size: small;}
+			
+					p { width: 6in; text-align: justify; margin: .25in; }
+					p.pin0 { margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 0.25em; color:green;}
+					p.pin1 { margin-left: 2.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin2 { margin-left: 4.0em; margin-bottom: 0.0em; margin-top: 0.00em; font-size: small;}
+					p.pin3 { margin-left: 6.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin4 { margin-left: 8.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin5 { margin-left: 10.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin6 { margin-left: 12.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin7 { margin-left: 14.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin8 { margin-left: 16.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin9 { margin-left: 18.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin10 { margin-left: 20.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			
+					h3.hin0  {margin-left: 0.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin1  {margin-left: 2.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin2  {margin-left: 4.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin3  {margin-left: 6.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin4  {margin-left: 8.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin5  {margin-left: 10.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin6  {margin-left: 12.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin7  {margin-left: 14.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin8  {margin-left: 16.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin9  {margin-left: 18.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin10 {margin-left: 20.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					ul {margin-bottom: 0.0em;}
+			
+					span.b { color: red; }
+					span.c { color: black; }
+					span.d { color: green; }
+					hr { color: blue; background-color: blue; width: 66%; height: 3px; }
+					b { color: red; }
+					li { width: 6in; color: green; margin-bottom: 0.0em;}
+					li.lev1 { width: 6in; font-size: X-large; color: green; }
+					li.lev2 { width: 6in; font-size: medium; margin-left: 4.0em; color: black}
+					/* usage <li id="a">  to reference this id http://yourdomain.com#a */
+					li.a { width: 6in; list-style-type: none; font-family: courier; font-size: small; white-space: pre; }
+					/* usage <li class="a"> */
+					/* note white-space: pre; attribute */
+					h1 { font-size: large; margin-left: .15in; color: black;}
+					h2 { font-size: medium; margin-left: .20in; }
+					h3 { font-size: medium; margin-left: .25in; }
+					h4 { font-size: large; text-align: center; width: 6in; }
+					h5 { font-size: X-large; text-align: center; width: 6in; }
+					div.intro { } 
+					div.body { margin-top: 1.5in;} 
+					code { font-family: monospace;} 
+					  dl {
+			    border: 3px double #ccc;
+			    padding: 0.5em;
+			    width: 6in;
+			  }
+					  dt {
+			    font-weight: bold;
+			  }
+			  dd {
+			    margin-bottom: 1em; 
+			    padding: 0 0 0.5em 0;
+			    font-size: small;
+			  }
+			  object:focus {
+			  outline: solid;
+			  outline-color: red;
+			  }
+		</style>
+	</head>
+	<body class="ba">
+		<h1>
+			Summary
+		</h1>
+		<div class="intro">
+			<p>
+				This document shows how to build and run a "hello world" parallel example on Summit.  We actually provide several examples, trivial hello world examples in Fortran and C, and a hello world example on steroids. That is this example has a few bells and whistles.  We also have serial matrix inversion programs in Python and R.  Our files are:
+			</p>
+			
+
+			<ul>
+				<li>
+					hello.f90 
+				</li>
+				<li>
+					hello.c 
+				</li>
+				<li>
+					phostone.c
+				</li>
+				<li>
+					makefile
+				</li>
+				<li>
+					simple
+				</li>
+				<li>
+					invert.R
+				</li>
+				<li>
+					invert.py
+				</li>
+				<li>
+					invertc.c
+				</li>
+				<li>
+					invertf.f90
+				</li>
+				<li>
+					tymer
+				</li>
+			</ul>
+			<p>
+				Very little of this document is specific to Summit. The examples should run elsewhere with changes to the module load commands. The module load commands are Summit specific. You can copy/paste the commands shown in red.  These will download, build, run, and show the output from the examples.
+			</p>
+		</div>
+		<div class="pre">
+			<p class="a">
+				Get on and set things up. On Summit first, login to a compile node. We assume that we will be working in a directory so we will make it with the mkdir command.
+				<i>
+					examp
+				</i>
+				under your 
+				<i>
+					projects
+				</i>
+				directory. 
+			</p>
+<span class="c">
+[ramba@colostate.edu@login12 examp]$</span><span class="b">ssh scompile</span>
+Last login: Wed May 8 07:07:47 2019 from login12.rc.int.colorado.edu 
+
+... SNIP ... 
+
+<span class="c">
+[ramba@colostate.edu@shas0136 ~]$ </span><span class="b">mkdir -p /projects/$USER/examp</span>
+<span class="c">
+[ramba@colostate.edu@shas0136 ~]$ </span><span class="b">cd /projects/$USER/examp</span>
+<p class="a">
+Download our examples and do an ls to see what we got.
+</p>
+<span class="c">
+[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">curl https://petra.acns.colostate.edu/docs/quick/quick.tar | tar -x</span>
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 51200  100 51200    0     0   359k      0 --:--:-- --:--:-- --:--:--  359k
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">ls</span>
+helloc.c    index.html  invertf.f90  invert.R  phostone.c  tymer
+hellof.f90  invertc.c   invert.py    makefile  simple
+
+<p class="a">
+The module load command loads software into our environment.  We are going to us the Intel C and Fortran compilers, Intel MPI (parallel) compilers, R 3.5 and python 3.6.5.  We can load these one at a time or all at once.
+</p>
+<span class="c">
+[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">module load python/3.6.5 intel impi  R/3.5.0 </span>
+
+<p class="a">
+We run the ml command again to see what was loaded.  We have an extra module loaded by default.
+</p>
+
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">ml </span>
+
+Currently Loaded Modules:
+  1) python/3.6.5   2) intel/17.4 (m)   3) jdk/1.8.0   4) R/3.5.0   5) impi/17.3
+
+  Where:
+   m:  built for host and native MIC
+
+
+<p class="a">
+Next we run the make utility to build our applications
+</p>
+
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">make </span>
+
+mpicc  -O3 -fopenmp phostone.c -o phostone
+mpif90  -O3 hellof.f90 -o hellof
+mpicc  -O3 helloc.c -o helloc
+ifort -O3 -fopenmp invertf.f90 -o invertf
+icc -O3 -fopenmp invertc.c -o invertc
+
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">ls</span>
+ccm_numz.mod  hellof      invertc    invertf.f90  makefile    simple
+helloc        hellof.f90  invertc.c  invert.py    phostone    tymer
+helloc.c      index.html  invertf    invert.R     phostone.c
+
+<p class="a">
+Next we run our job using the sbatch command, submitting our script file "simple".  Simple runs each of the programs for the hello world programs the output is piped into a file with the same name as the executable but with ".out" appended.  The output from the python and R programs goes to default output file slurm-xxxxx.out where xxxxx is the job number.
+</p>
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">sbatch simple</span> 
+Submitted batch job 3112200
+
+<p class="a">
+The squeue -u $USER command will show when your job is running and finished.  When there is not job listed it is done.
+</p>
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">squeue -u $USER</span>
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+<p class="a">
+We can list and then type our out output files.
+</p>
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">ls *out</span>
+helloc.out  hellof.out  invertc.out  invertf.out  phostone.out  slurm-3119317.out
+
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">cat helloc.out</span> 
+Hello from shas0409.rc.int.colorado.edu 0 8
+Hello from shas0409.rc.int.colorado.edu 1 8
+Hello from shas0447.rc.int.colorado.edu 4 8
+Hello from shas0409.rc.int.colorado.edu 2 8
+Hello from shas0447.rc.int.colorado.edu 5 8
+Hello from shas0409.rc.int.colorado.edu 3 8
+Hello from shas0447.rc.int.colorado.edu 6 8
+Hello from shas0447.rc.int.colorado.edu 7 8
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">cat hellof.out</span> 
+ Hello from shas0409.rc.int.colorado.edu #            0  of            8
+ Hello from shas0447.rc.int.colorado.edu #            4  of            8
+ Hello from shas0409.rc.int.colorado.edu #            1  of            8
+ Hello from shas0447.rc.int.colorado.edu #            5  of            8
+ Hello from shas0409.rc.int.colorado.edu #            2  of            8
+ Hello from shas0447.rc.int.colorado.edu #            6  of            8
+ Hello from shas0409.rc.int.colorado.edu #            3  of            8
+ Hello from shas0447.rc.int.colorado.edu #            7  of            8
+ 
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">cat phostone.out </span>
+MPI VERSION Intel(R) MPI Library 2017 Update 3 for Linux* OS
+
+task    thread    node name  first task    # on node  core
+0000      0000    shas0409        0000         0000  0010
+0000      0001    shas0409        0000         0000  0000
+0001      0000    shas0409        0000         0001  0022
+0001      0001    shas0409        0000         0001  0012
+0002      0000    shas0409        0000         0002  0011
+0002      0001    shas0409        0000         0002  0001
+0003      0000    shas0409        0000         0003  0023
+0003      0001    shas0409        0000         0003  0013
+0004      0000    shas0447        0004         0000  0010
+0004      0001    shas0447        0004         0000  0000
+0005      0000    shas0447        0004         0001  0022
+0005      0001    shas0447        0004         0001  0012
+0006      0000    shas0447        0004         0002  0011
+0006      0001    shas0447        0004         0002  0001
+0007      0000    shas0447        0004         0003  0023
+0007      0001    shas0447        0004         0003  0013
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">cat invertf.out </span>
+section    1 start time=     0.20000E-02 end time=      2.2660     error=    0.10924E-07
+section    2 start time=     0.20000E-02 end time=      2.2710     error=    0.49821E-08
+section    3 start time=     0.20000E-02 end time=      2.2610     error=    0.72107E-08
+section    4 start time=     0.20000E-02 end time=      2.2770     error=    0.61653E-08
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">cat invertc.out </span>
+section 1 start time=  0.0020969   end time=    0.60548  error= 1.09238e-08
+section 2 start time=   0.002218   end time=    0.60386  error= 4.98208e-09
+section 3 start time=  0.0022619   end time=    0.60427  error= 7.21066e-09
+section 4 start time=  0.0022559   end time=    0.60456  error= 6.16525e-09
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">cat slurm-*.out</span>
+ 
+ccm_numz.mod
+helloc
+helloc.c
+hellof
+hellof.f90
+index.html
+invertc
+invertc.c
+invertf
+invertf.f90
+invert.py
+invert.R
+makefile
+phostone
+phostone.c
+simple
+slurm-3119317.out
+tymer
+**** running our parallel Fortran example
+**** running our parallel C example
+**** running our hybrid MPI/OpenMP C example
+**** running our OpenMP Fortran example
+**** running our OpenMP C example
+1568389466.166466 Fri Sep 13 09:44:26 2019      0.000      0.000 **** running our R example
+[1] "1568389466.71968  2019-09-13 09:44:26       0.000       0.000  "
+[1] "1568389468.0999  2019-09-13 09:44:28       1.380       1.380  "
+[1] "size= 1000   Iterations= 100"
+1568389468.172311 Fri Sep 13 09:44:28 2019      2.006      2.006 end R
+1568389468.230775 Fri Sep 13 09:44:28 2019      0.058      2.064 **** running our python example
+size= 1000  iterations= 100 time= 0.959713 threads= 1
+1568389471.007779 Fri Sep 13 09:44:31 2019      2.777      4.841 end python
+
+</div>
+<h1>Additional notes:</h1>
+
+<h2>Clickable list of files</h2>
+<ul>
+	<li>Everything Shown below <a href="./quick.tar">quick.tar</a><br></li>
+	<li><a href="./index.html">index.html</a><br></li>
+	<li><a href="./tymer">tymer</a><br></li>
+	<li><a href="./simple">simple</a><br></li>
+	<li><a href="./phostone.c">phostone.c</a><br></li>
+	<li><a href="./makefile">makefile</a><br></li>
+	<li><a href="./invertf.f90">invertf.f90</a><br></li>
+	<li><a href="./invertc.c">invertc.c</a><br></li>
+	<li><a href="./invert.R">invert.R</a><br></li>
+	<li><a href="./invert.py">invert.py</a><br></li>
+	<li><a href="./hellof.f90">hellof.f90</a><br></li>
+	<li><a href="./helloc.c">helloc.c</a><br></li>
+</ul>
+
+
+<h2>tymer</h2>
+
+<div class="pre">
+<p class="a">The script tymer is a useful timing routine.  ./tymer -h will return its usage.
+</p>
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">./tymer -h </span>
+
+USAGE:
+
+('./tymer', ' [file] [comment]')
+
+With no input on the command line prints
+time in seconds and date to the screen.
+
+With a file name on the command line it reads
+the file, if it exists, and prints a delta time
+from the last time this program updated the file
+and appends the time information to the file.
+
+Note: file can be /dev/null or ""
+
+If the file does not exist it creates it and
+write the current time information.
+You can add optional comments that will be added
+to the end of the line.
+
+tymer can be called as a function:
+from tymer import tymer
+tymer()                          prints to stdout
+tymer("file")                    prints to file
+tymer(["file","comments"])       prints to file with comments
+tymer(["","comments"])           prints to stdout with comments
+tymer(["/dev/null","comments"])  prints to stdout with comments
+
+1568382415.290698 Fri Sep 13 07:46:55 2019      0.000      0.000
+</div>
+<h2>makefile</h2>
+
+<p class="a">The makefile with these examples shows how to make serial programs, MPI, OpenMP and hybrid MPI/OpenMP.  It uses the Intel compilers but could be modified to use gfortran and gcc.
+</p>
+
+<h2>phostone</h2>
+<p class="a">phostone.c has a number of options as shown below. It is useful to check if you are getting the expected mapping of tasks and threads to cores.  The core on which a thread/task is running is given in the last column.  In the ideal world you will not have a core on a given node with more than one thread/task. This can be seen more readily if you sort the output as shown below.
+</p>
+
+<div class="pre">
+
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">./cat phostone.out | sort  -k3,3 -k6n</span>
+MPI VERSION Intel(R) MPI Library 2017 Update 3 for Linux* OS
+task    thread             node name  first task    # on node  core
+0000      0001              shas0634        0000         0000  0000
+0002      0001              shas0634        0000         0002  0001
+0000      0000              shas0634        0000         0000  0010
+0002      0000              shas0634        0000         0002  0011
+0001      0001              shas0634        0000         0001  0012
+0003      0001              shas0634        0000         0003  0013
+0001      0000              shas0634        0000         0001  0022
+0003      0000              shas0634        0000         0003  0023
+0004      0001              shas0638        0004         0000  0000
+0006      0001              shas0638        0004         0002  0001
+0004      0000              shas0638        0004         0000  0010
+0006      0000              shas0638        0004         0002  0011
+0005      0001              shas0638        0004         0001  0012
+0007      0001              shas0638        0004         0003  0013
+0005      0000              shas0638        0004         0001  0022
+0007      0000              shas0638        0004         0003  0023
+
+<p class="a">
+Here are the options for phostone. 
+</p>
+<span class="c">[ramba@colostate.edu@shas0202 sing]$ </span><span class="b">srun -n 1 ./phostone -h</span>
+phostname arguments:
+          -h : Print this help message
+
+no arguments : Print a list of the nodes on which the command is run.
+
+ -f or -1    : Same as no argument but print MPI task id and Thread id
+               If run with OpenMP threading enabled OMP_NUM_THREADS > 1
+               there will be a line per MPI task and Thread.
+
+ -F or -2    : Add columns to tell first MPI task on a node and and the
+               numbering of tasks on a node. (Hint: pipe this output in
+               to sort -r
+
+ -a          : Print a listing of the environmental variables passed to
+               MPI task. (Hint: use the -l option with SLURM to prepend MPI
+               task #.)
+
+ -s ######## : Where ######## is an integer.  Sum a bunch on integers to slow
+               down the program.  Should run faster with multiple threads.
+
+ -t ######## : Where is a time in seconds.  Sum a bunch on integers to slow
+               down the program and run for at least the given seconds.
+
+</div>
+<dl>
+	<dt>Timothy H. Kaiser, Ph.D.</dt>
+		<dd>timk@colostate.edu<br>Revised: 09/13/2019 </dd>
+</dl>
+	</body>
+</html>

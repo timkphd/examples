@@ -87,6 +87,9 @@
 29. snoopy
 	* Fortran IV calendar program
 
+30. start
+	* A quick start guide with instructions, MPI, OpenMP, R, Python, slurm, hybrid
+
 30. stommel
 	* Stommel parallel finite difference code, Fortran, C, Python
 
@@ -105,11 +108,8 @@
 35. workshop
 	* Examples for HPC workshop
 	
-36. utilities
-	* Old utilities not real useful today.
-	
-37. parallel.f90 and parallel.py
+36. parallel.f90 and parallel.py
 	* Shows how to communicate via a file, used to show message passing concept
 	
-38. simple
+37. simple
 	* Basic slurm script
