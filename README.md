@@ -90,26 +90,26 @@
 30. start
 	* A quick start guide with instructions, MPI, OpenMP, R, Python, slurm, hybrid
 
-30. stommel
+31. stommel
 	* Stommel parallel finite difference code, Fortran, C, Python
 
-31. tif
+32. tif
 	* Create large tiff files in parallel
 
-32. tims_tools
+33. tims_tools
 	* Many useful small scripts, including plotting, tymer, source  for X test
 
-33. tree
+34. tree
 	* Source for tree list program
 	
-34. utilities
+35. utilities
 	* Old utilities not real useful today.
 	
-35. workshop
+36. workshop
 	* Examples for HPC workshop
 	
-36. parallel.f90 and parallel.py
+37. parallel.f90 and parallel.py
 	* Shows how to communicate via a file, used to show message passing concept
 	
-37. simple
+38. simple
 	* Basic slurm script
