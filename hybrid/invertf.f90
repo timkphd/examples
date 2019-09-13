@@ -117,7 +117,7 @@ subroutine mset(m,  n,  in)
             if( i .eq. j)then
                 m(i,j)=in
             else
-                m(i,j)=i+j
+                m(i,j)=1
             endif
         enddo
     enddo
@@ -134,7 +134,7 @@ function mcheck(m,  n,  in)
             if( i .eq. j)then
                 x=x+abs(m(i,j)-in)
             else
-                x=x+abs(m(i,J)-(i+j))
+                x=x+abs(m(i,j)-1)
             endif
         enddo
     enddo
@@ -166,10 +166,10 @@ program tover
       write(*,'("Fort says Hello from",i4," on ",a)')myid,trim(name)
     n=250
     allocate(m1(n,n),m2(n,n),m3(n,n),m4(n,n))
-    call mset(m1,n,1)
-    call mset(m2,n,2)
-    call mset(m3,n,3)
-    call mset(m4,n,4)
+    call mset(m1,n,10)
+    call mset(m2,n,20)
+    call mset(m3,n,30)
+    call mset(m4,n,40)
 ! redirect stdout
 ! OUTPUT_UNIT is from ISO_FORTRAN_ENV
     out_old=OUTPUT_UNIT
@@ -184,7 +184,7 @@ program tover
     call invert(m1,n)
     call invert(m1,n)
     t1_end=ccm_time()
-    e1=mcheck(m1,n,1)
+    e1=mcheck(m1,n,10)
     t1_start=t1_start-t0_start
     t1_end=t1_end-t0_start
 
@@ -193,7 +193,7 @@ program tover
     call invert(m2,n)
     call invert(m2,n)
     t2_end=ccm_time()
-    e2=mcheck(m2,n,2)
+    e2=mcheck(m2,n,20)
     t2_start=t2_start-t0_start
     t2_end=t2_end-t0_start
     
@@ -202,7 +202,7 @@ program tover
     call invert(m3,n)
     call invert(m3,n)
     t3_end=ccm_time()
-    e3=mcheck(m3,n,3)
+    e3=mcheck(m3,n,30)
     t3_start=t3_start-t0_start
     t3_end=t3_end-t0_start
     
@@ -211,7 +211,7 @@ program tover
     call invert(m4,n)
     call invert(m4,n)
     t4_end=ccm_time()
-    e4=mcheck(m4,n,4)
+    e4=mcheck(m4,n,40)
     t4_start=t4_start-t0_start
     t4_end=t4_end-t0_start
 

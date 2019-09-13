@@ -35,152 +35,152 @@ contains
     end function
 
 subroutine invert (matrix,size)
-	implicit none
-	real(b8) matrix(:,:)
-	integer size
-	integer switch,k, jj, kp1, i, j, l, krow, irow,nmax
-	parameter (nmax=1000)
-	dimension switch(nmax,2)
-	real(b8) pivot,temp
-	do  k = 1,size
-		jj = k
-		if (k .ne. size) then
-			kp1 = k + 1
-			pivot = (matrix(k, k))
-			do i = kp1,size
-				temp = (matrix(i, k))
-				if ( abs(pivot) .lt.  abs(temp)) then
-					pivot = temp
-					jj = i
-				endif
-			enddo
-		endif
-		switch(k, 1) = k
-		switch(k, 2) = jj
-		if (jj .ne. k) then
-			do  j = 1 ,size 
-				temp = matrix(jj, j)
-				matrix(jj, j) = matrix(k, j)
-				matrix(k, j) = temp
-			enddo
-		endif
-		do j = 1,size
-			if (j .ne. k)matrix(k, j) = matrix(k, j) / matrix(k, k)
-		enddo
-		matrix(k, k) = 1.0_b8 / matrix(k, k)
-		do  i = 1,size
-			if (i.ne.k) then
-				do  j = 1,size
-					if(j.ne.k)matrix(i,j)=matrix(i,j)-matrix(k,j)*matrix(i,k)
-				enddo
-			endif
-		enddo
-		do i = 1, size
-			if (i .ne. k)matrix(i, k) = -matrix(i, k) * matrix(k, k)
-		enddo
-	enddo 
-	do  l = 1,size
-		k = size - l + 1
-		krow = switch(k, 1)
-		irow = switch(k, 2)
-		if (krow .ne. irow) then
-			do  i = 1,size
-				temp = matrix(i, krow)
-				matrix(i, krow) = matrix(i, irow)
-				matrix(i, irow) = temp
-			enddo
-		endif
-	enddo
+    implicit none
+    real(b8) matrix(:,:)
+    integer size
+    integer switch,k, jj, kp1, i, j, l, krow, irow,nmax
+    parameter (nmax=1000)
+    dimension switch(nmax,2)
+    real(b8) pivot,temp
+    do  k = 1,size
+        jj = k
+        if (k .ne. size) then
+            kp1 = k + 1
+            pivot = (matrix(k, k))
+            do i = kp1,size
+                temp = (matrix(i, k))
+                if ( abs(pivot) .lt.  abs(temp)) then
+                    pivot = temp
+                    jj = i
+                endif
+            enddo
+        endif
+        switch(k, 1) = k
+        switch(k, 2) = jj
+        if (jj .ne. k) then
+            do  j = 1 ,size 
+                temp = matrix(jj, j)
+                matrix(jj, j) = matrix(k, j)
+                matrix(k, j) = temp
+            enddo
+        endif
+        do j = 1,size
+            if (j .ne. k)matrix(k, j) = matrix(k, j) / matrix(k, k)
+        enddo
+        matrix(k, k) = 1.0_b8 / matrix(k, k)
+        do  i = 1,size
+            if (i.ne.k) then
+                do  j = 1,size
+                    if(j.ne.k)matrix(i,j)=matrix(i,j)-matrix(k,j)*matrix(i,k)
+                enddo
+            endif
+        enddo
+        do i = 1, size
+            if (i .ne. k)matrix(i, k) = -matrix(i, k) * matrix(k, k)
+        enddo
+    enddo 
+    do  l = 1,size
+        k = size - l + 1
+        krow = switch(k, 1)
+        irow = switch(k, 2)
+        if (krow .ne. irow) then
+            do  i = 1,size
+                temp = matrix(i, krow)
+                matrix(i, krow) = matrix(i, irow)
+                matrix(i, irow) = temp
+            enddo
+        endif
+    enddo
 end subroutine
 
 subroutine mset(m,  n,  in)
-	real(b8) :: m(:,:)
-	integer n,in
-	integer i,j
-	do i=1,n
-		do j=1,n
-			if( i .eq. j)then
-				m(i,j)=in
-			else
-				m(i,j)=1
-			endif
-		enddo
-	enddo
+    real(b8) :: m(:,:)
+    integer n,in
+    integer i,j
+    do i=1,n
+        do j=1,n
+            if( i .eq. j)then
+                m(i,j)=in
+            else
+                m(i,j)=1
+            endif
+        enddo
+    enddo
 end subroutine
 
 function mcheck(m,  n,  in)
-	real(b8) :: m(:,:)
-	real(b8) mcheck,x
-	integer n,in
-	integer i,j
-	x=0
-	do i=1,n
-		do j=1,n
-			if( i .eq. j)then
-				x=x+abs(m(i,j)-in)
-			else
-				x=x+abs(m(i,j)-1)
-			endif
-		enddo
-	enddo
-	mcheck=x
+    real(b8) :: m(:,:)
+    real(b8) mcheck,x
+    integer n,in
+    integer i,j
+    x=0
+    do i=1,n
+        do j=1,n
+            if( i .eq. j)then
+                x=x+abs(m(i,j)-in)
+            else
+                x=x+abs(m(i,j)-1)
+            endif
+        enddo
+    enddo
+    mcheck=x
 end function
 end module ccm_numz
 
 program tover
-	use ccm_numz
-	real(b8),allocatable :: m1(:,:),m2(:,:),m3(:,:),m4(:,:)
-	integer n
-	real(b8) t0_start;
+    use ccm_numz
+    real(b8),allocatable :: m1(:,:),m2(:,:),m3(:,:),m4(:,:)
+    integer n
+    real(b8) t0_start;
     real(b8) t1_start,t1_end,e1;
     real(b8) t2_start,t2_end,e2;
     real(b8) t3_start,t3_end,e3;
     real(b8) t4_start,t4_end,e4;
 
-	n=750
-	allocate(m1(n,n),m2(n,n),m3(n,n),m4(n,n))
-	call mset(m1,n,10)
-	call mset(m2,n,20)
-	call mset(m3,n,30)
-	call mset(m4,n,40)
-	t0_start=ccm_time()
+    n=750
+    allocate(m1(n,n),m2(n,n),m3(n,n),m4(n,n))
+    call mset(m1,n,10)
+    call mset(m2,n,20)
+    call mset(m3,n,30)
+    call mset(m4,n,40)
+    t0_start=ccm_time()
 !$omp parallel sections
 
 !$omp section
-	t1_start=ccm_time()
-	call invert(m1,n)
-	call invert(m1,n)
-	t1_end=ccm_time()
-	e1=mcheck(m1,n,10)
-	t1_start=t1_start-t0_start
-	t1_end=t1_end-t0_start
+    t1_start=ccm_time()
+    call invert(m1,n)
+    call invert(m1,n)
+    t1_end=ccm_time()
+    e1=mcheck(m1,n,10)
+    t1_start=t1_start-t0_start
+    t1_end=t1_end-t0_start
 
 !$omp section
-	t2_start=ccm_time()
-	call invert(m2,n)
-	call invert(m2,n)
-	t2_end=ccm_time()
-	e2=mcheck(m2,n,20)
-	t2_start=t2_start-t0_start
-	t2_end=t2_end-t0_start
-	
+    t2_start=ccm_time()
+    call invert(m2,n)
+    call invert(m2,n)
+    t2_end=ccm_time()
+    e2=mcheck(m2,n,20)
+    t2_start=t2_start-t0_start
+    t2_end=t2_end-t0_start
+    
 !$omp section
-	t3_start=ccm_time()
-	call invert(m3,n)
-	call invert(m3,n)
-	t3_end=ccm_time()
-	e3=mcheck(m3,n,30)
-	t3_start=t3_start-t0_start
-	t3_end=t3_end-t0_start
-	
+    t3_start=ccm_time()
+    call invert(m3,n)
+    call invert(m3,n)
+    t3_end=ccm_time()
+    e3=mcheck(m3,n,30)
+    t3_start=t3_start-t0_start
+    t3_end=t3_end-t0_start
+    
 !$omp section
-	t4_start=ccm_time()
-	call invert(m4,n)
-	call invert(m4,n)
-	t4_end=ccm_time()
-	e4=mcheck(m4,n,40)
-	t4_start=t4_start-t0_start
-	t4_end=t4_end-t0_start
+    t4_start=ccm_time()
+    call invert(m4,n)
+    call invert(m4,n)
+    t4_end=ccm_time()
+    e4=mcheck(m4,n,40)
+    t4_start=t4_start-t0_start
+    t4_end=t4_end-t0_start
 
 !$omp end parallel sections
 
@@ -191,4 +191,4 @@ program tover
  1 format("section ",i4," start time= ",g15.5," end time= ",g15.5," error=",g15.5)
  end program
 
-	
+    
