@@ -1,0 +1,22 @@
+export COMPILER=19.0.3
+
+if [[ $COMPILER = 19* ]] ; then
+# for version 19.0.3 Intel compiler on Summit use the following
+export MBASE=/curc/sw/spack-experimental/opt/spack/linux-rhel7-x86_64/intel-19.0.3/intel-mpi-2019.3.199-7wrnfmvhjhbcag4xvkmmqmrdjibzhlsx/compilers_and_libraries_2019.3.199/linux/mpi/intel64
+export R_LIBS=/projects/$USER/R/builds/3.6.1_19.0.3_mkl/local          
+INC=include
+LIB=lib/release
+else
+# for version 17.4 Intel compiler on Summit use the following
+export MBASE=/curc/sw/intel/17.4/impi/2017.3.196
+export R_LIBS=/projects/$USER/R/builds/3.6.1_17.4_mkl/local          
+INC=include64
+LIB=lib64
+fi
+
+
+R CMD INSTALL -l $R_LIBS --configure-args="--with-Rmpi-include='$MBASE/$INC' --with-Rmpi-libpath='$MBASE/$LIB' --with-mpi='$MBASE' --with-Rmpi-type='OPENMPI' " Rmpi_0.6-9.tar.gz          
+
+
+echo "set up"
+echo "export" `printenv | grep R_LIBS`
