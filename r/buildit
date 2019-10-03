@@ -1,0 +1,94 @@
+#!/bin/bash
+CWD=`pwd`
+#export VERSION=3.5.0
+export VERSION=3.6.1
+
+#export COMPILER=6.1.0
+#export COMPILER=17.4
+export COMPILER=19.0.3
+
+if [ $# -gt 0 ]; then
+  export COMPILER=$1
+  export VERSION=$2
+fi
+
+export CWD=`pwd`
+
+if [[ $COMPILER = 17* ]] ; then
+  module purge 
+  export CC=icc
+  export FC=ifort
+  export CXX=icpc
+  ml intel/$COMPILER
+  ml mkl
+  MKL=" -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl "
+fi
+
+# Some available versions of gcc
+if [[ $COMPILER = 6* ]] || [[ $COMPILER = 9* ]]; then
+  module purge 
+  export CC=gcc
+  export FC=gfortran
+  export CXX=g++
+  ml gcc/$COMPILER
+  ml mkl
+  MKL="-Wl,--no-as-needed -lmkl_gf_lp64 -Wl,--start-group -lmkl_gnu_thread  -lmkl_core  -Wl,--end-group -fopenmp  -ldl -lpthread -lm"
+fi
+
+if [[ $COMPILER = 19* ]] ; then
+  module purge
+  export CC=icc
+  export FC=ifort
+  export CXX=icpc
+  module use /curc/sw/spack-experimental/share/spack/lmod/linux-rhel7-x86_64/Core 
+  module load intel/19.0.3
+  module load intel-mkl/2019.3.199
+  MKL=" -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl "
+fi
+
+module load jdk/1.8.0 
+
+export RBASE=/projects/$USER/R/builds/${VERSION}_${COMPILER}_mkl
+
+mkdir -p ${RBASE}_src
+cd ${RBASE}_src
+cat $CWD/$0 > script
+
+wget https://cran.r-project.org/src/base/R-3/R-$VERSION.tar.gz
+tar -xzf R-$VERSION.tar.gz
+cd R-$VERSION
+
+export CFLAGS="-O2 -fopenmp -fpic -mkl"
+export FCFLAGS="-O2 -fopenmp -fpic -mkl"
+export CXXFLAGS="-O2 -fopenmp -fpic -mkl"
+export LDFLAGS="-fopenmp -mkl"
+
+export R_LIBS=$RBASE/local
+mkdir -p $R_LIBS
+
+./configure --with-blas="$MKL" --with-lapack --prefix=$RBASE
+make
+make
+make install
+
+#show our new version and required modules
+echo $RBASE
+export PATH=$RBASE/bin:$PATH 
+#export LD_LIBRARY_PATH=$RBASE/lib64:$LD_LIBRARY_PATH 
+#export LD_LIBRARY_PATH=$RBASE/lib64/R:$LD_LIBRARY_PATH 
+which R
+echo " "
+echo "+++++++++++++++++++++++++++++++++++++++++"
+echo "+++++++++++++++++++++++++++++++++++++++++"
+echo "+++++++++++++++++++++++++++++++++++++++++"
+echo "To use set your path and load modules"
+echo "export PATH=$RBASE/bin:\$PATH"
+echo "And load the following modules:"
+if [[ $COMPILER = 19* ]] ; then
+echo "module use /curc/sw/spack-experimental/share/spack/lmod/linux-rhel7-x86_64/Core"
+fi
+ms=`ml -t 2>&1`
+echo module load $ms
+echo "+++++++++++++++++++++++++++++++++++++++++"
+echo "+++++++++++++++++++++++++++++++++++++++++"
+echo "+++++++++++++++++++++++++++++++++++++++++"
