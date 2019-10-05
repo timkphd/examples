@@ -164,7 +164,7 @@ stopCluster(cluster)
 tymer(reset=TRUE)
 
   
- t3=fastCor(x,,nSplit=1,optBLAS=TRUE,verbose = FALSE) 
+ t3=fastCor(x,,nSplit=1,optBLAS=FALSE,verbose = FALSE) 
  tymer()
  #head(t3)
  print(sum(abs(t1-t2)))

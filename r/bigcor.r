@@ -1,3 +1,12 @@
+#!/usr/bin/env Rscript
+args = commandArgs(trailingOnly=TRUE)
+cores<-4
+block=500
+msize <- 6000
+if (length(args) > 2)cores <- as.integer(args[3] )
+if (length(args) > 1)block <- as.integer(args[2] )
+if (length(args) > 0)msize <- as.integer(args[1] )
+print(c(msize,block,cores))
 #library(ff)
 bigcor <- function(
 x, 
@@ -211,7 +220,7 @@ fun = smallcor,
   ## symmetric sides of the diagonal
   #res<-foreach(i = 1:nrow(COMBS),.verbose=FALSE,.combine = cbind,
   # .packages = c('data.table', 'doParallel')) %dopar% {
-
+  print(c("COMBS",nrow(COMBS)))
   res<-foreach(i = 1:nrow(COMBS),.verbose=FALSE,
                 .inorder = FALSE) %dopar% {
     COMB <- COMBS[i, ]    
@@ -234,7 +243,6 @@ fun = smallcor,
 }
 
 
-msize <- 6000
 mymat <- matrix(nrow=msize, ncol=msize)
 # should most likely do this instead of the else mymat <- matrix(0.1,nrow=size, ncol=size)
 
@@ -256,19 +264,17 @@ library(dplyr)
 library(parallel)
 library(doParallel)
 source("~/bin/tymer.r")
-block=600
 
 tymer("start t1")
 t1<-cor(mymat)
 tymer("done t1")
 tymer("start t2")
-t2<-bigcor(mymat,mymat,size=block,verbose=FALSE,fun="cor")
+#t2<-bigcor(mymat,mymat,size=block,verbose=FALSE,fun="cor")
 tymer("done t2")
 tymer("start t3")
-t3<-smallcor(mymat,size=block,verbose=FALSE)
+#t3<-smallcor(mymat,size=block,verbose=FALSE)
 tymer("done t3")
 tymer("start cores")
-cores<-5
 cluster <- makeCluster(cores)  
 registerDoParallel(cluster)  
 tymer("start t4")
@@ -277,7 +283,7 @@ tymer("done t4")
 tymer("start t5")
 t5<-parcor(mymat,size=block,verbose=FALSE,fun=cor)
 tymer("done t5")
-print(sum(abs(t1-t2)))
-print(sum(abs(t1-t3)))
+#print(sum(abs(t1-t2)))
+#print(sum(abs(t1-t3)))
 print(sum(abs(t1-t4)))
 print(sum(abs(t1-t5)))
