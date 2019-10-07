@@ -16,21 +16,63 @@ size = 2000,
 verbose = TRUE, 
 ...)
 {
-  fun <- match.arg(fun)
-  if (fun == "cor") FUN <- cor else FUN <- cov
-  if (fun == "cor") STR <- "Correlation" else STR <- "Covariance" 
-  if (!is.null(y) & NROW(x) != NROW(y)) stop("'x' and 'y' must have compatible dimensions!")
+## send data to each task
+	myid <<- mpi.comm.rank(comm=mpi_comm_world)
+	numprocs <<- mpi.comm.size(comm=mpi_comm_world)
+	if (myid == 0){
+		ncol1=ncol(x)
+		nrow1=nrow(x)
+		if (is.null(y)){
+			ncol2=0
+			nrow2=0
+		}
+		else {
+			ncol2=ncol(y)
+			nrow2=nrow(y)
+		}
+	}
+	else {
+	ncol1<-0
+	nrow1<-0
+	ncol2<-0
+	nrow2<-0
+	size<-0
+	}
+ ncol1<-mpi.bcast(ncol1,    type=1,comm = mpi_comm_world)
+ nrow1<-mpi.bcast(nrow1,    type=1,comm = mpi_comm_world)
+ ncol2<-mpi.bcast(ncol2,    type=1,comm = mpi_comm_world)
+ nrow2<-mpi.bcast(nrow2,    type=1,comm = mpi_comm_world)
+ FUN <- cor
+ size<-mpi.bcast(size,    type=1,comm = mpi_comm_world)
+ verbose = TRUE
+ 
+
+#  fun <- match.arg(fun)
+#  if (fun == "cor") FUN <- cor else FUN <- cov
+#  if (fun == "cor") STR <- "Correlation" else STR <- "Covariance" 
+#  if (!is.null(y) & NROW(x) != NROW(y)) stop("'x' and 'y' must have compatible dimensions!")
    
-  NCOL <- ncol(x)
-  if (!is.null(y)) YCOL <- NCOL(y)
-    
+  NCOL <- ncol1
+  YCOL <- ncol2
+  if (YCOL == 0) {
+  	y=NULL
+# if y is null then we will need all of X on each node
+# since it replaces y
+  	x<-mpi.bcast.Robj(x,comm = mpi_comm_world)
+  } 
+  else {
+# bcast all of y to each task  
+	y<-mpi.bcast.Robj(y,comm = mpi_comm_world)
+  } 
   ## calculate remainder, largest 'size'-divisible integer and block size
   REST <- NCOL %% size
   LARGE <- NCOL - REST  
   NBLOCKS <- NCOL %/% size
     
-  if (is.null(y)) resMAT <- matrix(0.0,NCOL, NCOL)  
-  else resMAT <- matrix(0.0,NCOL, YCOL)
+  if (myid == 0){
+  	if (is.null(y)) resMAT <- matrix(0.0,NCOL, NCOL)  
+  	else resMAT <- matrix(0.0,NCOL, YCOL)
+  }
  
   ## split column numbers into 'nblocks' groups + remaining block
   GROUP <- rep(1:NBLOCKS, each = size)
@@ -45,6 +87,15 @@ verbose = TRUE,
   
   ## initiate time counter
   timeINIT <- proc.time() 
+  if(myid == 1){
+  	print(COMBS)
+  	print(SPLIT)
+  }
+  
+   bonk<-mpi.finalize()
+  q()  
+ 
+  
   
   ## iterate through each block combination, calculate correlation matrix
   ## between blocks and store them in the preallocated matrix on both
@@ -215,6 +266,14 @@ for(i in 1:dim(mat2)[1]) {
 }
 
 source("~/bin/tymer.r")
+if (!is.loaded("mpi_initialize")) {     
+    library("Rmpi")     
+    }  
+mpi_comm_world<-0 
+myid <<- mpi.comm.rank(comm=mpi_comm_world)
+numprocs <<- mpi.comm.size(comm=mpi_comm_world)
+myname <- mpi.get.processor.name()
+
 tymer("start t1")
 t1<-cor(mymat,mat2)
 tymer("done t1")
