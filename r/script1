@@ -1,0 +1,35 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --time=24:00:00
+##SBATCH --qos=testing 
+#SBATCH --oversubscribe
+#SBATCH --exclusive=user
+##SBATCH --cpus-per-task=6
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Run our program with output put into out.dat
+
+module purge
+module load intel/19.0.3   intel-mkl/2019.3.199
+
+# make a directory for this run
+mkdir $SLURM_JOB_ID
+cd $SLURM_JOB_ID
+
+#record our environment
+cat $0 > script
+printenv > env
+
+#get stuff
+cp $SLURM_SUBMIT_DIR/bigcor.r .
+
+./bigcor.r 12000 500 12 >> out.dat
+./bigcor.r 12000 600 12 >> out.dat
+./bigcor.r 12000 100 12 >> out.dat
+
+
+cp $SLURM_SUBMIT_DIR/slurm-$SLURM_JOB_ID* .
