@@ -91,11 +91,20 @@ verbose = TRUE,
   	print(COMBS)
   	print(SPLIT)
   }
-  
+   lc<-nrow(COMBS)
+   ea<-lc/numprocs
+   start_block<-as.integer(myid*ea+1)
+   end_block<-as.integer((myid+1)*ea)
+   if(myid == numprocs-1)end_block<-lc
+   print(c("blocks",myid,start_block,end_block))
    bonk<-mpi.finalize()
   q()  
  
-  
+  if (is.null(y)) {
+# every task has all of the data
+# each just needs to do its portion
+
+  }
   
   ## iterate through each block combination, calculate correlation matrix
   ## between blocks and store them in the preallocated matrix on both
