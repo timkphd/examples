@@ -16,6 +16,7 @@ size = 2000,
 verbose = TRUE, 
 ...)
 {
+STR="parallel "
 ## send data to each task
 	myid <<- mpi.comm.rank(comm=mpi_comm_world)
 	numprocs <<- mpi.comm.size(comm=mpi_comm_world)
@@ -58,7 +59,15 @@ verbose = TRUE,
   	y=NULL
 # if y is null then we will need all of X on each node
 # since it replaces y
-  	x<-mpi.bcast.Robj(x,comm = mpi_comm_world)
+    if(myid == 0 ){
+    print("before")
+    print(str(x))
+    }
+  	mpi.bcast.Robj(x,comm = mpi_comm_world)  	
+    if(myid > -1 ){
+    print("after")
+    print(str(x))
+    }
   } 
   else {
 # bcast all of y to each task  
@@ -96,16 +105,41 @@ verbose = TRUE,
    start_block<-as.integer(myid*ea+1)
    end_block<-as.integer((myid+1)*ea)
    if(myid == numprocs-1)end_block<-lc
-   print(c("blocks",myid,start_block,end_block))
-   bonk<-mpi.finalize()
-  q()  
+   
  
   if (is.null(y)) {
+    if(myid == -1) {
+  		print(x)
+  	}
+
 # every task has all of the data
 # each just needs to do its portion
+if(myid > -1 ) {
+  print(str(x))
+  RES=list(1)
+  k=1
+  print(c("blocks",myid,start_block,end_block))
+	  for (i in start_block:end_block) {
+		COMB <- COMBS[i, ]    
+		G1 <- SPLIT[[COMB[1]]]
+		G2 <- SPLIT[[COMB[2]]]  
+		if(myid == 0 ) {
+cat(sprintf("#%d: %s of Block %s and Block %s (%s x %s) ... ", i, STR,  COMB[1],
+                               COMB[2], length(G1),  length(G2))) 		}
+		RES[[k]] <-  FUN(x[, G1], x[, G2], ...)
+		k<-k+1
+	  }
+  if(myid == 3) {
+  print(str(RES))
+  print(RES)
+  }
+  }
 
   }
-  
+  print("calling finalize")
+  bonk<-mpi.finalize()
+  q()  
+
   ## iterate through each block combination, calculate correlation matrix
   ## between blocks and store them in the preallocated matrix on both
   ## symmetric sides of the diagonal
@@ -283,14 +317,15 @@ myid <<- mpi.comm.rank(comm=mpi_comm_world)
 numprocs <<- mpi.comm.size(comm=mpi_comm_world)
 myname <- mpi.get.processor.name()
 
+t3<-mpicor(mymat,size=block,verbose=TRUE,fun="cor")
+
 tymer("start t1")
 t1<-cor(mymat,mat2)
 tymer("done t1")
 tymer("start t2")
-t2<-bigcor(mymat,mat2,size=block,verbose=TRUE,fun="cor")
+t2<-bigcor(mymat,size=block,verbose=FALSE,fun="cor")
 tymer("done t2")
 tymer("start t3")
-t3<-mpicor(mymat,mat2,size=block,verbose=TRUE,fun="cor")
 tymer("done t3")
 print(sum(abs(t1-t2)))
 print(sum(abs(t1-t3)))
