@@ -16,7 +16,7 @@ size = 2000,
 verbose = TRUE, 
 ...)
 {
-STR="parallel "
+	STR="parallel "
 ## send data to each task
 	myid <<- mpi.comm.rank(comm=mpi_comm_world)
 	numprocs <<- mpi.comm.size(comm=mpi_comm_world)
@@ -33,25 +33,21 @@ STR="parallel "
 		}
 	}
 	else {
-	ncol1<-0
-	nrow1<-0
-	ncol2<-0
-	nrow2<-0
-	size<-0
+		ncol1<-0
+		nrow1<-0
+		ncol2<-0
+		nrow2<-0
+		size<-0
 	}
- ncol1<-mpi.bcast(ncol1,    type=1,comm = mpi_comm_world)
- nrow1<-mpi.bcast(nrow1,    type=1,comm = mpi_comm_world)
- ncol2<-mpi.bcast(ncol2,    type=1,comm = mpi_comm_world)
- nrow2<-mpi.bcast(nrow2,    type=1,comm = mpi_comm_world)
- FUN <- cor
- size<-mpi.bcast(size,    type=1,comm = mpi_comm_world)
- verbose = TRUE
+	ncol1<-mpi.bcast(ncol1,    type=1,comm = mpi_comm_world)
+	nrow1<-mpi.bcast(nrow1,    type=1,comm = mpi_comm_world)
+	ncol2<-mpi.bcast(ncol2,    type=1,comm = mpi_comm_world)
+	nrow2<-mpi.bcast(nrow2,    type=1,comm = mpi_comm_world)
+	size<-mpi.bcast(size,    type=1,comm = mpi_comm_world)
+	FUN <- cor
+	verbose = TRUE
  
 
-#  fun <- match.arg(fun)
-#  if (fun == "cor") FUN <- cor else FUN <- cov
-#  if (fun == "cor") STR <- "Correlation" else STR <- "Covariance" 
-#  if (!is.null(y) & NROW(x) != NROW(y)) stop("'x' and 'y' must have compatible dimensions!")
    
   NCOL <- ncol1
   YCOL <- ncol2
@@ -60,13 +56,9 @@ STR="parallel "
 # if y is null then we will need all of X on each node
 # since it replaces y
     if(myid == 0 ){
-    print("before")
-    print(str(x))
     }
   	mpi.bcast.Robj(x,comm = mpi_comm_world)  	
     if(myid > -1 ){
-    print("after")
-    print(str(x))
     }
   } 
   else {
@@ -96,10 +88,6 @@ STR="parallel "
   
   ## initiate time counter
   timeINIT <- proc.time() 
-  if(myid == 1){
-  	print(COMBS)
-  	print(SPLIT)
-  }
    lc<-nrow(COMBS)
    ea<-lc/numprocs
    start_block<-as.integer(myid*ea+1)
@@ -108,38 +96,60 @@ STR="parallel "
    
  
   if (is.null(y)) {
-    if(myid == -1) {
-  		print(x)
-  	}
-
+ 
 # every task has all of the data
 # each just needs to do its portion
-if(myid > -1 ) {
-  print(str(x))
+
   RES=list(1)
   k=1
-  print(c("blocks",myid,start_block,end_block))
 	  for (i in start_block:end_block) {
 		COMB <- COMBS[i, ]    
 		G1 <- SPLIT[[COMB[1]]]
 		G2 <- SPLIT[[COMB[2]]]  
-		if(myid == 0 ) {
-cat(sprintf("#%d: %s of Block %s and Block %s (%s x %s) ... ", i, STR,  COMB[1],
-                               COMB[2], length(G1),  length(G2))) 		}
 		RES[[k]] <-  FUN(x[, G1], x[, G2], ...)
 		k<-k+1
 	  }
-  if(myid == 3) {
-  print(str(RES))
-  print(RES)
-  }
-  }
 
-  }
-  print("calling finalize")
-  bonk<-mpi.finalize()
-  q()  
 
+	if(myid == 0){
+		xout=matrix(-10,NROW(x),NCOL(x))
+		i=myid
+		start_block<-as.integer(i*ea+1)
+		end_block<-as.integer((i+1)*ea)
+		if(myid == numprocs-1)end_block<-lc
+		for (j in start_block:end_block) {
+			COMB <- COMBS[j, ]    
+			G1 <- SPLIT[[COMB[1]]]
+			G2 <- SPLIT[[COMB[2]]] 
+			xout[G1, G2] <-RES[[j]]
+			xout[G2, G1] <- t(xout[G1, G2]) 
+		}
+
+
+		for (i in 1:(numprocs-1)) {
+		# should most likely us a gather here
+			stat<-0
+			section<-1
+			section<-mpi.recv.Robj(source=i, tag=i,comm = mpi_comm_world, status = stat)
+					start_block<-as.integer(i*ea+1)
+		end_block<-as.integer((i+1)*ea)
+		if(i == numprocs-1)end_block<-lc
+		for (j in start_block:end_block) {
+			COMB <- COMBS[j, ]    
+			G1 <- SPLIT[[COMB[1]]]
+			G2 <- SPLIT[[COMB[2]]] 
+			xout[G1, G2] <-section[[((j-start_block)+1)]]
+			xout[G2, G1] <- t(xout[G1, G2]) 
+		}
+
+		}
+		return(xout)
+	} else {
+		mpi.send.Robj(RES, 0, myid, comm = mpi_comm_world)   
+		return(0)
+	}
+  }
+  ## the rest is for two input matrices which is not yet enabled
   ## iterate through each block combination, calculate correlation matrix
   ## between blocks and store them in the preallocated matrix on both
   ## symmetric sides of the diagonal
@@ -317,15 +327,22 @@ myid <<- mpi.comm.rank(comm=mpi_comm_world)
 numprocs <<- mpi.comm.size(comm=mpi_comm_world)
 myname <- mpi.get.processor.name()
 
-t3<-mpicor(mymat,size=block,verbose=TRUE,fun="cor")
-
+if(myid == 0){
 tymer("start t1")
-t1<-cor(mymat,mat2)
+t1<-cor(mymat)
 tymer("done t1")
 tymer("start t2")
 t2<-bigcor(mymat,size=block,verbose=FALSE,fun="cor")
 tymer("done t2")
 tymer("start t3")
+}
+t3<-mpicor(mymat,size=block,verbose=FALSE,fun="cor")
+if(myid == 0){
 tymer("done t3")
 print(sum(abs(t1-t2)))
 print(sum(abs(t1-t3)))
+}
+  print("calling finalize")
+  bonk<-mpi.finalize()
+  q()  
+
