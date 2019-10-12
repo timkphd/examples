@@ -359,7 +359,8 @@ for(i in 1:dim(mymat)[1]) {
   	}
   }
 }
-nsize<-msize/2
+#nsize<-msize/2
+nsize=msize
 mat2 <- matrix( rnorm(msize*nsize),nrow=msize, ncol=nsize)
 
 source("~/bin/tymer.r")
@@ -393,15 +394,18 @@ if(myid == 0){
 	print(sum(abs(t1-t4)))
 	tymer("start t5")
 }
-t5<-cor(mat2,mat2)
+t5<-cor(mat2)
 #t5<-bigcor(mat2,mat2,size=block,verbose=FALSE,fun="cor")
 if(myid == 0){
+	str(mat2)
 	tymer("done t5")
+	str(t5)
 	tymer("start t6")
 }
 # still not wokring for all cases
 t6<-mpicor(mat2,size=block,verbose=FALSE,fun="cor")
-t6<-mpicor(mat2,mat2,size=block,verbose=FALSE,fun="cor")
+str(t6)
+#t6<-mpicor(mat2,mat2,size=block,verbose=FALSE,fun="cor")
 if(myid == 0){
 	tymer("done t6") 
 	print(sum(abs(t5-t6)))
