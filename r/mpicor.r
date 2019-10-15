@@ -3,6 +3,7 @@ args = commandArgs(trailingOnly=TRUE)
 cores<-4
 block=10
 msize <- 100
+set.seed(1234)
 if (length(args) > 2)cores <- as.integer(args[3] )
 if (length(args) > 1)block <- as.integer(args[2] )
 if (length(args) > 0)msize <- as.integer(args[1] )
@@ -359,8 +360,7 @@ for(i in 1:dim(mymat)[1]) {
   	}
   }
 }
-#nsize<-msize/2
-nsize=msize
+nsize<-msize/2
 mat2 <- matrix( rnorm(msize*nsize),nrow=msize, ncol=nsize)
 
 source("~/bin/tymer.r")
@@ -374,41 +374,48 @@ myname <- mpi.get.processor.name()
 
 if(myid == 0){
 	tymer("start t1")
-	t1<-cor(mymat)
+	t1<-cor(mymat,mat2)
 	tymer("done t1")
 	tymer("start t2")
-	t2<-bigcor(mymat,size=block,verbose=FALSE,fun="cor")
+	t2<-bigcor(mymat,mat2,size=block,verbose=FALSE,fun="cor")
 	tymer("done t2")
 	tymer("start t3")
 }
-t3<-mpicor(mymat,size=block,verbose=FALSE,fun="cor")
+t3<-mpicor(mymat,mat2,size=block,verbose=FALSE,fun="cor")
 if(myid == 0){
-	tymer("done t3")
-	print(sum(abs(t1-t2)))
-	print(sum(abs(t1-t3)))
-	tymer("start t4")
+	tymer("done t3") 
+	#print(t6)
+	#print(t5)
+	print(c("diff t1 t3",sum(abs(t1-t3))))
+	print(c("diff t2 t3",sum(abs(t2-t3))))
 }
-t4<-mpicor(mymat,mymat,size=block,verbose=FALSE,fun="cor")
+
+nsize<-msize
+nsize<-msize/2
+#### mpicor does not work propely if passed a nonsquare single matrix
+#### It creates a matrix the size of the orginal one.
+#### It will work if you pass the matrix as the second argument also.
+mat2 <- matrix( rnorm(msize*nsize),nrow=msize, ncol=nsize)
+tymer(reset=TRUE)
+
 if(myid == 0){
-	tymer("done t4")
-	print(sum(abs(t1-t4)))
-	tymer("start t5")
+	tymer("start t1")
+	t1<-cor(mat2)
+	tymer("done t1")
+	tymer("start t2")
+	t2<-bigcor(mat2,size=block,verbose=FALSE,fun="cor")
+	tymer("done t2")
+	tymer("start t3")
 }
-t5<-cor(mat2)
-#t5<-bigcor(mat2,mat2,size=block,verbose=FALSE,fun="cor")
+#t3<-mpicor(mat2size=block,verbose=FALSE,fun="cor")
+t3<-mpicor(mat2,mat2,size=block,verbose=FALSE,fun="cor")
 if(myid == 0){
-	str(mat2)
-	tymer("done t5")
-	str(t5)
-	tymer("start t6")
-}
-# still not wokring for all cases
-t6<-mpicor(mat2,size=block,verbose=FALSE,fun="cor")
-str(t6)
-#t6<-mpicor(mat2,mat2,size=block,verbose=FALSE,fun="cor")
-if(myid == 0){
-	tymer("done t6") 
-	print(sum(abs(t5-t6)))
+	tymer("done t3") 
+	str(t1)
+	str(t2)
+	str(t3)
+	print(c("diff t1 t3",sum(abs(t1-t3))))
+	print(c("diff t2 t3",sum(abs(t2-t3))))
 }
 
   print(c("calling finalize 0",myid))
