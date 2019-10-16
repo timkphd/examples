@@ -7,7 +7,6 @@ set.seed(1234)
 if (length(args) > 2)cores <- as.integer(args[3] )
 if (length(args) > 1)block <- as.integer(args[2] )
 if (length(args) > 0)msize <- as.integer(args[1] )
-print(c(msize,block,cores))
 #library(ff)
 mpicor <- function(
 x, 
@@ -67,8 +66,10 @@ verbose = TRUE,
   LARGE <- NCOL - REST  
   NBLOCKS <- NCOL %/% size
     
-  if (myid == 0){
-  	if (is.null(y)) resMAT <- matrix(0.0,NCOL, NCOL)  
+  if (myid == -1){
+  	if (is.null(y)) {
+  		resMAT <- matrix(0.0,NCOL, NCOL)  
+  		}
   	else resMAT <- matrix(0.0,NCOL, YCOL)
   }
  
@@ -106,10 +107,11 @@ verbose = TRUE,
 		RES[[k]] <-  FUN(x[, G1], x[, G2], ...)
 		k<-k+1
 	  }
-
+if(verbose)print(paste(myid,"done calculating"))
 
 	if(myid == 0){
-		xout=matrix(-10,NROW(x),NCOL(x))
+		#xout=matrix(-10,NROW(x),NCOL(x))
+		xout=matrix(-10,NCOL(x),NCOL(x))
 		i=myid
 		start_block<-as.integer(i*ea+1)
 		end_block<-as.integer((i+1)*ea)
@@ -122,14 +124,18 @@ verbose = TRUE,
 			xout[G2, G1] <- t(xout[G1, G2]) 
 		}
 
+		mpi.barrier(comm = mpi_comm_world)
 
 		for (i in 1:(numprocs-1)) {
 		# should most likely us a gather here
 			stat<-0
 			section<-1
+		if(verbose)print(paste("waiting for data from",i))
 			section<-mpi.recv.Robj(source=i, tag=i,comm = mpi_comm_world, status = stat)
 					start_block<-as.integer(i*ea+1)
+			
 		end_block<-as.integer((i+1)*ea)
+		if(verbose)print(paste(i,"got it"))
 		if(i == numprocs-1)end_block<-lc
 		for (j in start_block:end_block) {
 			COMB <- COMBS[j, ]    
@@ -142,7 +148,10 @@ verbose = TRUE,
 		}
 		return(xout)
 	} else {
-		mpi.send.Robj(RES, 0, myid, comm = mpi_comm_world)   
+		mpi.barrier(comm = mpi_comm_world)
+		if(verbose)print(paste(myid,"sending data"))
+		mpi.send.Robj(RES, 0, myid, comm = mpi_comm_world)  
+		if(verbose)print(paste(myid,"sent")) 
 		return(0)
 	}
   }
@@ -167,7 +176,10 @@ verbose = TRUE,
 				section[[k]]<-x[, G1]
 				k<-k+1
 			}
-			mpi.send.Robj(section, j, j, comm = mpi_comm_world)
+if(verbose)print(paste("sending section @ 2 to ",j))
+			mpi.send(j, type=1, j, 1234,  comm = mpi_comm_world)	
+			mpi.send.Robj(section, dest=j, tag=5678, comm = mpi_comm_world)
+if(verbose)print(paste("sent section @ 2 to ",j))	
 		}
 		i<-0
 		start_block<-as.integer(i*ea+1)
@@ -183,7 +195,13 @@ verbose = TRUE,
 		}
     } else {
 		stat<-0
-		section<-mpi.recv.Robj(source=0, tag=myid,comm = mpi_comm_world, status = stat)
+if(verbose)print(paste(myid,"waiting for section @ 2"))
+		pre_recv=as.integer(-1)	
+		mpi.recv(pre_recv,source=0,type=1,tag=1234,comm = mpi_comm_world)
+if(verbose)print(paste(myid,"got pre_recv @ 2"))
+section<-NULL	
+		section<-mpi.recv.Robj(source=0, tag=5678,comm = mpi_comm_world)
+if(verbose)print(paste(myid," got section @ 2"))	
     }
 
    lc<-nrow(COMBS)
@@ -203,7 +221,7 @@ verbose = TRUE,
 		}
 		k<-k+1
 	} 
-	
+if(verbose)print(paste(myid,"done calculating @ 2"))	
 
 	if(myid == 0){
 		resMAT <- matrix(-10.0,NCOL, YCOL)
@@ -213,7 +231,9 @@ verbose = TRUE,
 			start_block<-as.integer(j*ea+1)
 			end_block<-as.integer((j+1)*ea)
 			stat<-0
+if(verbose)print(paste("waiting @ 2 for",j))	
 			section<-mpi.recv.Robj(source=j, tag=j,comm = mpi_comm_world, status = stat)
+if(verbose)print(paste("got it @ 2 from",j))	
 			k<-1
 			for ( i in start_block:end_block) {
 				COMB <- COMBS[i, ]    
@@ -234,7 +254,9 @@ verbose = TRUE,
 			}
 		return(resMAT)
 		} else {
+if(verbose)print(paste(myid,"sending @ 2" ))	
 		mpi.send.Robj(xout, 0, myid, comm = mpi_comm_world)
+if(verbose)print(paste(myid,"sent @ 2" ))	
 		return(0)
 	}
   
@@ -373,19 +395,22 @@ numprocs <<- mpi.comm.size(comm=mpi_comm_world)
 myname <- mpi.get.processor.name()
 
 if(myid == 0){
+	print(c(msize,block,cores))
+
 	tymer("start t1")
-	t1<-cor(mymat,mat2)
+	t1<-cor(mymat)
 	tymer("done t1")
 	tymer("start t2")
-	t2<-bigcor(mymat,mat2,size=block,verbose=FALSE,fun="cor")
+	t2<-bigcor(mymat,size=block,verbose=FALSE,fun="cor")
 	tymer("done t2")
 	tymer("start t3")
 }
-t3<-mpicor(mymat,mat2,size=block,verbose=FALSE,fun="cor")
+t3<-mpicor(mymat,size=block,verbose=FALSE,fun="cor")
 if(myid == 0){
 	tymer("done t3") 
-	#print(t6)
-	#print(t5)
+	str(t1)
+	str(t2)
+	str(t3)
 	print(c("diff t1 t3",sum(abs(t1-t3))))
 	print(c("diff t2 t3",sum(abs(t2-t3))))
 }
@@ -400,20 +425,22 @@ tymer(reset=TRUE)
 
 if(myid == 0){
 	tymer("start t1")
-	t1<-cor(mat2)
+	t1<-cor(mymat,mat2)
 	tymer("done t1")
 	tymer("start t2")
-	t2<-bigcor(mat2,size=block,verbose=FALSE,fun="cor")
+	t2<-bigcor(mymat,mat2,size=block,verbose=FALSE,fun="cor")
 	tymer("done t2")
 	tymer("start t3")
 }
-#t3<-mpicor(mat2size=block,verbose=FALSE,fun="cor")
-t3<-mpicor(mat2,mat2,size=block,verbose=FALSE,fun="cor")
+t3<-mpicor(mymat,mat2,size=block,verbose=FALSE,fun="cor")
+#t3<-mpicor(mymat,mat2,size=block,verbose=FALSE,fun="cor")
 if(myid == 0){
 	tymer("done t3") 
 	str(t1)
 	str(t2)
 	str(t3)
+	#print(t1)
+	#print(t3)
 	print(c("diff t1 t3",sum(abs(t1-t3))))
 	print(c("diff t2 t3",sum(abs(t2-t3))))
 }
