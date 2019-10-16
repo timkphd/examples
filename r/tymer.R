@@ -40,5 +40,5 @@ tymer <-function(lab="",reset=FALSE) {
 	b2=toString(ds)
 	b3=format(dt1,digits=3, nsmall=3,width=10)
 	b4=format(dt2,digits=3, nsmall=3,width=10)
-	paste(b1,b2,b3,b4,lab,sep="  ")
+	print(paste(b1,b2,b3,b4,lab,sep="  "))
 }
