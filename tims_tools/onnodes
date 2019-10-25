@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+list=`squeue -u $USER -j $1 -ho %N`
+#echo $list
+long=`~/bin/expands $list`
+#echo $long
+for l in $long ; do  
+  echo $l 
+  echo "   PID    LWP PSR COMMAND         %CPU"  
+  ssh $l ps -U $USER -L -o pid,lwp,psr,comm,pcpu | grep -v COMMAND | sort -k3n 
+done
+

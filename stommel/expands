@@ -2,48 +2,48 @@
 import os
 import sys
 def do_help():
-	print sys.argv[0]
-	print "     Options:"
-	print "        Without arguments"
-	print "           If SLURM_NODELIST is defined"
-	print "           use it to find the node list as"
-	print "           described below."
-	print "      "
-	print "           Note: SLURM_NODELIST is defined"
-	print "           by slurm when running a parallel"
-        print "           job so this command in realy only"
-        print "           inside a batch script or when" 
-        print "           running interactive parallel jobs"
-	print "      "
-	print "        -h"
-	print "           Show this help"
-	print "      "
-	print "     Usage:"
-	print "        Takes an optional single command line argument,"
-	print "        the environmental variable SLURM_NODELIST"
-	print "        defined within a slurm job." 
-	print "      "
-	print "        SLURM_NODELIST is a compressed list of nodes"
-	print "        assigned to a job.  This command returns an expanded"
-	print "        list similar to what is defined in the PBS_NODES_FILE"
-	print "        under pbs."
-	print "      "
-	print "     Example:"
-	print "[joeuser@mio001 utility]$ printenv SLURM_NODELIST"
-	print "compute[004-005]"
-	print "[joeuser@mio001 utility]$ ",sys.argv[0]," $SLURM_NODELIST"
-	print "compute004"
-	print "compute004"
-	print "compute004"
-	print "compute004"
-	print "compute005"
-	print "compute005"
-	print "compute005"
-	print "compute005"
-	print "      "
-	print "     Author:"
-	print "        Timothy H. Kaiser, Ph.D."
-	print "        February 2014"
+	print(sys.argv[0])
+	print("     Options:")
+	print("        Without arguments")
+	print("           If SLURM_NODELIST is defined")
+	print("           use it to find the node list as")
+	print("           described below.")
+	print("      ")
+	print("           Note: SLURM_NODELIST is defined")
+	print("           by slurm when running a parallel")
+	print("           job so this command in realy only")
+	print("           inside a batch script or when")
+	print("           running interactive parallel jobs")
+	print("      ")
+	print("        -h")
+	print("           Show this help")
+	print("      ")
+	print("     Usage:")
+	print("        Takes an optional single command line argument,")
+	print("        the environmental variable SLURM_NODELIST")
+	print("        defined within a slurm job.")
+	print("      ")
+	print("        SLURM_NODELIST is a compressed list of nodes")
+	print("        assigned to a job.  This command returns an expanded")
+	print("        list similar to what is defined in the PBS_NODES_FILE")
+	print("        under pbs.")
+	print("      ")
+	print("     Example:")
+	print("[joeuser@mio001 utility]$ printenv SLURM_NODELIST")
+	print("compute[004-005]")
+	print("[joeuser@mio001 utility]$ ",sys.argv[0]," $SLURM_NODELIST")
+	print("compute004")
+	print("compute004")
+	print("compute004")
+	print("compute004")
+	print("compute005")
+	print("compute005")
+	print("compute005")
+	print("compute005")
+	print("      ")
+	print("     Author:")
+	print("        Timothy H. Kaiser, Ph.D.")
+	print("        February 2014")
 	exit()
 
 def getnlist(nlist):
@@ -66,7 +66,8 @@ def getnlist(nlist):
 				start=int(sub[0])
 				end=int(sub[1])+1
 				for s in range(start,end):
-					k="%3.3d" % (s)
+				#	k="%3.3d" % (s)
+					k="%2.2d" % (s)
 					k=head+k
 					nlist.append(k)
 	return nlist
@@ -87,7 +88,8 @@ def getnlist_org(nlist):
                         start=int(sub[0])
                         end=int(sub[1])+1
                         for s in range(start,end):
-                                k="%3.3d" % (s)
+                    #            k="%3.3d" % (s)
+                                k="%2.2d" % (s)
                                 k=head+k
                                 nlist.append(k)
         return nlist
@@ -111,12 +113,13 @@ else:
 	nodes=getnlist(sys.argv[1])
 expand=[]
 repeat=os.getenv("SLURM_NTASKS_PER_NODE","")
-repeat=int(repeat)
+#repeat=int(repeat)
+repeat=1
 for n in nodes:
 #	nc=getscores(n)
 	nc=repeat
 	for i in range(0,nc):
 		expand.append(n)
 for x in expand:
-	print x
+	print(x)
 
