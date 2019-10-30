@@ -1,15 +1,38 @@
 #!/bin/bash
+# Instructions
+#########
+# This must be run from a compile node:
+# ssh scompile
+# cd /projects/$USER
+# wget https://petra.acns.colostate.edu/private/rmkl
+# chmod 755 rmkl
+# ./rmkl
+#########
+# When the script completes it will print the commands
+# required to enable the new version of R.  This commands
+# could/should be added to your .bashrc file. 
+#  
 CWD=`pwd`
-#export VERSION=3.5.0
+export VERSION=3.5.0
 export VERSION=3.6.1
 
 #export COMPILER=6.1.0
 #export COMPILER=17.4
 export COMPILER=19.0.3
+export COMPILER=18.0.3
 
 if [ $# -gt 0 ]; then
   export COMPILER=$1
   export VERSION=$2
+fi
+
+if [[ $COMPILER = 18* ]] ; then
+###### NREL Eagle
+module purge
+module load gcc/7.3.0    comp-intel/2018.0.3    intel-mpi/2018.0.3    mkl/2018.3.222
+  export CC=icc
+  export FC=ifort
+  export CXX=icpc
 fi
 
 export CWD=`pwd`
@@ -21,6 +44,7 @@ if [[ $COMPILER = 17* ]] ; then
   export CXX=icpc
   ml intel/$COMPILER
   ml mkl
+  module load jdk/1.8.0
   MKL=" -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl "
 fi
 
@@ -43,12 +67,13 @@ if [[ $COMPILER = 19* ]] ; then
   module use /curc/sw/spack-experimental/share/spack/lmod/linux-rhel7-x86_64/Core 
   module load intel/19.0.3
   module load intel-mkl/2019.3.199
+  module load jdk/1.8.0
   MKL=" -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl "
 fi
 
-module load jdk/1.8.0 
 
 export RBASE=/projects/$USER/R/builds/${VERSION}_${COMPILER}_mkl
+export RBASE=/home/$USER/R/builds/${VERSION}_${COMPILER}_mkl
 
 mkdir -p ${RBASE}_src
 cd ${RBASE}_src
@@ -58,10 +83,16 @@ wget https://cran.r-project.org/src/base/R-3/R-$VERSION.tar.gz
 tar -xzf R-$VERSION.tar.gz
 cd R-$VERSION
 
-export CFLAGS="-O2 -fopenmp -fpic -mkl"
-export FCFLAGS="-O2 -fopenmp -fpic -mkl"
-export CXXFLAGS="-O2 -fopenmp -fpic -mkl"
-export LDFLAGS="-fopenmp -mkl"
+#### Paths to bzip2 and zlib added for NREL Eagle 
+#### since these are not installed in the system.
+#### You might also need to install latex and java 
+#### and set up PATH to point to them.
+export CPATH=/home/tkaiser2/libs/bzip2-1.0.8/include:/home/tkaiser2/libs/zlib-1.2.11/include:$CPATH
+export LD_LIBRARY_PATH=/home/tkaiser2/libs/bzip2-1.0.8/lib:/home/tkaiser2/libs/zlib-1.2.11/lib:$LD_LIBRARY_PATH
+export CFLAGS="-I/home/tkaiser2/libs/bzip2-1.0.8/include -I/home/tkaiser2/libs/zlib-1.2.11/include -O2 -fopenmp -fpic -mkl"
+export FCFLAGS="-I/home/tkaiser2/libs/bzip2-1.0.8/include -I/home/tkaiser2/libs/zlib-1.2.11/include -O2 -fopenmp -fpic -mkl"
+export CXXFLAGS="-I/home/tkaiser2/libs/bzip2-1.0.8/include -I/home/tkaiser2/libs/zlib-1.2.11/include -O2 -fopenmp -fpic -mkl"
+export LDFLAGS="-fopenmp -mkl -L/home/tkaiser2/libs/bzip2-1.0.8/lib -L/home/tkaiser2/libs/zlib-1.2.11/lib"
 
 export R_LIBS=$RBASE/local
 mkdir -p $R_LIBS
@@ -81,9 +112,9 @@ echo " "
 echo "+++++++++++++++++++++++++++++++++++++++++"
 echo "+++++++++++++++++++++++++++++++++++++++++"
 echo "+++++++++++++++++++++++++++++++++++++++++"
-echo "To use set your path and load modules"
+echo "#To use set your path and load modules"
 echo "export PATH=$RBASE/bin:\$PATH"
-echo "And load the following modules:"
+echo "#and load the following modules:"
 if [[ $COMPILER = 19* ]] ; then
 echo "module use /curc/sw/spack-experimental/share/spack/lmod/linux-rhel7-x86_64/Core"
 fi
