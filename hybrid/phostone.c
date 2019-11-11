@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <strings.h>
 #include <string.h>
 #include <omp.h>
@@ -16,6 +16,7 @@ int findcore ()
 {
     int cpu;
     cpu = sched_getcpu();
+//    cpu=0;
     return cpu;
 }
 void dohelp();
