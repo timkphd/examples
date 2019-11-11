@@ -66,7 +66,8 @@ def getnlist(nlist):
 				start=int(sub[0])
 				end=int(sub[1])+1
 				for s in range(start,end):
-					k="%3.3d" % (s)
+				#	k="%3.3d" % (s)
+					k="%2.2d" % (s)
 					k=head+k
 					nlist.append(k)
 	return nlist
@@ -87,7 +88,8 @@ def getnlist_org(nlist):
                         start=int(sub[0])
                         end=int(sub[1])+1
                         for s in range(start,end):
-                                k="%3.3d" % (s)
+                    #            k="%3.3d" % (s)
+                                k="%2.2d" % (s)
                                 k=head+k
                                 nlist.append(k)
         return nlist

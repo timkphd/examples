@@ -1,4 +1,4 @@
-export COMPILER=19.0.3
+export COMPILER=18.0.3
 
 if [[ $COMPILER = 19* ]] ; then
 # for version 19.0.3 Intel compiler on Summit use the following
@@ -14,6 +14,12 @@ INC=include64
 LIB=lib64
 fi
 
+if [[ $COMPILER = 18* ]] ; then
+export MBASE=/nopt/nrel/apps/base/2018-12-02/spack/opt/spack/linux-centos7-x86_64/intel-18.0.3/intel-mpi-2018.3.222-6hbmyhwcn27yjvb6og6iypamd6hb3tb4/compilers_and_libraries_2018.3.222/linux/mpi/intel64
+export R_LIBS=/home/tkaiser2/R/builds/3.6.1_18.0.3_mkl/local          
+INC=include
+LIB=lib
+fi
 
 R CMD INSTALL -l $R_LIBS --configure-args="--with-Rmpi-include='$MBASE/$INC' --with-Rmpi-libpath='$MBASE/$LIB' --with-mpi='$MBASE' --with-Rmpi-type='OPENMPI' " Rmpi_0.6-9.tar.gz          
 
