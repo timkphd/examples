@@ -1,0 +1,45 @@
+#Next 5 lines are optional if you don't do X-Windows.  The location of XAuthLocation might be different.
+ForwardAgent yes
+ForwardX11 yes
+ForwardX11Trusted yes
+XAuthLocation /Users/joeuser/.Xauthority
+#XAuthLocation /opt/X11/bin/xauth
+ServerAliveInterval 60
+PubkeyAcceptedKeyTypes=+ssh-dss
+AddKeysToAgent yes 
+
+Host cray
+Hostname cray2.colostate.edu
+User joeuser
+#ProxyCommand ssh 129.82.100.147 -W %h:%p
+ProxyCommand ssh petra -W %h:%p
+Identityfile2 ~/.ssh/forhpc
+
+Host cray2
+Hostname cray2.colostate.edu
+User joeuser
+#ProxyCommand ssh 129.82.100.147 -W %h:%p
+ProxyCommand ssh petra -W %h:%p
+Identityfile2 ~/.ssh/forhpc
+
+Host petra petra.acns.colostate.edu
+Hostname 129.82.100.147
+User joeuser
+Identityfile2 ~/.ssh/forhpc
+#ControlMaster auto
+#ControlPath   /home/pi/.ssh/tmp/%h_%p_%r
+
+Host semikln
+Hostname semikln.cs.colostate.edu
+User joeuser
+PubkeyAuthentication yes
+#ProxyCommand ssh 129.82.100.147 -W %h:%p
+ProxyCommand ssh petra -W %h:%p
+Identityfile2 ~/.ssh/forhpc
+
+Host summit
+Hostname login.rc.colorado.edu
+User joeuser@colostate.edu
+#ProxyCommand ssh petra -W %h:%p
+ControlMaster auto
+ControlPath   /home/pi/.ssh/tmp/%h_%p_%r
