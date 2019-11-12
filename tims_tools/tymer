@@ -4,8 +4,6 @@ import time
 import os.path
 global doquit
 doquit=False
-from io import StringIO
-tymer_save = StringIO()
 
 def tymer(sys_argv=""):
 	secs=time.time()
@@ -152,6 +150,9 @@ def tymer(sys_argv=""):
 if __name__ == '__main__':
 	doquit=True
 	tymer(sys.argv)
+else:
+	from io import StringIO
+	tymer_save = StringIO()
 
 
 	
