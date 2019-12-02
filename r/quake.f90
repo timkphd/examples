@@ -79,14 +79,15 @@ end module
      if(x >=0.1 .and. x <=2.0)then
         a=(-2.146128_b8)
         b=1.146128_b8
-     endif
-     if(x <= 3.0)then
-        a=(-0.9058116_b8)
-        b=0.5259698_b8
-     else
-        a=(-0.279157_b8)
-        b=0.3160013_b8
-     endif
+     else 
+         if(x <= 3.0)then
+            a=(-0.9058116_b8)
+            b=0.5259698_b8
+         else
+            a=(-0.279157_b8)
+            b=0.3160013_b8
+         endif
+     endif 
      t=a+b*x
      t=10.0_b8**t
      !write(18,*)"quake=",t
