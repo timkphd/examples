@@ -1,0 +1,105 @@
+sudo apt-get install apache2 -y
+
+
+in sc18a 
+
+.htaccess
+#    Order allow,deny
+#    Allow from all
+Require all granted
+AddHandler cgi-script .cgi .pl
+Options  +MultiViews +Includes +ExecCGI
+AddType text/html .shtml
+AddHandler server-parsed .shtml
+Options +Indexes +FollowSymLinks +Includes +MultiViews  +ExecCGI
+AddHandler server-parsed .html
+AddHandler cgi-script .cgi .pl
+
+Options +ExecCGI
+AddHandler server-parsed .html
+AddHandler server-parsed .shtml
+AddHandler server-parsed .htm
+
+   65  sudo a2enmod cgid.load
+   67  sudo a2enmod include.load
+ 
+/etc/apache2 $ ls -1 *enabled
+conf-enabled:
+charset.conf
+localized-error-pages.conf
+other-vhosts-access-log.conf
+security.conf
+serve-cgi-bin.conf
+
+mods-enabled:
+access_compat.load
+alias.conf
+alias.load
+auth_basic.load
+authn_core.load
+authn_file.load
+authz_core.load
+authz_host.load
+authz_user.load
+autoindex.conf
+autoindex.load
+cgid.conf
+cgid.load
+deflate.conf
+deflate.load
+dir.conf
+dir.load
+env.load
+filter.load
+include.load
+mime.conf
+mime.load
+mpm_event.conf
+mpm_event.load
+negotiation.conf
+negotiation.load
+reqtimeout.conf
+reqtimeout.load
+setenvif.conf
+setenvif.load
+status.conf
+status.load
+
+sites-enabled:
+000-default.conf
+pi@raspberrypi:/etc/apache2 $ 
+
+
+
+pi@raspberrypi:/etc/apache2 $ grep -1 sc18 *enabled/*
+conf-enabled/serve-cgi-bin.conf-		</Directory>
+conf-enabled/serve-cgi-bin.conf:		<Directory "/var/www/html/sc18a">
+conf-enabled/serve-cgi-bin.conf-		AllowOverride All
+pi@raspberrypi:/etc/apache2 $ grep -2 sc18 *enabled/*
+conf-enabled/serve-cgi-bin.conf-			Require all granted
+conf-enabled/serve-cgi-bin.conf-		</Directory>
+conf-enabled/serve-cgi-bin.conf:		<Directory "/var/www/html/sc18a">
+conf-enabled/serve-cgi-bin.conf-		AllowOverride All
+conf-enabled/serve-cgi-bin.conf-		</Directory>
+
+
+Dont think I need the next section
+pi@raspberrypi:/etc/apache2 $ diff ap*
+227,230d226
+< 		<Directory "/var/www/html/sc18a">
+< 			AllowOverride All
+< 		</Directory>
+< 
+pi@raspberrypi:/etc/apache2 $ 
+
+
+pi@raspberrypi:/var/www/html/sc18a $ ls -lt *cgi
+-rwxr-xr-x 1 root root  145 Sep 21 12:37 hello.cgi
+-rwxr-xr-x 1 root root 1605 Sep 21 12:01 index.cgi
+pi@raspberrypi:/var/www/html/sc18a $ 
+
+
+sudo cp hello.cgi /usr/lib/cgi-bin
+
+25 0,8,16 * * * wget http://inside.mines.edu/~tkaiser/cgi-bin/cgi-bin/silent.cgi?page=pi2 -O /dev/null -o /dev/null
+
