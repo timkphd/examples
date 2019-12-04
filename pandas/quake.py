@@ -15,6 +15,8 @@ tymer(["-i","got data"])
 from math import log10,acos,sqrt,sin,cos
 def quake (xin):
     x=xin
+    if(x <= 0.0):
+    	return(0)
     if(x < 0.1):
         x=0.1
     if(x >=0.1 and x <=2.0) :
@@ -44,16 +46,16 @@ def atin(disin):
     return(y)
 
 def whack(latin1,lonin1,latin2,lonin2,mag,dep):
-    lat1=latin1*0.01745329
-    lat2=latin2*0.01745329
-    lon1=lonin1*0.01745329
-    lon2=lonin2*0.01745329
-    ang1=(sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1)
+    lat1=latin1*0.017453292519943295
+    lat2=latin2*0.017453292519943295
+    lon1=lonin1*0.017453292519943295
+    lon2=lonin2*0.017453292519943295
+    ang1=(np.sin(lat1) * np.sin(lat2)) + np.cos(lat1) * np.cos(lat2) * np.cos(lon2-lon1)
     if(ang1 > 1.0):
         ang1=1.0
-    ang=acos(ang1)
+    ang=np.arccos(ang1)
     d = 6377.83 * ang
-    d = sqrt(d*d+dep*dep)
+    d = np.sqrt(d*d+dep*dep)
     if(d < 3.0):
         d=3.0
     if(mag > 0.0):
@@ -119,10 +121,10 @@ print("at", lat_seq[dlat-1],lon_seq[dlon-1],"sum=",mytot[dlat-1,dlon-1],"max=",m
 
 
 def whack2(latin1,lonin1,latin2,lonin2,mag,dep):
-    lat1=latin1*0.01745329
-    lat2=latin2*0.01745329
-    lon1=lonin1*0.01745329
-    lon2=lonin2*0.01745329
+    lat1=latin1*0.017453292519943295
+    lat2=latin2*0.017453292519943295
+    lon1=lonin1*0.017453292519943295
+    lon2=lonin2*0.017453292519943295
     ang1=(sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1)
     if(ang1 > 1.0):
         ang1=1.0
@@ -207,6 +209,79 @@ for index, row in dat.iterrows():
 tymer(["-i"])
 
 
+print("at", lat_seq[0],lon_seq[0],"sum=",mytot[0,0],"max=",mymax[0,0])
+print("at", lat_seq[0],lon_seq[dlon-1],"sum=",mytot[0,dlon-1],"max=",mymax[0,dlon-1])
+print("at", lat_seq[dlat-1],lon_seq[0],"sum=",mytot[dlat-1,0],"max=",mymax[dlat-1,0])
+print("at", lat_seq[dlat-1],lon_seq[dlon-1],"sum=",mytot[dlat-1,dlon-1],"max=",mymax[dlat-1,dlon-1])
+
+
+    
+def haversine(lat1, lon1, lat2, lon2):
+    MILES = 3959
+    lat1, lon1, lat2, lon2 = map(np.deg2rad, [lat1, lon1, lat2, lon2])
+    dlat = lat2 - lat1 
+    dlon = lon2 - lon1 
+    a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
+    c = 2 * np.arcsin(np.sqrt(a)) 
+    total_miles = MILES * c
+    return total_miles
+
+
+mytot=np.zeros([dlat,dlon])
+mymax=np.zeros([dlat,dlon])
+
+tymer(["-i","reading data"])
+thehead=["year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly"]
+dat=pd.read_csv('start',sep='\s+',names=thehead)
+tymer(["-i","got data"])
+
+def whack4b(latin1,lonin1,latin2,lonin2):
+    lat1, lon1, lat2, lon2 = map(np.deg2rad, [latin1,lonin1,latin2,lonin2])
+    ang1=(np.sin(lat1) * np.sin(lat2)) + np.cos(lat1) * np.cos(lat2) * np.cos(lon2-lon1)
+    ang=np.arccos(ang1)
+    d = 6377.83 * ang
+    d = np.sqrt(d*d+dep*dep)
+    d= np.where(d < 3.0,3.0,d)
+#    i =atin(d)*(mag)
+    return(d)
+
+def vatin2(dis):
+    x=np.log10(dis)
+    y=1.56301016+x*(0.54671034+x*(-0.54724666))
+    y=0.017535744506694952*(10.8**y)
+    return(y)
+
+def vatin(dis):
+    x=np.log10(dis)
+    return(np.where (dis > 100.0, 5.333253/(dis**2),vatin2(dis)))
+
+tymer(["-i","define mymag"])
+mymag=dat.apply(lambda row: quake(row['SCSN']),axis=1)
+dat["SCSN"]=mymag
+tymer(["-i","did mymag"])
+
+mytot=np.zeros([dlat,dlon])
+mymax=np.zeros([dlat,dlon])
+
+tymer(["-i","start"])
+j=0
+for mylat in lat_seq:
+    #print(mylat)
+    i=0
+    for mylon in lon_seq:
+        #tymer(["-i","get dist"])
+        dist=whack4b(mylat,mylon,dat['latitude'],dat['longitude'])
+        #tymer(["-i","got dist"])
+        tin=vatin(dist)
+        #tymer(["-i","got reduction"])
+        result=tin*mag
+        #print(j,i,np.max(result),np.sum(result))
+        mymax[j,i]=np.max(result)
+        mytot[j,i]=np.sum(result)
+        i=i+1
+    j=j+1
+
+tymer(["-i","done"])
 print("at", lat_seq[0],lon_seq[0],"sum=",mytot[0,0],"max=",mymax[0,0])
 print("at", lat_seq[0],lon_seq[dlon-1],"sum=",mytot[0,dlon-1],"max=",mymax[0,dlon-1])
 print("at", lat_seq[dlat-1],lon_seq[0],"sum=",mytot[dlat-1,0],"max=",mymax[dlat-1,0])
