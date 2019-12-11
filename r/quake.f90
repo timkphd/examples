@@ -79,14 +79,15 @@ end module
      if(x >=0.1 .and. x <=2.0)then
         a=(-2.146128_b8)
         b=1.146128_b8
-     endif
-     if(x <= 3.0)then
-        a=(-0.9058116_b8)
-        b=0.5259698_b8
-     else
-        a=(-0.279157_b8)
-        b=0.3160013_b8
-     endif
+     else 
+         if(x <= 3.0)then
+            a=(-0.9058116_b8)
+            b=0.5259698_b8
+         else
+            a=(-0.279157_b8)
+            b=0.3160013_b8
+         endif
+     endif 
      t=a+b*x
      t=10.0_b8**t
      !write(18,*)"quake=",t
@@ -119,10 +120,10 @@ end function
     real(b8) lat1,lon1,lat2,lon2
     real(b8) whack,quake,atin
     !write(*,*)lat1,lon1,lat2,lon2,mag,dep
-	lat1=latin1*0.01745329_b8
-	lat2=latin2*0.01745329_b8
-	lon1=lonin1*0.01745329_b8
-	lon2=lonin2*0.01745329_b8
+	lat1=latin1*0.017453292519943295_b8
+	lat2=latin2*0.017453292519943295_b8
+	lon1=lonin1*0.017453292519943295_b8
+	lon2=lonin2*0.017453292519943295_b8
 	ang1=(sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1)
 	if(ang1 > 1.0_b8)ang1=1.0_b8
 	ang=acos(ang1)

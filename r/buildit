@@ -1,12 +1,10 @@
 #!/bin/bash
 # Instructions
 #########
-# This must be run from a compile node:
+# For Summit, this must be run from a compile node:
 # ssh scompile
 # cd /projects/$USER
-# wget https://petra.acns.colostate.edu/private/rmkl
-# chmod 755 rmkl
-# ./rmkl
+# For Eagle, it can be run from a head node.
 #########
 # When the script completes it will print the commands
 # required to enable the new version of R.  This commands
