@@ -7,16 +7,30 @@
 #include <mpi.h>
 #include <math.h>
 #include <utmpx.h>
+#include <time.h>
 char *trim ( char *s );
 void slowit(long nints,int val);
 int node_color();
 int sched_getcpu();
 
+void ptime(){
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer [80];
+  time (&rawtime);
+  timeinfo = localtime (&rawtime);
+  strftime (buffer,80,"%c",timeinfo);
+  //puts (buffer);
+  printf("%s\n",buffer);
+}
 int findcore ()
 {
     int cpu;
+#ifdef __APPLE__
+    cpu=-1;
+#else
     cpu = sched_getcpu();
-//    cpu=0;
+#endif
     return cpu;
 }
 void dohelp();
@@ -130,6 +144,7 @@ int main(int argc, char **argv,char *envp[])
     MPI_Bcast(&full,1,MPI_INT,0,MPI_COMM_WORLD);
     MPI_Bcast(&envs,1,MPI_INT,0,MPI_COMM_WORLD);
     if(myid == 0 && full == 2){
+    	ptime();
 	printf("MPI VERSION %s\n",version);
     	printf("task    thread             node name  first task    # on node  core\n");
     }
@@ -186,9 +201,10 @@ int main(int argc, char **argv,char *envp[])
     }
 	if(myid == 0){
 		dt=0;
-		if(wait) {
+		if(wait ) {
 			slow=0;
 			for (iarg=1;iarg<argc;iarg++) {
+				//printf("%s\n",argv[iarg]);
 				if(atof(argv[iarg])> 0)dt=atof(argv[iarg]);
 			}
 		}
@@ -225,6 +241,7 @@ int main(int argc, char **argv,char *envp[])
 	printf("total time %10.3f\n",t2-t1);
     }
 
+    if(myid == 0 && full == 2)ptime();
     MPI_Finalize();
     return 0;
 }
