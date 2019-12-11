@@ -160,7 +160,7 @@ def do_transfer(psi,i1,i2,j1,j2):
 sys.argv =  mpi.mpi_init(len(sys.argv),sys.argv)
 myid=mpi.mpi_comm_rank(mpi.MPI_COMM_WORLD)
 numprocs=mpi.mpi_comm_size(mpi.MPI_COMM_WORLD)
-print "hello from ",myid," of ",numprocs
+print("hello from ",myid," of ",numprocs)
 
 #get the input.  see above for typical values
 vals=input()
@@ -206,10 +206,10 @@ for i in range(0,vals.steps):
 		diff=mpi.mpi_reduce(diff,1,  mpi.MPI_DOUBLE,mpi.MPI_SUM,0,mpi.MPI_COMM_WORLD)
 		if(myid == 0):
 			if ((i+1) % iout) == 0 :
-				print i+1,diff[0]
+				print(i+1,diff[0])
 t2=walltime()
 if(myid == 0):
-	print "total time=",t2-t1, "  time spent in do_jacobi=",ttot
+	print("total time=",t2-t1, "  time spent in do_jacobi=",ttot)
 mpi.mpi_finalize()
 
 # if is acting as the executable call main
