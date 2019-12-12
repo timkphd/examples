@@ -2,8 +2,20 @@
 #include <stdlib.h>
 #include <mpi.h>
 #include <math.h>
+#include <unistd.h>
+#include <time.h>
 int cumain(int myid, int gx, int gy,int bx, int by, int bz);
-
+void ptime(){
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer [80];
+  time (&rawtime);
+  timeinfo = localtime (&rawtime);
+  strftime (buffer,80,"%c",timeinfo);
+  //puts (buffer);
+  printf("%s\n",buffer);
+  }
+  
  
 /************************************************************
 This is a simple hello world program. Each processor prints
@@ -22,6 +34,7 @@ int main(int argc, char **argv)
     MPI_Get_processor_name(myname,&resultlen); 
     printf("C-> Hello from %s # %d of %d\n",myname,myid,numprocs);
     if (myid == 0) {
+		ptime();
 		scanf("%d %d",&gx,&gy);
 		scanf("%d %d %d",&bx,&by,&bz);
 	}
@@ -32,7 +45,12 @@ int main(int argc, char **argv)
 	MPI_Bcast(&by,1,MPI_INT,0,MPI_COMM_WORLD);
 	MPI_Bcast(&bz,1,MPI_INT,0,MPI_COMM_WORLD);
 
-    cumain(myid,gx,gy,bx,by,bz);
-   
+    for (int ic=0; ic<30; ic++ ){
+	cumain(myid % 2,gx,gy,bx,by,bz);
+    	sleep(1);
+    }
+    if(myid == 0) {
+                ptime();
+    }
     MPI_Finalize();
 }
