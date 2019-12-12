@@ -78,7 +78,7 @@ int main(int argc, char **argv,char *envp[])
     char version[40];
 #endif
     char *myname,*cutit;
-    int full,envs,iarg,tn,nt,help,slow,vlan,wait;
+    int full,envs,iarg,tn,nt,help,slow,vlan,wait,dotime;
     long nints;
     double t1,t2,dt;
     char f1234[128],f1235[128],f1236[128];
@@ -114,6 +114,7 @@ int main(int argc, char **argv,char *envp[])
     	full=0;
     	envs=0;
         help=0;
+        dotime=0;
     	if (argc > 1 ) {
     	  for (iarg=1;iarg<argc;iarg++) {
     	  	if ( (strcmp(argv[iarg],"-h")    == 0) || 
@@ -131,6 +132,8 @@ int main(int argc, char **argv,char *envp[])
     	  	if (strcmp(argv[iarg],"-t") == 0)     wait=1;
 /**/
     	  	if (strcmp(argv[iarg],"-a") == 0)         envs=1;
+/**/
+    	  	if (strcmp(argv[iarg],"-T") == 0)         dotime=1;
         }
     	}
     }
@@ -143,8 +146,9 @@ int main(int argc, char **argv,char *envp[])
 	}
     MPI_Bcast(&full,1,MPI_INT,0,MPI_COMM_WORLD);
     MPI_Bcast(&envs,1,MPI_INT,0,MPI_COMM_WORLD);
+    if(myid == 0 && dotime == 1)ptime();
     if(myid == 0 && full == 2){
-    	ptime();
+    	
 	printf("MPI VERSION %s\n",version);
     	printf("task    thread             node name  first task    # on node  core\n");
     }
@@ -241,7 +245,7 @@ int main(int argc, char **argv,char *envp[])
 	printf("total time %10.3f\n",t2-t1);
     }
 
-    if(myid == 0 && full == 2)ptime();
+    if(myid == 0 && dotime == 1)ptime();
     MPI_Finalize();
     return 0;
 }
