@@ -62,6 +62,7 @@ printf("               down the program.  Should run faster with multiple thread
 printf("\n");
 printf(" -t ######## : Where is a time in seconds.  Sum a bunch on integers to slow\n");
 printf("               down the program and run for at least the given seconds.\n");
+printf(" -T          : Print time/date at the beginning/end of the run\n");
 printf("\n");
 }
  
