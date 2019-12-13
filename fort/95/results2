@@ -1,0 +1,33 @@
+In C mysum before loop =-1
+In C mysum after loop  = 4.5
+C in do_sim
+Fortran mysum before C call  =    -1.0
+Back from C in Fortran mysum =     4.5
+   1.00000000       0.00000000    
+   2.00000000      0.642787576    
+   3.00000000      0.984807730    
+   4.00000000      0.866025448    
+   5.00000000      0.342020273    
+   6.00000000     -0.342019975    
+   7.00000000     -0.866025329    
+   8.00000000     -0.984807789    
+   9.00000000     -0.642787814    
+   10.0000000      -3.01991605E-07
+Fortran calling C again
+In Fortran called from C alpha=  10 beta=      0.50 gamma=      0.00
+ ! Associate C_ARRAY with an array allocated in C
+ ARRAYS%C, C_ARRAY point to same target
+ ! Allocate an array and make it available in C
+ Fortan fills the array for C
+C back in do_sim
+beta = 1234 gamma=2250
+0 0
+1 2
+2 4
+3 6
+4 8
+5 10
+6 12
+7 14
+8 16
+9 18
