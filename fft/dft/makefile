@@ -1,4 +1,4 @@
-all: segment test.dat fft.out
+all: segment  test.dat fft.out
 
 segment: segment.f90
 		ifort -mkl $(MKLROOT)/include/mkl_dfti.f90 -Wa -O3 segment.f90 -o segment
