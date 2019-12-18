@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import sys
+import os
 header="""
 <!DOCTYPE html>
 <html lang="en">
@@ -20,7 +21,7 @@ header="""
 	.greenbar th
 	{
 		font-size: 1.4em;
-		text-align: left;
+		text-align: center;
 		padding-top: 5px;
 		padding-bottom: 4px;
 		background-color: #A7C942;
@@ -31,6 +32,7 @@ header="""
 	{
 		font-size: 1.0em;
 		border: 1px solid #98bf21;
+		text-align: right;
 		padding: 3px 7px 2px 2px;
 	}
 	
@@ -116,6 +118,7 @@ header="""
 </style>
 </head>
 <body>
+XXXXXXXX
 """
 data="""run	nodes	tpn	total<br>tasks	build	time
 out16_128	8	16	128	build4	1.00567062124997619
@@ -132,6 +135,12 @@ out32_256	8	32	256	build5	0.257383043749996432
 out32_256	8	32	256	build7	0.284165476249995663
 out32_256	8	32	256	xxxxxx	0.202702161875002673
 """
+title=os.getenv("HEADER")
+if (title):
+	header=header.replace("XXXXXXXX","<h3>"+title+"</h3>")
+	header=header.replace("Untitled",title)
+else:
+	header=header.replace("XXXXXXXX","")
 color="blue"
 if(sys.argv[0].find("green") > -1):
 	color="green"

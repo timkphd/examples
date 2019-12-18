@@ -1,0 +1,3316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="Author" CONTENT="Timothy H. Kaiser">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (WinNT; U) [Netscape]">
+ 
+<style type="text/css">
+	em { color: red; }
+	h1 {
+	  text-align: center;
+	}
+	h3.c{
+	  text-align: center;
+	}
+	p.c {
+text-align: center;
+	}
+	
+	span.r { color: #F00; }
+	span.b { color: #00F; }
+	span.g { color: #0F0; }
+table {
+  margin-left: auto;
+  margin-right: auto;
+}
+table, th, td {
+   border: 4px solid #ddd;
+}
+dt { margin-left: 2.0em;}
+dd { margin-left: 4.0em; margin-bottom: .5em; color: #a0a;}
+
+pre {
+   font-size: large;
+}
+
+			@media print { h6 { page-break-after: always; } }
+			h6 { page-break-before: after; 
+			margin-top: 0.2in;
+			}
+
+</style>
+
+                
+<TITLE>f90</TITLE>
+</HEAD>
+<BODY>
+
+
+<H1>
+<em>Advanced Fortran 90</em></H1>
+
+
+<H3 class="c">
+Timothy H. Kaiser,Ph.D.
+</h3>
+<p class="c">
+timk@colostate.edu<br>
+Written:  Summer 1997
+</p>
+
+<hr><h6>&nbsp;</h6><h6>&nbsp;</h6>
+
+<H2><A HREF="Introduction"></A>Introduction</H2>
+
+<UL>
+<LI>
+Personal Introduction</LI>
+
+<LI>
+The mind of the language writers</LI>
+
+<LI>
+Justification for topics covered</LI>
+
+<LI>
+Classification of topics covered</LI>
+
+<LI>
+Listing of covered topics</LI>
+
+<LI>
+Format of our talk</LI>
+
+<LI>
+Meat</LI>
+</UL>
+
+<hr><h6>&nbsp;</h6><h6>&nbsp;</h6>
+
+<H2><A HREF="Who_am_I?"></A>Who am I?</H2>
+
+<ul>
+<LI>
+Wide experience background
+
+<UL>
+<LI>
+Physics</LI>
+
+<LI>
+Electrical Engineering</LI>
+
+<LI>
+Computer Science</LI>
+</UL>
+</LI>
+<LI>
+.gt. 25 years programming
+
+<UL>
+<LI>
+Defense Industry</LI>
+
+<LI>
+Academia</LI>
+</UL>
+
+</LI>
+<LI>
+Languages
+
+<UL>
+<LI>
+Fortran</LI>
+
+<LI>
+C</LI>
+
+<LI>
+C++</LI>
+
+<LI>
+Pascal</LI>
+
+<LI>
+Lisp</LI>
+
+<LI>
+Java</LI>
+
+<LI>
+Python</LI>
+
+<LI>
+Others</LI>
+</UL>
+</LI>
+<LI>
+Beta tester of several Fortran compilers</LI>
+
+<LI>
+I have had the chance to make just about every mistake in the book and
+some that ain't</LI>
+
+</ul>
+<hr><h6>&nbsp;</h6><h6>&nbsp;</h6>
+<H2>
+<A HREF="The_mind_of_the_language_writers"></A>The mind of
+the language writers<br>
+What were they thinking?</H2>
+
+<ul>
+<LI>
+Enable portable codes
+
+<UL>
+<LI>
+Same precision</LI>
+
+<LI>
+Include many common extensions</LI>
+</UL>
+</LI>
+<LI>
+More reliable programs</LI>
+
+<LI>
+Getting away from underlying hardware</LI>
+
+<LI>
+Move toward parallel programming</LI>
+
+<LI>
+Run old programs</LI>
+
+<LI>
+Ease of programming
+
+<UL>
+<LI>
+Writing</LI>
+
+<LI>
+Maintaining</LI>
+
+<LI>
+Understanding</LI>
+
+<LI>
+Reading</LI>
+</UL>
+</LI>
+<LI>
+Recover C and C++ users</LI>
+</ul>
+<BR> 
+
+<hr><h6>&nbsp;</h6><h6>&nbsp;</h6>
+<H2>
+Why Fortran?</H2>
+
+<p class="c">
+<em>"I don't know what the technical characteristics of<br>
+the standard language for scientific and engineering<br>
+computation in the year 2000 will be... but I know it<br>
+will be called Fortran." John Backus</em></p>
+
+<ul>
+<LI>
+Language of choice for Scientific programming</LI>
+
+<LI>
+Large installed user base.</LI>
+
+<LI>
+Fortran 90 has most of the features of C . . . and then some</LI>
+
+<LI>
+Principal language on the IBM SP Supercomputer and all Cray machines</LI>
+
+<LI>
+The compilers produce better programs</LI>
+</ul>
+<BR>
+<hr><h6>&nbsp;</h6><h6>&nbsp;</h6>
+
+<H2><A HREF="Justification_of_topics"></A>Justification
+of topics</h2>
+
+<UL>
+<LI>
+Enhance performance</LI>
+
+<LI>
+Enhance portability</LI>
+
+<LI>
+Enhance reliability</LI>
+
+<LI>
+Enhance maintainability</LI>
+</UL>
+
+<hr><h6>&nbsp;</h6>
+
+<H2><A HREF="Classification_of_topics"></A>Classification
+of topics</H2>
+
+<UL>
+<LI>
+New useful features</LI>
+
+<LI>
+Old tricks</LI>
+
+<LI>
+Power features</LI>
+</UL>
+
+<hr><h6>&nbsp;</h6>
+
+<H2><A HREF="Listing_of_topics_covered"></A>Listing
+of topics covered</H2>
+
+<OL>
+<LI>
+<I><A HREF="#Listing_of_topics_covered">Listing of topics covered</A></I></LI>
+
+<LI>
+<I><A HREF="#Format_for_our_talk">Format for our talk</A></I></LI>
+
+<LI>
+<I><A HREF="#What_is_a_Genetic_Algorithm">What is a Genetic Algorithm</A></I></LI>
+
+<LI>
+<I><A HREF="#Simple_algorithm_for_a_GA">Simple algorithm for a GA</A></I></LI>
+
+<LI>
+<I><A HREF="#Our_example_problem">Our example problem</A></I></LI>
+
+<LI>
+<I><A HREF="#Start_of_real_Fortran_90_discussion">Start of real Fortran
+90 discussion</A></I></LI>
+
+<LI>
+<I><A HREF="#Compare">Comparing a FORTRAN 77 routine to a Fortran 90 routine</A></I></LI>
+
+<LI>
+<I><A HREF="#Obsolescent_features">Obsolescent features</A></I></LI>
+
+<LI>
+<I><A HREF="#New_source_Form">New source Form (and related things)</A></I></LI>
+
+<LI>
+<I><A HREF="#New_data_declaration_method">New data declaration method</A></I></LI>
+
+<LI>
+<I><A HREF="#Kind_facility">Kind facility</A></I></LI>
+
+<LI>
+<I><A HREF="#Modules">Modules</A></I></LI>
+
+<LI>
+<I><A HREF="#Module_functions_and_subroutines">Module functions and subroutines</A></I></LI>
+
+<LI>
+<I><A HREF="#Allocatable_arrays_the_basics">Allocatable arrays (the basics)</A></I></LI>
+
+<LI>
+<I><A HREF="#Passing_arrays_to_subroutines">Passing arrays to subroutines</A></I></LI>
+
+<LI>
+<I><A HREF="#Interface_for_passing_arrays">Interface for passing arrays</A></I></LI>
+
+<LI>
+<I><A HREF="#Optional_arguments_and_intent">Optional arguments and intent</A></I></LI>
+
+<LI>
+<I><A HREF="#Derived_data_types">Derived data types</A></I></LI>
+
+<LI>
+<I><A HREF="#Using_defined_types">Using defined types</A></I></LI>
+
+<LI>
+<I><A HREF="#User_defined_operators">User defined operators</A></I></LI>
+
+<LI>
+<I><A HREF="#Recursive_functions_introduction">Recursive functions introduction</A></I></LI>
+
+<LI>
+<I><A HREF="#Fortran_90_recursive_functions">Fortran 90 recursive functions</A></I></LI>
+
+<LI>
+<I><A HREF="#Pointers">Pointers</A></I></LI>
+
+<LI>
+<I><A HREF="#Function_and_subroutine_overloading">Function and subroutine
+overloading</A></I></LI>
+
+<LI>
+<I><A HREF="#Fortran_Minval_and_Minloc_routines">Fortran Minval and Minloc
+routines</A></I></LI>
+
+<LI>
+<I><A HREF="#Pointer_assignment">Pointer assignment</A></I></LI>
+
+<LI>
+<I><A HREF="#More_pointer_usage_association_and_nullify">More pointer
+usage, association and nullify</A></I></LI>
+
+<LI>
+<I><A HREF="#Pointer_usage_to_reference_an_array">Pointer usage to reference
+an array</A></I></LI>
+
+<LI>
+<I><A HREF="#Data_assignment_with_structures">Data assignment with structures</A></I></LI>
+
+<LI>
+<I><A HREF="#Using_the_user_defined_operator">Using the user defined operator</A></I></LI>
+
+<LI>
+<I><A HREF="#Using_the_user_defined_operator">Passing arrays with a given
+arbitrary lower bounds</A></I></LI>
+
+<LI>
+<I><A HREF="#Using_pointers_to_access_sections_of_arrays">Using pointers
+to access sections of arrays</A></I></LI>
+
+<LI>
+<I><A HREF="#Allocating_an_array_inside_a_subroutine">Allocating an array
+inside a subroutine</A></I></LI>
+
+<LI>
+<I><A HREF="#Our_fitness_function">Our fitness function</A></I></LI>
+
+<LI>
+<I><A HREF="#Linked_lists">Linked lists</A></I></LI>
+
+<LI>
+<I><A HREF="#Linked_list_usage">Linked list usage</A></I></LI>
+
+<LI>
+<I><A HREF="#Our_map_representation">Our map representation</A></I></LI>
+
+<LI>
+<I><A HREF="#Non_advancing_and_character_I_O">Non advancing and character
+I/O</A></I></LI>
+
+<LI>
+<I><A HREF="#Date_and_time_functions">Date and time functions</A></I></LI>
+
+<LI>
+<I><A HREF="#Internal_I_O">Internal I/O</A></I></LI>
+
+<LI>
+<I><A HREF="#Inquire_function">Inquire function</A></I></LI>
+
+<LI>
+<I><A HREF="#Namelist">Namelist</A></I></LI>
+
+<LI>
+<I><A HREF="#Vector_valued_functions">Vector valued functions</A></I></LI>
+
+<LI>
+<I><A HREF="#Complete_source_for_recent_discussions">Complete source for
+recent discussions</A></I></LI>
+
+<LI>
+<I><A HREF="#Some_array_specific_intrinsic_functions">Some array specific
+intrinsic functions</A></I></LI>
+
+<LI>
+<I><A HREF="#The_rest_of_our_GA">The rest of our GA</A></I></LI>
+
+<LI>
+<I><A HREF="#Compiler">Compiler Information</A></I></LI>
+
+<LI>
+<I><A HREF="#Fortran_95">Fortan 95</A></I></LI>
+
+<LI>
+<I><A HREF="#Summary">Summary</A></I></LI>
+
+<LI>
+<I><A HREF="#References">References</A></I></LI>
+</OL>
+
+<hr><h6>&nbsp;</h6>
+
+<H2><A HREF="Format_for_our_talk"></A>Format
+for our talk</H2>
+
+<UL>
+<LI>
+We will "develop" an application
+
+<UL>
+<LI>
+Incorporate f90 features</LI>
+
+<LI>
+Show source code</LI>
+
+<LI>
+Explain what and why as we do it</LI>
+
+<LI>
+Important parts of source code are in red    <span class="r">(If
+I don't talk about it, ask!)</span></LI>
+</UL>
+</LI>
+<LI>
+Application is a genetic algorithm
+
+<UL>
+<LI>
+Easy to understand and program</LI>
+
+<LI>
+Offers rich opportunities for enhancement</LI>
+</UL>
+</LI>
+</UL>
+
+<hr><h6>&nbsp;</h6>
+
+<H2><a id="What_is_a_Genetic_Algorithm"></A>What
+is a Genetic Algorithm</H2>
+
+<ul>
+<LI>
+A "suboptimization" system
+
+<UL>
+<LI>
+Find good, but maybe not optimal, solutions to difficult problems</LI>
+
+<LI>
+Often used on NP-Hard or combinatorial optimization problems</LI>
+</UL>
+</LI>
+<LI>
+Requirements
+
+<UL>
+<LI>
+Solution(s) to the problem represented as a string</LI>
+
+<LI>
+A fitness function
+
+<UL>
+<LI>
+Takes as input the solution string</LI>
+
+<LI>
+Output the desirability of the solution</LI>
+</UL>
+</LI>
+<LI>
+A method of combining solution strings to generate new solutions</LI>
+</UL>
+</LI>
+<li>Find solutions to problems by Darwinian evolution
+<ul>
+<li>Potential solutions ar though of as living entities in a population</LI>
+<li>The strings are the genetic codes for the individuals</LI>
+<li>Fittest individuals are allowed to survive to reproduce</LI>
+</uL>
+</li>
+</ul>
+
+<hr><h6>&nbsp;</h6>
+
+<h2><a id="Simple_algorithm_for_a_GA"></A>Simple
+algorithm for a GA</h2>
+
+<ul>
+<LI>
+Generate a initial population, a collection of strings</LI>
+
+<LI>
+do for some time
+
+<UL>
+<LI>
+evaluate each individual (string) of the population using the fitness function</LI>
+
+<LI>
+sort the population with fittest coming to the top</LI>
+
+<LI>
+allow the fittest individuals to "sexually" reproduce replacing the old
+population</LI>
+
+<LI>
+allow for mutation</LI>
+</UL>
+</LI>
+<LI>
+end do</LI>
+</ul>
+
+<BR>
+<hr><h6>&nbsp;</h6>
+<BR> 
+<H2>
+<a id="Our_example_problem"></A>Our example problem</H2>
+<ul>
+
+<LI>Instance:Given a map of the N  states or countries and a fixed number of colors</LI>
+
+<LI>
+Find a coloring of the map, if it exists, such that no two states that share a boarder have the same color
+</LI>
+</UL>
+<ul>
+<LI>
+Notes
+
+	<UL>
+		<LI>
+		In general, for a fixed number of colors and an arbitrary map the only
+		known way to find if there is a valid coloring is a brute force search
+		with the number of combinations = (NUMBER_OF_COLORS)**(NSTATES)
+		</LI>
+
+		<LI>
+		The strings of our population are integer vectors represent the coloring
+		</LI>
+
+		<LI>
+		Our fitness function returns the number of boarder violations
+		</LI>
+
+		<LI>
+		The GA searches for a mapping with few, hopefully 0 violations
+
+		</LI>
+		<LI>
+		This problem is related to several important NP_HARD problems in computer
+		science
+
+		<UL>
+
+			<LI>Processor scheduling</LI>
+
+			<LI>Communication and grid allocation for parallel computing</LI>
+
+			<LI>Routing</LI>
+		</UL>
+	</LI>
+
+	</ul>
+	</li>
+	</ul>
+
+<hr><h6>&nbsp;</h6>
+<H3 class="c"><span class="r">
+<a id="Start_of_real_Fortran_90_discussion"></A>Start
+of real Fortran 90 discussion</span></h3>
+
+<hr><h6>&nbsp;</h6>
+
+
+
+<H2>
+<a id="Compare"></A>A preview:  Comparing a FORTRAN 77 routine to
+a Fortran 90 routine</H2>
+
+<ul>
+<LI>
+The routine is one of the random number generators from:  <I>Numerical
+Recipes, The Art of Scientific Computing</I>. Press, Teukolsky, Vetterling
+and Flannery.  Cambridge University Press 1986.</LI>
+
+<LI>
+Changes
+
+<UL>
+<LI>
+correct bugs</LI>
+
+<LI>
+increase functionality</LI>
+
+<LI>
+aid portability</LI>
+</ul>
+</LI>
+</UL>
+ 
+<BR> 
+<TABLE>
+<TR>
+<td>
+<pre>
+function ran1(idum)  
+        real ran1 
+        integer idum   
+        real r(97)  
+        parameter ( m1=259200,ia1=7141,ic1=54773)  
+        parameter ( m2=134456,ia2=8121,ic2=28411)  
+        parameter ( m3=243000,ia3=4561,ic3=51349)  
+        integer j  
+        integer iff,ix1,ix2,ix3  
+        data iff /0/  
+        if (idum&lt;0.or.iff.eq.0)then  
+            rm1=1.0/m1  
+            rm2=1.0/m2  
+            iff=1  
+            ix1=mod(ic1-idum,m1)  
+            ix1=mod(ia1*ix1+ic1,m1)  
+            ix2=mod(ix1,m2)  
+            ix1=mod(ia1*ix1+ic1,m1)  
+            ix3=mod(ix1,m3)  
+            do 11 j=1,97  
+                ix1=mod(ia1*ix1+ic1,m1)  
+                ix2=mod(ia2*ix2+ic2,m2)  
+                r(j)=(real(ix1)+real(ix2)*rm2)*rm1  
+ 11           continue  
+            idum=1  
+        endif  
+        ix1=mod(ia1*ix1+ic1,m1)  
+        ix2=mod(ia2*ix2+ic2,m2)  
+        ix3=mod(ia3*ix3+ic3,m3)  
+        j=1+(97*ix3)/m3  
+        if(j>97.or.j&lt;1)then  
+            write(*,*)' error in ran1 j=',j  
+            stop  
+        endif  
+        ran1=r(j)  
+        r(j)=(real(ix1)+real(ix2)*rm2)*rm1  
+        return  
+     end
+</pre>
+</TD>
+
+<TD>
+<pre>
+<span class="r">
+module ran_mod   
+contains
+</span>   
+     function ran1(idum)  
+        use numz  
+        implicit none  !note after use statement  
+        real<span class="r">(b8)</span> ran1  
+        integer<span class="r">, intent(inout), optional ::</span> idum  
+        real<span class="r">(b8)</span> r(97),rm1,rm2  
+        integer<span class="r">, parameter ::</span> m1=259200,ia1=7141,ic1=54773  
+        integer<span class="r">, parameter ::</span> m2=134456,ia2=8121,ic2=28411  
+        integer<span class="r">, parameter ::</span> m3=243000,ia3=4561,ic3=51349  
+        integer j  
+        integer iff,ix1,ix2,ix3  
+        data iff /0/  
+       <span class="r"> save ! corrects a bug in the original routine 
+        if(present(idum))then</span> 
+          if (idum&lt;0.or.iff.eq.0)then  
+            rm1=1.0<span class="r">_b8</span>/m1  
+            rm2=1.0<span class="r">_b8</span>/m2  
+            iff=1  
+            ix1=mod(ic1-idum,m1)  
+            ix1=mod(ia1*ix1+ic1,m1)  
+            ix2=mod(ix1,m2)  
+            ix1=mod(ia1*ix1+ic1,m1)  
+            ix3=mod(ix1,m3)  
+            <span class="r">do j=1,97 </span> 
+                ix1=mod(ia1*ix1+ic1,m1)  
+                ix2=mod(ia2*ix2+ic2,m2)  
+                r(j)=(real(ix1<span class="r">,b8</span>)+real(ix2<span class="r">,b8</span>)*rm2)*rm1  
+            <span class="r">enddo</span> 
+            idum=1  
+          endif  
+        endif  
+        ix1=mod(ia1*ix1+ic1,m1)  
+        ix2=mod(ia2*ix2+ic2,m2)  
+        ix3=mod(ia3*ix3+ic3,m3)  
+        j=1+(97*ix3)/m3  
+        if(j>97.or.j&lt;1)then  
+            write(*,*)' error in ran1 j=',j  
+            stop  
+        endif  
+        ran1=r(j)  
+        r(j)=(real(ix1<span class="r">,b8</span>)+real(ix2,b8)*rm2)*rm1  
+        return  
+     end <span class="r">function ran1</span>  
+ 
+</pre></TD>
+</TR>
+</TABLE>
+
+
+<hr><h6>&nbsp;</h6>
+
+<H2>
+<a id="Obsolescent_features"></A>Obsolescent features</H2>
+<p>
+The following are available in Fortran 90. On the other hand, the concept
+"obsolescence" is introduced. This means that some constructs may be removed
+in the future.
+</p>
+<ul>
+<LI>
+     Arithmetic IF-statement</LI>
+
+<LI>
+     Control variables in a DO-loop which are floating
+point or double-precision floating-point</LI>
+
+<LI>
+     Terminating several DO-loops on the same statement</LI>
+
+<LI>
+     Terminating the DO-loop in some other way than
+with CONTINUE or END DO</LI>
+
+<LI>
+     Alternate return</LI>
+
+<LI>
+     Jump to END IF from an outer block</LI>
+
+<LI>
+     PAUSE</LI>
+
+<LI>
+     ASSIGN and assigned GOTO and assigned FORMAT ,
+that is the whole "statement number variable" concept.</LI>
+
+<LI>
+     Hollerith editing in FORMAT.</LI>
+</ul>
+
+
+
+<hr><h6>&nbsp;</h6>
+
+<H2>
+<a id="New_source_Form"></A>New source form (and related things)</H2>
+
+
+
+<ul>
+	<li>Summary
+<ul>
+	<li>! now indicates the start of a comment</li>
+
+
+	<li>&amp; indicates the next line is a continuation</li>
+
+
+	<li>Lines can be longer than 72 characters</li>
+
+
+	<li>Statements can start in any column</li>
+
+
+	<li>Use ; to put multiple statements on one line</li>
+
+
+	<li>New forms for the do loop</li>
+
+
+	<li>Many functions are generic</li>
+
+
+	<li>32 character names</li>
+
+
+	<li>Many new array assignment techniques</li>
+</ul>
+
+	</li>
+	<li>Features
+<ul>
+	<li>Flexibility can aid in program readability</li>
+
+
+	<li>Readability decreases errors</li>
+</ul>
+	</li>
+	<li>Got ya!
+<ul>
+	<li>Can no longer use C to start a comment</li>
+
+
+	<li>Character in column 5 no longer is continue</li>
+
+
+	<li>Tab is not a valid character (may produce a warning)</li>
+
+
+	<li>Characters past 72 now count</li>
+</ul>
+
+	</li>
+</ul>
+ <pre>
+!23456789 
+program darwin 
+     real a(10), b(10), c(10), d(10), e(10), x, y 
+     integer odd(5),even(5) 
+     write(*,*)"starting ",<span class="r">&amp;  ! this line is continued by using "&amp;" </span>
+               "darwin"    <span class="r">   ! this line in a continued from above </span>
+     x=1; y=2; write(*,*)x,y <span class="r"> ! multiple statement per line -- rarely a good idea </span>
+     do i=1,10   <span class="r"> ! statement lable is not required for do </span>
+        e(i)=i 
+     enddo 
+     odd= (/ 1,3,5,7,9 /)  <span class="r">! array assignment </span>
+     even=(/ 2,4,6,8,10 /) ! array assignment 
+     a=1         <span class="r"> ! array assignment, every element of a = 1 </span>
+     b=2 
+     c=a+b+e      <span class="r">! element by element assignment </span>
+     c(odd)=c(even)-1  <span class="r">! can use arrays of indices on both sides</span>
+     d=sin(c)    <span class="r"> ! element by element application of intrinsics </span>
+     write(*,*)d 
+     write(*,*)<span class="r">abs</span>(d)  <span class="r">! many intrinsic functions are generic </span>
+<span class="r"> a_do_loop :</span> do i=1,10 
+               write(*,*)i,c(i),d(i) 
+             enddo <span class="r">a_do_loop </span>
+<span class="r">     do </span>
+        if(c(10) &lt; 0.0 ) <span class="r">exit </span>
+        c(10)=c(10)-1 
+<span class="r">     enddo </span>
+     write(*,*)c(10) 
+<span class="r">     do while (c(9) > 0) </span>
+        c(9)=c(9)-1 
+<span class="r">     enddo </span>
+     write(*,*)c(9) 
+end program 
+</pre>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="New_data_declaration_method"></A>New data declaration method</H2>
+
+<ul>
+<LI>
+Motivation
+
+<UL>
+<LI>
+Variables can now have attributes such as
+
+<UL>
+<LI>
+Parameter</LI>
+
+<LI>
+Save</LI>
+
+<LI>
+Dimension</LI>
+</UL>
+</LI>
+<LI>
+Attributes are assigned in the variable declaration statement</LI>
+</UL>
+</li>
+<LI>
+One variable can have several attributes</LI>
+
+<LI>
+Requires Fortran 90 to have a new statement form</LI>
+</ul>
+<pre>
+    integer<span class="r">,parameter :: </span>in2 = 14 
+    real, parameter :: pi = 3.141592653589793239 
+    real<span class="r">, save, dimension(10) :: </span>cpu_times,wall_times 
+!****    the old way of doing the same    ****! 
+!****    real cpu_times(10),wall_times(10) ****! 
+!****    save cpu_times, wall_times        ****! 
+</pre>
+
+<BR> 
+<ul>
+<LI>
+Other Attributes
+
+<UL>
+<LI>
+allocatable</LI>
+
+<LI>
+public</LI>
+
+<LI>
+private</LI>
+
+<LI>
+target</LI>
+
+<LI>
+pointer</LI>
+
+<LI>
+intent</LI>
+
+<LI>
+optional</LI>
+</UL>
+</LI>
+</ul>
+<BR> 
+<BR> 
+
+<hr><h6>&nbsp;</h6>
+
+<H2><a id="Kind_facility"></A>Kind facility</H2>
+
+<ul><LI>
+Motivation
+
+<UL>
+<LI>
+Assume we have a program that we want to run on two different machines</LI>
+
+<LI>
+We want the same representation of reals on both machines (same number
+of significant digits)</LI>
+
+<LI>
+Problem: different machines have different representations for reals</LI>
+</UL>
+</LI>
+</UL>
+
+<h3 class="c">Digits of precision for machine and data type</h3>
+<TABLE>
+<TR>
+<TD>Machine/Data Type</TD>
+
+<TD>    Real</TD>
+
+<TD>      Double Precision</TD>
+</TR>
+
+<TR>
+<TD>IBM (SP)</TD>
+
+<TD>      6</TD>
+
+<TD>          15</TD>
+</TR>
+
+<TR>
+<TD>Cray (T90)</TD>
+
+<TD>    15</TD>
+
+<TD>          33</TD>
+</TR>
+
+<TR>
+<TD>Cray (T3E)</TD>
+
+<TD>    15 </TD>
+
+<TD>          15</TD>
+</TR>
+</TABLE>
+
+<h3 class="c"><span class="r">********* or *********</span></h3>
+
+<UL>
+<LI>
+We may want to run with at least 6 digits today and at least 14 digits
+tomorrow</LI>
+
+<LI>
+Use the Select_Real_Kind(P) function to create a data type with P digits
+of precision</LI>
+</UL>
+ 
+
+<pre>
+<span class="b">  sp001 % cat darwin.f </span>
+program darwin 
+<span class="r">! e has at least 4 significant digits </span>
+  real(selected_real_kind(4))e 
+<span class="r">! b8 will be used to define reals with 14 digits </span>
+  integer, parameter:: b8 = selected_real_kind(14) 
+  real(b8), parameter :: pi = 3.141592653589793239<span class="r">_b8 ! note usage of _b8 </span>
+                                                   <span class="r">   ! with  a constant </span>
+                                                   <span class="r">   ! to force precision </span>
+ e= 2.71828182845904523536 
+  write(*,*)"starting ",&amp;  <span class="r">! this line is continued by using "&amp;" </span>
+            "darwin"       <span class="r">! this line in a continuation from above </span>
+  write(*,*)"pi has ",precision(pi)," digits precision ",pi 
+  write(*,*)"e has   ",precision(e)," digits precision ",e 
+end program  
+<span class="b">  sp001  % darwin 
+ starting darwin 
+ pi has  15  digits precision  3.14159265358979312 
+ e has    6  digits precision  2.718281746 
+sp001 % 
+</span>
+</pre>
+
+<UL>
+<LI>
+Can convert to/from given precision for all variables created using "b8"
+by changing definition of "b8"</LI>
+
+<LI>
+Use the Select_Real_Kind(P,R) function to create a data type with P digits
+of precision and exponent range of R</LI>
+</UL>
+
+<hr><h6>&nbsp;</h6>
+
+<H2><a id="Modules"></A>Modules</H2>
+
+<ul>
+<LI>
+Motivation:
+
+<UL>
+<LI>
+Common block usage is prone to error</LI>
+
+<LI>
+Provide most of capability of common blocks but safer</LI>
+
+<LI>
+Provide capabilities beyond common blocks</LI>
+</UL>
+</LI>
+<LI>
+Modules can contain:
+
+<UL>
+<LI>
+Data definitions</LI>
+
+<LI>
+Data to be shared much like using a labeled common</LI>
+
+<LI>
+Functions and subroutines</LI>
+
+<LI>
+Interfaces (more on this later)</LI>
+</UL>
+</LI>
+<LI>
+You "include" a module with a "use" statement</LI>
+</ul>
+
+<BR> 
+
+<pre>
+<span class="r">module numz</span> 
+<span class="r">  integer,parameter:: b8 = selected_real_kind(14)</span> 
+<span class="r">  real(b8),parameter :: pi = 3.141592653589793239_b8</span> 
+<span class="r">  integergene_size</span> 
+<span class="r">end module</span> 
+
+ program darwin   
+    <span class="r">use numz</span>  
+    <span class="r">implicit none    ! now part of the standard, put it after the use statements</span> 
+   write(*,*)"pi has ",precision(pi),"
+digits precision ",pi   
+   call set_size()   
+   write(*,*)"gene_size=",gene_size   
+ end program   
+
+subroutine set_size  
+  <span class="r">use numz  </span>
+  gene_size=10  
+end subroutine
+ 
+
+ <span class="b"> pi has  15  digits precision  3.14159265358979312  
+  gene_size=10 </span>
+</pre>
+
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Module_functions_and_subroutines"></A>Module functions and subroutines</H2>
+
+<ul>
+<LI>
+Motivation:
+
+<UL>
+<LI>
+Encapsulate related functions and subroutines</LI>
+
+<LI>
+Can "USE" these functions in a program or subroutine</LI>
+
+<LI>
+Can be provided as a library</LI>
+
+<LI>
+Only routines that contain the use statement can see the routines</LI>
+</UL>
+
+</LI>
+<li>Example is a random number package:</LI>
+</ul>
+
+<pre>
+module ran_mod 
+! module contains three functions 
+! ran1 returns a uniform random number between 0-1 
+! spread returns random number between min - max 
+! normal returns a normal distribution 
+<span class="r">contains</span>
+    <span class="r">function ran1()</span>  !returns random number between 0 - 1 
+        <span class="r">use numz</span> 
+        implicit none 
+        real(b8) ran1,x 
+        call random_number(x) ! built in fortran 90 random number function 
+        ran1=x 
+    end function ran1     
+    <span class="r">function spread(min,max)</span>  !returns random number between min - max 
+        <span class="r">use numz</span> 
+        implicit none 
+        real(b8) spread 
+        real(b8) min,max 
+        spread=(max - min) * ran1() + min 
+    end function spread     
+    <span class="r">function normal(mean,sigma)</span> !returns a normal distribution 
+        <span class="r">use numz</span> 
+        implicit none 
+        real(b8) normal,tmp 
+        real(b8) mean,sigma 
+        integer flag 
+        real(b8) fac,gsave,rsq,r1,r2 
+        save flag,gsave 
+        data flag /0/ 
+        if (flag.eq.0) then 
+        rsq=2.0_b8 
+            do <span class="r">while</span>(rsq.ge.1.0_b8.or.rsq.eq.0.0_b8) ! new from for do 
+                r1=2.0_b8*ran1()-1.0_b8 
+                r2=2.0_b8*ran1()-1.0_b8 
+                rsq=r1*r1+r2*r2 
+            enddo 
+            fac=sqrt(-2.0_b8*log(rsq)/rsq) 
+            gsave=r1*fac 
+            tmp=r2*fac 
+            flag=1 
+        else 
+            tmp=gsave 
+            flag=0 
+        endif 
+        normal=tmp*sigma+mean 
+        return 
+    end function normal end module ran_mod 
+</pre>
+
+<BR> 
+<BR>
+<hr><h6>&nbsp;</h6>
+<BR> Exersize 1:  Write a program that returns 10 uniform random
+numbers.
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Allocatable_arrays_the_basics"></A>Allocatable arrays (the basics)</H2>
+
+<uL>
+<LI>
+Motivation:
+
+<UL>
+<LI>
+At compile time we may not know the size an array need to be</LI>
+</UL>
+
+<UL>
+<LI>
+We may want to change problem size without recompiling</LI>
+</UL>
+</li>
+<LI>
+Allocatable arrays allow us to set the size at run time</LI>
+
+<LI>
+We set the size of the array using the allocate statement</LI>
+
+<LI>
+We may want to change the lower bound for an array</LI>
+<LI>
+A simple example:</LI>
+
+</ul>
+
+<pre>
+module numz 
+  integer, parameter:: b8 = selected_real_kind(14) 
+  integer gene_size,num_genes 
+  <span class="r">integer,allocatable :: a_gene(:),many_genes(:,:) </span>
+end module 
+program darwin 
+    use numz 
+    implicit none 
+    integer ierr 
+    call set_size() 
+    <span class="r">allocate(a_gene(gene_size),stat=ierr)</span> !stat= allows for an error code return 
+    if(ierr /= 0)write(*,*)"allocation error"  ! /= is .ne. 
+    <span class="r">allocate(many_genes(gene_size,num_genes),stat=ierr)</span>  !2d array 
+    if(ierr /= 0)write(*,*)"allocation error" 
+    write(*,*)<span class="r">lbound</span>(a_gene),<span class="r">ubound</span>(a_gene) <span class="r">! get lower and upper bound 
+                                            ! for the array </span>
+    write(*,*)<span class="r">size</span>(many_genes),size(many_genes,1) <span class="r">!get total size and size </span>
+                                                  <span class="r">!along 1st dimension </span>
+    <span class="r">deallocate</span>(many_genes) <span class="r">! free the space for the array and matrix </span>
+    deallocate(a_gene) 
+    allocate(a_gene(0:gene_size)) ! now allocate starting at 0 instead of 1 
+    write(*,*)<span class="r">allocated</span>(many_genes),allocated(a_gene) <span class="r">! shows if allocated </span>
+    write(*,*)lbound(a_gene),ubound(a_gene) 
+end program 
+  subroutine set_size 
+    use numz 
+    write(*,*)'enter gene size:' 
+    read(*,*)gene_size 
+    write(*,*)'enter number of genes:' 
+    read(*,*)num_genes 
+end subroutine set_size 
+
+<span class="b">
+    enter gene size: 
+10 
+ enter number of genes: 
+20 
+           1          10 
+         200          10 
+ F T 
+           0          10 
+</span>
+</pre>
+
+<BR>
+<H2>
+<a id="Passing_arrays_to_subroutines"></A>Passing arrays to subroutines</H2>
+
+<ul>
+	<li>There are several ways to specify arrays for subroutines
+
+
+<dl>
+	<dt>Explicit shape</dt>
+		<dd>    integer, dimension(8,8)::an_explicit_shape_array</dd>
+
+
+
+	<dt>Assumed size</dt>
+		<dd>    integer, dimension(i,*)::an_assumed_size_array</dd>
+
+
+
+	<dt>Assumed Shape</dt>
+		<dd>    integer, dimension(:,:)::an_assumed_shape_array</dd>
+</dl>
+
+</li>
+
+
+<li>Example</li>
+</ul>
+<pre>
+subroutine arrays(an_explicit_shape_array,&amp; 
+                  i                      ,&amp; !note we pass all bounds except the last 
+                  an_assumed_size_array  ,&amp; 
+                  an_assumed_shape_array) 
+<span class="r">! Explicit shape</span> 
+    integer, <span class="r">dimension(8,8)</span>::an_explicit_shape_array 
+<span class="r">! Assumed size </span>
+    integer, <span class="r">dimension(i,*)</span>::an_assumed_size_array 
+<span class="r">! Assumed Shape </span>
+    integer, <span class="r">dimension(:,:)</span>::an_assumed_shape_array 
+    write(*,*)sum(an_explicit_shape_array) 
+    write(*,*)lbound(an_assumed_size_array) ! why does sum not work here? 
+    write(*,*)sum(an_assumed_shape_array) 
+end subroutine 
+</pre>
+
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Interface_for_passing_arrays"></A>Interface for passing arrays</H2>
+
+<ul>
+<LI>
+<span class="g">!!!!Warning!!!!  When passing assumed shape arrays as arguments you must provide an interface</span></LI>
+
+<LI>
+Similar to C prototypes but much more versatile</LI>
+
+<LI>
+The interface is a copy of the invocation line and the argument definitions</LI>
+
+<LI>
+Modules are a good place for interfaces</LI>
+
+<LI>
+If a procedure is part of a "contains" section in a module an interface
+is not required</LI>
+
+<LI>
+<span class="g">!!!!Warning!!!! The compiler may not tell you that you need an interface</span></LI>
+</UL>
+<pre>
+  module numz 
+    integer, parameter:: b8 = selected_real_kind(14) 
+    integer,allocatable :: a_gene(:),many_genes(:,:) 
+end module module face 
+    interface fitness 
+        <span class="r">function fitness(vector) </span> 
+        use numz 
+        implicit none 
+        real(b8) fitness 
+        <span class="r">integer, dimension(:) ::  vector </span> 
+        end function fitness 
+    end interface 
+end module program darwin 
+    use numz 
+    <span class="r">use face </span> 
+    implicit none 
+    integer i 
+    integer vect(10) ! just a regular array 
+    allocate(a_gene(10));allocate(many_genes(3,10)) 
+    a_gene=1  !sets every element of a_gene to 1 
+    write(*,*)fitness(a_gene) 
+    vect=8 
+    write(*,*)fitness(vect) ! also works with regular arrays 
+    many_genes=3  !sets every element to 3 
+    many_genes(1,:)=a_gene  !sets column 1 to a_gene 
+    many_genes(2,:)=2*many_genes(1,:) 
+    do i=1,3 
+        write(*,*)fitness(many_genes(i,:)) 
+    enddo 
+    write(*,*)fitness(many_genes(:,1))  !go along other dimension 
+!!!!write(*,*)fitness(many_genes)!!!!does not work 
+end program 
+<span class="r">function fitness(vector)</span> 
+    use numz 
+    implicit none 
+    real(b8) fitness 
+    <span class="r">integer, dimension(:)::  vector ! must match interface</span> 
+    fitness=sum(vector) 
+end function 
+</pre>
+<BR>
+<hr><h6>&nbsp;</h6>
+<BR>Exersize 2:  Run this program using the "does not work line". 
+Why?  Using intrinsic functions make it work?
+<BR>Exersize 3:  Prove that f90 does not "pass by address".
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Optional_arguments_and_intent"></A>Optional arguments and intent</H2>
+
+<ul>
+<LI>
+Motivation:
+
+<UL>
+<LI>
+We may have a function or subroutine that we may not want to always pass
+all arguments</LI>
+
+<LI>
+Initialization</LI>
+</UL>
+
+</LI>
+<LI>
+Two examples
+
+<UL>
+<li>Seeding the intrinsic random number generator requires keyword arguments</li>
+
+<LI>
+To define an optional argument in our own function we use the optional
+attribute</LI>
+</UL>
+</li>
+</ul>
+<pre>
+<span class="r">integer :: my_seed</span>
+</pre>
+<h3>becomes</h3>
+<pre>
+<span class="r">integer, optional :: my_seed</span>
+</pre>
+<pre>
+! ran1 returns a uniform random number between 0-1 
+! the seed is optional and used to reset the generator 
+contains 
+   function ran1(my_seed) 
+      use numz 
+      implicit none 
+      real(b8) ran1,r 
+      integer, <span class="r">optional ,intent(in)</span> :: my_seed  <span class="r">! optional argument not changed in the routine </span>
+      integer,allocatable :: seed(:) 
+      integer the_size,j 
+      if(<span class="r">present(my_seed))</span>then            <span class="r">! use the seed if present </span>
+          call <span class="r">random_seed(size=the_size)</span> <span class="r">! how big is the intrisic seed? </span>
+          allocate(seed(the_size))        ! allocate space for seed 
+          do j=1,the_size                 ! create the seed 
+             seed(j)=<span class="r">abs</span>(my_seed)+(j-1)   <span class="r">! abs is generic </span>
+          enddo 
+          call <span class="r">random_seed(put=seed)      ! assign the seed </span>
+          deallocate(seed)                ! deallocate space 
+      endif 
+      call random_number(r) 
+      ran1=r 
+  end function ran1 
+end module program darwin 
+    use numz 
+    use ran_mod          <span class="r">! interface required if we have 
+                         ! optional or intent arguments </span>
+    real(b8) x,y 
+    x=ran1<span class="r">(my_seed=12345) ! we can specify the name of the argument </span>
+    y=ran1() 
+    write(*,*)x,y 
+    x=ran1<span class="r">(12345)         ! with only one optional argument we don't need to </span>
+    y=ran1() 
+    write(*,*)x,y 
+end program 
+</pre>
+
+<BR> 
+<ul>
+<LI>
+Intent is a hint to the compiler to enable optimization
+
+
+
+<dl>
+	<dt>intent(in)</dt>
+		<dd>We will not change this value in our subroutine</dd>
+
+
+
+	<dt>intent(out)</dt>
+		<dd>We will define this value in our routine</dd>
+
+
+
+	<dt>intent(inout)</dt>
+		<dd>The normal situation</dd>
+</dl>
+
+
+</li>
+</ul>
+
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Derived_data_types"></A>Derived data types</h2>
+
+<ul>
+<LI>
+Motivation:
+
+<UL>
+<LI>
+Derived data types can be used to group different types of data together
+(integers, reals, character, complex)</LI>
+
+<LI>
+Can not be done in F77 although people have "faked" it</LI>
+</UL>
+</LI>
+<LI>
+Example
+
+<UL>
+<LI>
+In our GA we define a collection of genes as a 2d array</LI>
+
+<LI>
+We call the fitness function for every member of the collection</LI>
+
+<LI>
+We want to sort the collection of genes based on result of fitness function</LI>
+
+<LI>
+Define a data type that holds the fitness value and an index into the 2d
+array</LI>
+
+<LI>
+Create an array of this data type, 1 for each member of the collection</LI>
+
+<LI>
+Call fitness function with the result being placed into the new data type
+along with a pointer into the array</LI>
+</UL>
+</li>
+
+<LI>
+Again modules are a good place for data type definitions</LI>
+</ul>
+
+<pre>
+module galapagos 
+    use numz 
+    type <span class="r">thefit !the name of the type 
+      sequence  ! sequence forces the data elements 
+                ! to be next to each other in memory 
+                ! where might this be useful? </span>
+      real(b8) val   ! our result from the fitness function 
+      integer index  ! the index into our collection of genes 
+    end type thefit 
+end module
+</pre>
+<hr><h6>&nbsp;</h6>
+
+<H2>
+<a id="Using_defined_types"></A>Using defined types</H2>
+
+<ul><LI>
+Use the % to reference various components of the derived data type</LI>
+</ul>
+
+<pre>
+program darwin 
+    use numz 
+    use galapagos <span class="r">! the module that contains the type definition</span> 
+    use face      <span class="r">! contains various interfaces </span> 
+ implicit none 
+<span class="r">! define an allocatable array of the data type 
+! than contains an index and a real value </span> 
+    type <span class="r">(thefit),allocatable ,target </span> :: results(:) 
+! create a single instance of the data type 
+    type (thefit) best 
+    integer,allocatable :: genes(:,:) ! our genes for the genetic algorithm 
+    integer j 
+    integer num_genes,gene_size 
+    num_genes=10 
+    gene_size=10 
+    allocate(results(num_genes))         <span class="r">! allocate the data type </span> 
+                                         <span class="r">! to hold fitness and index </span> 
+    allocate(genes(num_genes,gene_size)) <span class="r">! allocate our collection of genes </span> 
+    call init_genes(genes)               ! starting data 
+    write(*,<span class="r">'("input")'</span> ) ! we can put format in write statement 
+    do j=1,num_genes 
+       <span class="r">results(j)%index</span> =j 
+       <span class="r">results(j)%val</span> =fitness(genes(j,:)) ! just a dummy routine for now 
+       write(*,"(f10.8,i4)")<span class="r">results(j)%val,results(j)%index </span> 
+    enddo 
+end program 
+
+</pre>
+
+
+<BR>
+<hr><h6>&nbsp;</h6>
+
+<H2><a id="User_defined_operators"></A>User defined operators</H2>
+
+<UL>
+<LI>
+Motivation
+<ul>
+<LI>
+With derived data types we may want (need) to define operations</LI>
+
+<LI>
+(Assignment is predefined)</LI>
+</UL>
+</li>
+<LI>
+Example:
+
+<UL>
+<LI>
+&lt;, >, ==  not defined for our data types
+
+<UL>
+<LI>
+We want to find the minimum of our fitness values so we need &lt; operator</LI>
+
+<LI>
+In our sort routine we want to do &lt;, >, ==</LI>
+
+<LI>
+In C++ terms the operators are overloaded</LI>
+</UL>
+</LI>
+<LI>
+We are free to define new operators</LI>
+</UL>
+</LI>
+<LI>
+Two step process to define operators
+
+<UL>
+<LI>
+Define a special interface</LI>
+
+<LI>
+Define the function that performs the operation</LI>
+</UL>
+</LI>
+</ul>
+<pre>
+module sort_mod 
+!defining the interfaces 
+  interface operator <span class="r">(.lt.) </span> ! overloads standard .lt. 
+    module procedure <span class="r">theless</span> ! the function that does it 
+  end interface   interface operator (.gt.)   ! overloads standard .gt. 
+    module procedure thegreat ! the function that does it 
+  end interface   interface operator (.ge.)  ! overloads standard .ge. 
+    module procedure thetest ! the function that does it 
+  end interface   interface operator (.converged.)  <span class="r">! new operator </span>
+    module procedure index_test     ! the function that does it 
+  end interface 
+  <span class="r">contains      ! our module will contain 
+              ! the required functions </span>
+    function <span class="r">theless</span>(a,b) ! overloads &lt; for the type (thefit) 
+    use galapagos 
+    implicit none 
+    type(thefit), <span class="r">intent (in)</span> :: a,b 
+    <span class="r">logical theless           ! what we return 
+    if(a%val &lt; b%val)then     ! this is where we do the test </span>
+        theless=.true. 
+    else 
+        theless=.false. 
+    endif 
+    return 
+  end function theless   function thegreat(a,b) ! overloads > for the type (thefit) 
+    use galapagos 
+    implicit none 
+    type(thefit), intent (in) :: a,b 
+    logical thegreat 
+    if(a%val > b%val)then 
+        thegreat=.true. 
+    else 
+        thegreat=.false. 
+    endif 
+    return 
+  end function thegreat 
+  function thetest(a,b)   ! overloads >= for the type (thefit) 
+    use galapagos 
+    implicit none 
+    type(thefit), <span class="r">intent (in) :: a,b </span>
+    logical thetest 
+    if(a%val >= b%val)then 
+        thetest=.true. 
+    else 
+        thetest=.false. 
+    endif 
+    return 
+end function thetest 
+  function index_test(a,b) <span class="r">! defines a new operation for the type (thefit) </span>
+    use galapagos 
+    implicit none 
+    type(thefit), intent (in) :: a,b 
+    logical index_test 
+    if(a%index > b%index)then   <span class="r">! check the index value for a difference </span>
+        index_test=.true. 
+    else 
+        index_test=.false. 
+    endif 
+    return 
+end function index_test 
+</pre>
+<hr><h6>&nbsp;</h6>
+<BR>
+<H2>
+<a id="Recursive_functions_introduction"></A>Recursive functions introduction</H2>
+
+<UL>
+<LI>
+Notes
+
+
+<ul>
+<LI>
+Recursive function is one that calls itself</LI>
+
+<LI>
+Anything that can be done with a do loop can be done using a recursive
+function</LI>
+</UL>
+</li>
+<LI>
+Motivation
+
+<UL>
+<LI>
+Sometimes it is easier to think recursively</LI>
+
+<LI>
+Divide an conquer algorithms are recursive by nature
+
+<UL>
+<LI>
+Fast FFTs</LI>
+
+<LI>
+Searching</LI>
+
+<LI>
+Sorting</LI>
+</UL>
+</li>
+
+</UL>
+</LI>
+</ul>
+<h3>Algorithm of searching for minimum of an array</h3>
+    <pre>
+    function findmin(array) 
+        is size of array 1? 
+           min in the array is first element 
+        else 
+           find minimum in left half of array using findmin function 
+           find minimum in right half of array using findmin function 
+           global minimum is min of left and right half 
+    end function 
+    </pre>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Fortran_90_recursive_functions"></A>Fortran 90 recursive functions</H2>
+
+<ul>
+<LI>
+Recursive functions should have an interface</LI>
+
+<LI>
+The result and recursive keywords are required as part of the function definition</LI>
+
+<LI>
+Example is a function finds the minimum value for an array</LI>
+
+
+</ul>
+
+<pre>
+<span class="r">recursive</span> function realmin(ain) <span class="r">result (themin)</span> 
+<span class="r">! recursive and result are required for recursive functions</span> 
+    use numz 
+    implicit none 
+    real(b8) themin,t1,t2 
+    integer n,right 
+    real(b8) ,dimension(:) :: ain 
+    n=size(ain) 
+    if(n == 1)then 
+       themin=ain(1) <span class="r">! if the size is 1 return value</span> 
+    return 
+    else 
+      right=n/2 
+      t1=realmin(ain(1:right))   <span class="r">! find min in left half </span>
+      t2=realmin(ain(right+1:n)) <span class="r">! find min in right half </span>
+      themin=min(t1,t2)          ! find min of the two sides 
+     endif 
+end function 
+ </pre>
+
+
+<ul>
+<LI>
+Example 2 is the same except the input data is our derived data type</LI>
+</ul>
+
+<pre>
+<span class="r">!this routine works with the data structure thefit not reals </span>
+<span class="r">recursive</span> function typemin(ain) <span class="r">result (themin) </span>
+    use numz 
+ use sort_mod 
+ use galapagos 
+ implicit none 
+ real(b8) themin,t1,t2 
+ integer n,right 
+    type <span class="r">(thefit)</span> ,dimension(:) :: ain <span class="r">! this line is different </span>
+ n=size(ain) 
+ if(n == 1)then 
+     themin=ain(1)%val  <span class="r">! this line is different </span>
+  return 
+ else 
+  right=n/2 
+  t1=typemin(ain(1:right)) 
+  t2=typemin(ain(right+1:n)) 
+  themin=min(t1,t2) 
+ endif 
+end function 
+</pre>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Pointers"></A>Pointers</H2>
+ 
+<UL>
+<LI>
+Motivation
+<ul>
+<LI>
+Can increase performance</LI>
+
+<LI>
+Can improve readability</LI>
+
+<LI>
+Required for some derived data types (linked lists and trees)</LI>
+
+<LI>
+Useful for allocating "arrays" within subroutines</LI>
+
+<LI>
+Useful for referencing sections of arrays</LI>
+</UL>
+</LI>
+<LI>
+Notes
+
+<UL>
+<LI>
+Pointers can be thought of as an alias to another variable</LI>
+
+<LI>
+In some cases can be used in place of an array</LI>
+
+<LI>
+To assign a pointer use => instead of just =</LI>
+
+<LI>
+Unlike C and C++, pointer arithmetic is not allowed</LI>
+</UL>
+</LI>
+</ul>
+ 
+<ul>
+<LI>
+First pointer example
+
+<UL>
+<LI>
+Similar to the last findmin routine</LI>
+
+<LI>
+Return a pointer to the minimum</LI>
+</UL>
+</LI>
+</ul>
+<pre>
+recursive function pntmin(ain) <span class="r">result (themin)</span> ! return a pointer 
+ use numz 
+ use galapagos 
+ use sort_mod ! contains the &lt; operator for thefit type 
+ implicit none 
+ <span class="r">type (thefit),pointer:: themin,t1,t2 </span>
+ integer n,right 
+    type (thefit) ,dimension(:),target :: ain 
+ n=size(ain) 
+ if(n == 1)then 
+     themin=>ain(1) !this is how we do pointer assignment 
+  return 
+ else 
+  right=n/2 
+  t1=>pntmin(ain(1:right)) 
+  t2=>pntmin(ain(right+1:n)) 
+  if(t1 &lt; t2)then; themin=>t1; else; themin=>t2; endif 
+ endif 
+end function 
+</pre>
+<BR>
+<hr><h6>&nbsp;</h6>
+<BR>Exercise 4:  Carefully write a recursive N! program. 
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Function_and_subroutine_overloading"></A>Function and subroutine
+overloading</H2>
+
+<ul>
+<li>
+Motivation
+
+<UL>
+<LI>
+Allows us to call functions or subroutine with the same name with different
+argument types</LI>
+
+<LI>
+Increases readability</LI>
+</UL>
+</LI>
+<LI>
+Notes:
+
+<UL>
+<LI>
+Similar in concept to operator overloading</LI>
+
+<LI>
+Requires an interface</LI>
+
+<LI>
+Syntax for subroutines is same as for functions</LI>
+
+<LI>
+Many intrinsic functions have this capability
+
+<UL>
+<LI>
+abs (reals,complex,integer)</LI>
+
+<LI>
+sin,cos,tan,exp(reals, complex)</LI>
+
+<LI>
+array functions(reals, complex,integer)</LI>
+</UL>
+</li>
+
+<LI>
+Example
+
+<UL>
+<LI>
+Recall we had two functions that did the same thing but with different argument types</LI>
+</ul>
+</li>
+</ul>
+
+<pre>
+        recursive function realmin(ain) result (themin) 
+        real(b8) ,dimension(:) :: ain         recursive function typemin(ain) result (themin) 
+        type (thefit) ,dimension(:) :: ain 
+</pre>
+
+</li>
+<LI>
+We can define a generic interface for these two functions and call
+them using the same name</LI>
+</UL>
+<pre>
+! note we have two functions within the same interface 
+! this is how we indicate function overloading 
+! <span class="r">both functions are called "findmin" in the main program </span>
+interface <span class="r">findmin</span>  
+! the first is called with an array of reals as input 
+        recursive function <span class="r">realmin(ain)</span> result (themin) 
+          use numz 
+       real(b8) themin 
+          <span class="r">real(b8) ,dimension(:) :: ain </span>
+        end function ! the second is called with a array of data structures as input 
+     recursive function <span class="r">typemin</span>(ain) result (themin) 
+          use numz 
+    use galapagos 
+       real(b8) themin 
+          <span class="r">type (thefit) ,dimension(:) :: ain </span>
+     end function 
+    end interface 
+</pre>
+
+<ul>
+<LI>
+Example usage</LI>
+</ul>
+<pre>
+program darwin 
+    use numz 
+    use ran_mod 
+    use galapagos ! the module that contains the type definition 
+    use face      ! contains various interfaces 
+    use sort_mod  ! more about this later it 
+                  ! contains our sorting routine 
+      ! and a few other tricks 
+    implicit none 
+<span class="r">
+! create an allocatable array of the data type 
+! than contains an index and a real value 
+    type (thefit),allocatable ,target :: results(:) 
+! create a single instance of the data type 
+    type (thefit) best 
+! pointers to our type 
+    type (thefit) ,pointer :: worst,tmp </span>
+    integer,allocatable :: genes(:,:) ! our genes for the ga 
+    integer j 
+    integer num_genes,gene_size 
+    real(b8) x 
+    real(b8),allocatable :: z(:) 
+    real(b8),pointer :: xyz(:) ! we'll talk about this next 
+    num_genes=10 
+    gene_size=10 
+    allocate(results(num_genes))         ! allocate the data type to 
+    allocate(genes(num_genes,gene_size)) ! hold our collection of genes 
+    call init_genes(genes)               ! starting data 
+    write(*,'("input")') 
+    do j=1,num_genes 
+       results(j)%index=j 
+       results(j)%val=fitness(genes(j,:)) ! just a dummy routine 
+       write(*,"(f10.8,i4)")results(j)%val,results(j)%index 
+    enddo     allocate(z(size(results))) 
+    z=results(:)%val <span class="r">! copy our results to a real array ! use a recursive subroutine operating on the real array </span>
+    write(*,*)"the lowest fitness: ",<span class="r">findmin(z) </span>
+<span class="r">! use a recursive subroutine operating on the data structure </span>
+    write(*,*)"the lowest fitness: ",<span class="r">findmin(results) </span>
+end program
+</pre>
+    
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Fortran_Minval_and_Minloc_routines"></A>Fortran Minval and Minloc
+routines</H2>
+
+<UL>
+<LI>
+Fortran has routines for finding minimum and maximum values in arrays and
+the locations
+
+<ul>
+<LI>
+minval</LI>
+
+<LI>
+maxval</LI>
+
+<LI>
+minloc (returns an array)</LI>
+
+<LI>
+maxloc (returns an array)</LI>
+</UL>
+</li>
+</ul>
+
+<pre>
+<span class="r">! we show two other methods of getting the minimum fitness </span> 
+! use the <span class="r">built in f90 routines </span> on a real array 
+    write(*,*)"the lowest fitness: ",<span class="r">minval(z),minloc(z) </span>
+</pre>
+
+<BR> 
+<hr><h6>&nbsp;</h6>
+<H2>
+ <a id="Pointer_assignment"></A>Pointer assignment</H2>
+
+<UL>
+<LI>
+This is how we use the pointer function defined above</LI>
+
+<LI>
+worst is a pointer to our data type</LI>
+
+<LI>
+note the use of =></LI>
+</UL>
+<pre>
+! use a recursive subroutine operating on the data 
+! structure and returning a pointer to the result 
+    <span class="c">worst=></span>pntmin(results) <span class="c">! note pointer assignment </span>
+! what will this line write? 
+ write(*,*)"the lowest fitness: ",worst
+ </pre>
+
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="More_pointer_usage_association_and_nullify"></A>More pointer usage, association and nullify</H2>
+
+<UL>
+<LI>
+Motivation
+<ul>
+<LI>
+Need to find if pointers point to anything</LI>
+
+<LI>
+Need to find if two pointers point to the same thing</LI>
+
+<LI>
+Need to deallocate and nullify when they are no longer used</LI>
+</UL>
+</li>
+<LI>
+Usage
+
+<UL>
+<LI>
+We can use associated() to tell if a pointer has been set</LI>
+
+<LI>
+We can use associated() to compare pointers</LI>
+
+<LI>
+We use nullify to zero a pointer</LI>
+</UL>
+</LI>
+</ul>
+ 
+
+<pre>
+! This code will print "true" when we find a match, 
+! that is the pointers point to the same object 
+    do j=1,num_genes 
+     tmp=>results(j) 
+        write(*,"(f10.8,i4,l3)")results(j)%val,   &amp; 
+                                results(j)%index, &amp;
+           <span class="c">associated</span>(tmp,worst) 
+    enddo 
+    <span class="c">nullify</span>(tmp) 
+</pre>
+<BR>
+<ul>
+<LI>
+Notes:
+
+<UL>
+<LI>
+<span class="r">If a pointer is nullified the object to which it points is not deallocated.</span></li>
+
+<LI>
+<span class="r">In general, pointers as well as allocatable arrays become undefined on leaving a subroutine</span></li>
+
+<LI>
+<span class="r">This can cause a memory leak</span></li>
+</UL>
+</LI>
+</ul>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Pointer_usage_to_reference_an_array"></A>Pointer usage to reference an array without copying</h2>
+<UL>
+<LI>
+Motivation
+<ul>
+<LI>
+Our sort routine calls a recursive sorting routine</LI>
+
+<LI>
+It is messy and inefficient to pass the array to the recursive routine</LI>
+</UL>
+</li>
+<LI>
+Solution
+
+<ul>
+<LI>
+We define a "global" pointer in a module</LI>
+
+<LI>
+We point the pointer to our input array</LI>
+</UL>
+</li>
+</ul>
+<pre>
+module Merge_mod_types 
+    use galapagos 
+    type(thefit),allocatable :: work(:) ! a "global" work array 
+    <span class="c">type(thefit), pointer:: a_pntr(:)   ! this will be the pointer to our input array </span>
+end module Merge_mod_types 
+  subroutine Sort(ain, n) 
+    use Merge_mod_types 
+    implicit none 
+    integer n 
+    type(thefit), target:: ain(n) 
+    allocate(work(n)) 
+    nullify(a_pntr) 
+    <span class="c">a_pntr=>ain  ! we assign the pointer to our array 
+                 ! in RecMergeSort we reference it just like an array </span>
+    call RecMergeSort(1,n) ! very similar to the findmin functions 
+    deallocate(work) 
+    return 
+end subroutine Sort 
+</pre>
+
+<ul>
+<LI>
+In our main program sort is called like this:</LI>
+
+</ul>
+<pre>
+! our sort routine is also recursive but 
+! also shows a new usage for pointers 
+    call sort(results,num_genes) 
+    do j=1,num_genes 
+       write(*,"(f10.8,i4)")results(j)%val,   &amp; 
+                            results(j)%index 
+    enddo 
+</pre>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Data_assignment_with_structures"></A>Data assignment with structures</h2>
+<pre>
+! we can copy a whole structure 
+! with a single assignment 
+    best=results(1) 
+    write(*,*)"best result ",best 
+    </pre>
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Using_the_user_defined_operator"></A>Using the user defined operator</h2>
+
+<pre>
+! using the user defined operator to see if best is worst 
+! recall that the operator .converged. checks to see if %index matches 
+    worst=>pntmin(results) 
+    write(*,*)"worst result ",worst 
+    write(*,*)"converged=",(best .converged. worst)
+    </pre>
+
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Passing_arrays_with_a_given_arbitrary_lower_bounds"></A>Passing arrays with a given arbitrary lower bounds</H2>
+
+<ul>
+<li>Motivation
+
+<UL>
+<li>Default lower bound within a subroutine is 1</li>
+
+<li>May want to use a different lower bound</li>
+</UL>
+</LI>
+</ul>
+<pre>
+    <span class="r">if(allocated(z))deallocate(z) </span>
+    allocate(z(-10:10)) ! a 21 element array 
+    do j=-10,10 
+       z(j)=j 
+    enddo <span class="r">! pass z and its lower bound </span>
+! in this routine we give the array a specific lower 
+! bound and show how to use a pointer to reference 
+! different parts of an array using different indices 
+  call boink1(z,<span class="r">lbound(z,1)) ! why not just lbound(z) instead of lbound(z,1)? 
+                             ! lbound(z) returns a rank 1 array </span>
+     subroutine boink1(a,n) 
+     use numz 
+     implicit none 
+     integer,<span class="r"></span>intent(in) ::<span class="c"> n </span>
+     real(b8),<span class="r">dimension(n:)</span>:: a ! this is how we set lower bounds in a subroutine 
+     write(*,*)lbound(a),ubound(a) 
+   end subroutine
+</pre>
+
+<BR> 
+<h3 class="c"><span class="g">Warning:  because we are using an assumed shape array we need an interface</span></h3>
+<H2>
+<a id="Using_pointers_to_access_sections_of_arrays"></A>Using pointers to access sections of arrays</H2>
+
+<UL>
+<li>Motivation
+
+<ul>
+<li>Can increase efficiency</li>
+
+<li>Can increase readability</li>
+</UL>
+</LI>
+</ul>
+<pre>
+call boink2(z,lbound(z,1)) 
+ 
+subroutine boink2(a,n) 
+use numz 
+implicit none 
+integer,intent(in) :: n 
+real(b8),dimension(n:),target:: a 
+real(b8),dimension(:),pointer::b 
+<span class="r">b=>a(n:) ! b(1) "points" to a(-10) </span>
+write(*,*)"a(-10) =",a(-10),"b(1) =",b(1) 
+<span class="r">b=>a(0:) ! b(1) "points" to a(0) </span>
+write(*,*)"a(-6) =",a(-6),"b(-5) =",b(-5) 
+end subroutine
+</pre>
+
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Allocating_an_array_inside_a_subroutine"></A>Allocating
+an array inside a subroutine and passing it back</H2>
+
+<UL>
+<li>Motivation
+<ul>
+<li>Size of arrays are calculated in the subroutine</li>
+</UL>
+</LI>
+</ul>
+
+<pre>
+module numz 
+    integer, parameter:: b8 = selected_real_kind(14)
+end module
+
+program bla
+   use numz
+   real(b8), dimension(:) ,pointer :: xyz 
+
+   <span class="r">interface boink 
+     subroutine boink(a) 
+     use numz
+     implicit none 
+     real(b8), dimension(:), pointer :: a 
+     end subroutine 
+   end interface </span>
+
+   nullify(xyz) ! nullify sets a pointer to null 
+   write(*,'(l5)')associated(xyz) ! is a pointer null, should be 
+   call boink(xyz) 
+   write(*,'(l5)',advance="no")associated(xyz) 
+   if(associated(xyz))write(*,'(i5)')size(xyz) 
+end program  
+
+subroutine boink(a) 
+    use numz 
+    implicit none 
+    real(b8),dimension(:),pointer:: a 
+    if(associated(a))deallocate(a) 
+    allocate(a(10)) 
+end subroutine 
+
+
+
+<span class="b">     F
+     T
+10</span>
+</pre>
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Our_fitness_function"></A>Our fitness function</H2>
+Given a fixed number of colors, M, and a description of a map of a collection
+of  N states.
+<BR>Find a coloring of the map such that no two states that share a boarder
+have the same coloring.
+
+<h3>Example input is a sorted list of 22 western states</h3>
+<pre>
+22
+ar ok tx la mo xx
+az ca nm ut nv xx
+ca az nv or xx
+co nm ut wy ne ks xx
+ia mo ne sd mn xx
+id wa or nv ut wy mt xx
+ks ne co ok mo xx
+la tx ar xx
+mn ia sd nd xx
+mo ar ok ks ne ia xx
+mt wy id nd xx
+nd mt sd wy xx
+ne sd wy co ks mo ia xx
+nm az co ok tx mn xx
+nv ca or id ut az xx
+ok ks nm tx ar mo xx
+or ca wa id xx
+sd nd wy ne ia mn xx
+tx ok nm la ar xx
+ut nv az co wy id xx
+wa id or mt xx
+wy co mt id ut nd sd ne xx
+</pre>
+<P>Our fitness function takes a potential coloring, that is, an integer
+vector of length N and a returns the number of boarders that have states
+of the same coloring</p>
+<BR> 
+<ul>
+<LI>
+How do we represent the map in memory?
+
+<UL>
+<LI>
+One way would be to use an array but it would be very sparse</LI>
+
+<LI>
+Linked lists are often a better way</LI>
+</UL>
+</LI>
+</ul>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Linked_lists"></A>Linked lists</H2>
+
+<UL>
+	<LI>Motivation
+		<UL>
+		<LI>We have a collection of states and for each state a list of adjoining states. (Do not count a boarder twice.)</LI>
+		<LI>Problem is that you do not know the length of the list until runtime.</LI>
+		<LI>List of adjoining states will be different lengths for different states</LI>
+		</UL>
+	</li>
+	<LI>Solution
+		<UL>
+			<LI>
+			Linked list are a good way to handle such situations</LI>
+			<LI>
+			Linked lists use a derived data type with at least two components
+				<UL>
+					<LI>Data</LI>
+					<LI>Pointer to next element</LI>
+				</ul>
+			</li>
+		</ul>
+	</LI>
+</ul>
+
+<pre>
+module list_stuff 
+type llist 
+integer index ! data 
+<span class="r">type(llist),pointer</span>::next ! pointer to the 
+! next element 
+end type llist 
+end module
+</pre>
+
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Linked_list_usage"></A>Linked list usage</H2>
+<p>One way to fill a linked list is to use a recursive function</p>
+
+<pre>
+<span class="r">recursive</span> subroutine insert (item, <span class="r">root</span>) 
+use list_stuff 
+implicit none 
+type(llist), pointer :: root 
+integer item 
+if <span class="r">(.not. associated(root))</span> then 
+allocate(root) 
+nullify(root%next) 
+root%index = item 
+else 
+call <span class="r">insert</span>(item,<span class="r">root%next</span>) 
+endif 
+end subroutine 
+</pre>
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Our_map_representation"></A>Our map representation</H2>
+
+<ul>
+	<LI>An array of the derived data type states
+
+		<UL>
+			<LI>
+			State is name of a state</LI>
+
+			<LI>
+			Linked list containing boarders</LI>
+		</ul>
+	</li>
+</ul>
+
+<pre>
+    type states 
+        character(len=2)name 
+        type(llist),pointer:: list 
+    end type states 
+</pre>
+<UL>
+<LI>
+Notes:
+<ul>
+<LI>
+We have an array of linked lists
+
+<UL>
+<LI>
+This data structure is often used to represent sparse arrays</LI>
+
+<LI>
+We could have a linked list of linked lists</LI>
+</UL>
+</li>
+<LI>
+State name is not really required</LI>
+</UL>
+</LI>
+</ul>
+<hr><h6>&nbsp;</h6>
+
+<H2><a id="Non_advancing_and_character_I_O"></A>Non advancing and character I/O</H2>
+
+<ul>
+<LI>
+Motivation
+
+<UL>
+<LI>
+We read the states using the two character identification</LI>
+
+<LI>
+One line per state and do not know how many boarder states per line</LI>
+</UL>
+</li>
+<LI>
+Note: Our list of states is presorted</LI>
+</ul>
+<pre>
+character(len=2) a ! we have a character variable of length 2 
+read(12,*)nstates ! read the number of states 
+<span class="r">allocate(map(nstates)) ! and allocate our map </span>
+do i=1,nstates 
+    read(12,"(a2)",<span class="r">advance="no"</span>)map(i)%name <span class="r">! read the name </span>
+    !write(*,*)"state:",map(i)%name 
+    nullify(map(i)%list) ! "zero out" our list 
+    do 
+        read(12,"(1x,a2)",<span class="r">advance="no"</span>)a<span class="r"> ! read list of states 
+        ! without going to the 
+        ! next line </span>
+        if(<span class="r">lge(a,"xx") .and. lle(a,"xx")</span>)then ! if state == xx 
+        <span class="r">backspace(12) ! go to the next line 
+        read(12,"(1x,a2)",end=1)a ! go to the next line </span>
+        exit 
+        endif 
+        1 continue 
+        if(llt(a,map(i)%name))then <span class="r">! we only add a state to 
+        ! our list if its name 
+        ! is before ours thus we 
+        ! only count boarders 1 time </span>
+        ! what we want put into our linked list is an index 
+        ! into our map where we find the bordering state 
+        ! thus we do the search here 
+        ! any ideas on a better way of doing this search? 
+        found=-1 
+        do j=1,i-1 
+            if(lge(a,map(j)%name) .and. lle(a,map(j)%name))then 
+            !write(*,*)a 
+            found=j 
+            exit 
+            endif 
+        enddo 
+        if(found == -1)then 
+            write(*,*)"error" 
+            stop 
+        endif 
+        <span class="r">
+        ! found the index of the boarding state insert it into our list 
+        ! note we do the insert into the linked list for a particular state 
+        call insert(found,map(i)%list) </span>
+        endif 
+    enddo 
+enddo 
+</pre>
+
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Date_and_time_functions"></A>Date and time functions</H2>
+
+<UL>
+<LI>
+Motivation
+<ul>
+<LI>
+May want to know the date and time of your program</LI>
+
+<LI>
+Two functions</LI>
+</UL>
+</li>
+</ul>
+
+<pre>
+! all arguments are optional 
+call <span class="r">date_and_time</span>(date=c_date, &amp;  ! character(len=8) ccyymmdd 
+                   time=c_time, &amp;  ! character(len=10) hhmmss.sss 
+                   zone=c_zone, &amp;  ! character(len=10) +/-hhmm (time zone) 
+                   values=ivalues) ! integer ivalues(8) all of the above 
+                   
+call <span class="r">system_clock</span>(count=ic,           &amp; ! count of system clock (clicks) 
+                  count_rate=icr,     &amp; ! clicks / second 
+                  count_max=max_c)      ! max value for count 
+
+</pre>
+<br>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Internal_I_O"></A>Internal I/O</H2>
+
+<UL>
+<LI>
+Motivation
+<ul>
+<LI>
+May need to create strings on the fly</LI>
+
+<LI>
+May need to convert from strings to reals and integers</LI>
+
+<LI>
+Similar to sprintf and sscanf</LI>
+</UL>
+</LI>
+<LI>
+How it works
+
+<UL>
+<LI>
+Create a string</LI>
+
+<LI>
+Do a normal write except write to the string instead of file number</LI>
+</UL>
+</LI>
+
+<LI>
+Example 1: creating a date and time stamped file name</li>
+</ul>
+
+
+<pre>
+character (len=12)<span class="r">tmpstr </span>
+ 
+write(<span class="r">tmpstr</span>,"(a12)")(c_date(5:8)<span class="r">//</span>c_time(1:4)<span class="r">//</span>".dat") <span class="r">! // does string concatination </span>
+write(*,*)"name of file= ",tmpstr 
+open(14,file=tmpstr) 
+
+<span class="b">name of file= 03271114.dat</span>
+</pre>
+<ul>
+	<li>Example 2: Creating a format statement at run time (array of integers and a real)</li>
+</ul>
+
+<pre>
+<span class="r">! test_vect is an array that we do not know its length until run time </span>
+nstate=9 <span class="r">! the size of the array </span>
+write(<span class="r">fstr</span>,'("(",i4,"i1,1x,f10.5)")')<span class="r">nstates </span>
+write(*,*)"format= ",fstr 
+write(*,<span class="r">fstr)test_vect,fstr</span>
+
+<span class="b">format= ( 9i1,1x,f10.5)</span>
+</pre>
+
+<P>Any other ideas for writing an array when you do not know its length?</p>
+<BR> 
+<ul>
+<LI>
+Example 3: Reading from a string</LI>
+</ul>
+
+<pre>
+integer ht,minut,sec
+read(<span class="r">c_time</span>,"(3i2)")hr,minut,sec
+</pre>
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Inquire_function"></A>Inquire function</H2>
+
+<UL>
+<LI>Motivation
+
+<UL>
+<LI>Need to get information about I/O</LI>
+</UL>
+
+</li>
+<LI>
+Inquire statement has two forms
+
+<UL>
+<LI>
+Information about files (23 different requests can be done)</LI>
+
+<LI>
+Information about space required for binary output of a value</LI>
+</UL>
+</li>
+
+<LI>Example: find the size of your real relative to the "standard" real
+
+<UL>
+<LI>Useful for inter language programming</LI>
+
+<LI>Useful for determining data types in MPI (MPI_REAL or MPI_DOUBLE_PRECISION)</LI>
+</UL>
+</LI>
+</ul>
+<pre>
+inquire(<span class="r">iolength=len_real</span>)1.0 
+inquire(<span class="r">iolength=len_b8</span>)1.0_b8 
+write(*,*)"len_b8 ",len_b8 
+write(*,*)"len_real",len_real 
+iratio=len_b8/len_real 
+select case (iratio) 
+    case (1) 
+      my_mpi_type=mpi_real 
+    case(2) 
+      my_mpi_type=mpi_double_precision 
+    case default 
+      write(*,*)"type undefined" 
+      my_mpi_type=0 
+end select 
+
+<span class="b">
+len_b8 2 
+len_real 1 
+</span>
+</pre>
+
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Namelist"></A>Namelist</H2>
+
+<ul>
+<LI>
+Now part of the standard</LI>
+
+<LI>
+Motivation
+
+<UL>
+<LI>
+A convenient method of doing I/O</LI>
+
+<LI>
+Good for cases where you have similar runs but change one or two variables</LI>
+
+<LI>
+Good for formatted output</LI>
+</UL>
+</li>
+<LI>
+Notes:
+
+<UL>
+<LI>
+A little flaky</LI>
+
+<LI>
+No options for overloading format</LI>
+</UL>
+</LI>
+<LI>
+Example:</LI>
+</ul>
+
+<pre>
+integer ncolor 
+logical force 
+<span class="b">namelist /the_input/ncolor,force </span>
+ncolor=4 
+force=.true. 
+read(13,the_input) 
+write(*,the_input) 
+</pre>
+
+<p>On input:</p>
+<pre>
+<span class="b">&amp;THE_INPUT NCOLOR=4,FORCE = F / </span>
+</pre>
+
+
+Output is
+<pre>
+<span class="b">&amp;THE_INPUT 
+NCOLOR = 4, 
+FORCE = F 
+/ 
+</span>
+</pre>
+
+<BR> 
+<hr><h6>&nbsp;</h6>
+
+<H2><a id="Vector_valued_functions"></A>Vector valued functions</H2>
+ 
+<UL>
+<LI>
+Motivation
+<ul>
+<LI>
+May want a function that returns a vector</LI>
+</UL>
+</li>
+<LI>
+Notes
+
+<UL>
+<LI>
+Again requires an interface</LI>
+
+<LI>
+Use explicit or assumed size array</LI>
+
+<LI>
+Do not return a pointer to a vector unless you really want a pointer</LI>
+</UL>
+</li>
+<LI>
+Example:
+
+<Ul>
+<LI>
+Take an integer input vector which represents an integer in some base and
+add 1</LI>
+
+<LI>
+Could be used in our program to find a "brute force" solution</LI>
+</UL>
+</li>
+</ul>
+<pre>
+function add1(vector,max) result (rtn) 
+  integer, dimension(:),intent(in) ::  vector 
+  integer,dimension(size(vector)) :: rtn 
+  integer max 
+  integer len 
+  logical carry 
+  len=size(vector) 
+  rtn=vector 
+  i=0 
+  carry=.true. 
+  do while(carry)         ! just continue until we do not do a carry 
+      i=i+1 
+   rtn(i)=rtn(i)+1 
+   if(rtn(i) .gt. max)then 
+       if(i == len)then   ! role over set everything back to 0 
+        rtn=0 
+    else 
+        rtn(i)=0 
+       endif 
+   else 
+       carry=.false. 
+   endif 
+  enddo 
+end function 
+</pre>
+<P>Usage</p>
+<pre>
+        test_vect=0 
+        do 
+           test_vect=add1(test_vect,3) 
+           result=fitness(test_vect) 
+           if(result &lt; 1.0_b8)then 
+               write(*,*)test_vect 
+               stop 
+           endif 
+        enddo 
+</pre>
+<BR> 
+<hr><h6>&nbsp;</h6>
+<BR> 
+<H2>
+<a id="Complete_source_for_recent_discussions"></A>Complete source for recent discussions</H2>
+
+<ul>
+<LI>
+<a href="source/recent.f90">recent.f90</A></LI>
+
+<LI>
+<a href="source/fort.13">fort.13</A></LI>
+</ul>
+
+<BR> 
+<BR> 
+<hr><h6>&nbsp;</h6>Exersize 5  Modify the program to use the random
+number generator given earlier.
+
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Some_array_specific_intrinsic_functions"></A>Some array specific
+intrinsic functions</H2>
+ 
+<ul>
+<LI>
+ALL True if all values are true (LOGICAL)</LI>
+
+<LI>
+ANY True if any value is true (LOGICAL)</LI>
+
+<LI>
+COUNT Number of true elements in an array (LOGICAL)</LI>
+
+<LI>
+<span class="r">DOT_PRODUCT Dot product of two rank one arrays</span></li>
+
+<LI>
+<span class="r">MATMUL Matrix multiplication</span></li>
+
+<LI>
+MAXLOC Location of a maximum value in an array</LI>
+
+<LI>
+MAXVAL Maximum value in an array</LI>
+
+<LI>
+MINLOC Location of a minimum value in an array</LI>
+
+<LI>
+MINVAL Minimum value in an array</LI>
+
+<LI>
+PACK Pack an array into an array of rank one</LI>
+
+<LI>
+PRODUCT Product of array elements</LI>
+
+<LI>
+RESHAPE  Reshape an array</LI>
+
+<LI>
+SPREAD Replicates array by adding a dimension</LI>
+
+<LI>
+SUM Sum of array elements</LI>
+
+<LI>
+TRANSPOSE Transpose an array of rank two</LI>
+
+<LI>
+UNPACK Unpack an array of rank one into an array under a mask</LI>
+</ul>
+<BR> 
+<BR> 
+<ul>
+<LI>
+Examples</LI>
+</ul>
+
+<pre>
+program matrix 
+    real w(10),x(10),mat(10,10) 
+    call random_number(w) 
+    call random_number(mat) 
+    x=<span class="r">matmul</span>(w,mat)   <span class="r">! regular matrix multiply  USE IT </span>
+    write(*,'("dot(x,x)=",f10.5)'),<span class="r">dot_product(x,x) </span>
+end program  
+
+program allit 
+     character(len=10):: f1="(3l1)" 
+     character(len=10):: f2="(3i2)" 
+     integer b(2,3),c(2,3),one_d(6) 
+     logical l(2,3) 
+     one_d=(/ 1,3,5 , 2,4,6 /) 
+     b=transpose(reshape((/ 1,3,5 , 2,4,6 /),shape=(/3,2/))) 
+     C=transpose(reshape((/ 0,3,5 , 7,4,8 /),shape=(/3,2/))) 
+     l=(b.ne.c) 
+     write(*,f2)((b(i,j),j=1,3),i=1,2) 
+     write(*,*) 
+     write(*,f2)((c(i,j),j=1,3),i=1,2) 
+     write(*,*) 
+     write(*,f1)((l(i,j),j=1,3),i=1,2) 
+     write(*,*) 
+     write(*,f1)all ( b .ne. C ) !is .false. 
+     write(*,f1)all ( b .ne. C, DIM=1) !is [.true., .false., .false.] 
+     write(*,f1)all ( b .ne. C, DIM=2) !is [.false., .false.] 
+end 
+</pre>
+ 
+<ul><LI>
+The output is:</LI>
+</ul>
+<pre>
+<span class="b">
+ 1 3 5 
+ 2 4 6 
+
+ 0 3 5 
+ 7 4 8 
+
+ TFF 
+ TFT 
+
+ F 
+ TFF 
+ FF 
+ </span>
+ </pre>
+<hr><h6>&nbsp;</h6>
+
+<H2>
+<a id="The_rest_of_our_GA"></A>The rest of our GA</H2>
+
+<ul>
+<LI>
+Includes</LI>
+
+<LI>
+Reproduction</LI>
+
+<LI>
+Mutation</LI>
+
+<LI>
+Nothing new in either of these files</LI>
+
+<LI>
+ <a href="source/listing.html">Source
+and makefile</A></LI>
+</ul>
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Compiler"></A>Compiler Information</H2>
+
+<h3>Intel</h3>
+<pre><span class="r">ifort</span></pre>
+<p><a href="ifort.html">ifort man page</a></p>
+<dl>
+	<dt>      .f, .for, .ftn</dt>
+		<dd>       fixed-format Fortran source; compile</dd>
+
+	<dt>       .f90, .f95</dt>
+		<dd>       free-format Fortran source; compile</dd>
+	<dt>       -O0, -O1, -O2, -O3, -O4</dt>
+		<dd>       optimization level</dd>
+	<dt>       .fpp, .F, .FOR, .FTN, .FPP, .F90</dt>
+		<dd>       Fortran source file with preprocessor directives</dd>
+       
+	<dt>       -g </dt>
+		<dd>       compile for debug             </dd>
+		
+	<dt>		      -traceback -notraceback (default)</dt>
+		<dd>              Add debug information for runtime traceback</dd>
+
+	<dt>       -nofree, -free</dt>
+		<dd>       Source is fixed or free format</dd>
+	<dt>       -qopenmp</dt>
+		<dd>       turn on OpenMP</dd>
+</dl>
+
+
+<h3>Portland Group (x86)</h3>
+<pre><span class="r">pgfortran</span></pre>
+
+<p><a href="pgfortran.html">pgfortran man page</a></p>
+
+<dl>
+	<dt>      .f, .for, .ftn</dt>
+		<dd>       fixed-format Fortran source; compile</dd>
+
+	<dt>       .f90, .f95, .f03</dt>
+		<dd>       free-format Fortran source; compile</dd>
+	<dt>        .cuf</dt>
+		<dd>        free-format CUDA Fortran source; compile</dd>
+
+	<dt>       .CUF</dt>
+		<dd>       free-format CUDA Fortran source; preprocess, compile</dd>
+       
+	<dt>       -O0, -O1, -O2, -O3, -O4</dt>
+		<dd>       optimization level</dd>
+       
+	<dt>       -g </dt>
+		<dd>       compile for debug             </dd>
+		
+	<dt>		      -traceback (default) -notraceback</dt>
+		<dd>              Add debug information for runtime traceback</dd>
+
+	<dt>       -Mfixed, -Mfree</dt>
+		<dd>       Source is fixed or free format</dd>
+	<dt>       -qmp</dt>
+		<dd>       turn on OpenMP</dd>
+</dl>
+
+
+<h3>IBM xlf</h3>
+<pre><span class="r">xlf90_r</span></pre>
+
+<p><a href="xlf.html">xlf man page</a></p>
+
+<dl>
+	<dt>xlf, xlf_r, f77, fort77</dt>
+		<dd>Compile FORTRAN 77 source files.  _r = thread safe</dd>
+
+	<dt>xlf90, xlf90_r, f90</dt>
+		<dd>Compile Fortran 90 source files.  _r = thread safe</dd>
+
+	<dt>xlf95, xlf95_r, f95</dt>
+		<dd>Compile Fortran 95 source files.  _r = thread safe</dd>
+
+	<dt>xlf2003, xlf2003_r,f2003         </dt>
+		<dd>Compile Fortran 2003 source files. _r = thread safe</dd>
+
+	<dt>xlf2008, xlf2008_r, f2008          </dt>
+		<dd>Compile Fortran 2008 source files.</dd>
+
+	<dt>.f, .f77, .f90, .f95, .f03, .f08      </dt>
+		<dd>Fortran source file</dd>
+
+	<dt>.F, .F77, .F90, .F95,  .F03, .F08      </dt>
+		<dd>Fortran source file with preprocessor directives</dd>
+
+	<dt>-qtbtable=full</dt>
+		<dd>Add debug information for runtime traceback</dd>
+
+	<dt>-qsmp=omp</dt>
+		<dd>turn on OpenMP</dd>
+
+	<dt>-O0, -O1, -O2, -O3, -O4, O5</dt>
+		<dd>optimization level</dd>
+	<dt>-g , g0, g1,...g9</dt>
+		<dd>compile for debug             </dd>
+</dl>
+
+
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Fortran_95"></A>Fortran 95</H2>
+
+<ul>
+<LI>
+New Features
+<ul>
+<LI>
+The statement <span class="r">FORALL</span> as an alternative to the DO-statement</LI>
+
+<LI>
+Partial nesting of FORALL and WHERE statements</LI>
+
+<LI>
+Masked ELSEWHERE</LI>
+
+<LI>
+Pure procedures</LI>
+
+<LI>
+Elemental procedures</LI>
+
+<LI>
+Pure procedures in specification expressions</LI>
+
+<LI>
+Revised MINLOC and MAXLOC</LI>
+
+<LI>
+Extensions to CEILING and FLOOR with the KIND keyword argument</LI>
+
+<LI>
+Pointer initialization</LI>
+
+<LI>
+Default initialization of derived type objects</LI>
+
+<LI>
+Increased compatibility with IEEE arithmetic</LI>
+
+<LI>
+A CPU_TIME intrinsic subroutine</LI>
+
+<LI>
+A function NULL to nullify a pointer</LI>
+
+<LI>
+<span class="r">Automatic deallocation of allocatable arrays at exit of scoping unit</span></li>
+
+<LI>
+Comments in NAMELIST at input</LI>
+
+<LI>
+Minimal field at input</LI>
+
+<LI>
+Complete version of END INTERFACE</LI>
+</ul>
+</LI>
+<LI>
+Deleted Features
+<ul>
+
+<LI>
+real and double precision DO loop index variables</LI>
+
+<LI>
+branching to END IF from an outer block</LI>
+
+<LI>
+PAUSE statements</LI>
+
+<LI>
+ASSIGN statements and assigned GO TO statements and the use of an assigned
+integer as a FORMAT specification</LI>
+
+<LI>
+Hollerith editing in FORMAT</LI>
+
+
+<LI>
+ See <A HREF="http://www.nsc.liu.se/~boein/f77to90/f95.html#17.5">http://www.nsc.liu.se/~boein/f77to90/f95.html#17.5</A></LI>
+</ul>
+</li>
+</ul>
+<BR>
+<hr><h6>&nbsp;</h6>
+<H2>
+<a id="Summary"></A>Summary</H2>
+
+
+<ul>
+<li>Fortran 90 has features to:
+
+
+
+<ul>
+	<li>Enhance performance</li>
+
+
+	<li>Enhance portability</li>
+
+
+	<li>Enhance reliability</li>
+
+
+	<li>Enhance maintainability</li>
+</ul>
+
+
+
+</li>
+<li>Fortran 90 has new language elements
+
+<ul>
+
+
+	<li>Source form</li>
+
+
+	<li>Derived data types</li>
+
+
+	<li>Dynamic memory allocation functions</li>
+
+
+	<li>Kind facility for portability and easy modification</li>
+
+
+	<li>Many new intrinsic function</li>
+
+
+	<li>Array assignments</li>
+</ul>
+
+</li>
+<li>Examples
+
+
+
+<ul>
+	<li>Help show how things work</li>
+
+
+	<li>Reference for future use</li>
+</ul>
+</li>
+</ul>
+
+ 
+<BR> 
+
+<hr><h6>&nbsp;</h6>
+<H2><a id="References"></A>References</H2>
+<ul>
+	<li><a href="http://www.pkwteile.ch/science/avancee-fortran-90/">French Translation provided by Mary Orban</a></li>
+	<li><a href="http://webhostingrating.com/libs/pashyrany-fortran-90-be">Belorussian translation</a> provided by <a href="http://webhostingrating.com/">webhostingrating.com</a> </li>
+	<li><A HREF="http://www.fortran.com/fortran/">http://www.fortran.com/fortran/</A> Pointer to everything Fortran</li>
+	<li><A HREF="http://www.dmoz.org/Computers/Programming/Languages/Fortran/FAQs,_Help,_and_Tutorials/Fortran_90_and_95/">http://www.dmoz.org/Computers/Programming/Languages/Fortran/FAQs,_Help,_and_Tutorials/Fortran_90_and_95/</A> Cray's Manual</li>
+	<li><A HREF="http://www.nova.edu/ocean/psplot.html">http://www.nova.edu/ocean/psplot.html</A> Postscript plotting library</li>
+	<li><A HREF="http://meteora.ucsd.edu/~pierce/fxdr_home_page.html">http://meteora.ucsd.edu/~pierce/fxdr_home_page.html</A> Subroutines to do unformatted I/O across platforms, provided by David Pierce at UCSD</li>
+	<li><A HREF="http://www.nsc.liu.se/~boein/f77to90/a5.html">http://www.nsc.liu.se/~boein/f77to90/a5.html</A> A good reference for intrinsic functions</li>
+	<li><A HREF="summary.shtml">A quick Summary</A></li>
+	<li><a href="ftp://ftp.nag.co.uk/sc22wg5/n1551-n1600/n1579.pdf">ftp://ftp.nag.co.uk/sc22wg5/n1551-n1600/n1579.pdf</a>New Features of Fortran 2003</li>
+	<li><a href="http://www.fortran.com/fortran_storenew/Html/Info/books/key10.pdf">http://www.fortran.com/fortran_storenew/Html/Info/books/key10.pdf</a>Key Features of Fortran 90</li>
+	<li><a href="ftp://ftp.nag.co.uk/sc22wg5/n1701-n1750/n1729.pdf">ftp://ftp.nag.co.uk/sc22wg5/n1701-n1750/n1729.pdf</a>New Features of Fortran 2008</li>	
+	<li><A HREF="http://www.nsc.liu.se/~boein/f77to90/">http://www.nsc.liu.se/~boein/f77to90/</A> Fortran 90 for the Fortran 77 Programmer</li>
+	<li><B><I>Fortran 90 Handbook Complete ANSI/ISO Reference</I></B>. Jeanne Adams, Walt Brainerd, Jeanne Martin, Brian Smith, Jerrold Wagener</li>
+	<li><B><I>Fortran 90 Programming</I></B>. T. Ellis, Ivor Philips, Thomas Lahey</li>
+</ul>
+<br>
+<ul>	<li><A HREF="../mkl/">FFT stuff</A></li></ul>
+<ul>	<li><A HREF="../95/">Fortran 95 and beyond</A></li></ul>
+<hr><h6>&nbsp;</h6>
+
+</BODY>
+</HTML>

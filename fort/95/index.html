@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" /> 
+		<title>
+			Fortran 95 and Beyond
+		</title>
+		<meta name="generator" content="BBEdit 11.5" /> 
+		<style type="text/css">
+			TABLE.pics  { background: #ff0; border: solid black;
+			         empty-cells: hide }
+			 TR.top2 { background: red }
+			 TD.pad { padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px;}
+		</style>
+		<style type="text/css">
+			span.little { font-size:0.66em;}
+		</style>
+		<style>
+table {
+  margin-left: auto;
+  margin-right: auto;
+}
+table, th, td {
+   border: 2px solid #ddd;
+}
+li.n { width: 6in; }
+
+		ul.l1 {
+list-style-image: url('small.png');
+    color: black; font-family: courier; font-size: x-large;
+    width: 6in;
+    
+}
+		ul.l2 {
+list-style-image: url('small.png');
+    color: black; font-family: courier; font-size: large;
+    margin-left: 2.0em;
+    width: 6in;
+    
+}
+div.scroll {
+    background-color: #00FFFF;
+    width: 50em;
+    height: 300px;
+    overflow: scroll;
+}
+
+
+			@media print { h6 { page-break-after: always; } }
+			h6 { page-break-before: after; 
+			margin-top: 0.2in;
+			}
+			p.a { width: 6in; text-align: justify; margin: .5in; }
+			p.s { width: 4in; text-align: justify; margin: .25in; }
+			/* usage <p class="a"> */
+			pre.red { color: red; font-family: courier; font-size: small; }
+			pre { color: black; font-family: courier; font-size: small; }
+			
+			p { width: 6in; text-align: justify; margin: .25in; }
+			p.pin0 { margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin1 { margin-left: 2.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin2 { margin-left: 4.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin3 { margin-left: 6.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin4 { margin-left: 8.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin5 { margin-left: 10.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin6 { margin-left: 12.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin7 { margin-left: 14.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin8 { margin-left: 16.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin9 { margin-left: 18.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			p.pin10 { margin-left: 20.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			
+			h3.hin0  {margin-left: 0.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin1  {margin-left: 2.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin2  {margin-left: 4.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin3  {margin-left: 6.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin4  {margin-left: 8.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin5  {margin-left: 10.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin6  {margin-left: 12.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin7  {margin-left: 14.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin8  {margin-left: 16.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin9  {margin-left: 18.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			h3.hin10 {margin-left: 20.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+			
+			span.b { color: red; }
+			span.n { color: black; }
+			span.g { color: blue; }
+			b{
+			color: red;
+			}
+			
+			pre
+			{
+				color: black;
+				font-size: 9pt;
+				font-family: monospace;
+			}
+			.greenbar
+			{
+			font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+			border-collapse:collapse;
+			}
+			.greenbar td, .greenbar th 
+			{
+			font-size:.85em;
+			border:1px solid #98bf21;
+			padding:3px 7px 2px 2px;
+			background-color:#f0f0f0;
+			}
+			.greenbar th 
+			{
+			font-size:1.0em;
+			text-align:left;
+			padding-top:5px;
+			padding-bottom:4px;
+			background-color:#A7C942;
+			color:#fff;
+			}
+			.greenbar tr.alt td 
+			{
+			color:#000;
+			background-color:#EAF2D3;
+			}
+			
+			span.blue { color:#00f;}
+			#customers
+			{
+			font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+			width:100%;
+			border-collapse:collapse;
+			}
+			#customers td, #customers th 
+			{
+			font-size:1.2em;
+			border:1px solid #98bf21;
+			padding:3px 7px 2px 2px;
+			}
+			#customers th 
+			{
+			font-size:1.4em;
+			text-align:left;
+			padding-top:5px;
+			padding-bottom:4px;
+			background-color:#A7C942;
+			color:#fff;
+			}
+			#customers tr.alt td 
+			{
+			color:#000;
+			background-color:#EAF2D3;
+			}
+			td.x { color : #f00; text-align:left; background-color:#f0f0f0;padding: 15px;}
+			td.y { color : #f00; text-align:left; background-color:#DCDCFF;padding: 15px;}
+			#z { color : #000; text-align:left;}
+			.bluebar td, .bluebar th 
+			{
+			font-size:1.0em;
+			border:1px solid #888;
+			padding:3px 7px 2px 2px;
+			background-color:#f0f0f0;
+			}
+			.bluebar th 
+			{
+			font-size:1.4em;
+			text-align:left;
+			padding-top:5px;
+			padding-bottom:4px;
+			background-color: #646490
+			;
+			
+			color:#fff;
+			}
+			dd { margin-left: 3.0em; margin-bottom: 1.0em; margin-top: 0.15em; }
+			
+			.bluebar tr.alt
+			{
+			color:#000;
+			background-color:#DCDCFF;
+			}
+			.bluebar tr.alt td.alt 
+			{
+			color:#000;
+			background-color:#DCDCFF;
+			}
+			td.x color:#000; {
+			background-color:#0f0;
+			}
+			
+			
+			/* #change01:hover { height: 85; width:185; z-index:100; background: url(nodes/nodes1.png) no-repeat;} */
+					.tooltip {
+						border-bottom: 1px dotted #000000; color: #000000; outline: none;
+						cursor: help; text-decoration: none;
+						position: relative;
+					}
+					.tooltip span {
+						margin-left: -999em;
+						position: absolute;
+					}
+					.tooltip:hover span {
+						border-radius: 5px 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
+						box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1); -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.1); -moz-box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
+						font-family: Courier, monospace;
+						position: absolute; left: 1em; top: 2em; z-index: 99;
+						margin-left: 0;  width: 50em;
+						white-space: pre;
+					}
+					.tooltip:hover img {
+						border: 0; margin: -10px 0 0 -55px;
+						float: left; position: absolute;
+					}
+					.tooltip:hover em {
+						font-family: Courier, monospace; font-size: 1.2em; font-weight: bold;
+						display: block; padding: 0.2em 0 0.6em 0;
+					}
+					.classic { padding: 0.8em 1em; }
+					.custom { padding: 0.5em 0.8em 0.8em 2em; }
+					* html a:hover { background: transparent; }
+					.classic {background: #FFFFAA; border: 1px solid #FFAD33; }
+					.critical { background: #FFCCAA; border: 1px solid #FF3334;	}
+					.help { background: #9FDAEE; border: 1px solid #2BB0D7;	}
+					.info { background: #9FDAEE; border: 1px solid #2BB0D7;	}
+					.warning { background: #FFFFAA; border: 1px solid #FFAD33; }
+		</style>
+	</head>
+	<body>
+	<h1>Topics to Cover:</h1>
+<ul class="l1">
+	<li>F95 auto deallocation</li>
+	<li>Stream IO</li>
+	<li>Fortran and C interoperability</li>
+	<li>Forall statement</li>
+	<li>OOP</li>
+</ul>
+<ul class="l2">
+	<li><a class="tooltip" href="source/index.html" target="_blank">Link to examples <br>https://petra.acns.colostate.edu/docs/fortran/95/source/index.html</a></li>
+</ul>
+<hr><h6>&nbsp;</h6>
+	<h1>F95 auto deallocation</h1>
+	<ul class="l1">
+	<li>Fortran 90 introduced the allocatable array</li>
+	</ul>
+	<pre>
+	...
+	! specify that an array "x_ray" is allocatable
+        real, allocatable :: x_ray(:)
+	...
+	...
+	! allocate memory for the array
+        allocate(x_ray(10))
+	! use it
+        do i=1,10
+                x_ray(i)=i+2
+        end do
+	! deallocate the array
+        deallocate(x_ray)
+    </pre>
+	<ul class="l1">
+	<li>After an array is deallocated it can not be used (until reallocated)</li>
+	<li>If an array is in a subroutine and the subroutine returns the status of the array is unknown</li>
+	</ul>
+	<ul class="l2">
+	<li>This is a portability issue, different compilers can do things differently</li>
+	<li>Program correctness?</li>
+	<li>Memory leak</li>
+	</ul>
+<hr><h6>&nbsp;</h6>
+<h1>F95 auto deallocation</h1>
+<ul class="l1">
+	<li>In F95 and beyond if an array is allocated in a subroutine it is automatically deallocated on exit</li>
+	<li>Prevents memory leaks</li>
+	<li>Programs compiled under F90/F95 might behave differently </li>
+	<li>Related: Pointers in F90</li>
+</ul>
+<ul class="l2">
+	<li>	A pointer is a variable that can be used in place of a regular variable or an array</li>
+	<li>	The variable that is being pointed to must be given the target attribute</li>
+	<li>	We will use a pointer to illustrate the differences in allocatable arrays in F90/F95</li>
+</ul>
+	
+<hr><h6>&nbsp;</h6>
+<h1>F95 auto deallocation - Our example</h1>
+<ul class="l1">
+	<li>In our example we have a pointer, vector, that is "global" defined in a module</li>
+	<li>A subroutine "dummy"</li>
+	<li>Dummy allocates and fills a local x_ray "x_ray"</li>
+	<li>Points vector to dummy</li>
+	<li>Uses the ASSOCIATED function to show the status of x_ray and vector</li>
+	<li>Dummy does not deallocate the array</li>
+	<li>Our main program calls dummy twice and does <b>illegal</b> references to "vector"</li>
+	<li>We compile with IBM xlf90 and xlf95 and seen the differences</li>
+</ul>
+	<p>
+	<a class="tooltip" href="source/test1.f90" target="_blank">Source: test1.f90<span class="custom critical">module aptr
+        REAL, POINTER, DIMENSION(:) :: VECTOR => NULL()
+        !real, allocatable,target :: array(:)
+end module
+subroutine dummy(i)
+        use aptr
+        !save
+        real, allocatable,target :: x_ray(:)
+        write(*,*)
+        write(*,*)"in dummy vector associated", ASSOCIATED(vector)
+!        write(*,*)allocated(x_ray)
+        allocate(x_ray(i))
+        do j=1,i
+        x_ray(j)=j
+        enddo
+        write(*,*)"vector associated", ASSOCIATED(vector), &
+                  " vector points to x_ray",ASSOCIATED(vector,x_ray)
+        vector=>x_ray
+        write(*,*)"vector associated", ASSOCIATED(vector), &
+                  " vector points to x_ray",ASSOCIATED(vector,x_ray)
+        write(*,*)"sum(vector)",sum(vector),ASSOCIATED(vector)
+        write(*,*)
+end subroutine
+program xyz
+        use aptr
+        write(*,*)"in main before first call to dummy"
+        if(associated(vector)) then
+                write(*,*)"sum(vector)",sum(vector),ASSOCIATED(vector)
+                write(*,*)vector
+        else
+                write(*,*)"vector not ASSOCIATED"
+        endif
+        call dummy(5)
+        write(*,*)"back in main after first call to dummy"
+        if(associated(vector)) then
+                write(*,*)"sum(vector)",sum(vector),ASSOCIATED(vector)
+                write(*,*)vector
+        else
+                write(*,*)"vector not ASSOCIATED"
+        endif
+        call dummy(4)
+        write(*,*)"back in main after second call to dummy"
+        if(ASSOCIATED(vector)) then
+                write(*,*)"sum(vector)",sum(vector),ASSOCIATED(vector)
+                write(*,*)vector
+        else
+                write(*,*)"vector not ASSOCIATED"
+        endif
+end
+
+</span></a>
+</p>
+
+<div class="scroll">
+<pre>
+module aptr
+        REAL, POINTER, DIMENSION(:) :: VECTOR => NULL()
+        !real, allocatable,target :: array(:)
+end module
+subroutine dummy(i)
+        use aptr
+        !save
+        real, allocatable,target :: x_ray(:)
+        write(*,*)
+        write(*,*)"in dummy vector associated", ASSOCIATED(vector)
+!        write(*,*)allocated(x_ray)
+        allocate(x_ray(i))
+        do j=1,i
+        x_ray(j)=j
+        enddo
+        write(*,*)"vector associated", ASSOCIATED(vector), &
+                  " vector points to x_ray",ASSOCIATED(vector,x_ray)
+        vector=>x_ray
+        write(*,*)"vector associated", ASSOCIATED(vector), &
+                  " vector points to x_ray",ASSOCIATED(vector,x_ray)
+        write(*,*)"sum(vector)",sum(vector),ASSOCIATED(vector)
+        write(*,*)
+end subroutine
+program xyz
+        use aptr
+        write(*,*)"in main before first call to dummy"
+        if(associated(vector)) then
+                write(*,*)"sum(vector)",sum(vector),ASSOCIATED(vector)
+                write(*,*)vector
+        else
+                write(*,*)"vector not ASSOCIATED"
+        endif
+        call dummy(5)
+        write(*,*)"back in main after first call to dummy"
+        if(associated(vector)) then
+                write(*,*)"sum(vector)",sum(vector),ASSOCIATED(vector)
+                write(*,*)vector
+        else
+                write(*,*)"vector not ASSOCIATED"
+        endif
+        call dummy(4)
+        write(*,*)"back in main after second call to dummy"
+        if(ASSOCIATED(vector)) then
+                write(*,*)"sum(vector)",sum(vector),ASSOCIATED(vector)
+                write(*,*)vector
+        else
+                write(*,*)"vector not ASSOCIATED"
+        endif
+end
+
+
+</pre>
+</div>
+<br>
+<br>
+<table>
+<tr>
+<td class="x">Fortran 90 Complier - xlf90 </td>
+<td class="y">Fortran 95 Complier - xlf95</td>
+</tr>
+<tr>
+<td class="x">
+<pre>
+ in main before first call to dummy
+ vector not ASSOCIATED
+ 
+ in dummy vector associated F
+ vector associated F  vector points to x_ray F
+ vector associated T  vector points to x_ray T
+ sum(vector) 15.00000000 T
+ 
+ back in main after first call to dummy
+ sum(vector) 15.00000000 T
+ 1.000000000 2.000000000 3.000000000 4.000000000 5.000000000
+ 
+ in dummy vector associated T
+ vector associated T  vector points to x_ray F
+ vector associated T  vector points to x_ray T
+ sum(vector) 10.00000000 T
+ 
+ back in main after second call to dummy
+ sum(vector) 10.00000000 T
+ 1.000000000 2.000000000 3.000000000 4.000000000
+ </pre>
+</td>
+<td class="y">
+<pre>
+ in main before first call to dummy
+ vector not ASSOCIATED
+ 
+ in dummy vector associated F
+ vector associated F  vector points to x_ray F
+ vector associated T  vector points to x_ray T
+ sum(vector) 15.00000000 T
+ 
+ back in main after first call to dummy
+ <b>sum(vector) 12.00000000 T
+ 0.0000000000E+00 0.0000000000E+00 3.000000000 4.000000000 5.000000000</b>
+ 
+ in dummy vector associated T
+ vector associated T  vector points to x_ray F
+ vector associated T  vector points to x_ray T
+ sum(vector) 10.00000000 T
+ 
+ back in main after second call to dummy
+ <b>sum(vector) 7.000000000 T
+ 0.0000000000E+00 0.0000000000E+00 3.000000000 4.000000000</b>
+ </pre>
+
+</td>
+<tr>
+</table>
+<hr><h6>&nbsp;</h6>
+<h1>Our example - comments</h1>
+<ul class="l1">
+	<li>Which output is correct?</li>
+	<li>Neither - the program is invalid or at least very poorly written</li>
+	<li>The main routine references a pointer to an array that is no longer defined</li>
+	<li>In the "f90" version it looks like it is still defined</li>
+	<li>The f90 version most likely has a memory leak</li>
+	<li>My opinion is that associated should return false if the target is deallocated</li>
+	<li>Uncomment the "!save" and the array will remain allocated for both f90 and f95</li>
+</ul>
+
+<hr><h6>&nbsp;</h6>
+	<h1>Stream IO</h1>
+	<ul class="l1">
+	<li>Fortran support unformatted reads and writes</li>
+	<li>Unformatted I/O are not new</li>
+	<li>There is a new mode called Stream
+	<ul class="l2">
+		<li>Stream output produces clean output</li>
+		<li>Without Stream output every write adds beginning/end of record marks</li>
+		<li>"Stream" I/O is similar (identical) to C binary write/read commands</li>
+	</ul>
+	</li>
+	
+	</ul>
+<hr><h6>&nbsp;</h6>
+<h1>Diversion - linux od command</h1>
+
+<h2>od -A d -j4 -v -N 64 -t f8 fort.10</h2>
+
+<ul class="l1">
+	<li>Write a file "fort.10" to the terminal</li>
+	<li>-A d  =  header for the number the bytes written with decimal numbers</li>
+	<li>-j 4  = skip the first 4 bytes</li>
+	<li>-v    = don't skip repeats</li>
+	<li>-N 64 = write 64 bytes</li>
+	<li>-t f8 = format the output as 8 bytes reals</li>
+</ul>
+
+<ul class="l2">
+	<li>Other formats include</li>
+	<li>-c    = write as characters</li>
+	<li>-b    = write as octal bytes</li>
+	<li>-t f4 = format the output as 4 bytes reals</li>
+	<li>-t d# = write as integers of size #</li>
+</ul>
+
+
+<hr><h6>&nbsp;</h6>
+<h1>od example</h1>
+
+<h2>"View" a file that contains 16 4 byte reals = 4.0</h2>
+<pre>
+[tkaiser@mio001 tf]$ ls -lt fort.10
+-rw-rw-r-- 1 tkaiser tkaiser 64 Jul  6 11:22 fort.10
+
+[tkaiser@mio001 tf]$ cat fort.10
+?@?@?@?@?@?@?@?@?@?@?@?@?@?@?@?@[tkaiser@mio001 tf]$ 
+
+
+[tkaiser@mio001 tf]$ od  -A d -j4 -v -N 64 -t f4 fort.10
+0000004   4.000000e+00   4.000000e+00   4.000000e+00   4.000000e+00
+0000020   4.000000e+00   4.000000e+00   4.000000e+00   4.000000e+00
+0000036   4.000000e+00   4.000000e+00   4.000000e+00   4.000000e+00
+0000052   4.000000e+00   4.000000e+00   4.000000e+00
+0000064
+[tkaiser@mio001 tf]$ od -A d -j4 -v -N 64 -b fort.10
+0000004 000 000 200 100 000 000 200 100 000 000 200 100 000 000 200 100
+0000020 000 000 200 100 000 000 200 100 000 000 200 100 000 000 200 100
+0000036 000 000 200 100 000 000 200 100 000 000 200 100 000 000 200 100
+0000052 000 000 200 100 000 000 200 100 000 000 200 100
+0000064
+</pre>
+
+<h2>"View" a file that contains 4 copies of the string "abcdefghABCDEFGH"</h2>
+<pre>
+[tkaiser@mio001 tf]$ cat fort.10
+abcdefghABCDEFGHabcdefghABCDEFGHabcdefghABCDEFGHabcdefghABCDEFGH[tkaiser@mio001 tf]$ 
+[tkaiser@mio001 tf]$ 
+
+
+[tkaiser@mio001 tf]$ od  -A d -j0 -v -N 64 -c fort.10
+0000000   a   b   c   d   e   f   g   h   A   B   C   D   E   F   G   H
+0000016   a   b   c   d   e   f   g   h   A   B   C   D   E   F   G   H
+0000032   a   b   c   d   e   f   g   h   A   B   C   D   E   F   G   H
+0000048   a   b   c   d   e   f   g   h   A   B   C   D   E   F   G   H
+</pre>
+<hr><h6>&nbsp;</h6>
+
+
+<h1>Our Fortran example</h1>
+	<p>
+	<a class="tooltip" href="source/bin.f90" target="_blank">Source: bin.f90<span class="custom critical">      module numz
+! module defines the basic real types
+          integer, parameter:: b8 = selected_real_kind(14)
+          integer, parameter:: b4 = selected_real_kind(3)
+          integer, parameter :: in2 = selected_int_kind(1)
+          integer, parameter :: in4 = selected_int_kind(6)
+          integer, parameter :: in8 = selected_int_kind(12)
+          
+      end module
+function getlen(fname)
+    integer i
+    integer getlen
+    character(len=1) :: a
+    character(*) :: fname
+    open(unit=11,file=trim(fname),form="unformatted",status="old",access="stream")
+    len=0
+    do 
+        read(11,end=1234)a
+        len=len+1
+    enddo
+    1234 continue
+    close(11)
+    getlen=len
+end function
+
+
+program atest
+    use numz
+    integer getlen
+    real(b8) x8(4)
+    real(b4) x4(8)
+    integer(in2) i2(16)
+    integer(in4) i4(8)
+    integer(in8) i8(4)
+    integer wrs,k
+    character (len=8)  str8
+    character (len=16) str16
+    character (len=1)  str1(8)  
+    character (len=2) todo(10),indo
+    wrs=0
+    do while(wrs < 10)
+        read(*,*,end=1234)indo
+        if(indo .eq. "st")goto 1234
+        wrs=wrs+1
+        todo(wrs)=indo
+    enddo
+1234 continue    
+    
+
+    str8="!@#$%^&*"
+    str16="abcdefghABCDEFGH"
+    str1=(/"1","2","3","4","5","6","7","8"/)
+    !write(*,*)str8
+    !write(*,*)str16
+    !write(*,*)str1
+
+    i2=(/1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16/)
+    i4=(/10,20,30,40,50,60,70,80/)
+    i8=(/100,200,300,400/)
+    x8=(/10.,20.,30.,40./)
+    x4=(/1.,2.,3.,4.,5.,6.,7.,8./)
+    open(unit=9,file="fort.9",form="unformatted",status="replace")
+    open(unit=10,file="fort.10",form="unformatted",status="replace",access="stream")
+
+        do ifile=9,10
+            do i=1,wrs
+                select case(todo(i))
+                    case ("i2")
+                        write(ifile)i2
+                    case ("i4")
+                        write(ifile)i4
+                    case ("i8")
+                        write(ifile)i8
+                    case ("r4")
+                        write(ifile)x4
+                    case ("r8")
+                        write(ifile)x8
+                    case ("c1")
+                        do k=1,4
+                            write(ifile)str1
+                        enddo
+                    case ("c8")
+                        do k=1,4
+                            write(ifile)str8
+                        enddo
+                    case ("cx")
+                        do k=1,2
+                            write(ifile)str16
+                        enddo
+                end select
+            enddo
+            close(ifile)
+        enddo
+        open(unit=9,file="fort.9",form="unformatted",status="old")
+        open(unit=10,file="fort.10",form="unformatted",status="old",access="stream")
+    do ifile=9,10
+        do i=1,wrs
+            select case(todo(i))
+                case ("i2")
+                    read(ifile)i2 ; write(*,*)i2
+                case ("i4")
+                    read(ifile)i4 ; write(*,*)i4
+                case ("i8")
+                    read(ifile)i8 ; write(*,*)i8
+                case ("r4")
+                    read(ifile)x4 ; write(*,*)x4
+                case ("r8")
+                    read(ifile)x8 ; write(*,*)x8
+                case ("c1")
+                    do k=1,4
+                        read(ifile)str1
+                    enddo
+                    write(*,*)str1
+                case ("c8")
+                    do k=1,4
+                        read(ifile)str8
+                    enddo
+                    write(*,*)str8
+                case ("cx")
+                    do k=1,2
+                        read(ifile)str16
+                    enddo
+                    write(*,*)str16
+            end select
+        enddo
+        close(ifile)
+    enddo
+    write(*,*)
+    write(*,*)"length fort.10 =",getlen("fort.10")
+    write(*,*)"length fort.9 =",getlen("fort.9")
+end program
+       
+    
+    
+
+</span></a>
+</p>
+
+<div class="scroll">
+<pre>
+      module numz
+! module defines the basic real types
+          integer, parameter:: b8 = selected_real_kind(14)
+          integer, parameter:: b4 = selected_real_kind(3)
+          integer, parameter :: in2 = selected_int_kind(1)
+          integer, parameter :: in4 = selected_int_kind(6)
+          integer, parameter :: in8 = selected_int_kind(12)
+          
+      end module
+function getlen(fname)
+    integer i
+    integer getlen
+    character(len=1) :: a
+    character(*) :: fname
+    open(unit=11,file=trim(fname),form="unformatted",status="old",access="stream")
+    len=0
+    do 
+        read(11,end=1234)a
+        len=len+1
+    enddo
+    1234 continue
+    close(11)
+    getlen=len
+end function
+
+
+program atest
+    use numz
+    integer getlen
+    real(b8) x8(4)
+    real(b4) x4(8)
+    integer(in2) i2(16)
+    integer(in4) i4(8)
+    integer(in8) i8(4)
+    integer wrs,k
+    character (len=8)  str8
+    character (len=16) str16
+    character (len=1)  str1(8)  
+    character (len=2) todo(10),indo
+    wrs=0
+    do while(wrs < 10)
+        read(*,*,end=1234)indo
+        if(indo .eq. "st")goto 1234
+        wrs=wrs+1
+        todo(wrs)=indo
+    enddo
+1234 continue    
+    
+
+    str8="!@#$%^&*"
+    str16="abcdefghABCDEFGH"
+    str1=(/"1","2","3","4","5","6","7","8"/)
+    !write(*,*)str8
+    !write(*,*)str16
+    !write(*,*)str1
+
+    i2=(/1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16/)
+    i4=(/10,20,30,40,50,60,70,80/)
+    i8=(/100,200,300,400/)
+    x8=(/10.,20.,30.,40./)
+    x4=(/1.,2.,3.,4.,5.,6.,7.,8./)
+    open(unit=9,file="fort.9",form="unformatted",status="replace")
+    open(unit=10,file="fort.10",form="unformatted",status="replace",access="stream")
+
+        do ifile=9,10
+            do i=1,wrs
+                select case(todo(i))
+                    case ("i2")
+                        write(ifile)i2
+                    case ("i4")
+                        write(ifile)i4
+                    case ("i8")
+                        write(ifile)i8
+                    case ("r4")
+                        write(ifile)x4
+                    case ("r8")
+                        write(ifile)x8
+                    case ("c1")
+                        do k=1,4
+                            write(ifile)str1
+                        enddo
+                    case ("c8")
+                        do k=1,4
+                            write(ifile)str8
+                        enddo
+                    case ("cx")
+                        do k=1,2
+                            write(ifile)str16
+                        enddo
+                end select
+            enddo
+            close(ifile)
+        enddo
+        open(unit=9,file="fort.9",form="unformatted",status="old")
+        open(unit=10,file="fort.10",form="unformatted",status="old",access="stream")
+    do ifile=9,10
+        do i=1,wrs
+            select case(todo(i))
+                case ("i2")
+                    read(ifile)i2 ; write(*,*)i2
+                case ("i4")
+                    read(ifile)i4 ; write(*,*)i4
+                case ("i8")
+                    read(ifile)i8 ; write(*,*)i8
+                case ("r4")
+                    read(ifile)x4 ; write(*,*)x4
+                case ("r8")
+                    read(ifile)x8 ; write(*,*)x8
+                case ("c1")
+                    do k=1,4
+                        read(ifile)str1
+                    enddo
+                    write(*,*)str1
+                case ("c8")
+                    do k=1,4
+                        read(ifile)str8
+                    enddo
+                    write(*,*)str8
+                case ("cx")
+                    do k=1,2
+                        read(ifile)str16
+                    enddo
+                    write(*,*)str16
+            end select
+        enddo
+        close(ifile)
+    enddo
+    write(*,*)
+    write(*,*)"length fort.10 =",getlen("fort.10")
+    write(*,*)"length fort.9 =",getlen("fort.9")
+end program
+       
+    
+    
+
+
+</pre>
+</div>
+
+<h2>Opens two unformatted files</h2>
+<pre>
+        open(unit=9, file="fort.9", form="unformatted",status="replace")
+        open(unit=10,file="fort.10",form="unformatted",status="replace",<b>access="stream"</b>)
+</pre>
+
+<h2>Then...</h2>
+<ul  class="l1">
+<li>Reads from the command line what type of data to write in 32 byte blocks</li>
+</ul>
+
+<ul  class="l2">
+	<li>"i2" - 16 2 byte integers</li>
+	<li>"i4" -  8 4 byte integers</li>
+	<li>"i8" -  4 8 byte integers</li>
+	<li>"x4" -  8 4 byte reals</li>
+	<li>"x8" -  4 8 byte reals</li>
+	<li>"c1" -  (/"1","2","3","4","5","6","7","8"/) 4 times</li>
+	<li>"c8" -  "!@#$%^&amp;*" 4 times</li>
+	<li>"cx" -  "abcdefghABCDEFGH" 4 times</li>
+</ul>
+
+<ul  class="l1">
+<li>Writes the data</li>
+<li>Closes the files</li>
+<li>Reopens the files and reads the data back</li>
+<li>Calls a function to return the length of each file</li>
+</ul>
+
+<h2>For this version of the program we get the length by openning the file and read/count character by character</h2>
+
+<hr><h6>&nbsp;</h6>
+
+<h1>Our Fortran example writing 64 bits of real*4 data</h1>
+
+<pre>
+[tkaiser@mio001 tf]$ ./a.out
+[tkaiser@mio001 tf]$ ./a.out
+r4
+r4
+st
+   1.000000       2.000000       3.000000       4.000000       5.000000    
+   6.000000       7.000000       8.000000    
+   1.000000       2.000000       3.000000       4.000000       5.000000    
+   6.000000       7.000000       8.000000    
+   1.000000       2.000000       3.000000       4.000000       5.000000    
+   6.000000       7.000000       8.000000    
+   1.000000       2.000000       3.000000       4.000000       5.000000    
+   6.000000       7.000000       8.000000    
+ 
+ length fort.10 =          64
+ length fort.9 =          80
+[tkaiser@mio001 tf]$ 
+
+[tkaiser@mio001 tf]$ ls -l fort.10 fort.9
+-rw-rw-r-- 1 tkaiser tkaiser 32 Jul  6 13:05 fort.10
+-rw-rw-r-- 1 tkaiser tkaiser 48 Jul  6 13:05 fort.9
+[tkaiser@mio001 tf]$ 
+</pre>
+
+<hr><h6>&nbsp;</h6>
+
+<h1>Where is  the difference in length? od can show us</h1>
+<pre>
+[tkaiser@mio001 tf]$ ls -l fort.10 fort.9
+-rw-rw-r-- 1 tkaiser tkaiser 32 Jul  6 13:05 fort.10
+-rw-rw-r-- 1 tkaiser tkaiser 48 Jul  6 13:05 fort.9
+[tkaiser@mio001 tf]$ 
+</pre>
+
+<table>
+<tr>
+<td class="x">[tkaiser@mio001 tf]$ od -A d  -v  -b fort.10 </td>
+<td class="y">[tkaiser@mio001 tf]$ od -A d  -v  -b fort.9</td>
+</tr>
+<tr>
+<td class="x">
+<pre>
+
+0000000 000 000 200 077 000 000 000 100 000 000 100 100 000 000 200 100
+0000016 000 000 240 100 000 000 300 100 000 000 340 100 000 000 000 101
+0000032 000 000 200 077 000 000 000 100 000 000 100 100 000 000 200 100
+0000048 000 000 240 100 000 000 300 100 000 000 340 100 000 000 000 101
+0000064
+[tkaiser@mio001 tf]$ 
+</pre>
+</td>
+
+<td class="y">
+<pre>
+0000000 <b>040 000 000 000</b> 000 000 200 077 000 000 000 100 000 000 100 100
+0000016 000 000 200 100 000 000 240 100 000 000 300 100 000 000 340 100
+0000032 000 000 000 101 <b>040 000 000 000 040 000 000 000</b> 000 000 200 077
+0000048 000 000 000 100 000 000 100 100 000 000 200 100 000 000 240 100
+0000064 000 000 300 100 000 000 340 100 000 000 000 101 <b>040 000 000 000</b>
+0000080
+[tkaiser@mio001 tf]$ 
+</pre>
+</td>
+</tr>
+</table>
+<br>
+<br>
+<table>
+<tr>
+<td class="x">[tkaiser@mio001 tf]$ od -A d  -v  -t f4 fort.10</td>
+<td class="y">[tkaiser@mio001 tf]$ od -A d  -v  -t f4 fort.9</td>
+</tr>
+<tr>
+<td class="x">
+<pre>
+0000000   1.000000e+00   2.000000e+00   3.000000e+00   4.000000e+00
+0000016   5.000000e+00   6.000000e+00   7.000000e+00   8.000000e+00
+0000032   1.000000e+00   2.000000e+00   3.000000e+00   4.000000e+00
+0000048   5.000000e+00   6.000000e+00   7.000000e+00   8.000000e+00
+0000064
+
+</pre>
+</td>
+<td class="y">
+<pre>
+
+0000000   <b>4.484155e-44</b>   1.000000e+00   2.000000e+00   3.000000e+00
+0000016   4.000000e+00   5.000000e+00   6.000000e+00   7.000000e+00
+0000032   8.000000e+00   <b>4.484155e-44   4.484155e-44</b>   1.000000e+00
+0000048   2.000000e+00   3.000000e+00   4.000000e+00   5.000000e+00
+0000064   6.000000e+00   7.000000e+00   8.000000e+00   <b>4.484155e-44</b>
+0000080
+
+</pre>
+</td>
+</tr>
+</table>
+<br>
+<br>
+<h2>Both files contain the same data but the one not opened in "stream" mode has extra "junk"</h2>
+<ul class="l1">
+	<li>Can make the file longer</li>
+	<li>Make it difficult to write files that need to be read by other programs</li>
+</ul>
+
+<hr><h6>&nbsp;</h6>
+	<h1>F2003 Fortran and C interoperability</h1>
+<dl>
+	<dt>This section "borrows" heavily from: </dt>
+		<dd><a href="https://gcc.gnu.org/onlinedocs/gfortran/Interoperability-with-C.html">https://gcc.gnu.org/onlinedocs/gfortran/Interoperability-with-C.html</a>.</dd>
+</dl>
+<ul  class="l1">
+	<li>People have been writing mixed language programs for years</li>
+	<li>Many libraries called from Fortran are written in C (MPI)</li>
+	<li>Many libraries called from C are written in Fortran (LAPACK)</li>
+	<li>Issues:
+	<ul class="l2">
+	<li>	How do you handle things like derived typed and global varialbes</li>
+	<li>	Fortran (usualy) does a call by reference C does a call by value</li>
+	<li>	There has not been a standard way to do this</li>
+</ul>
+</li>
+</ul>
+
+<p class="a">
+Since Fortran 2003 (ISO/IEC 1539-1:2004(E)) there is a standardized way to generate procedure and derived-type declarations and global variables which are interoperable with C (ISO/IEC 9899:1999). 
+</p>
+<p class="a">
+Fortran 2003 adds a data type attribute <b>bind(c)</b>, and a module, <b>ISO_C_BINDING</b> which standardizes Fortran/C ISO_C_BINDING.
+
+<ul  class="l1">
+	<li>ISO_C_BINDING contains:
+<ul  class="l2">
+	<li>6 intrinsic procedures</li>
+	<li>Over 20 Fortran data types that map to C types</li>
+	<li>8 Character constants</li>
+	<li>2 Null pointer types</li>
+</ul>
+</li>
+
+</ul>
+<hr><h6>&nbsp;</h6>
+<h1>ISO_C_BINDING character constants</h1>
+<table class="greenbar">
+<tr><th>Name</th><th>C definition</th><th>Value </th></tr>
+<tr class="alt"><td>C_NULL_CHAR</td><td>null character</td><td>'\0' </td></tr>
+<tr><td>C_ALERT</td><td>alert</td><td>'\a' </td></tr>
+<tr class="alt"><td>C_BACKSPACE</td><td>backspace</td><td>'\b' </td></tr>
+<tr><td>C_FORM_FEED</td><td>form feed</td><td>'\f' </td></tr>
+<tr class="alt"><td>C_NEW_LINE</td><td>new line</td><td>'\n' </td></tr>
+<tr><td>C_CARRIAGE_RETURN</td><td>carriage return</td><td>'\r' </td></tr>
+<tr class="alt"><td>C_HORIZONTAL_TAB</td><td>horizontal tab</td><td>'\t' </td></tr>
+<tr><td>C_VERTICAL_TAB</td><td>vertical tab</td><td>'\v' </td></tr>
+</table>
+<p class="a">We'll see examples of C_NULL_CHAR. It's important.</p>
+
+<hr><h6>&nbsp;</h6>
+<h1>ISO_C_BINDING intrinsic procedures</h1>
+<dl>
+	<dt>C_ASSOCIATED</dt>
+		<dd><a href="https://gcc.gnu.org/onlinedocs/gfortran/C_005fASSOCIATED.html#C_005fASSOCIATED"> Status of a C pointer</a><br>C_ASSOCIATED(c_ptr_1[, c_ptr_2]) determines the status of the C pointer c_ptr_1 or if c_ptr_1 is associated with the target c_ptr_2.</dd>
+	<dt>C_F_POINTER</dt>
+		<dd><a href="https://gcc.gnu.org/onlinedocs/gfortran/C_005fF_005fPOINTER.html#C_005fF_005fPOINTER">Convert C into Fortran pointer</a><br>C_F_POINTER(CPTR, FPTR[, SHAPE]) assigns the target of the C pointer CPTR to the Fortran pointer FPTR and specifies its shape.</dd>
+	<dt>C_F_PROCPOINTER</dt>
+		<dd><a href="https://gcc.gnu.org/onlinedocs/gfortran/C_005fF_005fPROCPOINTER.html#C_005fF_005fPROCPOINTER">Convert C into Fortran procedure pointer</a><br>C_F_PROCPOINTER(CPTR, FPTR) Assign the target of the C function pointer CPTR to the Fortran procedure pointer FPTR.</dd>
+	<dt>C_FUNLOC</dt>
+		<dd><a href="https://gcc.gnu.org/onlinedocs/gfortran/C_005fFUNLOC.html#C_005fFUNLOC">Obtain the C address of a procedure</a><br>C_FUNLOC(x) determines the C address of the argument.</dd>
+	<dt>C_LOC</dt>
+		<dd><a href="https://gcc.gnu.org/onlinedocs/gfortran/C_005fLOC.html#C_005fLOC">C_LOC — Obtain the C address of an object</a><br>C_LOC(X) determines the C address of the argument. </dd>
+	<dt>C_SIZEOF</dt>
+		<dd><a href="https://gcc.gnu.org/onlinedocs/gfortran/C_005fSIZEOF.html#C_005fSIZEOF">C_SIZEOF — Size in bytes of an expression</a><br>C_SIZEOF(X) calculates the number of bytes of storage the expression X occupies. </dd>
+</dl>
+<p class="a">We'll look at C_LOC, C_F_POINTER and C_ASSOCIATED</p>
+
+
+<hr><h6>&nbsp;</h6>
+<h1>ISO_C_BINDING Fortran data types</h1>
+<p class="a">The Fortran data types "map" to C types.  If you want to use a variable in both Fortran and C it should be declared as one of thes types in Fortran.</p>
+
+
+<table class="greenbar">
+<tr><th>Fortran Type</th><th>Named constant</th><th>C type</th></tr>
+<tr class="alt"><td>INTEGER</td><td>C_INT</td><td>int </td></tr>
+<tr><td>INTEGER</td><td>C_SHORT</td><td>short int </td></tr>
+<tr class="alt"><td>INTEGER</td><td>C_LONG</td><td>long int </td></tr>
+<tr><td>INTEGER</td><td>C_LONG_LONG</td><td>long long int </td></tr>
+<tr class="alt"><td>INTEGER</td><td>C_SIGNED_CHAR</td><td>signed char/unsigned char </td></tr>
+<tr><td>INTEGER</td><td>C_SIZE_T</td><td>size_t </td></tr>
+<tr class="alt"><td>INTEGER</td><td>C_INT8_T</td><td>int8_t </td></tr>
+<tr><td>INTEGER</td><td>C_INT16_T</td><td>int16_t </td></tr>
+<tr class="alt"><td>INTEGER</td><td>C_INT32_T</td><td>int32_t </td></tr>
+<tr><td>INTEGER</td><td>C_INT64_T</td><td>int64_t </td></tr>
+<tr class="alt"><td>INTEGER</td><td>C_INT_LEAST8_T</td><td>int_least8_t </td></tr>
+<tr><td>INTEGER</td><td>C_INT_LEAST16_T</td><td>int_least16_t </td></tr>
+<tr class="alt"><td>INTEGER</td><td>C_INT_LEAST32_T</td><td>int_least32_t </td></tr>
+<tr><td>INTEGER</td><td>C_INT_LEAST64_T</td><td>int_least64_t </td></tr>
+<tr class="alt"><td>INTEGER</td><td>C_INT_FAST8_T</td><td>int_fast8_t </td></tr>
+<tr><td>INTEGER</td><td>C_INT_FAST16_T</td><td>int_fast16_t </td></tr>
+<tr class="alt"><td>INTEGER</td><td>C_INT_FAST32_T</td><td>int_fast32_t </td></tr>
+<tr><td>INTEGER</td><td>C_INT_FAST64_T</td><td>int_fast64_t </td></tr>
+<tr class="alt"><td>INTEGER</td><td>C_INTMAX_T</td><td>intmax_t </td></tr>
+<tr><td>INTEGER</td><td>C_INTPTR_T</td><td>intptr_t </td></tr>
+<tr class="alt"><td>REAL</td><td>C_FLOAT</td><td>float </td></tr>
+<tr><td>REAL</td><td>C_DOUBLE</td><td>double </td></tr>
+<tr class="alt"><td>REAL</td><td>C_LONG_DOUBLE</td><td>long double </td></tr>
+<tr><td>COMPLEX</td><td>C_FLOAT_COMPLEX</td><td>float _Complex </td></tr>
+<tr class="alt"><td>COMPLEX</td><td>C_DOUBLE_COMPLEX</td><td>double _Complex </td></tr>
+<tr><td>COMPLEX</td><td>C_LONG_DOUBLE_COMPLEX</td><td>long double _Complex </td></tr>
+<tr><td>LOGICAL</td><td>C_BOOL</td><td>_Bool </td></tr>
+<tr class="alt"><td>CHARACTER</td><td>C_CHAR</td><td>char </td></tr>
+</table>
+
+<hr><h6>&nbsp;</h6>
+<h1>Our First Example - call a C routine to get file length</h1>
+<ul  class="l1">
+	<li>This is from our previous "Stream IO" example"</li>
+	<li>The calls are:</li>
+</ul>
+<pre>
+    write(*,*)"length fort.10 =",getlen_c("fort.10")
+    write(*,*)"length fort.9 =",getlen_c("fort.9")
+</pre>    
+    <ul  class="l1">
+	<li>getlne_c is actually a Fortran routine that calls a C routine</li>
+</ul>
+
+<h2>C Routine:</h2>
+
+	<p>
+	<a class="tooltip" href="source/getit.c" target="_blank">Source: getit.c<span class="custom critical">#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdio.h>
+size_t c_filesize(char* filename)
+{
+    size_t rv = 0;  // Return 0, if failure
+    struct stat  file_info;
+
+    if ( (filename != NULL) && (stat(filename,&file_info) == 0) )  //NULL check/stat() call
+      rv = (size_t)file_info.st_size;  // Note: this may not fit in a size_t variable
+
+  return rv;
+}
+</span></a>
+</p>
+
+<pre>
+<code>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdio.h>
+size_t c_filesize(char* filename)
+{
+    size_t rv = 0;  // Return 0, if failure
+    struct stat  file_info;
+
+    if ( (filename != NULL) && (stat(filename,&file_info) == 0) )  //NULL check/stat() call
+      rv = (size_t)file_info.st_size;  // Note: this may not fit in a size_t variable
+
+  return rv;
+}
+
+</code>
+</pre>
+<table>
+<tr>
+<td>
+<pre><code>
+module getit
+contains
+function getlen_c(fname)
+    USE ISO_C_BINDING, ONLY: c_long, c_char,C_NULL_CHAR
+    use numz
+    integer(in8) :: getlen_c
+    interface 
+        integer(c_long) function filesize(aname) BIND(C, NAME='c_filesize')
+          USE ISO_C_BINDING, ONLY: c_long, c_char
+          character(kind=c_char) :: aname(*)
+        end function fileSize
+    end interface
+    character(*) :: fname
+    character(128) :: tmp
+    character(kind=c_char) :: string(128)
+    integer strlen
+    ! fill the string with nulls (strings for c must be null terminated)
+    string=C_NULL_CHAR
+    ! copy our input string to a c_char string
+    tmp=trim(ADJUSTL(fname))
+    strlen=len_trim(tmp)
+    do i=1,strlen
+        string(i:i)=tmp(i:i)
+    enddo
+    getlen_c=fileSize(string)
+end function
+end module
+
+</code>
+</pre></td>
+<td>
+<div class="scroll">
+
+<p class="s">
+Our Function getlen_c takes a file name and returns a file length.
+</p>
+
+<p class="s">
+ISO_C_BINDING contains our Fortran equivalent data types.  Here we are going to define variables that have typed matching C long and C char.  We are also going to use the C null character.
+</p>
+
+<p class="s">
+Our function returns an integer of type "in8".  In8 is defined in "numz" to be an 8 byte integer.
+</p>
+
+<p class="s">
+Next we have the interface for our C routine.  It will return a C long and take a C character array.  
+</p>
+
+<p class="s">
+The BIND clause first "just" says that this is a C routine.  If you have ever written mixed language programs you will appreciate the NAME='c_filesize' clause.  What this does is specify the name of the routine in C.  Why is this important.  Previously, if you wrote a mixed language program the Fortran compiler may or may not append and underscore (_) to the end of the routine name.  So on the C side you would need to be able to compile with or without the underscore.  Here we are forcing the Fortran compiler to name our C function as given.
+</p>
+
+<p class="s">
+The string we are sending to the C routine is defined here.  
+</p>
+
+<p class="s">
+We are going to fill it with NULLs.  This is a bit of an overkill.  Only the character after our filename needs to be NULL.
+</p>
+
+<p class="s">
+Next we "unpad" our input string and copy it to our C string.
+</p>
+
+<p class="s">
+Finally we call the C routine.
+</p>
+</div>
+</td>
+</tr>
+</table>
+
+<hr><h6>&nbsp;</h6>
+<h1>Our Second Example - Fortran calls C and C calls Fortran</h1>
+
+<p>
+	<a class="tooltip" href="source/ftnc_mod.f90" target="_blank">Source: fandc.f90 - module<span class="custom critical">MODULE FTN_C 
+INTERFACE
+! int C_Library_Function(float* sendbuf, int sendcount, float *recvcounts, float *mysum)
+INTEGER (C_INT) FUNCTION C_LIBRARY_FUNCTION (SENDBUF, SENDCOUNT, RECV, mysum) &
+                BIND(C, NAME='C_Library_Function')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    TYPE (C_PTR), VALUE :: SENDBUF 
+    INTEGER (C_INT), VALUE :: SENDCOUNT 
+     Real (C_FLOAT) :: mysum
+    TYPE (C_PTR), VALUE :: RECV
+    END FUNCTION C_LIBRARY_FUNCTION 
+END INTERFACE
+INTERFACE
+subroutine c_dosim ( ) BIND(C, NAME='do_sim')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    END subroutine c_dosim 
+END INTERFACE
+END MODULE FTN_C
+
+</span></a><br>
+	<a class="tooltip" href="source/main.f90" target="_blank">Source: fandc.f90 - main <span class="custom critical">program backforth
+    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_LOC 
+    USE FTN_C
+    REAL (C_FLOAT), TARGET :: SEND(10)
+    INTEGER (C_INT) :: SENDCOUNT
+    Real (C_FLOAT) :: mysum
+    REAL (C_FLOAT), ALLOCATABLE, TARGET :: RECV(:)
+
+    SENDCOUNT=size(SEND)
+    do i=1,SENDCOUNT
+        SEND(i)=i
+    enddo
+    ALLOCATE( RECV(SENDCOUNT) )
+    mysum=-1.0
+    write(*,'("Fortran mysum before C call  = ",f7.1)'),mysum
+    i=C_LIBRARY_FUNCTION(C_LOC(SEND), SENDCOUNT, C_LOC(RECV),mysum)
+    write(*,'("Back from C in Fortran mysum = ",f7.1)'),mysum
+
+    do i=1,SENDCOUNT
+        write(*,*)send(i),recv(i)
+    enddo
+    write(*,'("Fortran calling C again")')
+    call c_dosim()
+end program
+</span></a><br>
+	<a class="tooltip" href="source/simulation.f90" target="_blank">Source: fandc.f90 - subroutine<span class="custom critical">SUBROUTINE SIMULATION(ALPHA, BETA, GAMMA, DELTA, ARRAYS) BIND(C ,NAME='f_routine')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER (C_LONG), VALUE :: alpha
+    REAL (C_DOUBLE), INTENT(INOUT) :: beta
+    REAL (C_DOUBLE), INTENT(OUT) :: gamma
+    REAL (C_DOUBLE),DIMENSION(*),INTENT(IN) :: DELTA 
+    TYPE, BIND(C) :: PASS
+        INTEGER (C_INT) :: LENC, LENF
+        TYPE (C_PTR) :: C, F 
+    END TYPE PASS
+    TYPE (PASS), INTENT(INOUT) :: ARRAYS
+    REAL (C_FLOAT), ALLOCATABLE, TARGET, SAVE :: ETA(:) 
+    REAL (C_FLOAT), POINTER :: C_ARRAY(:)
+    integer i,j
+    write(*,'("In Fortran called from C alpha=",i4,&
+              " beta=",f10.2," gamma=",f10.2)')&
+            alpha,beta,gamma
+    gamma=0.0
+    do i=1,alpha
+        gamma=gamma+beta*delta(i)
+    enddo
+    beta=1234.0
+    
+    !...
+    write(*,*)"! Associate C_ARRAY with an array allocated in C"
+    CALL C_F_POINTER (ARRAYS%C, C_ARRAY, (/ARRAYS%LENC/) ) 
+    if(c_associated(ARRAYS%C, c_loc(C_ARRAY)))then
+        write(*,*)'ARRAYS%C, C_ARRAY point to same target'
+    else
+        write(*,*)'ARRAYS%C, C_ARRAY do not point to same target'
+        stop
+    endif
+    !...
+    write(*,*)"! Allocate an array and make it available in C" 
+    ARRAYS%LENF = 100
+    ALLOCATE (ETA(ARRAYS%LENF))
+    ARRAYS%F = C_LOC(ETA)
+    j=min(ARRAYS%lenc,ARRAYS%lenf)
+    write(*,*)"Fortan fills the array for C"
+    do i=1,j
+        ETA(i)=C_ARRAY(i)*2
+    enddo
+END SUBROUTINE SIMULATION
+
+</span></a>
+</p>
+
+<div class="scroll">
+<pre>
+MODULE FTN_C 
+INTERFACE
+! int C_Library_Function(float* sendbuf, int sendcount, float *recvcounts, float *mysum)
+INTEGER (C_INT) FUNCTION C_LIBRARY_FUNCTION (SENDBUF, SENDCOUNT, RECV, mysum) &
+                BIND(C, NAME='C_Library_Function')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    TYPE (C_PTR), VALUE :: SENDBUF 
+    INTEGER (C_INT), VALUE :: SENDCOUNT 
+     Real (C_FLOAT) :: mysum
+    TYPE (C_PTR), VALUE :: RECV
+    END FUNCTION C_LIBRARY_FUNCTION 
+END INTERFACE
+INTERFACE
+subroutine c_dosim ( ) BIND(C, NAME='do_sim')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    END subroutine c_dosim 
+END INTERFACE
+END MODULE FTN_C
+
+SUBROUTINE SIMULATION(ALPHA, BETA, GAMMA, DELTA, ARRAYS) BIND(C ,NAME='f_routine')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER (C_LONG), VALUE :: alpha
+    REAL (C_DOUBLE), INTENT(INOUT) :: beta
+    REAL (C_DOUBLE), INTENT(OUT) :: gamma
+    REAL (C_DOUBLE),DIMENSION(*),INTENT(IN) :: DELTA 
+    TYPE, BIND(C) :: PASS
+        INTEGER (C_INT) :: LENC, LENF
+        TYPE (C_PTR) :: C, F 
+    END TYPE PASS
+    TYPE (PASS), INTENT(INOUT) :: ARRAYS
+    REAL (C_FLOAT), ALLOCATABLE, TARGET, SAVE :: ETA(:) 
+    REAL (C_FLOAT), POINTER :: C_ARRAY(:)
+    integer i,j
+    write(*,'("In Fortran called from C alpha=",i4,&
+              " beta=",f10.2," gamma=",f10.2)')&
+            alpha,beta,gamma
+    gamma=0.0
+    do i=1,alpha
+        gamma=gamma+beta*delta(i)
+    enddo
+    beta=1234.0
+    
+    !...
+    write(*,*)"! Associate C_ARRAY with an array allocated in C"
+    CALL C_F_POINTER (ARRAYS%C, C_ARRAY, (/ARRAYS%LENC/) ) 
+    if(c_associated(ARRAYS%C, c_loc(C_ARRAY)))then
+        write(*,*)'ARRAYS%C, C_ARRAY point to same target'
+    else
+        write(*,*)'ARRAYS%C, C_ARRAY do not point to same target'
+        stop
+    endif
+    !...
+    write(*,*)"! Allocate an array and make it available in C" 
+    ARRAYS%LENF = 100
+    ALLOCATE (ETA(ARRAYS%LENF))
+    ARRAYS%F = C_LOC(ETA)
+    j=min(ARRAYS%lenc,ARRAYS%lenf)
+    write(*,*)"Fortan fills the array for C"
+    do i=1,j
+        ETA(i)=C_ARRAY(i)*2
+    enddo
+END SUBROUTINE SIMULATION
+
+program backforth
+    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_LOC 
+    USE FTN_C
+    REAL (C_FLOAT), TARGET :: SEND(10)
+    INTEGER (C_INT) :: SENDCOUNT
+    Real (C_FLOAT) :: mysum
+    REAL (C_FLOAT), ALLOCATABLE, TARGET :: RECV(:)
+
+    SENDCOUNT=size(SEND)
+    do i=1,SENDCOUNT
+        SEND(i)=i
+    enddo
+    ALLOCATE( RECV(SENDCOUNT) )
+    mysum=-1.0
+    write(*,'("Fortran mysum before C call  = ",f7.1)'),mysum
+    i=C_LIBRARY_FUNCTION(C_LOC(SEND), SENDCOUNT, C_LOC(RECV),mysum)
+    write(*,'("Back from C in Fortran mysum = ",f7.1)'),mysum
+
+    do i=1,SENDCOUNT
+        write(*,*)send(i),recv(i)
+    enddo
+    write(*,'("Fortran calling C again")')
+    call c_dosim()
+end program
+
+</pre>
+</div>
+<ul class="l1">
+	<li>Main program is Fortran</li>
+	<li>Calls two C routines</li>
+	<li>First routine accepts a size and two arrays and puts "sin" of first into the second</li>
+	<li>Second routine creats a derived type (structure) and then calls a Fortran routine</li>
+	<li>We show how to:
+	<ul class="l2">
+	<li>C calling Fortran</li>
+	<li>Fortran calling C</li>
+	<li>Pass by location</li>
+	<li>Pass by value</li>
+	<li>Use structures</li>
+</ul>
+
+	</li>
+	<li>We will go through this example "programatically"</li>
+
+</ul>
+
+<hr><h6>&nbsp;</h6>
+<h1>Our Main Routine</h1>
+
+<table>
+<tr>
+<td>
+<div class="scroll">
+<pre>
+program backforth
+    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_LOC 
+    USE FTN_C
+    REAL (C_FLOAT), TARGET :: SEND(10)
+    INTEGER (C_INT) :: SENDCOUNT
+    Real (C_FLOAT) :: mysum
+    REAL (C_FLOAT), ALLOCATABLE, TARGET :: RECV(:)
+
+    SENDCOUNT=size(SEND)
+    do i=1,SENDCOUNT
+        SEND(i)=i
+    enddo
+    ALLOCATE( RECV(SENDCOUNT) )
+    mysum=-1.0
+    write(*,'("Fortran mysum before C call  = ",f7.1)'),mysum
+    i=C_LIBRARY_FUNCTION(C_LOC(SEND), SENDCOUNT, C_LOC(RECV),mysum)
+    write(*,'("Back from C in Fortran mysum = ",f7.1)'),mysum
+
+    do i=1,SENDCOUNT
+        write(*,*)send(i),recv(i)
+    enddo
+    write(*,'("Fortran calling C again")')
+    call c_dosim()
+end program
+
+</pre>
+</div>
+</td>
+<td>
+<p class="s">
+We will use C ints and floats in this program as well as the C_LOC function so there are included here.
+</p>
+
+<p class="s">
+We will be sending a regular array which we fill.  We allocate an array that will have data put in it in the C procedure.
+</p>
+
+<p class="s">
+MYSUM will also be modified in the c routine.  SENDCOUNT will not be changed.
+</p>
+
+<p class="s">
+Using C_LOC is a bit odd in my opinion.  SEND and RECV are arrays but we will be sending the arrays as pointers.  C_LOC gives the pointer address. 
+</p>
+
+<p class="s">
+We next look at the interface for C_LIBRARY_FUNCTION.  Before that we note that after the call to C_LIBRARY_FUNCTION we print our returned data.
+</p>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td>
+
+<hr><h6>&nbsp;</h6>
+<h1>Our Interface</h1>
+
+
+
+<div class="scroll">
+<pre>
+MODULE FTN_C 
+INTERFACE
+! int C_Library_Function(float* sendbuf, int sendcount, float *recvcounts, float *mysum)
+INTEGER (C_INT) FUNCTION C_LIBRARY_FUNCTION (SENDBUF, SENDCOUNT, RECV, mysum) &
+                BIND(C, NAME='C_Library_Function')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    TYPE (C_PTR), VALUE :: SENDBUF 
+    INTEGER (C_INT), VALUE :: SENDCOUNT 
+     Real (C_FLOAT) :: mysum
+    TYPE (C_PTR), VALUE :: RECV
+    END FUNCTION C_LIBRARY_FUNCTION 
+END INTERFACE
+INTERFACE
+subroutine c_dosim ( ) BIND(C, NAME='do_sim')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    END subroutine c_dosim 
+END INTERFACE
+END MODULE FTN_C
+
+
+</pre>
+</div>
+</td>
+<td>
+
+
+<p class="s">
+We include the C interface for the routine as a reference.  
+</p>
+
+<p class="s">
+In the interface we declare the SENDBUF and RECV as pointers.  So this matches what we did in the program.  Note that we are sending these by VALUE, which is normal for C.  We can do this because we are not changing the value of the pointer.
+</p>
+
+<p class="s">
+SENDCOUNT will not change either so we send by value.
+</p>
+
+<p class="s">
+MYSUM will be changed in the C routine.  It is sent by location.  Note in the C routine it will be dereferenced as indicated in the C interface.
+</p>
+</td>
+</tr>
+</table>
+
+
+<br>
+<br>
+<hr><h6>&nbsp;</h6>
+<h1>Now we look at the C routine called by Fortran</h1>
+
+<table>
+<tr>
+<td>
+
+<p>
+	<a class="tooltip" href="source/cpart_1.c" target="_blank">Source: cpart_1.c<span class="custom critical">#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+/* this routine is called by fortran */
+int C_Library_Function(float* sendbuf, int sendcount, float *recvcounts, float *mysum) {
+int i;
+float pi=3.1415926;
+printf("In C mysum before loop =%g\n",*mysum);
+*mysum=0.0;
+
+for(i=0;i<sendcount;i++) {
+	recvcounts[i]=sin((sendbuf[i]-1)*(2.0*pi/((sendcount-1))));
+	*mysum=*mysum+recvcounts[i]*recvcounts[i];
+}
+printf("In C mysum after loop  = %g\n",*mysum);
+return 1234;
+}
+
+/****************************/
+
+</span></a>
+</p>
+<div class="scroll">
+<pre>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+/* this routine is called by fortran */
+int C_Library_Function(float* sendbuf, int sendcount, float *recvcounts, float *mysum) {
+int i;
+float pi=3.1415926;
+printf("In C mysum before loop =%g\n",*mysum);
+*mysum=0.0;
+
+for(i=0;i<sendcount;i++) {
+	recvcounts[i]=sin((sendbuf[i]-1)*(2.0*pi/((sendcount-1))));
+	*mysum=*mysum+recvcounts[i]*recvcounts[i];
+}
+printf("In C mysum after loop  = %g\n",*mysum);
+return 1234;
+}
+
+/****************************/
+
+
+</pre>
+</div>
+<td>
+<p class="s">
+The Routine just takes the input array and put sin in the output array and sums into *mysum.
+</p>
+
+<p class="s">
+The cool thing about this routine is that there is nothing special about it.
+</p>
+
+<p class="s">
+Note: sendbuf, recvcounts, are pointers / arrays.  We are passing back mysum so it also needs to be a pointer.  Finally sendcount is not a pointer because it is not changed.
+</p>
+
+</td>
+</tr>
+</table>
+<hr><h6>&nbsp;</h6>
+<h1>Here is a C routine that will call Fortran</h1>
+<table>
+<tr>
+<td>
+
+<p>
+	<a class="tooltip" href="source/cpart_2.c" target="_blank">Source: cpart_2.c<span class="custom critical">#include <stdio.h>
+#include <stdlib.h>
+struct pass {int lenc, lenf; float *c,  *f;};
+
+void f_routine(long alpha, double *beta, double *gamma, double delta[], struct pass *arrays);
+
+/* this routine is called by fortran but it
+   also calls a fortran routine "simulation"
+*/
+void do_sim(){ 
+	struct pass arrays;
+	long alpha;
+	double beta;
+	double gamma;
+	double *delta;
+	int i;
+	printf("C in do_sim\n");	
+	alpha=10;
+	delta=(double*)malloc(alpha*sizeof(double));
+	beta=0.5;
+	gamma=0;
+	for (i=0;i<alpha;i++) {
+		delta[i]=100*i;
+	}
+	arrays.lenc=10;
+	arrays.lenf=10;
+	arrays.c=(float*)malloc(arrays.lenc*sizeof(float));
+	for (i=0;i<10;i++) {
+		arrays.c[i]=i;
+	}
+/* call the fortran subroutine */
+	f_routine(alpha, &beta, &gamma, delta, &arrays);
+	printf("C back in do_sim\n");	
+	printf("beta = %g gamma=%g\n",beta,gamma);
+	for(i=0; i< arrays.lenc;i++) {
+		printf("%g %g\n",arrays.c[i],arrays.f[i]);
+	}
+}
+</span></a>
+</p>
+<div class="scroll">
+<pre>
+#include <stdio.h>
+#include <stdlib.h>
+struct pass {int lenc, lenf; float *c,  *f;};
+
+void f_routine(long alpha, double *beta, double *gamma, double delta[], struct pass *arrays);
+
+/* this routine is called by fortran but it
+   also calls a fortran routine "simulation"
+*/
+void do_sim(){ 
+	struct pass arrays;
+	long alpha;
+	double beta;
+	double gamma;
+	double *delta;
+	int i;
+	printf("C in do_sim\n");	
+	alpha=10;
+	delta=(double*)malloc(alpha*sizeof(double));
+	beta=0.5;
+	gamma=0;
+	for (i=0;i<alpha;i++) {
+		delta[i]=100*i;
+	}
+	arrays.lenc=10;
+	arrays.lenf=10;
+	arrays.c=(float*)malloc(arrays.lenc*sizeof(float));
+	for (i=0;i<10;i++) {
+		arrays.c[i]=i;
+	}
+/* call the fortran subroutine */
+	f_routine(alpha, &beta, &gamma, delta, &arrays);
+	printf("C back in do_sim\n");	
+	printf("beta = %g gamma=%g\n",beta,gamma);
+	for(i=0; i< arrays.lenc;i++) {
+		printf("%g %g\n",arrays.c[i],arrays.f[i]);
+	}
+}
+
+</pre>
+</div>
+<td>
+<p class="s">
+We have a data structure that will have a match in Fortran</p>
+<p class="s">
+This interface statement is for our Fortran Routine</p>
+<p class="s">
+We set alpha, beta, gamma, allocate delta and fill it.</p>
+<p class="s">
+The "len" portions of our data structure are assigned.</p>
+<p class="s">
+We allocate arrays.c and fill it but <b>we don't allocate arrays.f</b>
+</p>
+
+<p class="s">
+We call our Fortran routine.
+</p>
+
+<p class="s">
+On return from Fortran beta and gamma have been changed and arrays.f has been allocated and filled.</p>
+
+</td>
+</tr>
+</table>
+<hr><h6>&nbsp;</h6>
+<h1>Finally... we have our Fortran called by C</h1>
+<table>
+<tr>
+<td>
+
+<p>
+	<a class="tooltip" href="source/simulation.f90" target="_blank">Source: simulation.f90<span class="custom critical">SUBROUTINE SIMULATION(ALPHA, BETA, GAMMA, DELTA, ARRAYS) BIND(C ,NAME='f_routine')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER (C_LONG), VALUE :: alpha
+    REAL (C_DOUBLE), INTENT(INOUT) :: beta
+    REAL (C_DOUBLE), INTENT(OUT) :: gamma
+    REAL (C_DOUBLE),DIMENSION(*),INTENT(IN) :: DELTA 
+    TYPE, BIND(C) :: PASS
+        INTEGER (C_INT) :: LENC, LENF
+        TYPE (C_PTR) :: C, F 
+    END TYPE PASS
+    TYPE (PASS), INTENT(INOUT) :: ARRAYS
+    REAL (C_FLOAT), ALLOCATABLE, TARGET, SAVE :: ETA(:) 
+    REAL (C_FLOAT), POINTER :: C_ARRAY(:)
+    integer i,j
+    write(*,'("In Fortran called from C alpha=",i4,&
+              " beta=",f10.2," gamma=",f10.2)')&
+            alpha,beta,gamma
+    gamma=0.0
+    do i=1,alpha
+        gamma=gamma+beta*delta(i)
+    enddo
+    beta=1234.0
+    
+    !...
+    write(*,*)"! Associate C_ARRAY with an array allocated in C"
+    CALL C_F_POINTER (ARRAYS%C, C_ARRAY, (/ARRAYS%LENC/) ) 
+    if(c_associated(ARRAYS%C, c_loc(C_ARRAY)))then
+        write(*,*)'ARRAYS%C, C_ARRAY point to same target'
+    else
+        write(*,*)'ARRAYS%C, C_ARRAY do not point to same target'
+        stop
+    endif
+    !...
+    write(*,*)"! Allocate an array and make it available in C" 
+    ARRAYS%LENF = 100
+    ALLOCATE (ETA(ARRAYS%LENF))
+    ARRAYS%F = C_LOC(ETA)
+    j=min(ARRAYS%lenc,ARRAYS%lenf)
+    write(*,*)"Fortan fills the array for C"
+    do i=1,j
+        ETA(i)=C_ARRAY(i)*2
+    enddo
+END SUBROUTINE SIMULATION
+
+</span></a>
+</p>
+<div class="scroll">
+<pre>
+SUBROUTINE SIMULATION(ALPHA, BETA, GAMMA, DELTA, ARRAYS) BIND(C ,NAME='f_routine')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER (C_LONG), VALUE :: alpha
+    REAL (C_DOUBLE), INTENT(INOUT) :: beta
+    REAL (C_DOUBLE), INTENT(OUT) :: gamma
+    REAL (C_DOUBLE),DIMENSION(*),INTENT(IN) :: DELTA 
+    TYPE, BIND(C) :: PASS
+        INTEGER (C_INT) :: LENC, LENF
+        TYPE (C_PTR) :: C, F 
+    END TYPE PASS
+    TYPE (PASS), INTENT(INOUT) :: ARRAYS
+    REAL (C_FLOAT), ALLOCATABLE, TARGET, SAVE :: ETA(:) 
+    REAL (C_FLOAT), POINTER :: C_ARRAY(:)
+    integer i,j
+    write(*,'("In Fortran called from C alpha=",i4,&
+              " beta=",f10.2," gamma=",f10.2)')&
+            alpha,beta,gamma
+    gamma=0.0
+    do i=1,alpha
+        gamma=gamma+beta*delta(i)
+    enddo
+    beta=1234.0
+    
+    !...
+    write(*,*)"! Associate C_ARRAY with an array allocated in C"
+    CALL C_F_POINTER (ARRAYS%C, C_ARRAY, (/ARRAYS%LENC/) ) 
+    if(c_associated(ARRAYS%C, c_loc(C_ARRAY)))then
+        write(*,*)'ARRAYS%C, C_ARRAY point to same target'
+    else
+        write(*,*)'ARRAYS%C, C_ARRAY do not point to same target'
+        stop
+    endif
+    !...
+    write(*,*)"! Allocate an array and make it available in C" 
+    ARRAYS%LENF = 100
+    ALLOCATE (ETA(ARRAYS%LENF))
+    ARRAYS%F = C_LOC(ETA)
+    j=min(ARRAYS%lenc,ARRAYS%lenf)
+    write(*,*)"Fortan fills the array for C"
+    do i=1,j
+        ETA(i)=C_ARRAY(i)*2
+    enddo
+END SUBROUTINE SIMULATION
+
+
+</pre>
+</div>
+<td>
+<p class="s">
+The subroutine statement says that this routine can be called from C with the name f_routine
+</p>
+<p class="s">
+Alpha is passed by value as indicated by the attribute.
+</p>
+<p class="s">
+Beta has intent inout and gamma out.  Both could have been given intent inout since they are passed as pointers.
+</p>
+<p class="s">
+Next we have our data structure arrays  having the type pass matching the C pass structure.
+</p>
+<p class="s">
+We finally have eta and c_array which will be mapped to arrays in the C world.
+</p>
+
+<p class="s">
+We are changing beta and gamma.  These changed values gets printed in C.
+</p>
+
+<p class="s">
+We are passing in our data structure which contains ARRAYS%C.  We show here haw we can use C_F_POINTER
+to set a pointer to that.  Then we call c_associated to check that this worked.   
+</p>
+<p class="s">
+Next we show how we can allocate an array in Fortran "ETA" and then assign its memory to the array originally from C.
+ This is done indirectly, we don't allocate the C variable.  The reason for this is related to what we talked about earlier.  
+ The array could be automatically deallocated on routine exit.  Here we give "ETA" the save attribute to prevent that. 
+</p>
+
+</td>
+</tr>
+</table>
+<hr><h6>&nbsp;</h6>
+<h1>The Results...</h1>
+<p>
+	<a class="tooltip" href="source/results2" target="_blank">Source: results2<span class="custom critical">In C mysum before loop =-1
+In C mysum after loop  = 4.5
+C in do_sim
+Fortran mysum before C call  =    -1.0
+Back from C in Fortran mysum =     4.5
+   1.00000000       0.00000000    
+   2.00000000      0.642787576    
+   3.00000000      0.984807730    
+   4.00000000      0.866025448    
+   5.00000000      0.342020273    
+   6.00000000     -0.342019975    
+   7.00000000     -0.866025329    
+   8.00000000     -0.984807789    
+   9.00000000     -0.642787814    
+   10.0000000      -3.01991605E-07
+Fortran calling C again
+In Fortran called from C alpha=  10 beta=      0.50 gamma=      0.00
+ ! Associate C_ARRAY with an array allocated in C
+ ARRAYS%C, C_ARRAY point to same target
+ ! Allocate an array and make it available in C
+ Fortan fills the array for C
+C back in do_sim
+beta = 1234 gamma=2250
+0 0
+1 2
+2 4
+3 6
+4 8
+5 10
+6 12
+7 14
+8 16
+9 18
+</span></a>
+</p>
+<div class="scroll">
+<pre>
+In C mysum before loop =-1
+In C mysum after loop  = 4.5
+C in do_sim
+Fortran mysum before C call  =    -1.0
+Back from C in Fortran mysum =     4.5
+   1.00000000       0.00000000    
+   2.00000000      0.642787576    
+   3.00000000      0.984807730    
+   4.00000000      0.866025448    
+   5.00000000      0.342020273    
+   6.00000000     -0.342019975    
+   7.00000000     -0.866025329    
+   8.00000000     -0.984807789    
+   9.00000000     -0.642787814    
+   10.0000000      -3.01991605E-07
+Fortran calling C again
+In Fortran called from C alpha=  10 beta=      0.50 gamma=      0.00
+ ! Associate C_ARRAY with an array allocated in C
+ ARRAYS%C, C_ARRAY point to same target
+ ! Allocate an array and make it available in C
+ Fortan fills the array for C
+C back in do_sim
+beta = 1234 gamma=2250
+0 0
+1 2
+2 4
+3 6
+4 8
+5 10
+6 12
+7 14
+8 16
+9 18
+
+</pre>
+</div>
+
+<hr><h6>&nbsp;</h6>
+<h1>Forall statement</h1>
+
+<p>Fortran 95 provides an efficient alternative to the element by element construction of an array value in Fortran 90.</p>
+
+
+<h4>Interpreting the FORALL Statement</h4>
+
+<ol>
+	<li class="n">Evaluate the subscript and stride expressions for each forall_triplet_spec in any order. All possible pairings of index_name values form the set of combinations. For example, given the following statement:</li>
+
+	<li class="n">Evaluate the scalar_mask_expr for the set of combinations, in any order, producing a set of active combinations (those for which scalar_mask_expr evaluated to .TRUE.). For example, if the mask (I+J.NE.6) is applied to the above set, the set of active combinations is:</li>
+
+	<li class="n">For assignment_statement, evaluate, in any order, <span class="b">all values in the right-hand side expression</span> and all subscripts, strides, and substring bounds in the left-hand side variable for all active combinations of index_name values.</li>
+
+	<li class="n">For assignment_statement, <span class="b">assign, in any order, the computed expression values</span> to the corresponding variable entities for all active combinations of index_name values.</li>
+</ol>
+
+
+<table>
+	<thead>
+	<tr>
+		<th>Fortran 90 nested Do</th> <th>Similar Fortran 95 Forall</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td class="x"><pre>
+    do j=j1,j2
+        do i=i1,i2
+            new_psi(i,j)=a1*psi(i+1,j) + a2*psi(i-1,j) + &amp;
+                         a3*psi(i,j+1) + a4*psi(i,j-1) - &amp;
+                         a5*for(i,j)
+         enddo
+     enddo
+   <span class="b"> psi(i1:i2,j1:j2)=new_psi(i1:i2,j1:j2)</span>		
+		</pre></td>
+		
+		<td class="y"><pre>
+   <span class="b"> FORALL (i=i1:i2, j=j1:j2)</span>
+            psi(i,j)=a1*psi(i+1,j) + a2*psi(i-1,j) + &amp;
+                         a3*psi(i,j+1) + a4*psi(i,j-1) - &amp;
+                         a5*for(i,j)
+    end forall
+		</pre></td>
+	</tr>
+	<tr>
+		<td class="x">run time = 7.08 (75,000 iterations) </td> <td class="y">run time = 6.58  (75,000 iterations)</td>
+	</tr>
+	</tbody>
+</table>
+
+
+<hr><h6>&nbsp;</h6>
+<h1>Object-oriented programming (OOP) in Fortran...</h1>
+
+<h3>object-oriented programming...</h3>
+<ul  class="l1">
+	<li>You can define classes that contain both data and methods which operate on that data</li>
+	<li>Then create separate instances of the class, each with its own data methods called from an instance of the class will work on its data</li>
+</ul>
+
+<h3>Fortran Support in 33 seconds or less</h3>
+<ul class="l1">
+	<li>Fortran 90 modules may contain data, but there is no notion of separate instances of a module.</li>
+	<li>A Fortran 90/95 module can be viewed as an object because it can encapsulate both data and procedures. </li>
+	<li>Fortran 2003 (F2003) added the ability for a derived type to encapsulate procedures in addition to data. </li>
+	<li>F2003 also introduced type extension to its derived types which implements inheritance.</li>
+	<li>Inheritance allows code reusability through an implied inheritance link in which leaf objects, known as children, reuse components from their parent and ancestor objects.</li>
+	<li>Polymorphism is also supported in Fortran 2003.</li>
+	<li>Polymorphism occurs when a procedure, such as a function or a subroutine, can take a variety of data types as arguments. </li>
+	<li>You can also have data polymorphism - a pointer can point to different data types </li>
+</ul>
+
+<hr><h6>&nbsp;</h6>
+<h3>Really good source for more information</h3>
+
+<dl>
+	<dt>Fortan Wiki Object-oriented programming</dt>
+		<dd><a href="http://fortranwiki.org/fortran/show/Object-oriented+programming">http://fortranwiki.org/fortran/show/Object-oriented+programming</a></dd>
+	<dt>Object-Oriented Programming in Fortran 2003 Part 1: Code Reusability</dt>
+		<dd><a href="https://www.pgroup.com/lit/articles/insider/v3n1a3.htm">https://www.pgroup.com/lit/articles/insider/v3n1a3.htm</a></dd>
+	<dt>Object-Oriented Programming in Fortran 2003 Part 2: Data Polymorphism</dt>
+		<dd><a href="https://www.pgroup.com/lit/articles/insider/v3n2a2.htm">https://www.pgroup.com/lit/articles/insider/v3n2a2.htm</a></dd>
+	<dt>Object-Oriented Programming in Fortran 2003 Part 3: Parameterized Derived Types</dt>
+		<dd><a href="https://www.pgroup.com/lit/articles/insider/v5n2a4.htm">https://www.pgroup.com/lit/articles/insider/v5n2a4.htm</a></dd>
+	<dt>Object-Oriented Programming in Fortran 2003 Part 4: User-Defined Derived Type Input/Output</dt>
+		<dd><a href="https://www.pgroup.com/lit/articles/insider/v6n2a3.htm">https://www.pgroup.com/lit/articles/insider/v6n2a3.htm</a></dd>
+</dl>
+<hr><h6>&nbsp;</h6>
+<h3>A cool example from above</h3>
+<p>
+	<a class="tooltip" href="source/list.f90" target="_blank">Source: list.f90 - module<span class="custom critical">Click to open this file in a new window.</span></a><br>
+	<a class="tooltip" href="source/link.f90" target="_blank">Source: link.f90 - module<span class="custom critical">Click to open this file in a new window.</span></a><br>
+	<a class="tooltip" href="source/ll.f90" target="_blank">Source: ll.f90 - module<span class="custom critical">Click to open this file in a new window.</span></a><br>
+</p>
+<h3>Creates a linked list with different data types for values</h3>
+
+<table>
+<tr>
+<td class="x">Source</td>
+<td class="y">Output</td>
+</tr>
+<tr>
+<td class="x">
+<pre>
+program main
+  use list_mod
+  implicit none
+  integer i
+  type(list) :: my_list
+
+  do i=1, 10
+     call my_list%add(i)
+  enddo
+  call my_list%add(1.23)
+  call my_list%add('A')
+  call my_list%add('B')
+  call my_list%add('C')
+  call my_list%printvalues()
+end program main
+
+
+</pre>
+</td>
+
+<td class="y">
+<pre>
+           1
+           2
+           3
+           4
+           5
+           6
+           7
+           8
+           9
+          10
+   1.23000002    
+ A
+ B
+ C
+
+</pre>
+</td>
+</tr>
+</table>
+
+</body>
+</html>
