@@ -32,4 +32,4 @@ for r in sys.argv[2:]:
         else:
             break
 print("</body>")
-print("</hltm>")
+print("</html>")
