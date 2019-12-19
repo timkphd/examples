@@ -150,6 +150,8 @@ if len(sys.argv) > 1:
 	f=open(sys.argv[1])
 	data=f.read()
 print(header)
+if len(sys.argv) == 1 :
+	print('<h4>export HEADER="title to set title"</h4>')
 if len(sys.argv) > 2:
 	color=sys.argv[2]
 if(color=="green"):
