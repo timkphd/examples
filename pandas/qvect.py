@@ -70,12 +70,18 @@ dat=pd.read_csv('start',sep='\s+',names=thehead)
 tymer(["-i","got data"])
 
 dep=dat['depth']
-tymer(["-i","define mymag"])
+tymer(["-i","converting mymag"])
 #mymag=dat.apply(lambda row: quake(row['SCSN']),axis=1)
 mymag=quaked(dat["SCSN"])
 dat["SCSN"]=mymag
 tymer(["-i","did mymag"])
 
+if False :
+     print("types")
+     print("dep",type(dep),dep)
+     print("dat['latitude']",type(dat['latitude']),dat['latitude'])
+     print("dat['longitude']",type(dat['longitude']),dat['longitude'])
+     print("mymag",type(mymag),mymag)
 
 def whack4b(latin1,lonin1,latin2,lonin2):
     lat1, lon1, lat2, lon2 = map(np.deg2rad, [latin1,lonin1,latin2,lonin2])
