@@ -148,3 +148,17 @@ print("at", lat_seq[0],lon_seq[dlon-1],"sum=",mytot[0,dlon-1],"max=",mymax[0,dlo
 print("at", lat_seq[dlat-1],lon_seq[0],"sum=",mytot[dlat-1,0],"max=",mymax[dlat-1,0])
 print("at", lat_seq[dlat-1],lon_seq[dlon-1],"sum=",mytot[dlat-1,dlon-1],"max=",mymax[dlat-1,dlon-1])
 
+outfile="myquake6.hdf5"
+if os.path.exists(outfile):
+    os.remove(outfile)
+
+print("creating output: ",outfile)
+with h5py.File(outfile, "w") as f:
+    dset_max = f.create_dataset("quake/max", (dlat,dlon), dtype='float')
+    dset_tot = f.create_dataset("quake/tot", (dlat,dlon), dtype='float')
+    for i in range(0,dlat):
+        for j in range(0,dlon):
+            dset_tot[i,j]=mytot[i,j]
+            dset_max[i,j]=mymax[i,j]
+    f.close()  
+    
