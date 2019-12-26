@@ -65,7 +65,7 @@ def whack(latin1,lonin1,latin2,lonin2,mag,dep):
     whack=i
     return(i)
     
-b1=[35.0,32.0,6]
+b1=[32.0,35.0,6]
 b2=[-121.0,-115.0,8]
 latb1=b1[0]
 latb2=b1[1]

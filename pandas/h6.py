@@ -45,8 +45,10 @@ def quake (xin):
     t=10.0**t
     return(t)
 
-b1=[35.0,32.0,6]
+b1=[32.0,35.0,6]
 b2=[-121.0,-115.0,8]
+b1=[32.0,35.0,10]
+b2=[-121.0,-115.0,18]
 latb1=b1[0]
 latb2=b1[1]
 dlat=int(b1[2])
@@ -156,9 +158,13 @@ print("creating output: ",outfile)
 with h5py.File(outfile, "w") as f:
     dset_max = f.create_dataset("quake/max", (dlat,dlon), dtype='float')
     dset_tot = f.create_dataset("quake/tot", (dlat,dlon), dtype='float')
+    dset_lat = f.create_dataset("quake/lat", (dlat,), dtype='float')
+    dset_lon = f.create_dataset("quake/lon", (dlon,), dtype='float')
     for i in range(0,dlat):
         for j in range(0,dlon):
             dset_tot[i,j]=mytot[i,j]
             dset_max[i,j]=mymax[i,j]
+    dset_lat[:]=lat_seq[:]
+    dset_lon[:]=lon_seq[:]
     f.close()  
     
