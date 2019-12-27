@@ -147,7 +147,9 @@ program fung
 	integer iline,mline,i,j
 	real(b8) dx
 	real(b8)mylat,mylon,dep,mag,ouch,slat,slon,whack,dummy
-
+!$IFDEF _OPENMP
+	integer omp_get_thread_num
+!$ENDIF
 	integer year,month,day,hour,minute
 	real(b8) second
 	integer cuspid
@@ -247,9 +249,10 @@ program fung
  allocate(mymax(dlat,dlon))
  mytot=0.0
  mymax=0.0
- !do mline=1,1
+!$OMP PARALLEL do private(mylat,mylon,ouch,slat,slon,mag,dep,i,j) reduction(+: mytot) reduction(max: mymax)
   do mline=1,iline
-    !if (mod(mline,1000) .eq. 0)write(*,*)mline,iline
+!    if (mod(mline,1000) .eq. 0)write(*,*)mline,iline,omp_get_thread_num()
+    if (mod(mline,1000) .eq. 0)write(*,*)mline,iline
     slat=latitude(mline)
     slon=longitude(mline)
     mag=SCSN(mline)
@@ -264,6 +267,7 @@ program fung
     	enddo
     enddo
  enddo
+!$OMP END PARALLEL do
 open(18,file="mymax")
 open(19,file="mytot")
     do i=1,dlat
