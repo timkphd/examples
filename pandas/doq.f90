@@ -25,38 +25,45 @@
     INTEGER(HID_T) :: dset_id(5)     ! Dataset identifier
     INTEGER(HID_T) :: dataspace(5)   ! Dataspace identifier
 
-
-    REAL(b8), DIMENSION(8,6) :: buf1, buf2   ! Data buffers
-    REAL(b8), DIMENSION(6)   :: buf3         
-    REAL(b8), DIMENSION(8)   :: buf4  
            
+    REAL(b8) , allocatable ::  buf1(:,:), buf2(:,:)   ! Data buffers
+    REAL(b8) , allocatable ::  buf3(:), buf4(:)
+
     INTEGER(HSIZE_T), DIMENSION(2) :: data_dims   ! Dimensions for buffers
     INTEGER(HSIZE_T), DIMENSION(1) :: data_1
 
 
-
+    INTEGER nlat,nlon
+    
     INTEGER :: i, j,myset
 
     INTEGER :: error  ! Error flag
 
     dsetname=(/'max','tot','lat','lon'/)    ! Dataset names
+    nlat=6
+    nlon=8
+    
+    allocate(buf3(nlat))
+    allocate(buf4(nlon))
+    allocate(buf1(nlon,nlat))
+    allocate(buf2(nlon,nlat))
 
 !
 ! Data initialization.
 !
-
-    do i = 1, 8
-        do j = 1, 6
+ 
+    do i = 1, nlon
+        do j = 1, nlat
             buf1(i,j) = real(i,b8)+((10._b8)*real(j,b8))+0.1_b8
-            buf2(i,j) = real(2,b8)
+            buf2(i,j) = real(2,b8)+real(j,b8)/1000.0_b8+real(i,b8)/100000.0_b8
         end do
     end do
 
-    do i = 1, 6
+    do i = 1, nlat
         buf3(i)=real(i,b8)/10._b8
     enddo
 
-    do i = 1, 8
+    do i = 1, nlon
         buf4(i)=real(i,b8)/2._b8
     enddo
 !
@@ -81,12 +88,12 @@
         write(*,*)"doing ",myset,groupname//"/"//dsetname(myset)
         select case (myset)
             case (1,2)
-                data_dims(1) = 8
-                data_dims(2) = 6
+                data_dims(1) = nlon
+                data_dims(2) = nlat
             case (3)
-                data_1(1) = 6
+                data_1(1) = nlat
             case (4)
-                data_1(1) = 8
+                data_1(1) = nlon
         end select
 !
 ! Create the data space for the  datasets.
