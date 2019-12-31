@@ -7,6 +7,7 @@ import sys
 import h5py 
 
 sys.path.append("/Users/tkaiser/bin")
+sys.path.append("/Users/tkaiser2/bin")
 from tymer import tymer
 
 from math import log10,acos,sqrt,sin,cos

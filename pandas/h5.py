@@ -7,6 +7,7 @@ import sys
 import h5py 
 
 sys.path.append("/Users/tkaiser/bin")
+sys.path.append("/Users/tkaiser2/bin")
 from tymer import tymer
 
 from math import log10,acos,sqrt,sin,cos
@@ -45,10 +46,10 @@ def quake (xin):
     t=10.0**t
     return(t)
 
-b1=[32.0,35.0,6]
-b2=[-121.0,-115.0,8]
 b1=[32.0,35.0,101]
 b2=[-121.0,-115.0,176]
+b1=[32.0,35.0,6]
+b2=[-121.0,-115.0,8]
 latb1=b1[0]
 latb2=b1[1]
 dlat=int(b1[2])

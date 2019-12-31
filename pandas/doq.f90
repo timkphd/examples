@@ -26,7 +26,7 @@
     INTEGER(HID_T) :: dataspace(5)   ! Dataspace identifier
 
 
-    REAL(b8), DIMENSION(6,8) :: buf1, buf2   ! Data buffers
+    REAL(b8), DIMENSION(8,6) :: buf1, buf2   ! Data buffers
     REAL(b8), DIMENSION(6)   :: buf3         
     REAL(b8), DIMENSION(8)   :: buf4  
            
@@ -39,14 +39,14 @@
 
     INTEGER :: error  ! Error flag
 
-    dsetname=(/'max','tot','lon','lat'/)    ! Dataset names
+    dsetname=(/'max','tot','lat','lon'/)    ! Dataset names
 
 !
 ! Data initialization.
 !
 
-    do i = 1, 6
-        do j = 1, 8
+    do i = 1, 8
+        do j = 1, 6
             buf1(i,j) = real(i,b8)+((10._b8)*real(j,b8))+0.1_b8
             buf2(i,j) = real(2,b8)
         end do
@@ -81,8 +81,8 @@
         write(*,*)"doing ",myset,groupname//"/"//dsetname(myset)
         select case (myset)
             case (1,2)
-                data_dims(1) = 6
-                data_dims(2) = 8
+                data_dims(1) = 8
+                data_dims(2) = 6
             case (3)
                 data_1(1) = 6
             case (4)
