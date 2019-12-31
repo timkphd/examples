@@ -1,5 +1,5 @@
 ! * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-!   Copyright by The HDF Group.                                               *
+!   Based on a program from The HDF Group.                                               *
 !   Copyright by the Board of Trustees of the University of Illinois.         *
 !   All rights reserved.                                                      *
 ! * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -22,12 +22,11 @@
     INTEGER(HID_T) :: group_id      ! Group identifier
 
     INTEGER(HID_T) :: file_id        ! File identifier
-    INTEGER(HID_T) :: dset_id(5)     ! Dataset identifier
-    INTEGER(HID_T) :: dataspace(5)   ! Dataspace identifier
+    INTEGER(HID_T) :: dset_id(4)     ! Dataset identifier
+    INTEGER(HID_T) :: dataspace(4)   ! Dataspace identifier
 
            
-    REAL(b8) , allocatable ::  buf1(:,:), buf2(:,:)   ! Data buffers
-    REAL(b8) , allocatable ::  buf3(:), buf4(:)
+    REAL(b8) , allocatable ::  buf1(:,:), buf2(:,:), buf3(:), buf4(:)   ! Data buffers
 
     INTEGER(HSIZE_T), DIMENSION(2) :: data_dims   ! Dimensions for buffers
     INTEGER(HSIZE_T), DIMENSION(1) :: data_1
