@@ -12,7 +12,7 @@ cp -r $dirs two
 cd two
 
 BASE=`echo $dirs | cut -f 1 -d ' '`
-REST=`echo $dirs | cut -f 1 -d ' ' --complement`
+REST=`echo $dirs | sed "s/$BASE//"`
 
 for D2 in $REST ; do
   echo $BASE $D2
@@ -33,7 +33,7 @@ cp -r $dirs two
 cd two
 
 BASE=`echo $dirs | cut -f 1 -d ' '`
-REST=`echo $dirs | cut -f 1 -d ' ' --complement`
+REST=`echo $dirs | sed "s/$BASE//"`
 
 for D2 in $REST ; do
   echo $BASE $D2
@@ -54,7 +54,7 @@ cp -r $dirs two
 cd two
 
 BASE=`echo $dirs | cut -f 1 -d ' '`
-REST=`echo $dirs | cut -f 1 -d ' ' --complement`
+REST=`echo $dirs | sed "s/$BASE//"`
 
 for D2 in $REST ; do
   echo $BASE $D2
@@ -91,4 +91,12 @@ for s in $set ; do
 done
 
 cd $STRDIR
+
+
+#tree -H http://localhost/~tkaiser2/petsc --dirsfirst -v -I "notes|stdout|100|200|300|400|800|1000|1400|1700|2000|env|script|slurm*|times|ex16*|p*|*.py|buildit|*tgz|tymer|makefile|merge" > summary.html  
+#tree -H http://localhost/~tkaiser2/petsc --dirsfirst -v -I notes > index.html  
+#find . -type d -exec chmod 755 {} \; 
+#find . -type f -exec chmod 644 {} \;
+
+
 
