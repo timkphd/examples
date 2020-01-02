@@ -1,0 +1,17 @@
+Currently Loaded Modules:    
+  1) gcc/7.3.0             3) intel-mpi/2018.0.3    
+  2) comp-intel/2018.0.3   4) mkl/2018.3.222    
+    
+    
+./configure --with-cc=mpicc --with-fc=mpiifort --with-blaslapack-dir=$MKLROOT --prefix=/scratch/tkaiser2/petsc/3.12.2 --with-openmp --with-cxx=mpiicpc  --with-debugging=0         
+make PETSC_DIR=/lustre/eaglefs/scratch/tkaiser2/petsc-3.12.2 PETSC_ARCH=arch-linux-c-opt all         
+make PETSC_DIR=/lustre/eaglefs/scratch/tkaiser2/petsc-3.12.2 PETSC_ARCH=arch-linux-c-opt install         
+cd src/ksp/ksp/examples/tutorials         
+export PETSC_DIR=/lustre/eaglefs/scratch/tkaiser2/petsc-3.12.2         
+cd ./src/ksp/ksp/examples/tutorials/         
+# added timer around solve call         
+make ex16         
+         
+srun --account=hpcapps --time=180 --ntasks=8 --nodes=1 ./ex16 -log_view -n 1000 -m 1000 -ksp_converged_reason         
+        
+

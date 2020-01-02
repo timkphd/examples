@@ -1,0 +1,94 @@
+#!/bin/bash
+
+STRDIR=`pwd`
+
+subs="100.html 200.html 300.html 400.html 800.html 1000.html 1400.html 1700.html 2000.html"
+
+cd $STRDIR
+
+mkdir -p two
+dirs=`grep -l NODES=2 2*/summary/index.html | sed s,/summary/index.html,,`
+cp -r $dirs two
+cd two
+
+BASE=`echo $dirs | cut -f 1 -d ' '`
+REST=`echo $dirs | cut -f 1 -d ' ' --complement`
+
+for D2 in $REST ; do
+  echo $BASE $D2
+  mkdir -p $D2/diff
+  for s in $subs ; do 
+     $STRDIR/diff.py $BASE/summary/$s $D2/summary/$s > $D2/diff/$s
+  done
+done
+
+cd $BASE/summary
+for l in `ls *0.html | sort -n` ; do  $STRDIR/getmin.py $l; done > $STRDIR/2_nodes
+
+cd $STRDIR
+
+mkdir -p four 
+dirs=`grep -l NODES=4 2*/summary/index.html | sed s,/summary/index.html,,`
+cp -r $dirs two
+cd two
+
+BASE=`echo $dirs | cut -f 1 -d ' '`
+REST=`echo $dirs | cut -f 1 -d ' ' --complement`
+
+for D2 in $REST ; do
+  echo $BASE $D2
+  mkdir -p $D2/diff
+  for s in $subs ; do 
+     $STRDIR/diff.py $BASE/summary/$s $D2/summary/$s > $D2/diff/$s
+  done
+done
+
+cd $BASE/summary
+for l in `ls *0.html | sort -n` ; do  $STRDIR/getmin.py $l; done > $STRDIR/4_nodes
+
+cd $STRDIR
+
+mkdir -p eight 
+dirs=`grep -l NODES=8 2*/summary/index.html | sed s,/summary/index.html,,`
+cp -r $dirs two
+cd two
+
+BASE=`echo $dirs | cut -f 1 -d ' '`
+REST=`echo $dirs | cut -f 1 -d ' ' --complement`
+
+for D2 in $REST ; do
+  echo $BASE $D2
+  mkdir -p $D2/diff
+  for s in $subs ; do 
+     $STRDIR/diff.py $BASE/summary/$s $D2/summary/$s > $D2/diff/$s
+  done
+done
+
+cd $BASE/summary
+for l in `ls *0.html | sort -n` ; do  $STRDIR/getmin.py $l; done > $STRDIR/8_nodes
+
+
+cd $STRDIR
+
+#merge the diff files
+set=`find . -name "diff"`
+echo $set
+for s in $set ; do
+   cd $s
+   ~/bin/mhtml $subs > merge.html
+   cd $STRDIR
+done
+
+cd $STRDIR
+
+#merge the summary files
+set=`find . -name "summary"`
+echo $set
+for s in $set ; do
+   cd $s
+   ~/bin/mhtml $subs > merge.html
+   cd $STRDIR
+done
+
+cd $STRDIR
+
