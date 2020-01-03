@@ -20,7 +20,12 @@ startdir=`pwd`
 nm="1000"
 tasks_per_node="8"
 threads="4"
-#some of the PCs are not installed by default so they are not on the try list
+#notes.cholesky: [0]PETSC ERROR: Could not locate a solver package. Perhaps you must ./configure with --download-<package>
+#notes.icc:      [0]PETSC ERROR: Could not locate a solver package. Perhaps you must ./configure with --download-<package>
+#notes.ilu:      [0]PETSC ERROR: Could not locate a solver package. Perhaps you must ./configure with --download-<package>
+#notes.lu:       [0]PETSC ERROR: Could not locate a solver package. Perhaps you must ./configure with --download-<package>
+#notes.composite:[0]PETSC ERROR: No composite preconditioners supplied via PCCompositeAddPC() or -pc_composite_pcs
+#notes.bddc:     [0]PETSC ERROR: PCBDDC preconditioner requires matrix of type MATIS
 #for pc in jacobi bjacobi sor eisenstat icc ilu asm gasm gamg bddc ksp composite lu cholesky none ; do
  for pc in jacobi bjacobi sor eisenstat         asm gasm gamg      ksp                       none ; do
 for grid in $nm ; do
