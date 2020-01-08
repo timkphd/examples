@@ -1,23 +1,46 @@
+#!/bin/bash
+STARTDIR=`pwd`
 module purge
-module load gcc/7.3.0
-module load intel-mpi/2018.0.3
-module load comp-intel/2018.0.3
-module load mkl/2018.3.222    
-    
-wget http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.12.3.tar.gz
+#module load gcc/7.3.0
+module load comp-intel/2018.0.3 intel-mpi/2018.0.3 mkl/2018.3.222    
+SCRIPT=$( readlink -m $( type -p $0 ))
+echo $SCRIPT
 
-tar -xzf petsc-3.12.3.tar.gz
-cd petsc-3.12.3
+#give this build a name
+export BD=base
+mkdir -p /scratch/$USER/$BD
+cd /scratch/$USER/$BD
+cat $SCRIPT > buildit
+rm -rf petsc-3.12.2*
+
+wget http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.12.2.tar.gz
+
+tar -xzf petsc-3.12.2.tar.gz
+cd petsc-3.12.2
     
-./configure --with-cc=mpicc --with-fc=mpiifort --with-blaslapack-dir=$MKLROOT --prefix=/scratch/tkaiser2/petsc/3.12.2 --with-openmp --with-cxx=mpiicpc  --with-debugging=0         
-make PETSC_DIR=/lustre/eaglefs/scratch/tkaiser2/petsc-3.12.2 PETSC_ARCH=arch-linux-c-opt all         
-make PETSC_DIR=/lustre/eaglefs/scratch/tkaiser2/petsc-3.12.2 PETSC_ARCH=arch-linux-c-opt install         
+./configure --COPTFLAGS="-O2" --CXXOPTFLAGS="-O2" --FOPTFLAGS="-O2" \
+            --with-cc=mpicc --with-cxx=mpiicpc --with-fc=mpiifort \
+            --with-blaslapack-dir=$MKLROOT --with-openmp \
+            --prefix=/scratch/$USER/$BD/petsc/3.12.2  \
+            --with-debugging=0         
+
+make PETSC_DIR=/scratch/$USER/$BD/petsc-3.12.2 PETSC_ARCH=arch-linux-c-opt all         
+make PETSC_DIR=/scratch/$USER/$BD/petsc-3.12.2 PETSC_ARCH=arch-linux-c-opt install         
+
 cd src/ksp/ksp/examples/tutorials         
-export PETSC_DIR=/lustre/eaglefs/scratch/tkaiser2/petsc-3.12.2         
-cd ./src/ksp/ksp/examples/tutorials/         
-# added timer around solve call         
+export PETSC_DIR=/scratch/$USER/$BD/petsc-3.12.2         
+
+# My version adds timer around solve call
+# not in this version.
 make ex16         
          
 srun --account=hpcapps --time=180 --ntasks=8 --nodes=1 ./ex16 -log_view -n 1000 -m 1000 -ksp_converged_reason         
         
+cd $STARTDIR
+
+echo "Add the following to you .bashrc file and/or script"
+echo "export PETSC_DIR=/scratch/$USER/$BD/petsc-3.12.2"
+echo "module purge"
+echo "module load comp-intel/2018.0.3 intel-mpi/2018.0.3 mkl/2018.3.222"
+
 

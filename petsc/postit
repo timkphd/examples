@@ -2,6 +2,7 @@
 #####  for d in `ls | grep ^2` ; do ./postit $d ; done
 START=`pwd`
 cd $1
+echo $1
 #export NODES=`grep nodes script | sed "s/#SBATCH//" | sed "s/--//"`
 export NODES=`grep SLURM_JOB_NUM_NODES env | sed "s/SLURM_JOB_NUM_//"`
 export DATE=`head -1 times | cut -f 2,3,4,5,6 -d" "`

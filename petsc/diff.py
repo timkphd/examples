@@ -4,6 +4,7 @@ import sys
 import re
 f1=sys.argv[1]
 f2=sys.argv[2]
+sys.stderr.write(f1+" "+f2+"\n")
 f1=open(sys.argv[1],"r")
 f2=open(sys.argv[2],"r")
 d1=f1.readlines()
