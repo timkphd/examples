@@ -7,7 +7,8 @@ subs="100.html 200.html 300.html 400.html 800.html 1000.html 1400.html 1700.html
 cd $STRDIR
 
 mkdir -p two
-dirs=`grep -l NODES=2 2*/summary/index.html | sed s,/summary/index.html,,`
+dirs=`grep -l NODES=2 */summary/index.html | sed s,/summary/index.html,,`
+echo $dirs
 cp -r $dirs two
 cd two
 
@@ -23,12 +24,13 @@ for D2 in $REST ; do
 done
 
 cd $BASE/summary
-for l in `ls *0.html | sort -n` ; do  $STRDIR/getmin.py $l; done > $STRDIR/2_nodes
+for l in `ls *0.html | sort -n` ; do  $STRDIR/getmin.py $l; done > $STRDIR/two_nodes
 
 cd $STRDIR
 
 mkdir -p four 
-dirs=`grep -l NODES=4 2*/summary/index.html | sed s,/summary/index.html,,`
+dirs=`grep -l NODES=4 */summary/index.html | sed s,/summary/index.html,,`
+echo $dirs
 cp -r $dirs four
 cd four
 
@@ -44,12 +46,13 @@ for D2 in $REST ; do
 done
 
 cd $BASE/summary
-for l in `ls *0.html | sort -n` ; do  $STRDIR/getmin.py $l; done > $STRDIR/4_nodes
+for l in `ls *0.html | sort -n` ; do  $STRDIR/getmin.py $l; done > $STRDIR/four_nodes
 
 cd $STRDIR
 
 mkdir -p eight 
-dirs=`grep -l NODES=8 2*/summary/index.html | sed s,/summary/index.html,,`
+dirs=`grep -l NODES=8 */summary/index.html | sed s,/summary/index.html,,`
+echo $dirs
 cp -r $dirs eight
 cd eight
 
@@ -65,7 +68,7 @@ for D2 in $REST ; do
 done
 
 cd $BASE/summary
-for l in `ls *0.html | sort -n` ; do  $STRDIR/getmin.py $l; done > $STRDIR/8_nodes
+for l in `ls *0.html | sort -n` ; do  $STRDIR/getmin.py $l; done > $STRDIR/eight_nodes
 
 
 cd $STRDIR
@@ -93,8 +96,8 @@ done
 cd $STRDIR
 
 
-#tree -H http://localhost/~tkaiser2/petsc --dirsfirst -v -I "notes|stdout|100|200|300|400|800|1000|1400|1700|2000|100.html|200.html|300.html|400.html|800.html|1000.html|1400.html|1700.html|2000.html|env|script|slurm*|times|ex16*|p*|*.py|buildit|*tgz|tymer|makefile|merge" > summary.html  
-#tree -H http://localhost/~tkaiser2/petsc --dirsfirst -v -I notes > index.html  
+#tree -H http://localhost/~$USER/petsc --dirsfirst -v -I "notes|stdout|100|200|300|400|800|1000|1400|1700|2000|100.html|200.html|300.html|400.html|800.html|1000.html|1400.html|1700.html|2000.html|env|script|slurm*|times|ex16*|p*|*.py|buildit|*tgz|tymer|makefile|merge" > summary.html  
+#tree -H http://localhost/~$USER/petsc --dirsfirst -v -I notes > index.html  
 #find . -type d -exec chmod 755 {} \; 
 #find . -type f -exec chmod 644 {} \;
 
