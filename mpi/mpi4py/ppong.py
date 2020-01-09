@@ -18,7 +18,8 @@ comm=MPI.COMM_WORLD
 myid=comm.Get_rank()
 numprocs=comm.Get_size()
 myname= MPI.Get_processor_name()
-print(myid,myname,MPI.Wtick())
+ver=MPI.Get_library_version()
+print(myid,myname,ver,MPI.Wtick())
 buffer=np.zeros(BUFSIZE,dtype="a")
 tag=1234;
 log10=log(10)
