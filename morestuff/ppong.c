@@ -20,8 +20,8 @@ double MYCLOCK()
         gettimeofday(&timestr, Tzp);
         return ((double)timestr.tv_sec + 1.0E-06*(double)timestr.tv_usec);
 }
-#define TIMER MYCLOCK
-/* define TIMER MPI_Wtime */
+// #define TIMER MYCLOCK
+#define TIMER MPI_Wtime
 
 int main(int argc,char *argv[],char *env[])
 {
