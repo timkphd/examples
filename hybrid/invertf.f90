@@ -151,20 +151,23 @@ program tover
     real(b8),allocatable,target :: m1(:,:),m2(:,:),m3(:,:),m4(:,:)
     real(b8), pointer :: twod(:,:)
     real(b8) dt(4)
-    integer n
+    integer n,omp_get_thread_num,nt
+    integer omp_get_max_threads
     integer out_old
     real(b8) t0_start;
     real(b8) t1_start,t1_end,e1;
     real(b8) t2_start,t2_end,e2;
     real(b8) t3_start,t3_end,e3;
     real(b8) t4_start,t4_end,e4;
+    character(len=64)fstr
+    integer tid(4)
     myid=0
       call MPI_INIT( ierr )
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
       call MPI_COMM_SIZE( MPI_COMM_WORLD, numprocs, ierr )
       call MPI_Get_processor_name(name,nlen,ierr)
       write(*,'("Fort says Hello from",i4," on ",a)')myid,trim(name)
-    n=250
+    n=500
     allocate(m1(n,n),m2(n,n),m3(n,n),m4(n,n))
     call mset(m1,n,10)
     call mset(m2,n,20)
@@ -180,6 +183,7 @@ program tover
 !$omp parallel sections
 
 !$omp section
+    tid(1)=omp_get_thread_num()
     t1_start=ccm_time()
     call invert(m1,n)
     call invert(m1,n)
@@ -189,6 +193,7 @@ program tover
     t1_end=t1_end-t0_start
 
 !$omp section
+    tid(2)=omp_get_thread_num()
     t2_start=ccm_time()
     call invert(m2,n)
     call invert(m2,n)
@@ -198,6 +203,7 @@ program tover
     t2_end=t2_end-t0_start
     
 !$omp section
+    tid(3)=omp_get_thread_num()
     t3_start=ccm_time()
     call invert(m3,n)
     call invert(m3,n)
@@ -207,6 +213,7 @@ program tover
     t3_end=t3_end-t0_start
     
 !$omp section
+    tid(4)=omp_get_thread_num()
     t4_start=ccm_time()
     call invert(m4,n)
     call invert(m4,n)
@@ -221,7 +228,11 @@ program tover
  write(*,1)2,t2_start,t2_end,e2
  write(*,1)3,t3_start,t3_end,e3
  write(*,1)4,t4_start,t4_end,e4
- 1 format("section ",i4," start time= ",g10.5," end time= ",g10.5," error=",g10.5)
+ 1 format("section ",i4," start time= ",f10.5," end time= ",f10.5," error=",g15.7)
+ nt=4
+ write(fstr,'(a,i4,a)')"('task=',i4, ' threads='",nt,"(i4))"
+ !write(*,*)fstr
+ write(*,fstr)myid,tid(1:4)
  !$OMP PARALLEL DO PRIVATE(twod)
       do i=1,4
       if(i .eq. 1) twod=>m1
@@ -233,6 +244,6 @@ program tover
       call invert(twod,n)
       dt(i)=ccm_time()- dt(i)
       enddo    
-      write(*,*)dt      
+      write(*,"(4f10.5)")dt      
       call MPI_FINALIZE(ierr)
  end program
