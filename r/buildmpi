@@ -1,5 +1,7 @@
 export COMPILER=18.0.3
 
+wget https://cran.r-project.org/src/contrib/Rmpi_0.6-9.tar.gz
+
 if [[ $COMPILER = 19* ]] ; then
 # for version 19.0.3 Intel compiler on Summit use the following
 export MBASE=/curc/sw/spack-experimental/opt/spack/linux-rhel7-x86_64/intel-19.0.3/intel-mpi-2019.3.199-7wrnfmvhjhbcag4xvkmmqmrdjibzhlsx/compilers_and_libraries_2019.3.199/linux/mpi/intel64

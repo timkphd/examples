@@ -37,9 +37,9 @@ for grid in $nm ; do
                newdir=`echo $grid/$t1/$t2`
                mkdir -p $newdir
                cd $newdir
-               $SLURM_SUBMIT_DIR/tymer $SLURM_SUBMIT_DIR/$SLURM_JOB_ID/times $newdir $pc start
+               tymer $SLURM_SUBMIT_DIR/$SLURM_JOB_ID/times $newdir $pc start
                srun --ntasks-per-node=$t1 --cpus-per-task=$OMP_NUM_THREADS $SLURM_SUBMIT_DIR/ex16 -log_view -ksp_converged_reason -n $grid -m $grid -pc_type $pc  1> $pc 2> notes.$pc
-               $SLURM_SUBMIT_DIR/tymer $SLURM_SUBMIT_DIR/$SLURM_JOB_ID/times $newdir $pc end
+               tymer $SLURM_SUBMIT_DIR/$SLURM_JOB_ID/times $newdir $pc end
                cd $startdir
           fi
         done
