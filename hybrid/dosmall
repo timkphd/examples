@@ -1,0 +1,35 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#comment = "script for hybrid tests"
+#SBATCH --nodes=1
+#SBATCH --export=ALL
+#SBATCH --oversubscribe
+#SBATCH --time=01:00:00
+#SBATCH --account=hpcapps
+#SBATCH --exclusive=user
+
+mpiifort -g -cpp -DDOMPI -fopenmp -O3                         small.f90 -o small.ifort
+mpif90   -g -cpp -DDOMPI -fopenmp -O3 -fmax-stack-var-size=10 small.f90 -o small.gfortran
+mkdir $SLURM_JOB_ID
+
+cat $0 > $SLURM_JOB_ID/script
+cp in.dat $SLURM_JOB_ID
+for CASE in small.ifort small.gfortran small.f90 ; do
+  cp $CASE $SLURM_JOB_ID
+done
+
+cd $SLURM_JOB_ID
+ulimit -s unlimited
+
+export OMP_NUM_THREADS=6
+printenv > $SLURM_JOB_ID.env
+export TASKS=4
+for ss in 800000 400000 200000 100000 80000 40000 20000 10000 8000 4000 2000 1000 ; do
+export OMP_STACKSIZE=$ss
+for CASE in small.ifort small.gfortran ; do
+  tymer times start $CASE 
+  srun -n $TASKS --cpus-per-task=$OMP_NUM_THREADS ./$CASE 4194304 > $SLURM_JOB_ID.$CASE.$OMP_STACKSIZE
+  tymer times ended $CASE
+done
+done
+cp ../slurm-$SLURM_JOB_ID.out .
