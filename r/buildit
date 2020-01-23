@@ -85,12 +85,12 @@ cd R-$VERSION
 #### since these are not installed in the system.
 #### You might also need to install latex and java 
 #### and set up PATH to point to them.
-export CPATH=/home/tkaiser2/libs/bzip2-1.0.8/include:/home/tkaiser2/libs/zlib-1.2.11/include:$CPATH
-export LD_LIBRARY_PATH=/home/tkaiser2/libs/bzip2-1.0.8/lib:/home/tkaiser2/libs/zlib-1.2.11/lib:$LD_LIBRARY_PATH
-export CFLAGS="-I/home/tkaiser2/libs/bzip2-1.0.8/include -I/home/tkaiser2/libs/zlib-1.2.11/include -O2 -fopenmp -fpic -mkl"
-export FCFLAGS="-I/home/tkaiser2/libs/bzip2-1.0.8/include -I/home/tkaiser2/libs/zlib-1.2.11/include -O2 -fopenmp -fpic -mkl"
-export CXXFLAGS="-I/home/tkaiser2/libs/bzip2-1.0.8/include -I/home/tkaiser2/libs/zlib-1.2.11/include -O2 -fopenmp -fpic -mkl"
-export LDFLAGS="-fopenmp -mkl -L/home/tkaiser2/libs/bzip2-1.0.8/lib -L/home/tkaiser2/libs/zlib-1.2.11/lib"
+export CPATH=/home/NRELUSER/libs/bzip2-1.0.8/include:/home/NRELUSER/libs/zlib-1.2.11/include:$CPATH
+export LD_LIBRARY_PATH=/home/NRELUSER/libs/bzip2-1.0.8/lib:/home/NRELUSER/libs/zlib-1.2.11/lib:$LD_LIBRARY_PATH
+export CFLAGS="-I/home/NRELUSER/libs/bzip2-1.0.8/include -I/home/NRELUSER/libs/zlib-1.2.11/include -O2 -fopenmp -fpic -mkl"
+export FCFLAGS="-I/home/NRELUSER/libs/bzip2-1.0.8/include -I/home/NRELUSER/libs/zlib-1.2.11/include -O2 -fopenmp -fpic -mkl"
+export CXXFLAGS="-I/home/NRELUSER/libs/bzip2-1.0.8/include -I/home/NRELUSER/libs/zlib-1.2.11/include -O2 -fopenmp -fpic -mkl"
+export LDFLAGS="-fopenmp -mkl -L/home/NRELUSER/libs/bzip2-1.0.8/lib -L/home/NRELUSER/libs/zlib-1.2.11/lib"
 
 export R_LIBS=$RBASE/local
 mkdir -p $R_LIBS

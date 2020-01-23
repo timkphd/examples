@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Building R on Eagle</title>
+	<meta name="generator" content="BBEdit 13.0" />
+			<style type="text/css">
+			::-webkit-scrollbar {
+			  -webkit-appearance: none;
+			  width: 10px;
+			}
+			
+			::-webkit-scrollbar-thumb {
+			  border-radius: 5px;
+			  background-color: rgba(0,0,0,.5);
+			  -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+			}
+			
+			object.bx {overflow-y: scroll; border: 5px; width: 100%}
+			div.pre { 
+			  display: block;
+			  font-family: monospace; 
+			  font-size: small;
+			  white-space: pre;
+			  color:blue;
+			
+			}
+			div.box {
+			  border: 5px solid gray;
+			  padding: 0px;
+			  margin: 5px;
+			  width:55%;
+			  background: #f8f8f8;
+			}
+				table {
+			  border: 1px solid #1C6EA4;
+			  background-color: #EEEEEE;
+			  width: 5in;;
+			  text-align: left;
+			  border-collapse: collapse;
+			  margin-left: 0.25in;
+			}
+			table td, table th {
+			  border: 1px solid #AAAAAA;
+			  padding: 3px 2px;
+			}
+			table tbody td {
+			  font-size: 13px;
+			}
+			table tr:nth-child(even) {
+			  background: #D0E4F5;
+			}
+			table thead {
+			  background: #1C6EA4;
+			  background: -moz-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+			  background: -webkit-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+			  background: linear-gradient(to bottom, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+			  border-bottom: 2px solid #444444;
+			}
+			table thead th {
+			  font-size: 15px;
+			  font-weight: bold;
+			  color: #FFFFFF;
+			  border-left: 2px solid #D0E4F5;
+			}
+			table thead th:first-child {
+			  border-left: none;
+			}
+			
+			table tfoot {
+			  font-size: 14px;
+			  font-weight: bold;
+			  color: #111111;
+			  background: #D0E4F5;
+			  background: -moz-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+			  background: -webkit-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+			  background: linear-gradient(to bottom, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+			  border-top: 2px solid #444444;
+			}
+			table tfoot td {
+			  font-size: 14px;
+			}
+			table tfoot .links {
+			  text-align: right;
+			}
+			table tfoot .links a{
+			  display: inline-block;
+			  background: #1C6EA4;
+			  color: #FFFFFF;
+			  padding: 2px 8px;
+			  border-radius: 5px;
+			}
+				body
+			{
+				background-color: ivory;
+			}
+					  .LLink
+			   {
+			     background-color: #E4F5F8;
+			     border:1px solid #C0DEED; 
+			
+			    text-decoration:none !important;
+			  }
+			
+			.f { padding: 0.0cm 0.5cm 0.0cm 0.5cm; border-width: 2px; text-indent: 0cm; text-align: justify; }
+					.b { color: red; font-weight: normal; }
+					.red { color: red; }
+					pre { color: blue; font-size: 9pt; font-family: monospace; }
+					.black { color: black; font-size: 9pt; font-family: monospace; }
+					hr.wide { color: #f00; background-color: #f00; height: 2px; width: 5%; margin-left: 0; }
+					hr { color: #f0F; background-color: blue; width: 66%; height: 3px; }
+					h5 { color: #f0F; }
+					@media print { h6 { page-break-after: always; } }
+					p.a { width: 6in; text-align: justify; 
+					margin-left: 1in;
+					 margin-bottom: .1in;
+					 margin-top: .1in;
+					font-style: italic;
+					font-size: medium; 
+					white-space: normal;
+					font-family: normal;
+					color:black; }
+			
+			
+					/* usage <p class="a"> */
+					pre.red { color: red; font-family: courier; font-size: small; }
+					pre.black { color: black; font-family: courier; font-size: small; }
+					pre { color: blue; font-family: courier; font-size: small;}
+			
+					p { width: 6in; text-align: justify; margin: .25in; }
+					p.pin0 { margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 0.25em; color:green;}
+					p.pin1 { margin-left: 2.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin2 { margin-left: 4.0em; margin-bottom: 0.0em; margin-top: 0.00em; font-size: small;}
+					p.pin3 { margin-left: 6.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin4 { margin-left: 8.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin5 { margin-left: 10.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin6 { margin-left: 12.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin7 { margin-left: 14.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin8 { margin-left: 16.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin9 { margin-left: 18.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+					p.pin10 { margin-left: 20.0em; margin-bottom: 0.0em; margin-top: 0.25em; }
+			
+					h3.hin0  {margin-left: 0.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin1  {margin-left: 2.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin2  {margin-left: 4.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin3  {margin-left: 6.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin4  {margin-left: 8.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin5  {margin-left: 10.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin6  {margin-left: 12.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin7  {margin-left: 14.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin8  {margin-left: 16.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin9  {margin-left: 18.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					h3.hin10 {margin-left: 20.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+					ul {margin-bottom: 0.0em;}
+			
+					span.b { color: red; }
+					span.c { color: black; }
+					span.d { color: green; }
+					hr { color: blue; background-color: blue; width: 66%; height: 3px; }
+					b { color: red; }
+					li { width: 6in; color: green; margin-bottom: 0.0em;}
+					li.lev1 { width: 6in; font-size: X-large; color: green; }
+					li.lev2 { width: 6in; font-size: medium; margin-left: 4.0em; color: black}
+					/* usage <li id="a">  to reference this id http://yourdomain.com#a */
+					li.a { width: 6in; list-style-type: none; font-family: courier; font-size: small; white-space: pre; }
+					/* usage <li class="a"> */
+					/* note white-space: pre; attribute */
+					h1 { font-size: large; margin-left: .15in; color: black;}
+					h2 { font-size: medium; margin-left: .20in; }
+					h3 { font-size: medium; margin-left: .25in; }
+					h4 { font-size: large; text-align: center; width: 6in; }
+					h5 { font-size: X-large; text-align: center; width: 6in; }
+					div.intro { } 
+					div.body { margin-top: 1.5in;} 
+					code { font-family: monospace;} 
+					  dl {
+			    border: 3px double #ccc;
+			    padding: 0.5em;
+			    width: 6in;
+			  }
+					  dt {
+			    font-weight: bold;
+			  }
+			  dd {
+			    margin-bottom: 1em; 
+			    padding: 0 0 0.5em 0;
+			    font-size: small;
+			  }
+			  object:focus {
+			  outline: solid;
+			  outline-color: red;
+			  }
+		</style>
+</head>
+<body>
+		<h1>
+			Building R on Eagle with Intel Compilers and MKL 
+		</h1>
+
+<p>
+Load the modules:
+</p>
+<pre>
+module load gcc/7.3.0
+module load comp-intel/2018.0.3
+module load intel-mpi/2018.0.3
+module load mkl/2018.3.222
+</pre>
+
+<p>
+There are 4 prerequisites not currently installed as part of the OS on Eagle.
+</p>
+<ul>
+	<li>Latex</li>
+	<li>Java</li>
+	<li>bzip2 library</li>
+	<li>zlib library</li>
+</ul>
+
+<p>
+Fortunately, these are all easy installs.
+</p>
+<p>
+In these instructions where NRELUSER is used you will need to substitute your username.
+</p>
+
+
+<h3>Installing Latex</h3>
+<pre class="c">
+cd $HOME
+mkdir bin
+cd bin
+wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz  
+</pre>
+
+<p>
+Run the command
+</p>
+<pre class="c">
+./install-tl -gui text
+</pre>
+
+<p>Enter the option P to create a profile.  Edit the profile file, texlive.profile and replace 
+<i>/usr/local</i> with <i>/home/NRELUSER/bin</i>.
+
+<p>
+Run the command 
+</p>
+<pre>
+ ./install-tl  -profile texlive.profile   
+</pre>
+
+<p>
+At the end of the install you will see instructions for adding to your MANPATH, INFOPATH, and PATH variables to your .bashrc file.  Just Doit!
+</p>
+
+<h3>Installing Java</h3>
+
+<p>
+Go to your bin directory
+</p>
+
+<pre>
+cd ~/bin
+</pre>
+
+
+<p>
+Using a web browser go to the web page:
+https://www.java.com/en/download/manual.jsp
+</p>
+
+<p>
+Copy the link Linux x64.  It will be some long string.  "wget" this file.  The exact string my vary from day to day but for example:
+</p>
+
+<pre>
+wget https://javadl.oracle.com/webapps/download/AutoDL?BundleId=240718_5b13a193868b4bf28bcb45c792fce896 -O java.tgz
+</pre>
+
+<p>
+Unpack it:
+</p>
+
+<pre>
+tar -xzf java.tgz
+</pre>
+
+<p>
+This will create a java directory, for example jre1.8.0_231 (version might change).  Add the bin and lib directories to your paths. For example:
+<p>
+<pre>
+export PATH=$HOME/bin/jre1.8.0_231/bin:$PATH
+export LD_LIBRARY_PATH=/home/NRELUSER/bin/jdk-13.0.1/lib:$LD_LIBRARY_PATH
+</pre>
+
+<p>
+These should be added to your .bashrc file also.
+</p>
+
+<h3>Installing bzip2</h3>
+
+<pre>
+cd ~
+wget https://www.sourceware.org/pub/bzip2/bzip2-latest.tar.gz
+tar -xzf bzip2-latest.tar.gz
+cd bzip2-1.0.8/
+make
+mkdir -p /home/NRELUSER/libs
+make  install PREFIX=/home/NRELUSER/libs/bzip2-1.0.8
+</pre>
+
+<h3>Installing zlib</h3>
+<pre>
+cd ~
+wget https://zlib.net/zlib-1.2.11.tar.gz
+tar -xzf zlib-1.2.11.tar.gz
+cd zlib-1.2.11
+./configure --prefix=/home/NRELUSER/libs/zlib-1.2.11
+make
+make install
+</pre>
+
+<p>Add these to you PATH and the lib directories to your LD_LIBRARY_PATH. In the end your .bashrc file should contain the following with your username 
+replacing NRELUSER.
+</p>
+
+<pre>
+export PATH=/home/NRELUSER/bin/jdk-13.0.1/bin:$PATH
+export LD_LIBRARY_PATH=/home/NRELUSER/bin/jdk-13.0.1/lib:$LD_LIBRARY_PATH
+
+export PATH=/home/NRELUSER/libs/bzip2-1.0.8/bin:$PATH
+export LD_LIBRARY_PATH=/home/NRELUSER/libs/bzip2-1.0.8/lib:$LD_LIBRARY_PATH
+
+export LD_LIBRARY_PATH=/home/NRELUSER/libs/zlib-1.2.11//lib:$LD_LIBRARY_PATH
+
+export PATH=/home/NRELUSER/bin/tex/texlive/2019/bin/x86_64-linux:$PATH
+export MANPATH=/home/NRELUSER/bin/tex/texlive/2019/texmf-dist/doc/man:$MANPATH
+export INFOPATH=home/NRELUSER/bin/tex/texlive/2019/texmf-dist/doc/info:$INFOPATH
+</pre>
+
+<h3>Building R</h3>
+<p>
+You can logout and login to reset your environment with the new software.  You can check to see that it found by running the following
+</p>
+<pre>
+latex --version
+bzip2 --help
+javac --version
+</pre>
+
+ 
+<p>
+Finally we are ready to build R.  This is done with a script that references all of the above software.  The build script, 
+along with a lot of other R stuff can be downloaded.
+</p>
+
+<pre>
+git clone https://github.nrel.gov/tkaiser2/r-stuff.git
+cd r-stuff
+</pre>
+
+<p>
+The build script is buildit.  Again you need to replace NRELUSER with your username.  A simple way to do this is to use the sed command.
+<p>
+
+<pre>
+cat buildit | sed "s/NRELUSER/$USER/g" > newbuild
+chmod 755 newbuild
+</pre>
+
+<p>
+Then you can run the script.
+</p>
+
+<pre>
+./newbuild
+</pre>
+
+<p>
+When the script finishes it will provide instructions on how to add your new version of R to your path.
+</p>
+
+<p>
+You can additional libraries to your new version of R by runnit the R script doinstall.R and sourcing the script buildmpi.
+</p>
+
+
+</body>
+</html>
