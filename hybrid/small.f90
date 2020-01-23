@@ -1,3 +1,8 @@
+!based on 
+! https://www.epcc.ed.ac.uk/research/computing/performance-characterisation-and-benchmarking/epcc-openmpmpi-micro-benchmark
+! The program may run out of stack.  Stack size can be adjusted by setting OMP_STACKSIZE.
+! See the script dosmall for examples
+
 !Allocate space for globalIDarray
 module stuff 
   integer myThreadID
