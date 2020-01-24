@@ -11,7 +11,7 @@
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
       call MPI_COMM_SIZE( MPI_COMM_WORLD, numprocs, ierr )
 
-      write (*,*) "Hello from task ",myid," of ",numprocs
+      write (*,'("Hello from task ",i4," of ",i4)')myid,numprocs
 
       call MPI_FINALIZE(ierr)
       stop
