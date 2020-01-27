@@ -20,8 +20,7 @@ char *argv[];
  
 
     /* print out my rank and this run's PE size */
-    printf("Hello from %d\n",myid);
-    printf("Numprocs is %d\n",numprocs);
+    printf("Hello from %d of %d\n",myid,numprocs);
 
     MPI_Finalize();
     
