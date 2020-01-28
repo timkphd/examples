@@ -1,0 +1,15 @@
+64 # min data size
+4194304 # max data size
+1.00 # target time
+allReduce
+masteronlyPingpong 
+0 1
+funnelledPingpong
+3 1
+multiplePingpong
+-1 0
+funnelledHaloExchange
+alltoall
+gather
+barrier
+scatter

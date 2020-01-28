@@ -1,0 +1,43 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#comment = "script for hybrid tests"
+#SBATCH --nodes=1
+#SBATCH --export=ALL
+#SBATCH --oversubscribe
+#SBATCH --time=01:00:00
+#SBATCH --account=hpcapps
+#SBATCH --exclusive=user
+
+mkdir $SLURM_JOB_ID
+
+cat $0 > $SLURM_JOB_ID/script
+cp in.dat $SLURM_JOB_ID
+cp postit.py $SLURM_JOB_ID
+
+for CASE in mixedModeBenchmark.intel mixedModeBenchmark.gcc ; do
+  cp $CASE $SLURM_JOB_ID
+done
+
+cd $SLURM_JOB_ID
+
+
+export OMP_STACKSIZE=20000
+export OMP_NUM_THREADS=6
+export TASKS=4
+for CASE in mixedModeBenchmark.intel mixedModeBenchmark.gcc ; do
+  module purge
+  if [[ $CASE =~ "gcc" ]] ; then
+    echo $CASE gcc
+    #ml openmpi/3.1.3/gcc-7.3.0   gcc/7.3.0
+    ml gcc/7.3.0 comp-intel/2018.0.3 intel-mpi/2018.0.3 mkl/2018.3.222
+  else
+    echo $CASE intel
+    ml gcc/7.3.0 comp-intel/2018.0.3 intel-mpi/2018.0.3 mkl/2018.3.222
+  fi
+  printenv > $CASE.out
+  tymer times start $CASE
+  srun -n $TASKS --cpus-per-task=$OMP_NUM_THREADS ./$CASE in.dat > $CASE.out
+  tymer times ended $CASE
+done
+
+python postit.py

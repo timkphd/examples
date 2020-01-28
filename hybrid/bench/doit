@@ -1,0 +1,9 @@
+wget https://www.epcc.ed.ac.uk/sites/default/files/DOCUMENTS/openmpmpibench_Fortran.tar.gz
+tar -xzf openmpmpibench_Fortran.tar.gz
+cp INTEL GFORTRAN makefile in.dat script doit postit.py openmpmpibench_Fortran 
+cd openmpmpibench_Fortran
+module purge
+module load gcc/7.3.0 comp-intel/2018.0.3 intel-mpi/2018.0.3 mkl/2018.3.222
+export VERSION=INTEL    ; make -f makefile
+export VERSION=GFORTRAN ; make -f makefile
+sbatch script

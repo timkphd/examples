@@ -1,0 +1,4 @@
+FC=	mpif90
+FFLAGS=	 -fopenmp -O3 -fmax-stack-var-size=10
+END=gcc
+

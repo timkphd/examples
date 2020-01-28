@@ -1,0 +1,4 @@
+FC=mpiifort
+FFLAGS=	 -fopenmp -O3
+END=intel
+
