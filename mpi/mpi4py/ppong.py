@@ -1,10 +1,18 @@
-#!/opt/anaconda3/bin/python3
+#!/usr/bin/env python3
 BUFSIZE=10737418241
 BSIZE=15
-RCOUNT=2000
-TMAX=1.0
+RCOUNT=200
+TMAX=0.5
+repcount=10
 
-from time import time as TIMER
+try:
+    from time import time_ns as ns
+    def TIMER():
+        return ns()*1e-9
+except:
+    from time import time as ts
+    def TIMER():
+        return ts()
 
 # numpy is required
 import numpy as np
@@ -20,7 +28,11 @@ myid=comm.Get_rank()
 numprocs=comm.Get_size()
 myname= MPI.Get_processor_name()
 ver=MPI.Get_library_version()
-print(myid,myname,ver,MPI.Wtick())
+#TIMER=MPI.Wtick
+t1=TIMER()
+t2=TIMER()
+
+print(myid,myname,ver,MPI.Wtick(),t2-t1)
 buffer=np.zeros(BUFSIZE,dtype="a")
 tag=1234;
 step=4
@@ -53,17 +65,20 @@ for isource in range(0,numprocs):
 						    #print(buffer[0])
 						count[mysize]=count[mysize]+1
 						st=TIMER()
-						comm.Send([buffer[0:isize],MPI.CHAR], dest=ir, tag=1234)
-						comm.Recv([buffer[0:isize],MPI.CHAR], source=ir, tag=1234)
+						for irep in range(0,repcount):
+							comm.Send([buffer[0:isize],MPI.CHAR], dest=ir, tag=1234)
+							comm.Recv([buffer[0:isize],MPI.CHAR], source=ir, tag=1234)
 						#print("back",buffer[0],buffer[0] == b'b')
 						et=TIMER();
 						dt=et-st;
+						dt=dt/repcount
 						total[mysize]=total[mysize]+dt;
 						if(dt > maxtime[mysize]) : maxtime[mysize]=dt
 						if(dt < mintime[mysize]) : mintime[mysize]=dt
 					if myid == ir :
-						comm.Recv([buffer[0:isize],MPI.CHAR], source=isource, tag=1234)
-						comm.Send([buffer[0:isize],MPI.CHAR], dest=isource, tag=1234)
+						for irep in range(0,10):
+							comm.Recv([buffer[0:isize],MPI.CHAR], source=isource, tag=1234)
+							comm.Send([buffer[0:isize],MPI.CHAR], dest=isource, tag=1234)
 					if buffer[0] == b'b':
 						    #print(myid,"doing break")
 						    break
