@@ -5,10 +5,12 @@
 #include <unistd.h>
 #include <mpi.h>
 #include <math.h>
-#define BUFSIZE 10000000
-#define BSIZE 7
+#define BUFSIZE 1073741824
+#define BSIZE 15
 /*#define BSIZE 4*/
-#define RCOUNT 10
+#define RCOUNT 200
+#define TMAX 0.5
+#define repcount 10
  
 /************************************************************
 This is a simple send/receive program in MPI
@@ -21,41 +23,60 @@ double MYCLOCK()
         gettimeofday(&timestr, Tzp);
         return ((double)timestr.tv_sec + 1.0E-06*(double)timestr.tv_usec);
 }
-#define TIMER MYCLOCK
-/* define TIMER MPI_Wtime */
+// #define TIMER MYCLOCK
+#define TIMER MPI_Wtime
 
 int main(int argc,char *argv[],char *env[])
 {
   int myid, numprocs;
-  int i;
+  int i,vlan;
   int tag;
   char *buffer;
   char *astr;
-//  char myname[MPI_MAX_PROCESSOR_NAME];
   char *myname;
   MPI_Status status;
   double total[20],maxtime[20],mintime[20],st,et,dt;
+  int count[20];
   int is,ir,mysize,isize,resultlen,repeat;
+  double logs;
+  int step;
+  step=4;
+  logs=log((double)step);
+#ifdef MPI_MAX_LIBRARY_VERSION_STRING
+    char version[MPI_MAX_LIBRARY_VERSION_STRING] ;
+#else
+    char version[256];
+#endif
   MPI_Init(&argc,&argv);
   MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
   MPI_Comm_rank(MPI_COMM_WORLD,&myid);
   myname=(char*)malloc(MPI_MAX_PROCESSOR_NAME);
   MPI_Get_processor_name(myname,&resultlen); 
-  myname=strrchr(myname,(char)32)+1;
-  printf("%d %s %e \n",myid,myname,MPI_Wtick());
-/*  system("sleep 30"); */
+  st=TIMER();
+  et=TIMER();
+  printf("%d %s %e %e\n",myid,myname,MPI_Wtick(),et-st);
+  if(myid > -1){
+#ifdef MPI_MAX_LIBRARY_VERSION_STRING
+    MPI_Get_library_version(version,&vlan);
+#else
+    sprintf(version,"%s","UNDEFINED - consider upgrading");
+#endif
+   printf("MPI VERSION %s\n",version);
+}
+
   buffer=(char*)malloc((size_t)BUFSIZE);
   for(is=0;is<BUFSIZE;is++){
     buffer[is]=(char)0;
   }
-if(myid == 0){
-i=0;
-astr=env[i];
-while(astr) {
-      printf("%s\n",astr);
-      i++;
-      astr=env[i];
-}
+// edit next line to print your environment
+if(myid == -1){
+	i=0;
+	astr=env[i];
+	while(astr) {
+		printf("%s\n",astr);
+		i++;
+		astr=env[i];
+	}
 }
   tag=1234;
   for (is=0; is < numprocs-1 ; is++) {
@@ -63,36 +84,46 @@ while(astr) {
       MPI_Barrier(MPI_COMM_WORLD);
       if (myid == is || myid == ir) {
         for (mysize=0;mysize <=BSIZE; mysize++){
-          isize=(int)exp(2.3025850929940459*(double)mysize);
+          isize=round(exp(logs*(double)mysize));
+          buffer[0]=(char)0;
           if(isize > BUFSIZE)isize=BUFSIZE;
           total[mysize]=0.0;
           mintime[mysize]=1e6;
           maxtime[mysize]=0.0;
+          count[mysize]=0;
           for (repeat=1;repeat<=RCOUNT;repeat++) {
             if(myid == is){
+            	if (total[mysize] > TMAX) buffer[0]='b';
+				count[mysize]=count[mysize]+1;
                 st=TIMER();
-                MPI_Send(buffer,isize,MPI_CHAR,ir,tag,MPI_COMM_WORLD);
-                MPI_Recv(buffer,isize,MPI_CHAR,ir,tag,MPI_COMM_WORLD,&status);
+                for(int irep=0; irep<repcount;irep++ ){
+                  MPI_Send(buffer,isize,MPI_CHAR,ir,tag,MPI_COMM_WORLD);
+                  MPI_Recv(buffer,isize,MPI_CHAR,ir,tag,MPI_COMM_WORLD,&status);
+                }
                 et=TIMER();
                 dt=et-st;
+                dt=dt/repcount;
                 total[mysize]=total[mysize]+dt;
                 if(dt > maxtime[mysize])maxtime[mysize]=dt;
                 if(dt < mintime[mysize])mintime[mysize]=dt;
               }
             if(myid == ir){
-                MPI_Recv(buffer,isize,MPI_CHAR,is,tag,MPI_COMM_WORLD,&status);
-                MPI_Send(buffer,isize,MPI_CHAR,is,tag,MPI_COMM_WORLD);
+                for(int irep=0; irep<repcount;irep++ ){
+                  MPI_Recv(buffer,isize,MPI_CHAR,is,tag,MPI_COMM_WORLD,&status);
+                  MPI_Send(buffer,isize,MPI_CHAR,is,tag,MPI_COMM_WORLD);
+                }
             }
+            if (buffer[0] == 'b') break;
           }
         }
       }
       if (myid == is){
         for (mysize=0;mysize <=BSIZE; mysize++){
-          isize=(int)exp(2.3025850929940459*(double)mysize);
+          isize=round(exp(logs*(double)mysize));
           if(isize > BUFSIZE)isize=BUFSIZE;
-          printf("%2d %2d %10d %e %e %e  s %15.4e\n",is,ir,isize,
-                  mintime[mysize],total[mysize]/RCOUNT,
-                  maxtime[mysize],(double)isize*2.0/mintime[mysize]);
+          printf("%2d %2d %10d %e %e %e  s %15.4e %4d\n",is,ir,isize,
+                  mintime[mysize],total[mysize]/count[mysize],
+                  maxtime[mysize],(double)isize*2.0/mintime[mysize],count[mysize]);
           fflush(0);
         }
       }
