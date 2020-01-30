@@ -6,8 +6,7 @@
 #include <mpi.h>
 #include <math.h>
 #define BUFSIZE 1073741824
-#define BSIZE 15
-/*#define BSIZE 4*/
+// #define BSIZE 15
 #define RCOUNT 200
 #define TMAX 0.5
 #define repcount 10
@@ -40,7 +39,9 @@ int main(int argc,char *argv[],char *env[])
   int is,ir,mysize,isize,resultlen,repeat;
   double logs;
   int step;
+  int BSIZE;
   step=4;
+  FILE *file;
   logs=log((double)step);
 #ifdef MPI_MAX_LIBRARY_VERSION_STRING
     char version[MPI_MAX_LIBRARY_VERSION_STRING] ;
@@ -50,6 +51,14 @@ int main(int argc,char *argv[],char *env[])
   MPI_Init(&argc,&argv);
   MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
   MPI_Comm_rank(MPI_COMM_WORLD,&myid);
+  BSIZE=15;
+  if (file=fopen("BSIZE","r")){
+      fscanf(file,"%d",&BSIZE);
+      fclose(file);
+ }
+    
+  printf("%d %d\n",myid,BSIZE);
+
   myname=(char*)malloc(MPI_MAX_PROCESSOR_NAME);
   MPI_Get_processor_name(myname,&resultlen); 
   st=TIMER();
@@ -121,7 +130,7 @@ if(myid == -1){
         for (mysize=0;mysize <=BSIZE; mysize++){
           isize=round(exp(logs*(double)mysize));
           if(isize > BUFSIZE)isize=BUFSIZE;
-          printf("%2d %2d %10d %e %e %e  s %15.4e %4d\n",is,ir,isize,
+          printf("%2d %2d %10d %e %e %e %15.4e %4d\n",is,ir,isize,
                   mintime[mysize],total[mysize]/count[mysize],
                   maxtime[mysize],(double)isize*2.0/mintime[mysize],count[mysize]);
           fflush(0);

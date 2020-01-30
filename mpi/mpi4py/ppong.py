@@ -4,6 +4,7 @@ BSIZE=15
 RCOUNT=200
 TMAX=0.5
 repcount=10
+import sys
 
 try:
     from time import time_ns as ns
@@ -36,12 +37,21 @@ print(myid,myname,ver,MPI.Wtick(),t2-t1)
 buffer=np.zeros(BUFSIZE,dtype="a")
 tag=1234;
 step=4
-logs=log(10)
 logs=log(step)
 total=np.zeros(20)
 count=np.zeros(20,dtype="int")
 maxtime=np.zeros(20)
 mintime=np.zeros(20)
+
+try:
+    f=open("BSIZE","r")
+    dat=f.readlines()
+    BSIZE=int(dat[0])
+except:
+    pass
+print(myid,BSIZE)
+
+    
 for isource in range(0,numprocs):
 	for ir in range(isource+1,numprocs):
 		comm.Barrier()
