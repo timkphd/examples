@@ -38,6 +38,25 @@ extern "C" void  cumain(int myid, int gx, int gy,int bx, int by, int bz) {
 	}
 }
 
+// Set jmax to a larger value to slow it down more.
+// To run at normal speed define SLOW as blank.
+// The program should return the same results independent of
+// the setting for k and jmax.
+#define SLOW slow
+int __device__ slow(int input){
+  int i;
+  int jmax;
+  i=input;
+  jmax=10;
+  for (int j=1; j <=jmax ; j++) {
+    i=j;
+    if(j == jmax)i=input;
+    for (int k=1; k< 100000; k++) {
+     i= int(i*(1.00001*(sin((double)i)*sin((double)i)+cos((double)i)*cos((double)i))));
+    }
+  }
+  return(i);
+}
 
  __global__ void Kernel(int *dat) {
 /* get my block within a grid */
@@ -57,12 +76,12 @@ extern "C" void  cumain(int myid, int gx, int gy,int bx, int by, int bz) {
 #endif
 /* starting index into array */
 	int index=thread*6;
-	dat[index]=thread;
-	dat[index+1]=blockIdx.x;
-	dat[index+2]=blockIdx.y;
-	dat[index+3]=threadIdx.x;
-	dat[index+4]=threadIdx.y;
-	dat[index+5]=threadIdx.z;
+	dat[index]=SLOW(thread);
+	dat[index+1]=SLOW(blockIdx.x);
+	dat[index+2]=SLOW(blockIdx.y);
+	dat[index+3]=SLOW(threadIdx.x);
+	dat[index+4]=SLOW(threadIdx.y);
+	dat[index+5]=SLOW(threadIdx.z);
 }
 
 void checkCUDAError(const char *msg)
