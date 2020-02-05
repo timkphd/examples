@@ -38,20 +38,20 @@ extern "C" void  cumain(int myid, int gx, int gy,int bx, int by, int bz) {
 	}
 }
 
-// Set jmax to a larger value to slow it down more.
 // To run at normal speed define SLOW as blank.
 // The program should return the same results independent of
-// the setting for k and jmax.
+// the setting for kmax and jmax.
+// Set jmax to a larger value to slow it down more.
 #define SLOW slow
 int __device__ slow(int input){
   int i;
-  int jmax;
-  i=input;
+  int jmax,kmax;
   jmax=10;
+  kmax=100000;
   for (int j=1; j <=jmax ; j++) {
     i=j;
     if(j == jmax)i=input;
-    for (int k=1; k< 100000; k++) {
+    for (int k=1; k< kmax; k++) {
      i= int(i*(1.00001*(sin((double)i)*sin((double)i)+cos((double)i)*cos((double)i))));
     }
   }
