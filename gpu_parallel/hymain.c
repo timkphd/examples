@@ -16,7 +16,7 @@ void ptime(){
   printf("%s\n",buffer);
   }
   
- 
+#define GPUS 2
 /************************************************************
 This is a simple hello world program. Each processor prints
 name, rank, and total run size.
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	MPI_Bcast(&bz,1,MPI_INT,0,MPI_COMM_WORLD);
 
     for (int ic=0; ic<30; ic++ ){
-	cumain(myid % 2,gx,gy,bx,by,bz);
+	cumain(myid % GPUS ,gx,gy,bx,by,bz);
     	sleep(1);
     }
     if(myid == 0) {
