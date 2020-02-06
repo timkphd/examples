@@ -59,6 +59,9 @@ i=0
 dosmall=False
 if(sys.argv[0].find("xkcd")> 0):
     try:
+        # If the name of the program contains xkcd, that is we do a link
+        # lrwxr-xr-x  1 tkaiser  staff  6 Aug 24 09:10 plxkcd -> plplot
+        # then plots will be in the https://xkcd.com style.
         xkcd()
         dosmall=True    
     except:
