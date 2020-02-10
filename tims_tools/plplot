@@ -2,25 +2,62 @@
 import sys
 from pylab import *
 import math
-import EasyDialogs
 import warnings
 import time
 import os
 
+# Produces simple but nice X/Y plots.  
+
+# Program will try to save plots to a "plots"
+# subdirectory off of your home directory. It
+# assumes it exists.
+
+# It will ask for data files until you just enter
+# return.  You can alternatively enter files on
+# the command line.
+
+# If you enter an input file that does not exist
+# it will be replaced with the dummy data defined
+# below.  You can "test" the program by using "-"
+# as the file name and use the default values for
+# all other inputs.
+
+# If the name of the program contains the string
+# "xkcd" plots will be done in the xkcd style. 
+# See https://xkcd.com. You can have it both ways 
+# by creating a symbolic link:
+#
+# ln -s plplot plxkcd 
+
+# EasyDialogs is a Mac specific module. See: 
+# https://documentation.help/Python-PEP/module-EasyDialogs.html
+# It should be easy to replicate on most systems. 
+# However, here we provide a simple "text" version.
+
+
 warnings.simplefilter("ignore")
+
+try:
+    from EasyDialogs import *
+except:
+    def AskFileForOpen(message="file="):
+    	fstring=input(message)
+    	return fstring
+    def AskString(message="input:",default=""):
+    	prompt=message+": "+default+" "
+    	fstring=input(prompt)
+    	if(len(fstring)==0):
+    		fstring=default
+    	return fstring
 
 def dummy():
     lines=[]
-    from math import sin
-    from math import cos
-    from math import pi
     for x in range(0,101):
-        xin=x*2*pi/100.0
-        yin=sin(xin)*cos(xin)
+        xin=x*2*math.pi/100.0
+        yin=math.sin(xin)*math.cos(xin)
         aline=str(xin)+" "+str(yin)
         lines.append(aline)
     return(lines)
-
 
 paths=[]
 if len(sys.argv) > 1:
@@ -30,7 +67,7 @@ if len(sys.argv) > 1:
 else:
     pathname=" "
     while pathname:
-        pathname = EasyDialogs.AskFileForOpen(message='File to plot:')
+        pathname = AskFileForOpen(message='File to plot:')
         if pathname:
 #            print pathname
             paths.append(pathname)
@@ -39,18 +76,18 @@ ip=len(paths)
 bottom=" "
 side=" "
 top=" "
-bottom=EasyDialogs.AskString("bottom label","x axis")
-side=EasyDialogs.AskString("side label","y axis")
-top=EasyDialogs.AskString("title","the title")
-log=EasyDialogs.AskString("log","none")
+bottom=AskString("bottom label","x axis")
+side=AskString("side label","y axis")
+top=AskString("title","the title")
+log=AskString("log","none")
 xrange="auto"
 yrange="auto"
-xrange=EasyDialogs.AskString("X-range",xrange)
-yrange=EasyDialogs.AskString("Y-range",yrange)
-dosym=EasyDialogs.AskString("Do Symbols","n")
+xrange=AskString("X-range",xrange)
+yrange=AskString("Y-range",yrange)
+dosym=AskString("Do Symbols","n")
 dosym=(dosym == "y")
 lw=1
-lw=EasyDialogs.AskString("lw","1")
+lw=AskString("lw","1")
 lw=float(lw)
 
 xray={}
@@ -101,7 +138,7 @@ if(log.find("y") > -1 or  log.find("Y") > -1 or log.find("both") > -1 or log.fin
 
 leg=[]
 sym=['+','o','*','x','#','X','0']
-leggs=EasyDialogs.AskFileForOpen("Legend file:")
+leggs=AskFileForOpen("Legend file:")
 if(leggs):
     f=open(leggs)
     for p in paths:
@@ -145,23 +182,28 @@ if(yrange != "auto"):
     ylim(ymin,ymax)
     
 if dosmall:
-    xlabel(bottom,fontsize=10)
-    ylabel(side,fontsize=10)
+    xlabel(bottom,fontsize='x-small')
+    ylabel(side,fontsize='x-small')
+    # this does not work
+    params = {
+         'xtick.labelsize':'2',
+         'ytick.labelsize':'2'}
+    rcParams.update(params)
 else:
     xlabel(bottom)
     ylabel(side)
-
 title(top)
 grid(True)
 x=time.localtime()
 stime=("%2.2d%2.2d%2.2d%2.2d%2.2d%2.2d" % (x[0]-2000,x[1],x[2],x[3],x[4],x[5]))
-stime=os.getenv("HOME")+"/plots/"+stime+".pdf"
+stime=os.getenv("HOME")+"/plot/"+stime+".pdf"
 didsave=False
 didshow=False
 try:
     savefig(stime)
     didsave=True
 except:
+    print("save to ",stime," failed.  Directory exists: ",os.path.isdir(os.getenv("HOME")+"/plot"))
     pass
 host=os.getenv("HOSTNAME")
 who=os.getlogin()
@@ -171,4 +213,7 @@ try:
     didshow=True
 except:
     pass
-print("saved:",didsave," displayed:",didshow)
+if (didsave):
+    print("saved to:",stime," displayed:",didshow)
+else :
+    print("saved:",didsave," displayed:",didshow)
