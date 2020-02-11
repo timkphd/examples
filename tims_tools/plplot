@@ -6,6 +6,13 @@ import warnings
 import time
 import os
 
+htext="""
+####################
+
+CMD [file1 file2...]
+
+####################
+
 # Produces simple but nice X/Y plots.  
 
 # Program will try to save plots to a "plots"
@@ -34,6 +41,14 @@ import os
 # It should be easy to replicate on most systems. 
 # However, here we provide a simple "text" version.
 
+"""
+
+
+if len(sys.argv) > 1:
+    if (sys.argv[1] == "--help" or sys.argv[1] == "-help" or sys.argv[1] == "-h"):
+    	htext=htext.replace("CMD",sys.argv[0])
+    	print(htext)
+    	exit()
 
 warnings.simplefilter("ignore")
 
