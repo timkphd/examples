@@ -37,7 +37,6 @@
       enddo
       GOTO 10
 !     HERE WE EXIT THE PICTURE AND RETURN TO THE CALLING PROGRAM
-  200 RETURN
       END
 !     ****************************************************************
 !     * IBM 1130 EMULATOR VERSION (KYM FARNIK)                       *
@@ -88,41 +87,44 @@
       integer NODS(12)
       character*6 CAL(60,22)
       COMMON ISET
-      READ (2,1) (((AMNTH(I,J,K),K=1,13),J=1,7),I=1,12)
-      READ (2,2) (ANAM(I),I=1,22)
-      READ (2,3) (((ANUM(I,J,K),J=1,10),K=1,5),I=1,2)
-      READ (2,4) (NODS(I),I=1,12)
-      READ (2,1) BLANK,ONE,ALIN1,ALIN2,ALIN3,ALIN4
-      READ (2,4) MF,IYR,MTLST,IYLST,LNSW
-1     FORMAT (13A6)
-2     FORMAT (11A6)
-3     FORMAT (10A6)
-4     FORMAT (12I6)
+      READ (2,"(13A6)") (((AMNTH(I,J,K),K=1,13),J=1,7),I=1,12)
+      READ (2,"(11A6)") (ANAM(I),I=1,22)
+      READ (2,"(10A6)") (((ANUM(I,J,K),J=1,10),K=1,5),I=1,2)
+      READ (2,"(12I6)") (NODS(I),I=1,12)
+      READ (2,"(13A6)") BLANK,ONE,ALIN1,ALIN2,ALIN3,ALIN4
+      READ (2,"(12I6)") MF,IYR,MTLST,IYLST,LNSW
 5     FORMAT (A1,20A6)
 
       ISET=25
-      DO 10 I=1,60
-      DO 10 J=1,22
-10    CAL(I,J)= BLANK
+      DO  I=1,60
+        DO  J=1,22
+         CAL(I,J)= BLANK
+        end do
+      end do
       CAL(1,1)= ONE
-      DO 20 J=1,22
-20    CAL(11,J)=ANAM(J)
+      DO  J=1,22
+        CAL(11,J)=ANAM(J)
+      end do
       IF (LNSW) 122,142,122
-122   DO 125 I=20,60,8
-      DO 125 J=1,22
-125   CAL(I,J)=ALIN2
+122   DO  I=20,60,8
+      DO  J=1,22
+          CAL(I,J)=ALIN2
+        end do
+      end do
       DO 140 J=4,19,3
       I=13
-127   DO 130 L=1,7
-      CAL(I,J)=ALIN1
-130   I=I+1
+127   DO L=1,7
+        CAL(I,J)=ALIN1
+        I=I+1
+      end do 
       IF (I-55) 135,135,140
 135   CAL(I,J)=ALIN3
       I=I+1
       GO TO 127
 140   CONTINUE
-      DO 141 I=20,60,8
-141   CAL(I,1)=ALIN4
+      DO  I=20,60,8
+        CAL(I,1)=ALIN4
+      end do 
 142   IDOW=(IYR-1751)+(IYR-1753)/4-(IYR-1701)/100+(IYR-1601)/400
       IDOW=IDOW-7*((IDOW-1)/7)
 55    IF (IYR-IYLST) 60,65,100
@@ -136,11 +138,12 @@
       IY3=NUMB/10
       NUMB=NUMB-10*IY3
       IY4=NUMB
-      DO 72 J=1,5
-      CAL(J+3,2)=ANUM(2,IY1+1,J)
-      CAL(J+1,3)=ANUM(2,IY2+1,J)
-      CAL(J+1,19)=ANUM(2,IY3+1,J)
-72    CAL(J+3,20)=ANUM(2,IY4+1,J)
+fill1: DO  J=1,5
+        CAL(J+3,2)=ANUM(2,IY1+1,J)
+        CAL(J+1,3)=ANUM(2,IY2+1,J)
+        CAL(J+1,19)=ANUM(2,IY3+1,J)
+        CAL(J+3,20)=ANUM(2,IY4+1,J)
+      end do fill1
       LPYSW=0
       IF (IYR-4*(IYR/4)) 90,75,90
 75    IF (IYR-100*(IYR/100)) 85,80,85
@@ -149,39 +152,45 @@
 90    NODS(2)=NODS(2)+LPYSW
       IF (MF-1) 100,110,95
 95    MF=MF-1
-      DO 105 MONTH=1,MF
-105   IDOW=IDOW+NODS(MONTH)
+      DO  MONTH=1,MF
+        IDOW=IDOW+NODS(MONTH)
+      end do 
       IDOW=IDOW-7*((IDOW-1)/7)
       MF=MF+1
 110   DO 51 MONTH=MF,ML
       LSTDY=NODS(MONTH)
-      DO 115 I=1,7
-      DO 115 JM=1,13
-      J=JM+4
-115   CAL(I,J)=AMNTH(MONTH,I,JM)
+      DO  I=1,7
+        DO  JM=1,13
+        J=JM+4
+        CAL(I,J)=AMNTH(MONTH,I,JM)
+        end do 
+      end do 
       IF (IDOW-1) 160,160,120
 120   ID=IDOW-1
       J=2
-      DO 155 K=1,ID
-      DO 150 I=14,18
-      CAL (I,J)= BLANK
-150   CAL(I,J+1)= BLANK
-      J=J+3
-155   CONTINUE
+i155: DO  K=1,ID
+        DO   I=14,18
+          CAL (I,J)= BLANK
+          CAL(I,J+1)= BLANK
+        end do 
+        J=J+3
+      end do i155
 160   IDAY=1
       II=14
 25    J=3*IDOW-1
       N=IDAY/10+1
       I=II
-      DO 30 K=1,5
-      CAL(I,J)=ANUM(1,N,K)
-30    I=I+1
+      DO  K=1,5
+        CAL(I,J)=ANUM(1,N,K)
+        I=I+1
+      end do 
       N=IDAY-10*N+11
       J=J+1
       I=II
-      DO 35 K=1,5
-      CAL(I,J)=ANUM(2,N,K)
-35    I=I+1
+      DO  K=1,5
+        CAL(I,J)=ANUM(2,N,K)
+        I=I+1
+      end do 
       IDOW=IDOW+1
       IF (IDOW-7) 45,45,40
 40    IDOW=1
@@ -192,9 +201,10 @@
 205   I=II
       J=3*ID-1
       DO 210 K=1,5
-      CAL(I,J)= BLANK
-      CAL(I,J+1)= BLANK
-210   I=I+1
+        CAL(I,J)= BLANK
+        CAL(I,J+1)= BLANK
+        I=I+1
+      end do  
       IF (ID-7) 215,220,220
 215   ID=ID+1
       GO TO 205
@@ -205,10 +215,9 @@
 230   CALL SNPIC
       WRITE (3,5) ((CAL(I,J),J=1,21),I=1,60)
 51    CONTINUE
-      IF (IYR-IYLST) 235,100,100
+      IF (IYR-IYLST .ge. 0)call exit()
 235   NODS(2)=NODS(2)-LPYSW
       IYR=IYR+1
       MF=1
       GO TO 55
-100   CALL EXIT
       END
