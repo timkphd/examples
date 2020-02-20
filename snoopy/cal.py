@@ -474,7 +474,7 @@ two=two.replace("yr02",y2)
 fort2=open("fort.2","w")
 fort2.write(two)
 fort2.close()
-os.system("snoopy")
+os.system("./snoopy")
 
 
 fname="fort.3"
