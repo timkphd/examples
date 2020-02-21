@@ -32,16 +32,18 @@ int main(int argc,char *argv[],char *env[])
   int tag;
   char *buffer;
   char *astr;
-  char *myname;
+  char *myname,*yours;
   MPI_Status status;
   double total[20],maxtime[20],mintime[20],st,et,dt;
+  double t1,t2;
+  char fname[256];
   int count[20];
   int is,ir,mysize,isize,resultlen,repeat;
   double logs;
   int step;
   int BSIZE;
   step=4;
-  FILE *file;
+  FILE *file,*F;
   logs=log((double)step);
 #ifdef MPI_MAX_LIBRARY_VERSION_STRING
     char version[MPI_MAX_LIBRARY_VERSION_STRING] ;
@@ -57,14 +59,20 @@ int main(int argc,char *argv[],char *env[])
       fclose(file);
  }
     
-  printf("%d %d\n",myid,BSIZE);
+  // printf("%d %d\n",myid,BSIZE);
 
   myname=(char*)malloc(MPI_MAX_PROCESSOR_NAME);
   MPI_Get_processor_name(myname,&resultlen); 
   st=TIMER();
   et=TIMER();
-  printf("%d %s %e %e\n",myid,myname,MPI_Wtick(),et-st);
-  if(myid > -1){
+  /*****
+  sprintf(fname,"%s_%4.4d",argv[0],myid);
+  F=fopen(fname,"w");
+  fprintf(F,"%d %s %e %e\n",myid,myname,MPI_Wtick(),et-st);
+  fclose(F);
+  *****/
+  
+  if(myid == 0){
 #ifdef MPI_MAX_LIBRARY_VERSION_STRING
     MPI_Get_library_version(version,&vlan);
 #else
@@ -72,7 +80,22 @@ int main(int argc,char *argv[],char *env[])
 #endif
    printf("MPI VERSION %s\n",version);
 }
-
+  if(myid == 0){
+    yours=(char*)malloc(MPI_MAX_PROCESSOR_NAME);
+    printf("%d %s %e %e\n",myid,myname,MPI_Wtick(),et-st);
+    for(ir=1;ir<numprocs;ir++) {
+		MPI_Recv(yours,MPI_MAX_PROCESSOR_NAME,MPI_CHAR,ir,345,MPI_COMM_WORLD,&status);
+		MPI_Recv(&t1,1,MPI_DOUBLE,ir,456,MPI_COMM_WORLD,&status);
+		MPI_Recv(&t2,1,MPI_DOUBLE,ir,789,MPI_COMM_WORLD,&status);
+		printf("%d %s %e %e\n",ir,yours,t1,t2);
+    }
+  } else {
+        t1=MPI_Wtick();
+        t2=et-st;
+		MPI_Send(myname,MPI_MAX_PROCESSOR_NAME,MPI_CHAR,0,345,MPI_COMM_WORLD);
+		MPI_Send(&t1,1,MPI_DOUBLE,0,456,MPI_COMM_WORLD);
+		MPI_Send(&t2,1,MPI_DOUBLE,0,789,MPI_COMM_WORLD);
+    }
   buffer=(char*)malloc((size_t)BUFSIZE);
   for(is=0;is<BUFSIZE;is++){
     buffer[is]=(char)0;
