@@ -12,7 +12,7 @@
       i=1
 !!      DO 40 I = 1, ISET
       do 
-      if ((INUM(I)+1)  .ne. 0)goto 100
+      if ((INUM(I)+1)  .ne. 0)go to 100
 !     HERE WE WRITE A LINE TO THE PRINTER AND GO BUILD ANOTHER
       DO  L = K, 121
         ILINE(L)=ICHR(I)
@@ -33,9 +33,9 @@
         end do 
       end if 
       i=i+1
-      if(i .gt. iset)goto 10
+      if(i .gt. iset)go to 10
       enddo
-      GOTO 10
+      go to 10
 !     HERE WE EXIT THE PICTURE AND RETURN TO THE CALLING PROGRAM
       END
 !     ****************************************************************
@@ -107,9 +107,9 @@
       end do
       if(LNSW .ne. 0 ) then 
           DO I=20,60,8
-          DO J=1,22
+           DO J=1,22
             CAL(I,J)=ALIN2
-          end do
+           end do
         end do 
         DO 140 J=4,19,3
         I=13
@@ -117,16 +117,17 @@
           CAL(I,J)=ALIN1
           I=I+1
         end do 
-        IF (I-55) 135,135,140
-135     CAL(I,J)=ALIN3
-        I=I+1
-        GO TO 127
+        if( (I-55) .le. 0) then 
+          CAL(I,J)=ALIN3
+          I=I+1
+          GO TO 127
+        endif 
 140     CONTINUE
         DO I=20,60,8
           CAL(I,1)=ALIN4
         end do 
       endif 
-142   IDOW=(IYR-1751)+(IYR-1753)/4-(IYR-1701)/100+(IYR-1601)/400
+      IDOW=(IYR-1751)+(IYR-1753)/4-(IYR-1701)/100+(IYR-1601)/400
       IDOW=IDOW-7*((IDOW-1)/7)
       
  l55: do 
@@ -136,7 +137,7 @@
       else 
          ML=MTLST
       end if 
-70    IY1=IYR/1000
+      IY1=IYR/1000
       NUMB=IYR-1000*IY1
       IY2=NUMB/100
       NUMB=NUMB-100*IY2
@@ -150,11 +151,16 @@
         CAL(J+3,20)=ANUM(2,IY4+1,J)
       end do 
       LPYSW=0
-      IF (IYR-4*(IYR/4)) 90,75,90
-75    IF (IYR-100*(IYR/100)) 85,80,85
-80    IF (IYR-400*(IYR/400)) 90,85,90
-85    LPYSW=1
-90    NODS(2)=NODS(2)+LPYSW
+      if (IYR-4*(IYR/4) .eq. 0 )then
+        if( (IYR-100*(IYR/100)) .ne. 0 )then
+          LPYSW=1
+        else
+          if ((IYR-400*(IYR/400)) .eq. 0 )then
+            LPYSW=1            
+          end if
+        end if 
+      end if 
+      NODS(2)=NODS(2)+LPYSW
       if((MF-1) .lt. 0)call exit
       if((MF-1) .gt. 0)then
         MF=MF-1
@@ -185,7 +191,8 @@
       endif
       IDAY=1
       II=14
-25    J=3*IDOW-1
+i25:  do
+      J=3*IDOW-1
       N=IDAY/10+1
       I=II
       DO K=1,5
@@ -205,27 +212,30 @@
         II=II+8
       end if 
       IDAY=IDAY+1
-      IF (IDAY-LSTDY) 25,25,50
-50    ID=IDOW
-205   I=II
+      if ((IDAY-LSTDY) .gt. 0 )exit
+      end do i25
+      ID=IDOW
+l205: do
+      I=II
       J=3*ID-1
       DO K=1,5
         CAL(I,J)= BLANK
         CAL(I,J+1)= BLANK
         I=I+1
       end do 
-      IF (ID-7) 215,220,220
-215   ID=ID+1
-      GO TO 205
-220   IF (II-54) 225,230,230
-225   II=54
+      if((ID-7) .lt. 0 )then
+        ID=ID+1
+        cycle
+      endif  
+      IF ((II-54) .ge. 0)exit
+      II=54
       ID=1
-      GO TO 205
-230   CALL SNPIC
+      end do l205
+      CALL SNPIC
       WRITE (3,5) ((CAL(I,J),J=1,21),I=1,60)
 51    CONTINUE
       IF (IYR-IYLST .ge. 0 ) call exit
-235   NODS(2)=NODS(2)-LPYSW
+      NODS(2)=NODS(2)-LPYSW
       IYR=IYR+1
       MF=1
       end do l55
