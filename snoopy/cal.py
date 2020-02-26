@@ -503,11 +503,24 @@ for line in lines:
 			rtn=ff
 		output.write(rtn)
 		output.write(line[1:])
-ps="cal"+".ps"
-command="enscript -B -f Courier7 -r -e "+outfile+" -o "+ps
-os.system(command)
+command_org="enscript -B -f Courier7 -r -e fort.3.out -o cal.ps"
+command=command_org.split()
+#print(command)
+import subprocess
+# HACK for some reason sometimes enscript skips the last
+# page the first time you run it so we run it twice. 
+for i in [0,1] :
+    #x=subprocess.run(["enscript","-B",  "-f", "Courier7" ,"-r", "-e", "fort.3.out", "-o" ,"cal.ps"],capture_output=True,encoding='utf-8')  
+    x=subprocess.run(command,capture_output=True,encoding='utf-8')  
+    #print(x.args)
+    #print(x.returncode)
+    output=x.stderr.split("\n")
+output=x.stderr.split("\n")
+for o in output:
+    if (len(o) > 0):
+        print(o)
 print("**********")
 print("If the output reports that few or no pages")
 print("were produced try running this command:")
-print(command)
+print(command_org)
 

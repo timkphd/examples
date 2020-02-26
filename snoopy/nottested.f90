@@ -131,7 +131,10 @@
             IDOW = IDOW - 7*((IDOW - 1)/7)
 
             l55: do
-               IF ((IYR - IYLST) .gt. 0) call exit
+               IF ((IYR - IYLST) .gt. 0) then
+                 !flush(3)
+                 call exit
+               endif 
                IF ((IYR - IYLST) .lt. 0) then
                   ML = 12
                else
@@ -161,7 +164,10 @@
                   end if
                end if
                NODS(2) = NODS(2) + LPYSW
-               if ((MF - 1) .lt. 0) call exit
+               if ((MF - 1) .lt. 0) then
+                 !flush(3)
+                 call exit
+               endif 
                if ((MF - 1) .gt. 0) then
                   MF = MF - 1
                   DO MONTH = 1, MF
@@ -234,7 +240,10 @@
                   CALL SNPIC
                   WRITE (3, 5) ((CAL(I, J), J=1, 21), I=1, 60)
 51                CONTINUE
-                  IF (IYR - IYLST .ge. 0) call exit
+                  IF (IYR - IYLST .ge. 0)then
+                     !flush(3)
+                     call exit
+                  endif 
                   NODS(2) = NODS(2) - LPYSW
                   IYR = IYR + 1
                   MF = 1
