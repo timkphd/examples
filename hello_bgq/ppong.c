@@ -6,28 +6,37 @@
 #include <mpi.h>
 #include <math.h>
 
+/************************************************************
+This is a simple send/receive program in MPI. It loops over
+all processor pairs.
+
+Note: You should replace MPI_Wtime with Papi timers if
+available.
+************************************************************/
+
 // Max buffer size, actual size determined by BSIZE,
 // optionally read in from the file "BSIZE".  The
 // max size will be 4**BSIZE.  BSIZE defaluts to 15.
 // 4**15=1,073,741,824
 #define BUFSIZE 1073741824
 
-// Max times to do the send/rec loop
+// Max times to do the send/rec loop for a processor pair
 #define RCOUNT 200
 
 // Number of send/rec per loop
 #define repcount 10
 
-// Max time to spend in the send/rec loop
+// Min time to spend in the send/rec loop
 #define TMAX 0.5
 
 // Compile line:
 //      mpicc -DDOSAVE ppong.c -o ppong
 // If DOSAVE is defined then every loop
-// time will be recorded.
+// time will be recorded to binary files.
 
-// Reports MPI version
-// Nodes used for run , MPI_Wtick and timer call delta t
+// Reports: 
+// MPI version
+// Nodes used for run , MPI_Wtick and timer call delta t 
 // to/from processor
 // message size 
 // mintime for loop
@@ -38,9 +47,6 @@
 // NOTE: times are round trip not one way; so bandwidth
 // might be half of what is expected.
  
-/************************************************************
-This is a simple send/receive program in MPI
-************************************************************/
 #ifdef DOSAVE
 #define FLT double
 #define INT int
@@ -222,6 +228,9 @@ if(myid == -1){
 }
 
 #ifdef DOSAVE
+// Following based on:
+// Numerical recipes in C : the art of scientific computing 
+// William H. Press ... [et al.]. – 2nd ed.
 FLT **matrix(INT nrl,INT nrh,INT ncl,INT nch)
 {
     INT i;
