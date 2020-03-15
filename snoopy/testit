@@ -1,5 +1,6 @@
 #testit - all 14 possible calendars
 for y in 2017 2018 2019 2025 2026 2021 2022 2040 2052 2036 2020 2032 2044 2028 ; do
+  rm -rf fort*
   let "y2= $y + 1"
   echo $y 1 $y2 1
   ./cal.py 1 $y 1 $y2
