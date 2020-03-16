@@ -10,7 +10,7 @@
 This is a simple send/receive program in MPI. It loops over
 all processor pairs.
 
-Note: You should replace MPI_Wtime with Papi timers if
+Note: You should replace MPI_Wtime with PAPI timers if
 available.
 ************************************************************/
 
@@ -21,18 +21,26 @@ available.
 #define BUFSIZE 1073741824
 
 // Max times to do the send/rec loop for a processor pair
+#ifndef RCOUNT
 #define RCOUNT 200
+#endif
 
 // Number of send/rec per loop
-#define repcount 10
+#ifndef REPCOUNT
+#define REPCOUNT 10
+#endif
 
-// Min time to spend in the send/rec loop
+// Max time to spend in the send/rec loop
+#ifndef TMAX
 #define TMAX 0.5
+#endif
 
 // Compile line:
 //      mpicc -DDOSAVE ppong.c -o ppong
 // If DOSAVE is defined then every loop
 // time will be recorded to binary files.
+// Note RCOUNT, REPCOUNT, and TMAX can also
+// be defined on the compile line.
 
 // Reports: 
 // MPI version
@@ -61,8 +69,16 @@ double MYCLOCK()
         gettimeofday(&timestr, Tzp);
         return ((double)timestr.tv_sec + 1.0E-06*(double)timestr.tv_usec);
 }
+
+#ifdef PAPI
+long PAPI_get_real_cyc(void);
+#define TIMER ((double)PAPI_get_real_cyc()*(double)1.0E-06)
+#endif
+
 // #define TIMER MYCLOCK
-#define TIMER MPI_Wtime
+#ifndef TIMER
+#define TIMER MPI_Wtime()
+#endif
 
 int main(int argc,char *argv[],char *env[])
 {
@@ -106,8 +122,8 @@ int main(int argc,char *argv[],char *env[])
 
   myname=(char*)malloc(MPI_MAX_PROCESSOR_NAME);
   MPI_Get_processor_name(myname,&resultlen); 
-  st=TIMER();
-  et=TIMER();
+  st=TIMER;
+  et=TIMER;
   /*****
   sprintf(fname,"%s_%4.4d",argv[0],myid);
   F=fopen(fname,"w");
@@ -181,14 +197,14 @@ if(myid == -1){
             if(myid == is){
             	if (total[mysize] > TMAX) buffer[0]='b';
 				count[mysize]=count[mysize]+1;
-                st=TIMER();
-                for(int irep=0; irep<repcount;irep++ ){
+                st=TIMER;
+                for(int irep=0; irep<REPCOUNT;irep++ ){
                   MPI_Send(buffer,isize,MPI_CHAR,ir,tag,MPI_COMM_WORLD);
                   MPI_Recv(buffer,isize,MPI_CHAR,ir,tag,MPI_COMM_WORLD,&status);
                 }
-                et=TIMER();
+                et=TIMER;
                 dt=et-st;
-                dt=dt/repcount;
+                dt=dt/REPCOUNT;
 #ifdef DOSAVE
                 times[mysize][repeat]=dt;
 #endif
@@ -197,7 +213,7 @@ if(myid == -1){
                 if(dt < mintime[mysize])mintime[mysize]=dt;
               }
             if(myid == ir){
-                for(int irep=0; irep<repcount;irep++ ){
+                for(int irep=0; irep<REPCOUNT;irep++ ){
                   MPI_Recv(buffer,isize,MPI_CHAR,is,tag,MPI_COMM_WORLD,&status);
                   MPI_Send(buffer,isize,MPI_CHAR,is,tag,MPI_COMM_WORLD);
                 }
