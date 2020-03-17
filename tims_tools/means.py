@@ -10,7 +10,7 @@ global Ex2
 
 #this excludes negative numbers and 0
 def testit(x):
-    #return(True)
+    return(True)
     return (x > 0.0)
 
 def add_variable(x):
