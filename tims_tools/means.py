@@ -1,4 +1,4 @@
-#!/opt/intel/intelpython3/bin/python3
+#!/usr/bin/env python3
 import sys
 import scipy.stats
 from math import sqrt
@@ -7,6 +7,11 @@ global n
 global K
 global Ex
 global Ex2
+
+#this excludes negative numbers and 0
+def testit(x):
+    #return(True)
+    return (x > 0.0)
 
 def add_variable(x):
     global n,K,Ex,Ex2
@@ -58,42 +63,68 @@ dat1=""" 2.245E+09
 
 con=98
 
+f1=1
+f2=2
+bin=False
 if(len(sys.argv) > 1) :
-	fname=sys.argv[1]
-	#f=open(fname,"r")
-	#dat1=f.read()
-	dat1=np.fromfile(fname,dtype=np.float)
+	if sys.argv[1]== "-b" :
+	    bin=True
+	    f1=2
+	    f2=3
 
-if(len(sys.argv) > 2) :
-	fname=sys.argv[3]
-	#f=open(fname,"r")
-	#dat2=f.read()
-	dat2=np.fromfile(fname,dtype=np.float)
+if(bin):
+    if(len(sys.argv) > f1) :
+	    fname=sys.argv[f1]
+	    dat1=np.fromfile(fname,dtype=np.float)
+    if(len(sys.argv) > f2) :
+	    fname=sys.argv[f2]
+	    dat2=np.fromfile(fname,dtype=np.float)
+else:
+    if(len(sys.argv) > f1) :
+	    fname=sys.argv[f1]
+	    f=open(fname,"r")
+	    dat1=f.read()
+    if(len(sys.argv) > f2) :
+	    fname=sys.argv[f2]
+	    f=open(fname,"r")
+	    dat2=f.read()
 
 
 T=scipy.stats.t._isf
-#dat=dat1.split()
+if not bin : 
+    dat=dat1.split()
 dat=dat1
 n=0
 K=0
 Ex=0.0
 Ex2=0.0
+max1=-1e37
+min1=1e37
 for d in dat:
 	d=float(d)
-	add_variable(d)
+	if testit(d): 
+	    if d < min1: min1=d
+	    if d > max1: max1=d
+	    add_variable(d)
 m1=get_meanvalue()
 s1=get_variance()**(0.5)	
 n1=n
 
-#dat=dat2.split()
+if not bin:
+    dat=dat2.split()
 dat=dat2
 n=0
 K=0
 Ex=0.0
 Ex2=0.0
+max2=-1e37
+min2=1e37
 for d in dat:
 	d=float(d)
-	add_variable(d)
+	if testit(d) :
+	    if d < min2: min2=d
+	    if d > max2: max2=d
+	    add_variable(d)
 m2=get_meanvalue()
 s2=get_variance()**(0.5)	
 n2=n
@@ -132,24 +163,27 @@ under=sqrt((s1*s1)/n1+(s2*s2)/n2)
 vtop=(s1*s1)/n1+(s2*s2)/n2
 vbot1=(((s1*s1)/n1)**2)/(n1-1)
 vbot2=(((s2*s2)/n2)**2)/(n2-1)
-print(vtop,vbot1,vbot2)
+#print(vtop,vbot1,vbot2)
 v=(vtop**2)/(vbot1+vbot2)
-print("v=",v)
+#print("v=",v)
 
-
+ 
 a=(1.0-con/100.0)
-print("a=",a)
+#print("a=",a)
 ao2=a/2.0
 ta2=T(ao2,v)
-print(ta2,v)
+#print(ta2,v)
 dm=m1-m2
 diff=ta2*under
 lower=dm-diff
 upper=dm+diff
-print("diff=",diff)
-print("dm=",dm)
+#print("diff=",diff)
+#print("dm=",dm)
+print("    min        ave        max        std             #")
 
-print(m1,s1,n1)
-print(m2,s2,n2)
-print("%#10.4G < u1 - u2 < %#10.4G" % (lower,upper)) 
+print("%#10.4G %#10.4G %#10.4G %#10.4G %#10d" % (min1,m1,max1,s1**2,n1))
+print("%#10.4G %#10.4G %#10.4G %#10.4G %#10d" % (min2,m2,max2,s2**2,n2))
+
+print("%#5.1F%s confidence interval for difference in means" %(float(con),"%"))
+print("        %#10.4G < u1 - u2 < %#10.4G" % (lower,upper)) 
 
