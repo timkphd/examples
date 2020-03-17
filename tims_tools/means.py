@@ -11,7 +11,7 @@ global Ex2
 #this excludes negative numbers and 0
 def testit(x):
     return(True)
-    return (x > 0.0)
+    #return (x > 0.0)
 
 def add_variable(x):
     global n,K,Ex,Ex2
@@ -32,7 +32,7 @@ def get_meanvalue():
     return K + Ex / n
 
 def get_variance():
-#s2 is the variance
+#S2 is the variance
 #standard deviation, denoted by S is the sqrt of variance
     global n,K,Ex,Ex2
     return (Ex2 - (Ex*Ex)/n) / (n-1)
@@ -179,11 +179,15 @@ lower=dm-diff
 upper=dm+diff
 #print("diff=",diff)
 #print("dm=",dm)
-print("    min        ave        max        std             #")
-
-print("%#10.4G %#10.4G %#10.4G %#10.4G %#10d" % (min1,m1,max1,s1**2,n1))
-print("%#10.4G %#10.4G %#10.4G %#10.4G %#10d" % (min2,m2,max2,s2**2,n2))
+print("    min        ave        max        std             #   diff/ave")
+print("%#10.4G %#10.4G %#10.4G %#10.4G %#10d %#10.4G  X" % (min1,m1,max1,s1**2,n1,abs(diff/m1)))
+print("%#10.4G %#10.4G %#10.4G %#10.4G %#10d %#10.4G  Y" % (min2,m2,max2,s2**2,n2,abs(diff/m2)))
 
 print("%#5.1F%s confidence interval for difference in means" %(float(con),"%"))
-print("        %#10.4G < u1 - u2 < %#10.4G" % (lower,upper)) 
+
+mycase="=="
+if lower > 0: mycase="U1"
+if lower < 0 and upper < 0 : mycase="U2"
+
+print("        %#10.4G < u1 - u2 < %#10.4G     %s" % (lower,upper,mycase)) 
 
