@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import os
 two="""           JJJJJJJ   AAAAA   N     N  U     U   AAAAA   RRRRRR   Y     Y
