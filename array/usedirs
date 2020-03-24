@@ -6,7 +6,7 @@
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=2
 #SBATCH --time=00:05:00
-###### sending output to /dev/null will surpress it
+###### sending output to /dev/null will suppress it
 ###### this is a good idea for array jobs lest it
 ###### create extra output for each subjob
 ##SBATCH -o /dev/null
@@ -64,17 +64,11 @@ cd $SUB_ID
 cat $0 > myscript
 
 
-if [ -z ${USEDIRS+x} ]; then
-	# USEDIRS is not set; default to no
-	#export USEDIRS=yes
-	export USEDIRS=no
-fi
 
 # Get the name of our LIST, default to list
 if [ -z ${LIST+x} ]; then echo "LIST is unset"; export LIST=list ; else echo "LIST is set to '$LIST'"; fi
 
 
-if [[ $USEDIRS = *yes* ]] ; then
 # Here we assume that our LIST is is a set of directories
 # under a "main" directory "inputs" each containing data sets.  
 # For our current program we require each directory contain an 
@@ -94,19 +88,3 @@ if [[ $USEDIRS = *yes* ]] ; then
 	echo $SLURM_SUBMIT_DIR/inputs/$dir > directory
 	$SLURM_SUBMIT_DIR/tymer timer end_time
 
-else
-
-# Here we assume that our each line of our LIST contains 
-# data for our program.
-# Grab the line  
-    export input=`head -n $SUB_ID $SLURM_SUBMIT_DIR/$LIST | tail -1`
-    printenv > envs
-
-# Run our job
-	$SLURM_SUBMIT_DIR/tymer timer start_time
-	echo $input > input
-	#$SLURM_SUBMIT_DIR/$EXE  $input > output
-	$SLURM_SUBMIT_DIR/$EXE <<< $input > output
-	hostname > node
-	$SLURM_SUBMIT_DIR/tymer timer end_time
-fi

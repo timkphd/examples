@@ -17,5 +17,5 @@ clean:
 	rm -rf invertc in_list dir_list inputs
 
 backup:
-	tar -czf array.tgz array.job  doit invertc.c makefile setarray.py tymer invertp.py bot
+	tar -czf array.tgz bot doseperate dotogether invertc.c invertp.py makefile setarray.py tymer useboth usedirs uselist
 
