@@ -6,17 +6,18 @@ make
 #    --export=ALL
 #to the sbatch command
 
+export ACC=--account=hpcapps
 ##run assuming each line of "in_list" contains our input
 export LIST=in_list
 export USEDIRS=no
-sbatch --array=1-24  useboth
-sbatch --array=25-48  useboth
+sbatch $ACC --array=1-24  useboth
+sbatch $ACC --array=25-48  useboth
 
 #run assuming data in in directories specified in "dir_list"
 export LIST=dir_list
 export USEDIRS=yes
-sbatch --array=1-24  useboth
-sbatch --array=25-48  useboth
+sbatch $ACC --array=1-24  useboth
+sbatch $ACC --array=25-48  useboth
 
 unset LIST
 unset USEDIRS
