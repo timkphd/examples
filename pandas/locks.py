@@ -39,18 +39,23 @@ def dc(j,maxloc=1):
 			sleep(1)
 	return(nlast,n)
 	
+nl=0
+nb=0
 for i in range(1,20):
         nlast,nnow=dc(1,1)
         if nlast < 1 :
             print("doing local",i)
             sleep(5*random())
+            nl=nl+1
             nlast,nnow=dc(-1,1)
             sleep(5*random())
         else:
             print("local busy",i)
+            nb=nb+1
             sleep(1)
         
-#    ./locks.py two &
-#    ./locks.py three &
-#    ./locks.py four &
+print(nl,nb)
+#    ./locks.py > one.out &
+#    ./locks.py > two.out &
+#    ./locks.py > thr.out &
 

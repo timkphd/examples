@@ -37,7 +37,7 @@ def get_variance():
     global n,K,Ex,Ex2
     return (Ex2 - (Ex*Ex)/n) / (n-1)
 
-dat2=""" 2.215E+09
+dat2="""2.215E+09
  2.048E+09
  2.247E+09
  2.214E+09
@@ -46,10 +46,9 @@ dat2=""" 2.215E+09
  2.207E+09
  2.074E+09
  2.093E+09
- 2.049E+09
-"""
+ 2.049E+09"""
 
-dat1=""" 2.245E+09
+dat1="""2.245E+09
  2.0428E+09
  2.235E+09
  2.227E+09
@@ -58,8 +57,7 @@ dat1=""" 2.245E+09
  2.147E+09
  2.124E+09
  2.193E+09
- 2.039E+09
-"""
+ 2.039E+09"""
 
 con=98
 
@@ -92,8 +90,9 @@ else:
 
 T=scipy.stats.t._isf
 if not bin : 
-    dat=dat1.split()
-dat=dat1
+    dat=dat1.split("\n")
+else:
+    dat=dat1
 n=0
 K=0
 Ex=0.0
@@ -111,8 +110,9 @@ s1=get_variance()**(0.5)
 n1=n
 
 if not bin:
-    dat=dat2.split()
-dat=dat2
+    dat=dat2.split("\n")
+else:
+    dat=dat2
 n=0
 K=0
 Ex=0.0
@@ -179,7 +179,7 @@ lower=dm-diff
 upper=dm+diff
 #print("diff=",diff)
 #print("dm=",dm)
-print("    min        ave        max        std             #   diff/ave")
+print("    min        mu         max        std             #   diff/ave")
 print("%#10.4G %#10.4G %#10.4G %#10.4G %#10d %#10.4G  X" % (min1,m1,max1,s1**2,n1,abs(diff/m1)))
 print("%#10.4G %#10.4G %#10.4G %#10.4G %#10d %#10.4G  Y" % (min2,m2,max2,s2**2,n2,abs(diff/m2)))
 
@@ -190,4 +190,29 @@ if lower > 0: mycase="U1"
 if lower < 0 and upper < 0 : mycase="U2"
 
 print("        %#10.4G < u1 - u2 < %#10.4G     %s" % (lower,upper,mycase)) 
+
+print()
+d0=0
+print("d0= %#10.4G" %(d0))
+print("H0a:  m1 - m2  = %#10.4G" % (d0))
+print("H1a:  m1 - m2  < %#10.4G" % (d0))
+ta=T(a,v)
+tp=((m1-m2)-d0)/sqrt((s1**2)/n1 + (s2**2)/n2)
+if (tp < -ta): 
+    print("Reject H0a at the %#10.4G level of significance" % (a))
+else:
+    print("Do not reject H0a at the %#10.4G level of significance" % (a))
+
+print()
+print("H0b:  m1 - m2  = %#10.4G" % (d0))
+print("H1b:  m1 - m2  > %#10.4G" % (d0))
+ta=T(a,v)
+tp=((m1-m2)-d0)/sqrt((s1**2)/n1 + (s2**2)/n2)
+if (tp > ta): 
+    print("Reject H0b at the %#10.4G level of significance" % (a))
+else:
+    print("Do not reject H0b at the %#10.4G level of significance" % (a))
+
+
+
 
