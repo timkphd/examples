@@ -22,7 +22,7 @@ import os
 file_path = "sentinel.txt"
 lock_path = "sentinel.txt.lock"
 lock = FileLock(lock_path, timeout=1)
-def dc(j,maxloc=1,labal=""):
+def dc(j,maxloc=1,lable=""):
 	trying=True
 	while trying :
 		try:
