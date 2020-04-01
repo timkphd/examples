@@ -24,6 +24,7 @@ lock_path = "sentinel.txt.lock"
 #lock = FileLock(lock_path, timeout=0.01)
 lock = FileLock(lock_path, timeout=1)
 def dc(j,maxloc=1,lable=""):
+	verbose=True
 	trying=True
 	while trying :
 		try:
@@ -57,7 +58,7 @@ def dc(j,maxloc=1,lable=""):
 nl=0
 nb=0
 # Maximum number of simultaneous local instances to run.
-pmax=1
+pmax=2
 if len(sys.argv)> 1:
     lable=sys.argv[1]
 else:
@@ -80,10 +81,10 @@ print(nl,nb)
 # this might not work on some platforms.
 # You'll need to launch from different 
 # terminal windows.
-#    rm sentinel.txt*
-#    ./locks.py one > one.out &
-#    ./locks.py two > two.out &
-#    ./locks.py thr > thr.out &
+# rm sentinel.txt*
+# for x in one two thr for fiv six ; do
+#    ./locks.py $x > $x.out &
+# done
 #    sleep 2
 #    while true ; do cat sentinel.txt ; sleep 1 ; done
 #        OR
