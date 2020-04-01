@@ -21,8 +21,10 @@ import os
 
 file_path = "sentinel.txt"
 lock_path = "sentinel.txt.lock"
+#lock = FileLock(lock_path, timeout=0.01)
 lock = FileLock(lock_path, timeout=1)
 def dc(j,maxloc=1,labal=""):
+	verbose=True
 	trying=True
 	while trying :
 		try:
@@ -37,26 +39,26 @@ def dc(j,maxloc=1,labal=""):
 			except:
 				n=0
 			nlast=n
-			#print("open for write")
+			if verbose: print("open for write",lable)
 			x=open(file_path, "w")
 			n=n+j
 			if(n<0): n=0
 			if(n>maxloc): n=maxloc
-			print(str(n)+" "+lable)
+			if verbose: print(str(n)+" "+lable)
 			x.write(str(n)+" "+lable+"\n")
 			x.close()
-			#print("release")
+			if verbose: print("release",lable)
 			lock.release()
 			trying=False
 		except:
-			#print("fail")
-			sleep(1)
+			if verbose: print("retry",lable)
+			sleep(0.1)
 	return(nlast,n)
 	
 nl=0
 nb=0
 # Maximum number of simultaneous local instances to run.
-pmax=2
+pmax=1
 if len(sys.argv)> 1:
     lable=sys.argv[1]
 else:
