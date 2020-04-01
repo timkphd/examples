@@ -7,6 +7,11 @@
 # In a real case this would be replaced
 # with a launch of a another program via
 # a system call or a long subroutine.
+#
+# The file sentinel.txt.lock acts as the
+# lock and the file sentinel.txt is where
+# we store the number of instances of our
+# local program running.
 
 from filelock import Timeout, FileLock
 from time import sleep,time
@@ -79,14 +84,14 @@ print(nl,nb)
 #    ./locks.py two > two.out &
 #    ./locks.py thr > thr.out &
 #    sleep 2
-#    tail -f sentinel.txt
-#        OR
 #    while true ; do cat sentinel.txt ; sleep 1 ; done
+#        OR
+#    tail -f sentinel.txt
 # Again, the tail command might not work 
 # on some platforms.  In any case you'll 
-# need to manually kill the tail command
-# because it does not quit even after no
-# output is going to the file.
+# need to manually kill the tail/while 
+# command because it does not quit even 
+# after no output is going to the file.
 #
 # Then to see what happened...
 # cat *out | grep local | sort -nk4,4 
