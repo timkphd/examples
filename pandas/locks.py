@@ -85,10 +85,10 @@ print(nl,nb)
 # for x in one two thr for fiv six ; do
 #    ./locks.py $x > $x.out &
 # done
-#    sleep 2
-#    while true ; do cat sentinel.txt ; sleep 1 ; done
+# sleep 2
+# while true ; do cat sentinel.txt ; sleep 1 ; done
 #        OR
-#    tail -f sentinel.txt
+# tail -f sentinel.txt
 # Again, the tail command might not work 
 # on some platforms.  In any case you'll 
 # need to manually kill the tail/while 
