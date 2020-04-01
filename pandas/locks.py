@@ -80,7 +80,8 @@ print(nl,nb)
 #    ./locks.py thr > thr.out &
 #    sleep 2
 #    tail -f sentinel.txt
-#
+#        OR
+#    while true ; do cat sentinel.txt ; sleep 1 ; done
 # Again, the tail command might not work 
 # on some platforms.  In any case you'll 
 # need to manually kill the tail command
