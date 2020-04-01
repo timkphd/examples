@@ -1,14 +1,23 @@
 #!/usr/bin/env python
+# Program to show usage of python locks.
+# This only allows pmax instances of a 
+# particular routine to run.  In this
+# case the local program is:
+# sleep(5*random())
+# In a real case this would be replaced
+# with a launch of a another program via
+# a system call or a long subroutine.
+
 from filelock import Timeout, FileLock
-from time import sleep
+from time import sleep,time
 import sys
 from random import random
 import os
 
-file_path = "high_ground.txt"
-lock_path = "high_ground.txt.lock"
+file_path = "sentinel.txt"
+lock_path = "sentinel.txt.lock"
 lock = FileLock(lock_path, timeout=1)
-def dc(j,maxloc=1):
+def dc(j,maxloc=1,labal=""):
 	trying=True
 	while trying :
 		try:
@@ -28,8 +37,8 @@ def dc(j,maxloc=1):
 			n=n+j
 			if(n<0): n=0
 			if(n>maxloc): n=maxloc
-			print(str(n)+" "+str(os.getpid()))
-			x.write(str(n)+" "+str(os.getpid())+"\n")
+			print(str(n)+" "+lable)
+			x.write(str(n)+" "+lable+"\n")
 			x.close()
 			#print("release")
 			lock.release()
@@ -41,21 +50,43 @@ def dc(j,maxloc=1):
 	
 nl=0
 nb=0
+# Maximum number of simultaneous local instances to run.
+pmax=2
+if len(sys.argv)> 1:
+    lable=sys.argv[1]
+else:
+	lable=str(os.getpid())
 for i in range(1,20):
-        nlast,nnow=dc(1,1)
-        if nlast < 1 :
-            print("doing local",i)
+        nlast,nnow=dc(1,pmax,lable)
+        if nlast < pmax :
+            print("doing local %2d %15.3f %10s %4d" % (i,time(),lable,nlast))
             sleep(5*random())
             nl=nl+1
-            nlast,nnow=dc(-1,1)
+            nlast,nnow=dc(-1,pmax,lable)
             sleep(5*random())
         else:
-            print("local busy",i)
+            print("local busy  %2d %15.3f %10s %4d" % (i,time(),lable,nlast))
             nb=nb+1
             sleep(1)
         
 print(nl,nb)
-#    ./locks.py > one.out &
-#    ./locks.py > two.out &
-#    ./locks.py > thr.out &
+# Putting tasks in the background like
+# this might not work on some platforms.
+# You'll need to launch from different 
+# terminal windows.
+#    rm sentinel.txt*
+#    ./locks.py one > one.out &
+#    ./locks.py two > two.out &
+#    ./locks.py thr > thr.out &
+#    sleep 2
+#    tail -f sentinel.txt
+#
+# Again, the tail command might not work 
+# on some platforms.  In any case you'll 
+# need to manually kill the tail command
+# because it does not quit even after no
+# output is going to the file.
+#
+# Then to see what happened...
+# cat *out | grep local | sort -nk4,4 
 
