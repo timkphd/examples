@@ -4,8 +4,7 @@
 #SBATCH --ntasks-per-node=8
 #SBATCH --cpus-per-task=1
 #SBATCH --time=00:05:00
-##SBATCH -o outz-%j
-##SBATCH --share
+#SBATCH -o out.%j
 #SBATCH --export=ALL
 #SBATCH --account=hpcapps
 #SBATCH --partition=debug
