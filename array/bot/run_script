@@ -10,12 +10,27 @@
 #SBATCH --partition=debug
 
 
-#Activate a conda invironment for example:
+#Activate a conda environment, for example:
 #conda activate tfgpu
+
 #Then:
 #conda install mpi4py
 #conda install matplotlib
 #conda install Tornado
+
+#Change the account line above from hpcapps
+#to one that works for you.
+
+#Submit the job
+
+#sbatch run_script
+
+#After the job finishes the directory laser
+#will contain *png files created in parallel.
+
+#For produiction runs change the partition
+#and time=00:05:00
+
 
 tar -xzf laser.tgz
 rm -rf laser/*png
