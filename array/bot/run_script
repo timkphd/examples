@@ -10,7 +10,9 @@
 #SBATCH --partition=debug
 
 
+#Activate a conda invironment for example:
 #conda activate tfgpu
+#Then:
 #conda install mpi4py
 #conda install matplotlib
 #conda install Tornado
