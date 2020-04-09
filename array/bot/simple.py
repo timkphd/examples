@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from mpi4py import MPI
 import numpy
 global numnodes,myid,mpi_err

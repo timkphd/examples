@@ -16,7 +16,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 import os
-
+import matplotlib
+matplotlib.use('Agg')
 # from the docs:
 
 # If interpolation is None, default to rc image.interpolation. See also
