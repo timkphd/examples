@@ -1,5 +1,5 @@
 #default: tmpi topenmp gpucount
-default: topenmp gpucount mpitest
+default: topenmp gpucount mpitest heatgpu
 
 MPI=/opt/development/exp/mpi/builds/1.5.1/pg-11.5_posix/bin/mpif90
 PRE=-Mpreprocess -Dmagma_devptr_t="integer(kind=8)"
@@ -23,11 +23,14 @@ tmpi: tmpi.o
 gpucount: gpucount.c
 	nvcc gpucount.c -o gpucount
 
+heatgpu: sermain.c  hysub.cu
+	nvcc sermain.c  hysub.cu -o heatgpu
+
 clean:
-	rm -f tmpi.o tmpi topenmp *mod gpucount stdout stderr *.o mpitest
+	rm -f tmpi.o tmpi topenmp *mod gpucount stdout stderr *.o mpitest heatgpu
 
 tar:
-	~/bin/backup makefile tmpi.f90 openmp.f90 gpucount.c script mface.c
+	~/bin/backup makefile tmpi.f90 openmp.f90 gpucount.c script mface.c sermain.c  hysub.cu
 
 CULA=-I/opt/development/gpu/current/cula/include -L/opt/development/gpu/current/cula/lib64 
 CUDA2=-lcula_core -lcula_lapack  -lcublas -lcudart
