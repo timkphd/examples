@@ -1,0 +1,103 @@
+#!/bin/bash
+#SBATCH --job-name="osu_bench"
+#SBATCH --nodes=4
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=02:00:00
+#SBATCH --account=hpcapps
+
+#tymer and phostone from
+#https://github.com/timkphd/examples.git
+#compile line:
+#mpicc -fopenmp phostone.c 
+
+#Put this near the top of your script but after any module imports.
+###################################################################
+#Create a filename based on date/time/jobid
+mylog=`date +"%m%d%H%M"`
+mylog=`echo ${mylog}_${SLURM_JOBID}`
+
+#Create the file 
+echo $mylog > $mylog
+
+#Save this script
+cat $0 >> $mylog
+
+#Save the environment. This will include a node list.
+printenv >> $mylog
+###################################################################
+
+if false ; then
+        cd /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2
+        rm -rf /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/intel
+
+        module purge
+        module load gcc/7.3.0
+        module load comp-intel/2018.0.3
+        module load intel-mpi/2018.0.3
+        export CC=mpiicc
+        export CXX=mpiicpc
+        ./configure --prefix=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/intel
+        make clean
+        make install
+
+        cd /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2
+        rm -rf /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi
+
+        module purge
+        module load gcc/7.3.0
+        module load openmpi/3.1.3/gcc-7.3.0_slurm18 
+        export CC=mpicc
+        export CXX=mpicxx
+        ./configure --prefix=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi
+        make clean
+        make install
+
+fi
+
+JOBID=`echo $SLURM_JOBID`
+mkdir $JOBID
+cd $JOBID
+printenv > env
+cat $0 > script
+
+
+INTEL=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/intel/libexec/osu-micro-benchmarks
+OPEN=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi/libexec/osu-micro-benchmarks
+export OMP_NUM_THREADS=1
+for nnodes in 1 2 4 8 16 32 64 128 256 384 512 ; do
+        if [ "$nnodes" -gt "$SLURM_NNODES" ] ; then
+          break
+        fi
+	module purge
+	module load gcc/7.3.0
+	module load comp-intel/2018.0.3
+	module load intel-mpi/2018.0.3
+	
+	tymer btimes starting phostone.intel on $nnodes
+	srun --nodes=$nnodes --ntasks-per-node=36 /scratch/tkaiser2/osu/phostone.intel -F -t 10 > phostone.intel.$nnodes
+        tymer btimes finished phostone.intel on $nnodes			
+	tymer btimes starting osu_init.intel on $nnodes
+	srun --nodes=$nnodes --ntasks-per-node=36 $INTEL/mpi/startup/osu_init  > osu_init.intel.$nnodes
+        tymer btimes finished osu_init.intel on $nnodes			
+	tymer btimes starting osu_allgather.intel on $nnodes
+	srun --nodes=$nnodes --ntasks-per-node=36 $INTEL/mpi/collective/osu_allgather -f > osu_allgather.intel.$nnodes
+	tymer btimes finished osu_allgather.intel on $nnodes
+
+	module purge
+	module load gcc/7.3.0 
+	module load openmpi/3.1.3/gcc-7.3.0_slurm18
+
+	tymer btimes starting phostone.openmpi on $nnodes
+	srun --nodes=$nnodes --ntasks-per-node=36 /scratch/tkaiser2/osu/phostone.openmpi -F -t 10 > phostone.openmpi.$nnodes
+	tymer btimes finished phostone.openmpi on $nnodes
+	tymer btimes starting osu_init.openmpi on $nnodes
+	srun --nodes=$nnodes --ntasks-per-node=36 $OPEN/mpi/startup/osu_init  > osu_init.openmpi.$nnodes
+        tymer btimes finished osu_init.openmpi on $nnodes			
+	tymer btimes starting osu_allgather.openmpi on $nnodes
+	srun --nodes=$nnodes --ntasks-per-node=36 $OPEN/mpi/collective/osu_allgather -f > osu_allgather.openmpi.$nnodes
+	tymer btimes finished osu_allgather.openmpi on $nnodes
+done
+cp $SLURM_SUBMIT_DIR/slurm-$JOBID.* .
+
+
