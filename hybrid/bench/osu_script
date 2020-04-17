@@ -3,13 +3,13 @@
 #SBATCH --nodes=4
 #SBATCH --exclusive
 #SBATCH --export=ALL
-#SBATCH --time=02:00:00
+#SBATCH --time=04:00:00
 #SBATCH --account=hpcapps
 
 #tymer and phostone from
 #https://github.com/timkphd/examples.git
 #compile line:
-#mpicc -fopenmp phostone.c 
+#mpicc  -g -fopenmp phostone.c 
 
 #Put this near the top of your script but after any module imports.
 ###################################################################
@@ -27,6 +27,40 @@ cat $0 >> $mylog
 printenv >> $mylog
 ###################################################################
 
+#Redirection on steroids
+if false ; then
+###############
+# http://compgroups.net/comp.unix.shell/bash-changing-stdout/497180
+# set up our redirects of stdout and stderr
+                            # 1 and 2 are file descriptors for  
+                            # stdout and stderr
+                            # 3 and 4 are descriptors to logfile
+                            # we will use 3 for stdout 4 for stderr
+exec 3>>logfile.`date +"%y%m%d%H%M%S"` 
+                            # anything that goes to 4 will go to 3
+                            # which is our file we have created
+exec 4>&3 
+exec 5>&1 6>&2              # save "pointers" to stdin and stdout
+exec 1>&3 2>&4              # redirect stdin and stdout to file
+###############
+# normal commands
+#...
+#...
+###############
+exec 1>&5 2>&6              # restore original stdin and stdout
+3>&- 4>&-                   # close logfile descriptors
+5>&- 6>&-                   # close saved stdin and stdout
+fi
+
+
+#Create a directory for this run and go there
+JOBID=`echo $SLURM_JOBID`
+mkdir $JOBID
+cd $JOBID
+printenv > env
+cat $0 > script
+
+
 if false ; then
         cd /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2
         rm -rf /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/intel
@@ -41,6 +75,9 @@ if false ; then
         make clean
         make install
 
+	cd /scratch/tkaiser2/osu
+	mpiicc -g -fopenmp phostone.c -o phostone.intel
+
         cd /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2
         rm -rf /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi
 
@@ -53,22 +90,57 @@ if false ; then
         make clean
         make install
 
+	cd /scratch/tkaiser2/osu
+	mpicc -g -fopenmp phostone.c -o phostone.openmpi
+
+        cd /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2
+        rm -rf /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi_3.1.3-noslurmk
+
+        module purge
+	module use /nopt/nrel/apps/modules/test/modulefiles
+	module load gcc/7.3.0
+	module load openmpi/3.1.3-noslurmk/gcc-7.3.0
+	export CC=mpicc
+        export CXX=mpicxx
+        ./configure --prefix=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi_3.1.3-noslurmk
+        make clean
+        make install
+
+	cd /scratch/tkaiser2/osu
+	mpicc -g -fopenmp phostone.c -o phostone.noslu
+
+        cd /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2
+        rm -rf /scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi_4.0.x-65219eb
+
+        module purge
+	module use /nopt/nrel/apps/modules/test/modulefiles
+        module load gcc/7.3.0
+        module load openmpi/4.0.x-65219eb/gcc-7.3.0 
+        export CC=mpicc
+        export CXX=mpicxx
+        ./configure --prefix=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi_4.0.x-65219eb
+        make clean
+        make install
+
+	cd /scratch/tkaiser2/osu
+	mpicc -g -fopenmp phostone.c -o phostone.openmpi4
+
 fi
 
-JOBID=`echo $SLURM_JOBID`
-mkdir $JOBID
-cd $JOBID
-printenv > env
-cat $0 > script
 
 
 INTEL=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/intel/libexec/osu-micro-benchmarks
 OPEN=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi/libexec/osu-micro-benchmarks
+NOSLU=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi_3.1.3-noslurmk/libexec/osu-micro-benchmarks
+FOUR=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/openmpi_4.0.x-65219eb/libexec/osu-micro-benchmarks
 export OMP_NUM_THREADS=1
-for nnodes in 1 2 4 8 16 32 64 128 256 384 512 ; do
+#for nnodes in 1 2 4 8 16 32 64 128 256 384 512 ; do
+for nnodes in 1 2 4 8 16 32 64 72 128 256 384 512 ; do
         if [ "$nnodes" -gt "$SLURM_NNODES" ] ; then
           break
         fi
+        let "tasks = 36 * $nnodes "
+if false ; then
 	module purge
 	module load gcc/7.3.0
 	module load comp-intel/2018.0.3
@@ -97,6 +169,38 @@ for nnodes in 1 2 4 8 16 32 64 128 256 384 512 ; do
 	tymer btimes starting osu_allgather.openmpi on $nnodes
 	srun --nodes=$nnodes --ntasks-per-node=36 $OPEN/mpi/collective/osu_allgather -f > osu_allgather.openmpi.$nnodes
 	tymer btimes finished osu_allgather.openmpi on $nnodes
+fi
+        module purge
+	module use /nopt/nrel/apps/modules/test/modulefiles
+	module load gcc/7.3.0
+	module load openmpi/3.1.3-noslurmk/gcc-7.3.0
+
+	scontrol show hostname  > hosts.uniq
+        tymer btimes starting phostone.noslu on $nnodes
+        mpirun --hostfile hosts.uniq -n $tasks /scratch/tkaiser2/osu/phostone.noslu -F -t 10 > phostone.noslu.$nnodes
+	tymer btimes finished phostone.noslu on $nnodes
+	tymer btimes starting osu_init.noslu on $nnodes
+        mpirun --hostfile hosts.uniq -n $tasks  $NOSLU/mpi/startup/osu_init  > osu_init.noslu.$nnodes
+        tymer btimes finished osu_init.noslu on $nnodes			
+	tymer btimes starting osu_allgather.noslu on $nnodes
+        mpirun --hostfile hosts.uniq -n $tasks  $NOSLU/mpi/collective/osu_allgather -f > osu_allgather.noslu.$nnodes
+	tymer btimes finished osu_allgather.noslu on $nnodes
+
+        module purge
+	module use /nopt/nrel/apps/modules/test/modulefiles
+        module load gcc/7.3.0
+        module load openmpi/4.0.x-65219eb/gcc-7.3.0 
+
+	tymer btimes starting phostone.openmpi4 on $nnodes
+	srun --nodes=$nnodes --ntasks-per-node=36 /scratch/tkaiser2/osu/phostone.openmpi4 -F -t 10 | grep -v "MXM  WARN" > phostone.four.$nnodes
+	tymer btimes finished phostone.openmpi4 on $nnodes
+	tymer btimes starting osu_init.openmpi4 on $nnodes
+	srun --nodes=$nnodes --ntasks-per-node=36 $FOUR/mpi/startup/osu_init  | grep -v "MXM  WARN" > osu_init.four.$nnodes
+        tymer btimes finished osu_init.openmpi4 on $nnodes			
+	tymer btimes starting osu_allgather.openmpi4 on $nnodes
+	srun --nodes=$nnodes --ntasks-per-node=36 $FOUR/mpi/collective/osu_allgather -f | grep -v "MXM  WARN" > osu_allgather.four.$nnodes
+	tymer btimes finished osu_allgather.openmpi4 on $nnodes
+
 done
 cp $SLURM_SUBMIT_DIR/slurm-$JOBID.* .
 
