@@ -1,0 +1,34 @@
+**** Running Jupyter on compute nodes
+
+** Get an interactive session.  For example:
+srun --x11 --account=hpcapps --time=1:00:00 --partition=debug --ntasks=1 --cpus-per-task=8 --nodes=1 --pty bash
+
+** Note the node you were given for your interactive session; for example r1i7n35
+
+** May need to:
+module purge
+module load conda
+
+** Then start jupyter
+jupyter notebook --no-browser
+
+After a few seconds you will see strings of the form:
+
+http://localhost:8888/?token=23c9370aaf2f25f8a9ddfb4d0240940be9360c4984d51b26
+http://127.0.0.1:8888/?token=23c9370aaf2f25f8a9ddfb4d0240940be9360c4984d51b26
+
+** On your local machine run the following command.  You will need to replace 
+r1i7n35 with the node on which you are running and maybe the 8888 with the 
+left most number from the jupyter if it is different.
+
+ssh -L 8888:localhost:9999 eagle ssh -L 9999:localhost:8888 r1i7n35
+
+** If you get a message about port 8888 being busy try again with an different port, maybe 8887.
+
+** Copy the http:localhost string from the window running jupyter to a browser
+running on your local machine.  A notebook should open up.
+
+** I should also work using 127.0.0.1 instead of localhost in your ssh command and
+the browser.
+
+
