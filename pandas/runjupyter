@@ -1,6 +1,74 @@
+**** Installing a newer version of Python/Jupyter
+** Below we have a "screen dump" of installing python 3.8 with Jupyter.
+** Much of the text has been cut. When conda asked if you want to do the
+** install say yes.  If you have not created a conda environment previously
+** you will need to do the conda init, logout, and log back in before doint
+** the conda activate as shown below.  
+
+** To Create a jupyter environment with python 3.8
+[tkaiser2@el2 ~]$ module load conda
+[tkaiser2@el2 ~]$ conda create --name planet python=3.8 jupyter matplotlib
+...
+...
+...
+[tkaiser2@el2 ~]$ conda init
+no change     /nopt/nrel/apps/anaconda/5.3/condabin/conda
+no change     /nopt/nrel/apps/anaconda/5.3/bin/conda
+no change     /nopt/nrel/apps/anaconda/5.3/bin/conda-env
+no change     /nopt/nrel/apps/anaconda/5.3/bin/activate
+no change     /nopt/nrel/apps/anaconda/5.3/bin/deactivate
+no change     /nopt/nrel/apps/anaconda/5.3/etc/profile.d/conda.sh
+no change     /nopt/nrel/apps/anaconda/5.3/etc/fish/conf.d/conda.fish
+no change     /nopt/nrel/apps/anaconda/5.3/shell/condabin/Conda.psm1
+no change     /nopt/nrel/apps/anaconda/5.3/shell/condabin/conda-hook.ps1
+no change     /nopt/nrel/apps/anaconda/5.3/lib/python2.7/site-packages/xontrib/conda.xsh
+no change     /nopt/nrel/apps/anaconda/5.3/etc/profile.d/conda.csh
+modified      /home/tkaiser2/.bashrc
+
+[tkaiser2@el2 ~]$ exit
+logout
+Connection to eagle.hpc.nrel.gov closed.
+
+
+(base) tkaiser2-31606s:~ tkaiser2$ ssh eagle
+...
+...
+...
+
+
+
+(base) [tkaiser2@el2 ~]$ module load conda
+(base) [tkaiser2@el2 ~]$ conda activate planet
+
+
+
+
+
+** The conda init command adds the following to your .bashrc file
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/nopt/nrel/apps/anaconda/5.3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/nopt/nrel/apps/anaconda/5.3/etc/profile.d/conda.sh" ]; then
+        . "/nopt/nrel/apps/anaconda/5.3/etc/profile.d/conda.sh"
+    else
+        export PATH="/nopt/nrel/apps/anaconda/5.3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+
+
+
 **** Running Jupyter on compute nodes
 
 ** Get an interactive session.  For example:
+salloc --account=hpcapps --time=1:00:00 --partition=debug --ntasks=36 --nodes=1
+** or
 srun --x11 --account=hpcapps --time=1:00:00 --partition=debug --ntasks=1 --cpus-per-task=8 --nodes=1 --pty bash
 
 ** Note the node you were given for your interactive session; for example r1i7n35
@@ -28,7 +96,7 @@ ssh -L 8888:localhost:9999 eagle ssh -L 9999:localhost:8888 r1i7n35
 ** Copy the http:localhost string from the window running jupyter to a browser
 running on your local machine.  A notebook should open up.
 
-** I should also work using 127.0.0.1 instead of localhost in your ssh command and
+** It should also work using 127.0.0.1 instead of localhost in your ssh command and
 the browser.
 
 
