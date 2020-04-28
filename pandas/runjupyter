@@ -62,7 +62,11 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 
-
+** Option **
+** instll mpi4py
+module load comp-intel/2018.0.3 
+module load intel-mpi/2018.0.3
+pip install mpi4py
 
 **** Running Jupyter on compute nodes
 
