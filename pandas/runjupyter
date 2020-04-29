@@ -7,7 +7,7 @@
 
 ** To Create a jupyter environment with python 3.8
 [tkaiser2@el2 ~]$ module load conda
-[tkaiser2@el2 ~]$ conda create --name planet python=3.8 jupyter matplotlib
+[tkaiser2@el2 ~]$ conda create --name planet python=3.8 jupyter matplotlib scipy
 ...
 ...
 ...
@@ -37,8 +37,14 @@ Connection to eagle.hpc.nrel.gov closed.
 
 
 
+(base) [tkaiser2@el2 ~]$ module purge 
 (base) [tkaiser2@el2 ~]$ module load conda
 (base) [tkaiser2@el2 ~]$ conda activate planet
+
+## Optional: install mpi4py
+(base) [tkaiser2@el2 ~]$ module load comp-intel/2018.0.3 intel-mpi/2018.0.3
+(base) [tkaiser2@el2 ~]$ pip install mpi4py
+
 
 
 
