@@ -1,0 +1,46 @@
+#!/bin/bash
+#SBATCH --job-name="two"
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=01:00:00
+#SBATCH --account=hpcapps
+
+export OMP_NUM_THREADS=4
+module purge
+module load comp-intel/2018.0.3 intel-mpi/2018.0.3 
+
+# The programs tymer and phostone can be downloaded via
+#    git clone https://github.com/timkphd/examples
+# Tymer is a glorified wallclock timer.  It can be
+# found in the tims_tools directory.  
+#
+# Phostone.c is hello world on steroids and can be 
+# found at start/phostone.c.  After loading the modules
+# given above it can be compiled using
+#    mpiicc -fopenmp phostone.c -o phostone
+# Run with the -t option is will run at least the
+# given number of seconds.
+
+# This script is at scripts/two
+
+rm -rf mytimes
+
+# The file mytimes will have a record of what happened
+
+# Start the first job and put it the background 
+./tymer mytimes start run1
+srun -n 2 ./phostone -F -t 30 > run1 &
+
+# Start the second job and put it the background 
+./tymer mytimes start run2
+srun -n 2 ./phostone -F -t 60 > run2 &
+
+# We call the wait command to wait for the jobs
+# started above to finish
+./tymer mytimes start waiting
+wait
+
+# Done - record our final time
+./tymer mytimes exiting
+
