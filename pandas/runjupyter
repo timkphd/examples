@@ -1,8 +1,8 @@
 **** Installing a newer version of Python/Jupyter
 ** Below we have a "screen dump" of installing python 3.8 with Jupyter.
-** Much of the text has been cut. When conda asked if you want to do the
+** Much of the text has been cut. When conda asks if you want to do the
 ** install say yes.  If you have not created a conda environment previously
-** you will need to do the conda init, logout, and log back in before doint
+** you will need to do the conda init, logout, and log back in before doing
 ** the conda activate as shown below.  
 
 ** To Create a jupyter environment with python 3.8
