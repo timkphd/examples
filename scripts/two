@@ -5,6 +5,7 @@
 #SBATCH --export=ALL
 #SBATCH --time=01:00:00
 #SBATCH --account=hpcapps
+#SBATCH --partition=debug
 
 export OMP_NUM_THREADS=4
 module purge
@@ -30,11 +31,11 @@ rm -rf mytimes
 
 # Start the first job and put it the background 
 ./tymer mytimes start run1
-srun -n 2 ./phostone -F -t 30 > run1 &
+srun -n 2 ./phostone -F -t 30 -T > run1 &
 
 # Start the second job and put it the background 
 ./tymer mytimes start run2
-srun -n 2 ./phostone -F -t 60 > run2 &
+srun -n 2 ./phostone -F -t 60 -T > run2 &
 
 # We call the wait command to wait for the jobs
 # started above to finish
