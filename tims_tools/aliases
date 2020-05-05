@@ -1,0 +1,20 @@
+#Show your recent jobs
+alias recent='sacct -S 2020-03-01 -u $USER --format=JobID,start,elapsed,nodelist%25,state | grep -v “\."'
+
+#Show your accounts
+alias accounts='sacctmgr show associations user=$USER format=account%15'
+
+#One way to get an interactive session
+alias allocate='salloc --account=hpcapps --time=1:00:00 --partition=debug --ntasks=36 --nodes=1'
+
+#Where is a git repository from
+alias git-home='git remote show origin'
+ #Show information about a job
+alias showjob='scontrol show job'
+
+#Show what I have in the queue
+alias sq='squeue -u $USER'
+
+#Module avail
+alias ma='module avail'
+
