@@ -1,3 +1,16 @@
+// Normal compile
+// Intel:
+// mpiicc -qopenmp phostone.c -o phostone
+// gcc:
+// mpicc  -qopenmp phostone.c -o phostone
+//
+// To compile without openmp 
+// Intel:
+// mpiicc -qopenmp-stubs phostone.c -o purempi
+// gcc:
+// mpicc  -DSTUBS        phostone.c -o purempi
+//
+//
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -226,7 +239,7 @@ int main(int argc, char **argv,char *envp[])
 			}
 			t2=MPI_Wtime();
 		}
-	printf("total time %10.3f\n",t2-t1);
+	if(myid == 0)printf("total time %10.3f\n",t2-t1);
 	nints=0;
 	}
 	if(myid == 0){
@@ -244,7 +257,7 @@ int main(int argc, char **argv,char *envp[])
     		slowit(nints,i);
     	}
 	t2=MPI_Wtime();
-	printf("total time %10.3f\n",t2-t1);
+	if(myid == 0)printf("total time %10.3f\n",t2-t1);
     }
 
     if(myid == 0 && dotime == 1)ptime();
@@ -354,4 +367,8 @@ sum=0;
 	free(block);
 }
 
+#ifdef STUBS
+int omp_get_thread_num(void) { return 0; }
+int omp_get_num_threads(void){ return 1; }
+#endif
 
