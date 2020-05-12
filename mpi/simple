@@ -1,12 +1,11 @@
 #!/bin/bash -x
-#SBATCH --job-name="hybrid"
-#comment = “glorified hello world"
-#SBATCH --nodes=2
-#SBATCH --ntasks-per-node=8
+#SBATCH --job-name="hello"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=16
 #SBATCH --ntasks=16
 #SBATCH --exclusive
 #SBATCH --export=ALL
-#SBATCH --time=10:00:00
+#SBATCH --time=00:01:00
 
 #module load StdEnv
 
@@ -14,4 +13,6 @@
 cd $SLURM_SUBMIT_DIR
 
 # run an application
-srun $SLURM_SUBMIT_DIR/helloc
+srun $SLURM_SUBMIT_DIR/c_ex01
+srun $SLURM_SUBMIT_DIR/f_ex01
+
