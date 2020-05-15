@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 
-#typeset  -f > be4
-# runs script that makes functions
-#typeset  -f > aft
+# Make module from "new" bash functions
+# typeset  -f > be4
+# run script that adds functions
+# typeset  -f > aft
+# ./makemod.py > mods/new.lua
 
 import os
-import sys
-command="diff be4 aft | grep \(\)"
-difs=os.popen(command,"r")
-difs=difs.readlines()
 
-aft=open("aft","r")
-aft=aft.readlines()
+command="diff be4 aft | grep \(\)"
+difs=os.popen(command,"r").readlines()
 
 funcs=[]
 for d in difs:
@@ -20,6 +18,8 @@ for d in difs:
     d=d.replace(" ()","")
     funcs.append(d)
     
+aft=open("aft","r").readlines()
+
 for f in funcs:
     i=0
     for l in aft:
