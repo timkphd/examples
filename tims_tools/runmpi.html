@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MPI Setup for a Raspberry Pi Cluster</title>
+	<meta name="generator" content="BBEdit 13.0" />
+		<style>
+body
+{
+/* */
+background-color: ivory;
+  counter-reset: section;      
+
+}
+
+p { width: 6in; text-align: justify; margin: .25in; color: #000; }
+
+pre {color: #00F; }
+
+p.x:before {
+  counter-increment: section;        
+  content: "" counter(section) ": "; 
+}
+	li:nth-child(odd)
+	{
+		color: #000;
+		background-color: #EAF2D3;
+	}
+li {
+width: 5.75in; font-size: 13px;
+}
+dd {font-size: 13px;}
+	</style>
+</head>
+<body>
+<h3>Give each node a unique name:</h3>
+
+<p>
+This can be done in the GUI or via the command line.  If you
+do it on the commmand line you need to edit the files:</p>
+  
+  <pre>/etc/hostname</pre>
+    <p>
+and</p>
+   <pre>/etc/hosts</pre>
+  
+<p>
+You'll have to use sudo to edit thes files.  Assuming you 
+name a node "pi1" the files will look like this:</p>
+
+<pre>
+cat /etc/hostname
+pi1
+
+cat /etc/hosts
+127.0.0.1	localhost
+::1		localhost ip6-localhost ip6-loopback
+ff02::1		ip6-allnodes
+ff02::2		ip6-allrouters
+
+127.0.1.1	pi1
+
+</pre>
+<p>
+Then reboot.</p>
+
+<h3>Get ip addresses for each node</h3>
+
+<p>
+You'll need the ip address of each of the nodes.  This is 
+found using the command</p>
+
+<pre>ifconfig</pre>
+
+
+<p>
+If you are running wirelessly look under the wlan0 section.
+The address will be on the next line that will look something
+like this:</p>
+
+<pre>        inet 192.168.0.25  netmask 255.255.255.0  broadcast 192.168.0.255</pre>
+
+<p>
+The address is 192.168.0.25
+
+<p>
+If you have a wired network look under the eth0 section for 
+the address.</p>
+
+<p>
+I have had issues mixing wired and wireless nodes.  I got it to work
+but only if I launched my job from a wireless node.</p>
+
+<h3>Passwordless ssh</h3>
+<p>
+You need to set up passwordless ssh between the nodes. I created a 
+key pair with the command</p>
+
+<pre> ssh-keygen</pre>
+
+<p>
+specifying a blank passphrase and the output</p>
+
+<pre>/home/pi/.ssh/id_rsa/clust</pre>
+
+<p>
+The keys in the hidden directory .ssh are</p>
+
+<pre>clust and clust.pub</pre>
+
+
+
+<p>
+You'll need to copy these to each of your nodes. Assuming you 
+want to copy from your current node to the node
+with the address 192.168.0.25 you should</p>
+
+<pre>
+cd ~/.ssh
+scp clust* 192.168.0.25:/home/pi/.ssh
+</pre>
+
+
+
+<p>
+Also, on each node append clust.pub to the end of your authorized_keys
+file. The best way to do this is:</p>
+
+<pre>
+cd ~/.ssh
+cat clust.pub >> authorized_keys
+</pre>
+ 
+<p>
+You'll need to set up your  ~./ssh/config file on each node  Here is mine
+for my 4 nodes pi1-pi4 with the specified ip address.</p>
+
+<pre>
+#Next 5 lines are optional if you don't do X-Windows.
+ForwardAgent yes
+ForwardX11 yes
+ForwardX11Trusted yes
+XAuthLocation /Users/joeuser/.Xauthority
+#XAuthLocation /opt/X11/bin/xauth
+ServerAliveInterval 60
+PubkeyAcceptedKeyTypes=+ssh-dss
+AddKeysToAgent yes 
+
+
+Host pi1
+Hostname 192.168.0.23
+User pi
+Identityfile2 ~/.ssh/clust
+
+Host pi2
+Hostname 192.168.0.26
+User pi
+Identityfile2 ~/.ssh/clust
+
+Host pi3
+Hostname 192.168.0.25
+User pi
+Identityfile2 ~/.ssh/clust
+
+Host pi4
+Hostname 192.168.0.27
+User pi
+Identityfile2 ~/.ssh/clust
+</pre>
+
+<h3>Test application</h3>
+<p>
+Finally build a test application.  Assuming you have my examples off of your
+home directory a good one is /home/pi/examples/hybrid/phostone.c This is a 
+hybrid MPI/OpenMP application.</p>
+
+<p>
+The program phostone has many command line options.  A useful one that shows
+mappings of tasks to core is "-F".</p>
+
+
+<pre>
+cd /home/pi/examples/hybrid
+mpicc -fopenmp phostone.c -o phostone
+</pre>
+
+<h3>Run it</h3>
+<p>
+The command to run the job is mpiexec.  There are two ways to specify nodes 
+for a run, on the command line and in a file.  My file is "pies"</p>
+
+<pre>
+pi1 slots=4
+pi2 slots=4
+pi3 slots=4
+pi4 slots=4
+</pre>
+
+<p>
+This says that each node has 4 cores.</p>
+
+<p>
+So, finally to run on 4 nodes with 1 task
+per node</p>
+
+
+<pre>
+/usr/local/bin/mpiexec -n 4 -N 1 --hostfile pies /home/pi/examples/hybrid/phostone -F
+</pre>
+
+
+<p>
+The other way to do this all on the command line is</p>
+
+<pre>
+/usr/local/bin/mpiexec -n 4 -N 1 -host pi1,pi2,pi3,pi4 /home/pi/examples/hybrid/phostone -F
+</pre>
+
+<h3>Here is the output.</h3>
+<pre>
+MPI VERSION Open MPI v4.0.1, package: Open MPI pi@raspberrypi Distribution, ident: 4.0.1, repo rev: v4.0.1, Mar 26, 2019
+task    thread             node name  first task    # on node  core
+0000      0000                   pi3        0000         0000  0003
+0000      0003                   pi3        0000         0000  0000
+0000      0001                   pi3        0000         0000  0002
+0000      0002                   pi3        0000         0000  0001
+0001      0000                   pi1        0001         0000  0000
+0001      0002                   pi1        0001         0000  0002
+0001      0001                   pi1        0001         0000  0001
+0001      0003                   pi1        0001         0000  0003
+0002      0000                   pi2        0002         0000  0002
+0002      0001                   pi2        0002         0000  0001
+0002      0003                   pi2        0002         0000  0003
+0002      0002                   pi2        0002         0000  0000
+0003      0000                   pi4        0003         0000  0000
+0003      0002                   pi4        0003         0000  0002
+0003      0001                   pi4        0003         0000  0001
+0003      0003                   pi4        0003         0000  0003
+</pre>
+
+<p>
+As I said this is a hybrid program.  There are 4 MPI tasks 0-3 and each MPI task is
+further parallelized with threads 0-3. You can change the number of threads by setting
+the variable and rerunning.</p>
+
+<pre>
+export OMP_NUM_THREADS=2
+/usr/local/bin/mpiexec -n 4 -N 1 -host pi1,pi2,pi3,pi4 -x OMP_NUM_THREADS  /home/pi/examples/hybrid/phostone -F
+</pre>
+
+<h3>Here is the output.</h3>
+<pre>
+MPI VERSION Open MPI v4.0.1, package: Open MPI pi@raspberrypi Distribution, ident: 4.0.1, repo rev: v4.0.1, Mar 26, 2019
+task    thread             node name  first task    # on node  core
+0000      0000                   pi3        0000         0000  0003
+0000      0001                   pi3        0000         0000  0002
+0001      0000                   pi1        0001         0000  0003
+0001      0001                   pi1        0001         0000  0000
+0002      0001                   pi2        0002         0000  0001
+0002      0000                   pi2        0002         0000  0000
+0003      0000                   pi4        0003         0000  0001
+0003      0001                   pi4        0003         0000  0002
+</pre>
+</body>
+</html>
