@@ -1,0 +1,83 @@
+#!/bin/bash
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:20:00
+#SBATCH --partition=debug
+#SBATCH --account=hpcapps
+
+cd $SLURM_SUBMIT_DIR
+
+module use /nopt/nrel/apps/compilers/intel/2020.1.217/mods
+module purge
+module load compilervars 
+module load mpivars
+export IPPROOT=/nopt/nrel/apps/compilers/intel/2020.1.217/compilers_and_libraries_2020.1.217/linux/ipp
+export I_MPI_ROOT=/nopt/nrel/apps/compilers/intel/2020.1.217/compilers_and_libraries_2020.1.217/linux/mpi
+
+
+
+
+
+JOBID=`echo $SLURM_JOBID`
+
+mkdir $JOBID
+cd $JOBID
+printenv > env
+cat $0 > script
+
+
+export KMP_AFFINITY=granularity=fine,scatter
+export OMP_NUM_THREADS=1
+
+export export I_MPI_DEBUG=5
+export cpn=36
+#export I_MPI_FABRICS=ofi:ofi
+#export I_MPI_FABRICS=shm:shm
+#unset I_MPI_FABRICS
+
+INTEL20=/scratch/tkaiser2/osu/osu-micro-benchmarks-5.6.2/intel20/libexec/osu-micro-benchmarks
+for set in norm release ; do
+export I_MPI_PMI_LIBRARY=/nopt/slurm/current/lib/libpmi.so
+for tpn in  2 36 ; do
+  #for nnodes in  2 256 512 ; do
+  for nnodes in  1 2 256 512 ; do
+	if [ "$nnodes" -gt "$SLURM_NNODES" ] ; then
+	  break
+	fi
+	let "tasks = $tpn * $nnodes "
+	let "cores = $tpn * $OMP_NUM_THREADS "
+	if [ "$cores" -gt "$cpn" ] ; then
+	  break
+	fi
+    RUN="srun -l --mpi=pmi2 --nodes=$nnodes -n $tasks --cpus-per-task=$OMP_NUM_THREADS --cpu-bind=cores "
+    RUN="srun    --mpi=pmi2 --nodes=$nnodes -n $tasks --cpus-per-task=$OMP_NUM_THREADS --cpu-bind=cores "
+    RUN="srun               --nodes=$nnodes -n $tasks --cpus-per-task=$OMP_NUM_THREADS --cpu-bind=cores "
+	mv task* $nnodes.$tpn.s
+    $RUN /home/tkaiser2/examples/mpi/purempi -F
+  done
+done
+unset I_MPI_PMI_LIBRARY
+for tpn in  2 36 ; do
+  #for nnodes in  2 256 512 ; do
+  for nnodes in  1 2 256 512 ; do
+	if [ "$nnodes" -gt "$SLURM_NNODES" ] ; then
+	  break
+	fi
+	let "tasks = $tpn * $nnodes "
+	let "cores = $tpn * $OMP_NUM_THREADS "
+	if [ "$cores" -gt "$cpn" ] ; then
+	  break
+	fi
+    RUN="mpirun -l --machinefile hosts.$nnodes.$tpn -n $tasks"
+    RUN="mpirun    --machinefile hosts.$nnodes.$tpn -n $tasks"
+    RUN="mpirun    -launcher srun -n $tasks"
+    unset I_MPI_PMI_LIBRARY
+    $RUN /home/tkaiser2/examples/mpi/purempi -F
+  done
+done
+export LD_LIBRARY_PATH=/nopt/nrel/apps/compilers/intel/2020.1.217/compilers_and_libraries_2020.1.217/linux/mpi/intel64/lib/release:$LD_LIBRARY_PATH
+done
+
+cp $SLURM_SUBMIT_DIR/slurm-$JOBID.* .
