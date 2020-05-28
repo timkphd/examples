@@ -21,6 +21,13 @@
 #include <math.h>
 #include <utmpx.h>
 #include <time.h>
+
+// which processor on a node will 
+// print env if requested
+#ifndef PID
+#define PID 0
+#endif
+
 char *trim ( char *s );
 void slowit(long nints,int val);
 int node_color();
@@ -210,7 +217,8 @@ int main(int argc, char **argv,char *envp[])
 		}
 	 }
 /* here we print out the environment in which a MPI task is running */
-		if (envs == 1 && new_id==0) {
+		//if (envs == 1 && new_id==1) {
+		if (envs == 1 && new_id==PID) {
 			k=0;
 			while(envp[k]) {
 				printf("%s\n",envp[k]);
