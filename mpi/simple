@@ -1,18 +1,25 @@
-#!/bin/bash -x
+#!/bin/bash
 #SBATCH --job-name="hello"
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=16
-#SBATCH --ntasks=16
 #SBATCH --exclusive
 #SBATCH --export=ALL
-#SBATCH --time=00:01:00
+#SBATCH --time=00:20:00
+#SBATCH --partition=debug
+#SBATCH --account=hpcapps
 
-#module load StdEnv
-
-# Go to the directoy from which our job was launched
 cd $SLURM_SUBMIT_DIR
 
+module purge
+module use /nopt/nrel/apps/compilers/intel/2020.1.217/mods
+module load compilervars 
+module load mpivars
+#Needed for this version of MPI and srun
+export I_MPI_PMI_LIBRARY=/nopt/slurm/current/lib/libpmi.so
+
+export nnodes=1
+export tasks=2
+RUN="srun               --nodes=$nnodes -n $tasks --cpus-per-task=$OMP_NUM_THREADS --cpu-bind=cores "
+
 # run an application
-srun $SLURM_SUBMIT_DIR/c_ex01
-srun $SLURM_SUBMIT_DIR/f_ex01
+$RUN ./c_ex02
 
