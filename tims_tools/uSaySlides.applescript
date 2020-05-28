@@ -161,9 +161,10 @@ repeat while mygo
 						--display dialog i
 						--delay 0.1
 						
-						start slideshow
-						show aslide
-						stop slideshow
+						-- might need to uncomment these next three lines
+						--start slideshow
+						--show aslide
+						--stop slideshow
 						
 						try
 							set things to audio clips of aslide
