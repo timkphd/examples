@@ -114,7 +114,7 @@ repeat while mygo
 						set ks to text -4 thru -1 of ("0000" & k)
 						set fname to fold & ks
 						my write_file(fname, bonk, true)
-						set cname to fname & ".m4a"
+						set cname to fname & ".aiff"
 					end if
 				end if
 				try
@@ -125,9 +125,9 @@ repeat while mygo
 			
 			-- cut section		
 			if save_text is true then
-				set bonk to "#!/bin/bash" & linefeed & "rm *aac *m4a; slides=`ls 0*`"
+				set bonk to "#!/bin/bash" & linefeed & "rm *aac *aiff; slides=`ls 0*`"
 				set bonk to bonk & " ; "
-				set bonk to bonk & "for s in $slides ; do echo $s ; cat $s | say -o $s.m4a -f -  ;done"
+				set bonk to bonk & "for s in $slides ; do echo $s ; cat $s | say -o $s.aiff -f -  ;done"
 				set fname to fold & "runme"
 				my write_file(fname, bonk, true)
 				do shell script "chmod  700 " & quoted form of POSIX path of fname
@@ -161,9 +161,10 @@ repeat while mygo
 						--display dialog i
 						--delay 0.1
 						
-						start slideshow
-						show aslide
-						stop slideshow
+						-- might need to uncomment these next three lines
+						--start slideshow
+						--show aslide
+						--stop slideshow
 						
 						try
 							set things to audio clips of aslide
@@ -254,9 +255,10 @@ repeat while mygo
 								set ks to k as string
 								set ks to text -4 thru -1 of ("0000" & k)
 								set fname to fold & ks
-								set cname to fname & ".m4a"
-								
+								set cname to fname & ".aiff"
+								--display dialog "calling thisAudioClip"
 								set thisAudioClip to make new image with properties {file:cname}
+								--display dialog "did thisAudioClip"
 								
 								-- ADJUST AUDIO CLIP PROPERTIES
 								tell thisAudioClip
