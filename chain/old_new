@@ -2,16 +2,18 @@
 #SBATCH --job-name="atest"
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=8
-#SBATCH --time=01:00:00
+#SBATCH --time=00:05:00
 #SBATCH --exclusive
 #SBATCH -o stdout.%j
 #SBATCH -e stderr.%j
 #SBATCH --export=ALL
+#SBATCH --account=hpcapps
+#SBATCH --partition=debug
 
 #----------------------
 cd $SLURM_SUBMIT_DIR
 module purge
-module load StdEnv
+module load intel-mpi/2018.0.3
 
 # Make a directory for this run and go there.
 # If NEW_DIR is defined then we use that for
@@ -30,5 +32,5 @@ fi
 cd $NEW_DIR
 export OMP_NUM_THREADS=2
 # Here we just run the hello world program “phostname"
-srun -n 8 /opt/utility/phostname -F -t 10 >$SLURM_JOBID.out
+srun -n 8 $SLURM_SUBMIT_DIR/phostone -F -t 10 >$SLURM_JOBID.out
 
