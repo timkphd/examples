@@ -12,9 +12,9 @@ def help():
         
         Run the function walk to see a slide show.  For every slide for which
         there is a spoken text file it will be spoken.  The printed text will
-        be shown at the end of the slide.  This is if you want to provide some 
-        text for the reader might want to copy/paste, for example a script or 
-        command.
+        be shown at the end of the slide.  Use this if you want to provide some 
+        text for the reader they might want to copy/paste, for example a script 
+        or command.
         
         Note: Keynote allows slides to be saved as images.  The AppleScript
         uSaySlides.applescript can be used to create text files from the presenter
