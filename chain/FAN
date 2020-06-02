@@ -1,0 +1,41 @@
+#!/bin/bash
+rm -rf ser* par* final*
+echo "Start with 5 jobs that need to run in sequence."
+unset OLD_DIR
+export NEW_DIR=ser1
+jid=`sbatch --partition=short old_new | awk '{print $NF }'`
+echo $jid 
+myset1=""
+for job in ser2 ser3 ser4 ser5 ; do
+  export OLD_DIR=$NEW_DIR
+  export NEW_DIR=$job
+  echo --dependency=afterok:$jid
+  jid=`sbatch --partition=short --dependency=afterok:$jid old_new | awk '{print $NF }'`
+  echo $jid
+  myset1=$myset1,afterok:$jid
+done
+myset1=`echo $myset1 | sed "s/,//"`
+echo $myset1
+
+echo "Now 4 jobs that will wait for the previous 5,"
+echo "however, these are independent of each other."
+myset2=""
+export OLD_DIR=$NEW_DIR
+for job in par1 par2 par3 par4 ; do
+  export NEW_DIR=$job
+  echo --dependency=$myset1
+  jid=`sbatch  --partition=short --dependency=$myset1 old_new | awk '{print $NF }'`
+  echo $jid
+  myset2=$myset2,afterok:$jid
+done
+
+myset2=`echo $myset2 | sed "s/,//"`
+echo $myset2
+
+echo "Finally a single job that waits for the previous 4"
+export OLD_DIR=$NEW_DIR
+export NEW_DIR=final
+jid=`sbatch  --partition=short --dependency=$myset2 old_new | awk '{print $NF }'`
+echo $jid
+
+
