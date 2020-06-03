@@ -2,6 +2,7 @@
 rm -rf ser* par* final*
 echo "Start with 5 jobs that need to run in sequence."
 unset OLD_DIR
+unset OLD_FILES
 export NEW_DIR=ser1
 jid=`sbatch --partition=short old_new | awk '{print $NF }'`
 echo $jid 
@@ -33,9 +34,11 @@ myset2=`echo $myset2 | sed "s/,//"`
 echo $myset2
 
 echo "Finally a single job that waits for the previous 4"
-export OLD_DIR=$NEW_DIR
+getfiles=`echo $myset2 | sed "s/,/ /g"`
+getfiles=`echo $getfiles | sed "s/afterok://g"`
+echo $getfiles
+unset OLD_DIR
 export NEW_DIR=final
+export OLD_FILES=$getfiles
 jid=`sbatch  --partition=short --dependency=$myset2 old_new | awk '{print $NF }'`
 echo $jid
-
-
