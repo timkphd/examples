@@ -29,6 +29,15 @@ if [ -n "$OLD_DIR" ]  ; then
   cp $OLD_DIR/* $NEW_DIR
 fi
 
+# If we have OLD_FILES defined then we copy files
+# This copies a single output file from a directory instead
+# of the whole directory
+if [ -n "$OLD_FILES" ]  ; then
+  for afile in $OLD_FILES ; do 
+    cp */$afile.out $NEW_DIR
+  done
+fi
+
 cd $NEW_DIR
 export OMP_NUM_THREADS=2
 # Here we just run the hello world program “phostname"
