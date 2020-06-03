@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-def help():
+def dohelp():
     text="""Script takes three sets of files in numerical order starting at 1.
         Images:         either 
                           *[0-9[[0-9][0-9].png 
@@ -25,16 +25,50 @@ def help():
            from slides import *
            walk()
 
-        It uses the OSX say command which would need to be replaced to run under 
-        Windows.
+        By default it uses the OSX say command.  On Windows you should create a 
+        conda environment:
+            conda create --name slides Jupyter Matplotlib scipy pandas 
+            conda activate slides
+            pip install gtts
+            pip install pygame 
     """
     print(text)
 import os
+import platform
 from IPython.display import Image,display
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
 import getpass
 from IPython.display import clear_output
+
+
+def wsay(afile):
+	x=os.popen("say -v Karen -f "+ afile)
+
+#if platform.system() == "Darwin" :
+if platform.system() == "Windows" :
+	try:
+	##### conda create --name slides Jupiter Matplotlib scipy pandas 
+	##### conda activate slides 
+	##### pip install gtts   
+	##### pip install pygame   
+		from gtts import gTTS
+		from io import BytesIO
+		from pygame import mixer 
+		onmac=False
+		def wsay(afile):
+			x=open(afile,"r")
+			txt=x.read()
+			x.close()
+			tts = gTTS(text=txt, lang='en')
+			mp3 = BytesIO()   
+			tts.write_to_fp(mp3)   
+			mp3.seek(0)   
+			mixer.init()   
+			mixer.music.load(mp3)   
+			mixer.music.play() 
+	except:
+		dohelp()
 
 username = getpass.getuser()
 
@@ -45,15 +79,16 @@ dir=os.getcwd()
 txt=[]
 
 # images to show, either jpg or png files
-command="ls *jpeg"
-pngs=os.popen(command,"r")
-img=pngs.read()
+lfiles=os.listdir()
+img=[]
+for i in lfiles :
+	if i.find("jpeg") > 0:
+		img.append(i)
 if len(img) == 0:
-    command="ls *png"
-    pngs=os.popen(command,"r")
-    img=pngs.read()
-img=img.strip()
-img=img.split("\n")
+	img=[]
+	for i in lfiles :
+		if i.find("png") > 0:
+			img.append(i)
 
 # optional text to show after the slide
 # that can be copy/pasted
@@ -75,7 +110,7 @@ for s in range(1,len(img)+1):
 def showit(txt,img,out,j,talk=True):
     i=j-1
     if talk :
-        x=os.popen("say -f "+ txt[i])
+        wsay(txt[i])
     display(Image(filename=img[i]))
 #optional test for copy paste written after the slide
     if len(out[i]) > 0:
