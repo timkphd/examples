@@ -19,6 +19,10 @@ def usage():
     print(" ")
     print(tb,name,"<node list file> -p\"list of programs\" [<number of copies per node>]")
     print(" ")
+    print(tb,tb,"or")
+    print(" ")
+    print(tb,name,"program_to_run")
+    print(" ")
     print(tb,"The OpenMPI version of MPI has the ability to run Multiple ")
     print(tb,"Instruction Multiple Data (MIMD) programs.  That is each MPI")
     print(tb,"task can be a different program. For example, one task can be")
@@ -64,11 +68,11 @@ def usage():
     print(tb,tb,"compute-2-2.local")
     print(tb,tb,"compute-2-29.local")
     print(" ")
-    print(tb,tb,"[<ra>]$ match shortlist applist")
+    print(tb,tb,"[<ra>]$ ",name," shortlist applist")
     print(tb,tb,"-host  compute-2-2.local  -np  1  c_ex00")
     print(tb,tb,"-host  compute-2-29.local  -np  1  f_ex00")
     print(" ")
-    print(tb,tb,"[<ra>]$ match shortlist applist 4")
+    print(tb,tb,"[<ra>]$ ",name," shortlist applist 4")
     print(tb,tb,"-host  compute-2-2.local  -np 4  c_ex00")
     print(tb,tb,"-host  compute-2-29.local  -np 4  f_ex00")
     print(" ")
@@ -90,7 +94,7 @@ def usage():
     print(tb,tb,"compute-3-21.local")
     print(tb,tb,"compute-3-21.local")
     print(" ")
-    print(tb,tb,"[<ra>]$ match nodelist applist ")
+    print(tb,tb,"[<ra>]$ ",name," nodelist applist ")
     print(tb,tb,"-host  compute-3-22.local  -np  1  c_ex00")
     print(tb,tb,"-host  compute-3-22.local  -np  1  f_ex00")
     print(tb,tb,"-host  compute-3-22.local  -np  1  c_ex00")
@@ -111,7 +115,7 @@ def usage():
     print(tb,tb,"[<ra>]$ cat oneprogram")
     print(tb,tb,"c_ex00")
     print(" ")
-    print(tb,tb,"[<ra>]$ match shortlist oneprogram")
+    print(tb,tb,"[<ra>]$ ",name," shortlist oneprogram")
     print(tb,tb,"-host  compute-2-2.local  -np  1  c_ex00")
     print(tb,tb,"-host  compute-2-29.local  -np  1  c_ex00")
     print(tb,tb,"[<ra>]$ ")
@@ -120,7 +124,7 @@ def usage():
     print(tb,"The following example show how to run 1 copy of c_ex00 on one node")
     print(tb,"and 7 copies on the second node")
     print(" ")
-    print(tb,tb,"[<ra>]$ match shortlist oneprogram 1 7")
+    print(tb,tb,"[<ra>]$ ",name," shortlist oneprogram 1 7")
     print(tb,tb,"-host  compute-2-2.local  -np  1  c_ex00")
     print(tb,tb,"-host  compute-2-29.local  -np  7  c_ex00")
     print(tb,tb,"[<ra>]$ ")
@@ -129,7 +133,7 @@ def usage():
     print(tb,"There is also a option to list the program names on the command line")
     print(tb,"along with the number of each per node.")
     print(" ")
-    print(tb,tb,"[<ra>]$ match  shortlist -p\"c01 f01\" 4 8")
+    print(tb,tb,"[<ra>]$ ",name,"  shortlist -p\"c01 f01\" 4 8")
     print(tb,tb,"-host  compute-2-2.local  -np  4  c01")
     print(tb,tb,"-host  compute-2-29.local  -np  8  f01")
     print(tb,tb,"[<ra>]$ ")
@@ -137,10 +141,26 @@ def usage():
     print(" ") 
     print("TYPICAL USAGE WITHIN A PBS SCRIPT")
     print(tb,tb,"cat $PBS_NODEFILE > fulllist")
-    print(tb,tb,"match fulllist applist > appfile")
+    print(tb,tb,name," fulllist applist > appfile")
     print(tb,tb,"mpiexec -app appfile")
     print(" ") 
     print(" ") 
+    print("RUNNING ON EVERY CORE")
+    print(tb,"The simplest usage is to only put the name of your program")
+    print(tb,"on the command line.  In this case ",name," will find the list")
+    print(tb,"of nodes from your $PBS_NODEFILE and create an appfile which")
+    print(tb,"can be used to launch on every core.  This is useful if you")
+    print(tb,"have different numbers of cores on various nodes or if you")
+    print(tb,"don't know if you will get a 8 or 12 core node.")
+    print()
+    print(tb,"In the example below we create a appfile that will run \"myprogram\"")
+    print(tb,"on every core.")   
+    print(tb,tb,name," my_program > appfile")
+    print(tb,tb,"mpiexec -app appfile")
+    print(" ") 
+    print(" ") 
+    
+    
     print("AUTHOR")
     print(tb,"Timothy H. Kaiser")
     print(tb,"tkaiser@mines.edu")
@@ -164,49 +184,95 @@ def ravel(a,b):
             if(len(head) > 0 and len(tail) > 0):
                 r.append([head,tail])
         return r
+def corelist():
+#This routine is Mio.mines.edu specific
+	import os
+	mkl=os.getenv("MKL_NUM_THREADS")
+	if mkl == None:
+		mkl=1
+	else:
+		mkl=int(mkl)
+	omp=os.getenv("OMP_NUM_THREADS")
+	if omp == None:
+		omp=1
+	else:
+		omp=int(omp)
+	omp=max(mkl,omp,1)
+	slist=os.getenv("PBS_NODEFILE")
+	if slist == None:
+		print("PBS_NODEFILE not defined")
+		sys.exit(0)
+	command="sort -u "+slist
+	input=os.popen(command,"r")
+	nlist=input.readlines()
+	cores=0
+	mylist=[]
+# following should be replaced with something like
+# pbsnodes | egrep "^n|^f|^c| np ="
+	np=8
+	for l in nlist:
+		try:
+			n=int(l[1:])
+			if n <= 31  or n == 48 :
+				np=8
+			else:
+				np=12
+		except:
+			np=8
+		cores=cores+np
+		np=np/omp
+		for i in range(0,np):
+			mylist.append(l.strip())
+	return mylist
 
 def main():
 #	if(len(sys.argv) > 4 or len(sys.argv) < 3):
-	if(len(sys.argv) < 3):
-		usage()
 	if(sys.argv[1] == "--help" or  
 	   sys.argv[1] ==  "-help" or 
 	   sys.argv[1] ==   "help" ): 
 		usage()
-	
-	try:
-		nodefile=open(sys.argv[1],"r")
-	except IOError as xxx_todo_changeme1:
-		(errno, strerror) = xxx_todo_changeme1.args
-		print("I/O error(%s): %s" % (errno, strerror))
-		raise
-	nodes=nodefile.readlines()
-
-	if (sys.argv[2].find("-p") == 0):
-		progs=sys.argv[2].replace("-p","")
-		progs=progs.split()
-	else:
+	if(len(sys.argv) > 2):	
 		try:
-			progfile=open(sys.argv[2],"r")
-		except IOError as xxx_todo_changeme:
-			(errno, strerror) = xxx_todo_changeme.args
+			nodefile=open(sys.argv[1],"r")
+		except IOError as xxx_todo_changeme1:
+			(errno, strerror) = xxx_todo_changeme1.args
 			print("I/O error(%s): %s" % (errno, strerror))
 			raise
-		progs=progfile.readlines()
-		
-	donp=[]
-	if(len(sys.argv) >= 4):
-		for a in sys.argv[3:]:
+		nodes=nodefile.readlines()
+	
+		if (sys.argv[2].find("-p") == 0):
+			progs=sys.argv[2].replace("-p","")
+			progs=progs.split()
+		else:
 			try:
-				np=int(a)
-			except ValueError:
-				print("Could not convert the pararmeter: \"",\
-					  a,"\" to an integer")
+				progfile=open(sys.argv[2],"r")
+			except IOError as xxx_todo_changeme:
+				(errno, strerror) = xxx_todo_changeme.args
+				print("I/O error(%s): %s" % (errno, strerror))
 				raise
+			progs=progfile.readlines()
+			
+		donp=[]
+		if(len(sys.argv) >= 4):
+			for a in sys.argv[3:]:
+				try:
+					np=int(a)
+				except ValueError:
+					print("Could not convert the pararmeter: \"",\
+						  a,"\" to an integer")
+					raise
+				donp.append(" -np %2d " % np)
+		else:
+			np=1
 			donp.append(" -np %2d " % np)
 	else:
-		np=1
-		donp.append(" -np %2d " % np)
+# we only have one argument on the command line
+# we assume the one argument is a program name
+# and we will get the nodes from an expanded 
+# PBS_NODEFILE
+		nodes=corelist()
+		progs=[sys.argv[1]]
+		donp=["-np 1"]
 	
 	
 	mylist=ravel(nodes,progs)
