@@ -9,166 +9,166 @@ def usage():
     	name=lname[cp+1:]
     else:
     	name=lname
-    print "NAME"
-    print tb,name,"- create an OpenMPI appfile"
-    print " "
-    print "SYNOPSIS"
-    print tb,name,"<node list file> <application list file> [<number of copies per node>]"
-    print " "
-    print tb,tb,"or"
-    print " "
-    print tb,name,"<node list file> -p\"list of programs\" [<number of copies per node>]"
-    print " "
-    print tb,tb,"or"
-    print " "
-    print tb,name,"program_to_run"
-    print " "
-    print tb,"The OpenMPI version of MPI has the ability to run Multiple "
-    print tb,"Instruction Multiple Data (MIMD) programs.  That is each MPI"
-    print tb,"task can be a different program. For example, one task can be"
-    print tb,"a Fortran program and another a C program."
-    print " "
-    print tb,"There are two ways to specify a MIMD run.  It can be done on"
-    print tb,"the command line or by using an \"appfile\".  ",name,"is designed"
-    print tb,"to make it easier to create an \"appfile\"."
-    print " "
-    print tb,"The syntax for using an appfile to run an MPI program is"
-    print tb,tb,"mpiexec -app appfile"
-    print " "
-    print tb,"If you specify the --app option all other command line arguments"
-    print tb,"are ignored."
-    print " "
-    print tb,"The appfile is collection of lines of the form"
-    print tb,tb,"-host <host name> -np <number of copies to run on host> <program name>"
-    print " "
-    print tb,"If you have different application names in the appfile then your have a"
-    print tb,"MIMD parallel program.  The -np number determines how many copies of the"
-    print tb,"given program to run on the node."
-    print " "
-    print tb,"It is legal to have a node listed more then once.  For example the following"
-    print tb,"two appfiles are equivalent"
-    print " "
-    print tb,tb,"-host compute-1-1 -np 1 myprogram"
-    print tb,tb,"-host compute-1-1 -np 1 myprogram"
-    print tb,tb,"-host compute-1-1 -np 1 myprogram"
-    print tb,tb,"-host compute-1-1 -np 1 myprogram"
-    print " "
-    print tb,tb,"-host compute-1-1 -np 4 myprogram"
-    print " "
-    print tb,name,"will take a file that contains a list of nodes and a file that contains"
-    print tb,"a list of programs and optionally a replication count and produce a appfile."
-    print tb,"The output of",name,"will normally be piped into a file for use with mpiexec."
-    print "  "
-    print "EXAMPLES"
-    print tb,tb,"[<ra>]$ cat applist"
-    print tb,tb,"c_ex00"
-    print tb,tb,"f_ex00"
-    print " "
-    print tb,tb,"[<ra>]$ cat shortlist"
-    print tb,tb,"compute-2-2.local"
-    print tb,tb,"compute-2-29.local"
-    print " "
-    print tb,tb,"[<ra>]$ ",name," shortlist applist"
-    print tb,tb,"-host  compute-2-2.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-2-29.local  -np  1  f_ex00"
-    print " "
-    print tb,tb,"[<ra>]$ ",name," shortlist applist 4"
-    print tb,tb,"-host  compute-2-2.local  -np 4  c_ex00"
-    print tb,tb,"-host  compute-2-29.local  -np 4  f_ex00"
-    print " "
-    print tb,tb,"[<ra>]$ cat nodelist"
-    print tb,tb,"compute-3-22.local"
-    print tb,tb,"compute-3-22.local"
-    print tb,tb,"compute-3-22.local"
-    print tb,tb,"compute-3-22.local"
-    print tb,tb,"compute-3-22.local"
-    print tb,tb,"compute-3-22.local"
-    print tb,tb,"compute-3-22.local"
-    print tb,tb,"compute-3-22.local"
-    print tb,tb,"compute-3-21.local"
-    print tb,tb,"compute-3-21.local"
-    print tb,tb,"compute-3-21.local"
-    print tb,tb,"compute-3-21.local"
-    print tb,tb,"compute-3-21.local"
-    print tb,tb,"compute-3-21.local"
-    print tb,tb,"compute-3-21.local"
-    print tb,tb,"compute-3-21.local"
-    print " "
-    print tb,tb,"[<ra>]$ ",name," nodelist applist "
-    print tb,tb,"-host  compute-3-22.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-3-22.local  -np  1  f_ex00"
-    print tb,tb,"-host  compute-3-22.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-3-22.local  -np  1  f_ex00"
-    print tb,tb,"-host  compute-3-22.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-3-22.local  -np  1  f_ex00"
-    print tb,tb,"-host  compute-3-22.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-3-22.local  -np  1  f_ex00"
-    print tb,tb,"-host  compute-3-21.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-3-21.local  -np  1  f_ex00"
-    print tb,tb,"-host  compute-3-21.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-3-21.local  -np  1  f_ex00"
-    print tb,tb,"-host  compute-3-21.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-3-21.local  -np  1  f_ex00"
-    print tb,tb,"-host  compute-3-21.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-3-21.local  -np  1  f_ex00"
-    print " "
-    print tb,tb,"[<ra>]$ cat oneprogram"
-    print tb,tb,"c_ex00"
-    print " "
-    print tb,tb,"[<ra>]$ ",name," shortlist oneprogram"
-    print tb,tb,"-host  compute-2-2.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-2-29.local  -np  1  c_ex00"
-    print tb,tb,"[<ra>]$ "
-    print " " 
-    print " "
-    print tb,"The following example show how to run 1 copy of c_ex00 on one node"
-    print tb,"and 7 copies on the second node"
-    print " "
-    print tb,tb,"[<ra>]$ ",name," shortlist oneprogram 1 7"
-    print tb,tb,"-host  compute-2-2.local  -np  1  c_ex00"
-    print tb,tb,"-host  compute-2-29.local  -np  7  c_ex00"
-    print tb,tb,"[<ra>]$ "
-    print " " 
-    print " " 
-    print tb,"There is also a option to list the program names on the command line"
-    print tb,"along with the number of each per node."
-    print " "
-    print tb,tb,"[<ra>]$ ",name,"  shortlist -p\"c01 f01\" 4 8"
-    print tb,tb,"-host  compute-2-2.local  -np  4  c01"
-    print tb,tb,"-host  compute-2-29.local  -np  8  f01"
-    print tb,tb,"[<ra>]$ "
-    print " " 
-    print " " 
-    print "TYPICAL USAGE WITHIN A PBS SCRIPT"
-    print tb,tb,"cat $PBS_NODEFILE > fulllist"
-    print tb,tb,name," fulllist applist > appfile"
-    print tb,tb,"mpiexec -app appfile"
-    print " " 
-    print " " 
-    print "RUNNING ON EVERY CORE"
-    print tb,"The simplest usage is to only put the name of your program"
-    print tb,"on the command line.  In this case ",name," will find the list"
-    print tb,"of nodes from your $PBS_NODEFILE and create an appfile which"
-    print tb,"can be used to launch on every core.  This is useful if you"
-    print tb,"have different numbers of cores on various nodes or if you"
-    print tb,"don't know if you will get a 8 or 12 core node."
-    print
-    print tb,"In the example below we create a appfile that will run \"myprogram\""
-    print tb,"on every core."   
-    print tb,tb,name," my_program > appfile"
-    print tb,tb,"mpiexec -app appfile"
-    print " " 
-    print " " 
+    print("NAME")
+    print(tb,name,"- create an OpenMPI appfile")
+    print(" ")
+    print("SYNOPSIS")
+    print(tb,name,"<node list file> <application list file> [<number of copies per node>]")
+    print(" ")
+    print(tb,tb,"or")
+    print(" ")
+    print(tb,name,"<node list file> -p\"list of programs\" [<number of copies per node>]")
+    print(" ")
+    print(tb,tb,"or")
+    print(" ")
+    print(tb,name,"program_to_run")
+    print(" ")
+    print(tb,"The OpenMPI version of MPI has the ability to run Multiple ")
+    print(tb,"Instruction Multiple Data (MIMD) programs.  That is each MPI")
+    print(tb,"task can be a different program. For example, one task can be")
+    print(tb,"a Fortran program and another a C program.")
+    print(" ")
+    print(tb,"There are two ways to specify a MIMD run.  It can be done on")
+    print(tb,"the command line or by using an \"appfile\".  ",name,"is designed")
+    print(tb,"to make it easier to create an \"appfile\".")
+    print(" ")
+    print(tb,"The syntax for using an appfile to run an MPI program is")
+    print(tb,tb,"mpiexec -app appfile")
+    print(" ")
+    print(tb,"If you specify the --app option all other command line arguments")
+    print(tb,"are ignored.")
+    print(" ")
+    print(tb,"The appfile is collection of lines of the form")
+    print(tb,tb,"-host <host name> -np <number of copies to run on host> <program name>")
+    print(" ")
+    print(tb,"If you have different application names in the appfile then your have a")
+    print(tb,"MIMD parallel program.  The -np number determines how many copies of the")
+    print(tb,"given program to run on the node.")
+    print(" ")
+    print(tb,"It is legal to have a node listed more then once.  For example the following")
+    print(tb,"two appfiles are equivalent")
+    print(" ")
+    print(tb,tb,"-host compute-1-1 -np 1 myprogram")
+    print(tb,tb,"-host compute-1-1 -np 1 myprogram")
+    print(tb,tb,"-host compute-1-1 -np 1 myprogram")
+    print(tb,tb,"-host compute-1-1 -np 1 myprogram")
+    print(" ")
+    print(tb,tb,"-host compute-1-1 -np 4 myprogram")
+    print(" ")
+    print(tb,name,"will take a file that contains a list of nodes and a file that contains")
+    print(tb,"a list of programs and optionally a replication count and produce a appfile.")
+    print(tb,"The output of",name,"will normally be piped into a file for use with mpiexec.")
+    print("  ")
+    print("EXAMPLES")
+    print(tb,tb,"[<ra>]$ cat applist")
+    print(tb,tb,"c_ex00")
+    print(tb,tb,"f_ex00")
+    print(" ")
+    print(tb,tb,"[<ra>]$ cat shortlist")
+    print(tb,tb,"compute-2-2.local")
+    print(tb,tb,"compute-2-29.local")
+    print(" ")
+    print(tb,tb,"[<ra>]$ ",name," shortlist applist")
+    print(tb,tb,"-host  compute-2-2.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-2-29.local  -np  1  f_ex00")
+    print(" ")
+    print(tb,tb,"[<ra>]$ ",name," shortlist applist 4")
+    print(tb,tb,"-host  compute-2-2.local  -np 4  c_ex00")
+    print(tb,tb,"-host  compute-2-29.local  -np 4  f_ex00")
+    print(" ")
+    print(tb,tb,"[<ra>]$ cat nodelist")
+    print(tb,tb,"compute-3-22.local")
+    print(tb,tb,"compute-3-22.local")
+    print(tb,tb,"compute-3-22.local")
+    print(tb,tb,"compute-3-22.local")
+    print(tb,tb,"compute-3-22.local")
+    print(tb,tb,"compute-3-22.local")
+    print(tb,tb,"compute-3-22.local")
+    print(tb,tb,"compute-3-22.local")
+    print(tb,tb,"compute-3-21.local")
+    print(tb,tb,"compute-3-21.local")
+    print(tb,tb,"compute-3-21.local")
+    print(tb,tb,"compute-3-21.local")
+    print(tb,tb,"compute-3-21.local")
+    print(tb,tb,"compute-3-21.local")
+    print(tb,tb,"compute-3-21.local")
+    print(tb,tb,"compute-3-21.local")
+    print(" ")
+    print(tb,tb,"[<ra>]$ ",name," nodelist applist ")
+    print(tb,tb,"-host  compute-3-22.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-3-22.local  -np  1  f_ex00")
+    print(tb,tb,"-host  compute-3-22.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-3-22.local  -np  1  f_ex00")
+    print(tb,tb,"-host  compute-3-22.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-3-22.local  -np  1  f_ex00")
+    print(tb,tb,"-host  compute-3-22.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-3-22.local  -np  1  f_ex00")
+    print(tb,tb,"-host  compute-3-21.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-3-21.local  -np  1  f_ex00")
+    print(tb,tb,"-host  compute-3-21.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-3-21.local  -np  1  f_ex00")
+    print(tb,tb,"-host  compute-3-21.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-3-21.local  -np  1  f_ex00")
+    print(tb,tb,"-host  compute-3-21.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-3-21.local  -np  1  f_ex00")
+    print(" ")
+    print(tb,tb,"[<ra>]$ cat oneprogram")
+    print(tb,tb,"c_ex00")
+    print(" ")
+    print(tb,tb,"[<ra>]$ ",name," shortlist oneprogram")
+    print(tb,tb,"-host  compute-2-2.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-2-29.local  -np  1  c_ex00")
+    print(tb,tb,"[<ra>]$ ")
+    print(" ") 
+    print(" ")
+    print(tb,"The following example show how to run 1 copy of c_ex00 on one node")
+    print(tb,"and 7 copies on the second node")
+    print(" ")
+    print(tb,tb,"[<ra>]$ ",name," shortlist oneprogram 1 7")
+    print(tb,tb,"-host  compute-2-2.local  -np  1  c_ex00")
+    print(tb,tb,"-host  compute-2-29.local  -np  7  c_ex00")
+    print(tb,tb,"[<ra>]$ ")
+    print(" ") 
+    print(" ") 
+    print(tb,"There is also a option to list the program names on the command line")
+    print(tb,"along with the number of each per node.")
+    print(" ")
+    print(tb,tb,"[<ra>]$ ",name,"  shortlist -p\"c01 f01\" 4 8")
+    print(tb,tb,"-host  compute-2-2.local  -np  4  c01")
+    print(tb,tb,"-host  compute-2-29.local  -np  8  f01")
+    print(tb,tb,"[<ra>]$ ")
+    print(" ") 
+    print(" ") 
+    print("TYPICAL USAGE WITHIN A PBS SCRIPT")
+    print(tb,tb,"cat $PBS_NODEFILE > fulllist")
+    print(tb,tb,name," fulllist applist > appfile")
+    print(tb,tb,"mpiexec -app appfile")
+    print(" ") 
+    print(" ") 
+    print("RUNNING ON EVERY CORE")
+    print(tb,"The simplest usage is to only put the name of your program")
+    print(tb,"on the command line.  In this case ",name," will find the list")
+    print(tb,"of nodes from your $PBS_NODEFILE and create an appfile which")
+    print(tb,"can be used to launch on every core.  This is useful if you")
+    print(tb,"have different numbers of cores on various nodes or if you")
+    print(tb,"don't know if you will get a 8 or 12 core node.")
+    print()
+    print(tb,"In the example below we create a appfile that will run \"myprogram\"")
+    print(tb,"on every core.")   
+    print(tb,tb,name," my_program > appfile")
+    print(tb,tb,"mpiexec -app appfile")
+    print(" ") 
+    print(" ") 
     
     
-    print "AUTHOR"
-    print tb,"Timothy H. Kaiser"
-    print tb,"tkaiser@mines.edu"
-    print tb,"Colorado School of Mines"
-    print tb,"May 8, 2008"
-    print " " 
-    print "LOCATION"
-    print tb,lname
+    print("AUTHOR")
+    print(tb,"Timothy H. Kaiser")
+    print(tb,"tkaiser@mines.edu")
+    print(tb,"Colorado School of Mines")
+    print(tb,"May 8, 2008")
+    print(" ") 
+    print("LOCATION")
+    print(tb,lname)
     sys.exit()
 
 def ravel(a,b):
@@ -200,7 +200,7 @@ def corelist():
 	omp=max(mkl,omp,1)
 	slist=os.getenv("PBS_NODEFILE")
 	if slist == None:
-		print "PBS_NODEFILE not defined"
+		print("PBS_NODEFILE not defined")
 		sys.exit(0)
 	command="sort -u "+slist
 	input=os.popen(command,"r")
@@ -234,8 +234,9 @@ def main():
 	if(len(sys.argv) > 2):	
 		try:
 			nodefile=open(sys.argv[1],"r")
-		except IOError , (errno, strerror):
-			print "I/O error(%s): %s" % (errno, strerror)
+		except IOError as xxx_todo_changeme1:
+			(errno, strerror) = xxx_todo_changeme1.args
+			print("I/O error(%s): %s" % (errno, strerror))
 			raise
 		nodes=nodefile.readlines()
 	
@@ -245,8 +246,9 @@ def main():
 		else:
 			try:
 				progfile=open(sys.argv[2],"r")
-			except IOError , (errno, strerror):
-				print "I/O error(%s): %s" % (errno, strerror)
+			except IOError as xxx_todo_changeme:
+				(errno, strerror) = xxx_todo_changeme.args
+				print("I/O error(%s): %s" % (errno, strerror))
 				raise
 			progs=progfile.readlines()
 			
@@ -256,8 +258,8 @@ def main():
 				try:
 					np=int(a)
 				except ValueError:
-					print "Could not convert the pararmeter: \"",\
-						  a,"\" to an integer"
+					print("Could not convert the pararmeter: \"",\
+						  a,"\" to an integer")
 					raise
 				donp.append(" -np %2d " % np)
 		else:
@@ -278,13 +280,13 @@ def main():
 		for line in mylist:
 			a=line[0]
 			b=line[1]
-			print "-host ",a,donp[0],b
+			print("-host ",a,donp[0],b)
 	else:
 		ic=0
 		for line in mylist:
 			a=line[0]
 			b=line[1]
-			print "-host ",a,donp[ic],b
+			print("-host ",a,donp[ic],b)
 			ic=ic+1
 	sys.exit(0)
 
