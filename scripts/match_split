@@ -1,0 +1,91 @@
+#!/usr/bin/env python
+import sys
+
+htext="""NAME [MATCHFILE applist hostlist]
+
+A post processing script for the utility match.
+
+It takes the mpiexec "appfile" output from match and 
+creates srun style application list and hostfile list 
+files for use with the srun option "--multi-prog".
+
+You can pipe "|"  match into this program in which 
+case /opt/utility/match_split will create the files applist 
+and hostlist.
+
+Of you can specify the file created by match on the command
+line in which case the files created will be of the form
+MATCHFILE_applist and MATCHFILE_hostlist.  
+
+Finally, you can specify all three files on the command line
+
+/opt/utility/match_split MATCHFILE applist hostlist.
+
+To run a slurm job using these files you do two things:
+
+export SLURM_HOSTFILE=hostlist
+srun -n12 --multi-prog applist
+
+where -n12 specifies the total number of MPI tasks to start."""
+
+examp="""-host  node0010  -np  2  helloc
+-host  node0021  -np  1  hellof
+-host  node0022  -np  3  hellof
+-host  node0021  -np  1  helloc
+
+becomes two files:
+
+HOSTLIST:     APPLIST:
+node0010       0: helloc:2
+node0021       1: hellof:1
+node0022       2: hellof:3
+node0021       3: helloc:1"""
+
+if len(sys.argv) == 4:
+	matchfile=sys.argv[1]
+	applist=sys.argv[2]
+	hostlist=sys.argv[3]
+	
+if len(sys.argv) == 2:
+	matchfile=sys.argv[1]
+	applist=matchfile+"_applist"
+	hostlist=matchfile+"_hostlist"
+
+if (len(sys.argv) == 2 and sys.argv[1].find("-") == 1) or len(sys.argv) == 3 :
+	htext=htext.replace("NAME",sys.argv[0])
+	print(htext)
+	print("\n")
+	print(examp)
+	exit()
+	
+	
+if len(sys.argv) == 1:
+	infile=sys.stdin
+	applist="applist"
+	hostlist="hostlist"
+else:
+	infile=open(matchfile,"r")
+
+f1=open(hostlist,"w")
+f2=open(applist,"w")
+
+
+
+dat=infile.read()
+dat=dat.split("\n")
+
+list1=""
+list2=""
+k=0
+for d in dat:
+    d=d.split()
+    if len(d) > 4 :
+        list1=list1+d[1]+"\n"
+        list2b=("%4d: %s:%d" %(k,d[4],int(d[3])))
+        if len(d) > 5:
+                for n in d[5:]:
+                    list2b=list2b+" "+n
+        list2=list2+list2b+"\n"
+        k=k+1
+f1.write(list1)
+f2.write(list2)
