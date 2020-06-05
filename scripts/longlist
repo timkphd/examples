@@ -1,0 +1,9 @@
+#!/bin/bash
+SHORTLIST=`scontrol show hostnames $SLURM_JOB_NODELIST`
+for s in $SHORTLIST ; do 
+  nc=`scontrol show nodes -o $s | sed "s/.*CPUTot=//" | sed "s/CPULoad=.*//"`
+  for x in `seq $nc` ; do 
+    echo $s
+  done
+done
+

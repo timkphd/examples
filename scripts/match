@@ -280,13 +280,13 @@ def main():
 		for line in mylist:
 			a=line[0]
 			b=line[1]
-			print("-host ",a,donp[0],b)
+			print("-host %s %s %s " % (a,donp[0],b))
 	else:
 		ic=0
 		for line in mylist:
 			a=line[0]
 			b=line[1]
-			print("-host ",a,donp[ic],b)
+			print("-host %s %s %s " % (a,donp[ic],b))
 			ic=ic+1
 	sys.exit(0)
 
