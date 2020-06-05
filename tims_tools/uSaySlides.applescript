@@ -34,7 +34,14 @@
 -- Based on information from
 -- http://iworkautomation.com/keynote/media-items-audio-clip.html
 
-property narrator_voice : "Tom"
+on split_it(input, x)
+	if input does not contain x then return {input}
+	set text item delimiters to x
+	return text item 1 of input
+end split_it
+
+
+property narrator_voice : "Alex"
 set mygo to true
 repeat while mygo
 	global rate_tag, current_voice, current_system_voice, save_text, say_text, doit
@@ -106,7 +113,8 @@ repeat while mygo
 				if skipped of aslide is false then
 					set bonk to presenter notes of aslide
 					if say_text is true then
-						say bonk using current_voice
+						set bonk1 to my split_it(bonk, "====")
+						say bonk1 using current_voice
 					end if
 					if save_text is true then
 						set k to k + 1
@@ -127,7 +135,8 @@ repeat while mygo
 			if save_text is true then
 				set bonk to "#!/bin/bash" & linefeed & "rm *aac *aiff; slides=`ls 0*`"
 				set bonk to bonk & " ; "
-				set bonk to bonk & "for s in $slides ; do echo $s ; cat $s | say -o $s.aiff -f -  ;done"
+				--set bonk to bonk & "for s in $slides ; do echo $s ; cat $s | say -o $s.aiff -f -  ;done"
+				set bonk to bonk & "for s in $slides ; do if [ `grep '^====' $s` ] ;    then  grep -B 10000  '^====' $s    | grep -v '^===='  ; else cat $s ;    fi  | say -o $s.aiff -f - ; done"
 				set fname to fold & "runme"
 				my write_file(fname, bonk, true)
 				do shell script "chmod  700 " & quoted form of POSIX path of fname
