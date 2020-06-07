@@ -82,7 +82,7 @@ if platform.system() == "Darwin" :
 		speakversion="Mac say"
 
 #if platform.system() == "Darwin" :
-if platform.system() == "Windows" :
+if platform.system() == "Windows" or platform.system() == "Linux" :
 	try:
 	##### conda create --name slides Jupiter Matplotlib scipy pandas 
 	##### conda activate slides 
