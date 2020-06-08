@@ -4,15 +4,16 @@ global speakversion
 speakversion="none"
 
 def dohelp():
-    text="""Script takes three sets of files in numerical order starting at 1.
+    text="""Script takes two sets of files in numerical order starting at 1.
         Images:         either 
                 *[0-9[[0-9][0-9].png 
                         or 
                 *[0-9[[0-9][0-9].jpeg
+                        and
         Text:   0[0-9[[0-9][0-9]
         
-        The text files are in two parts delimited by ====.  Everything before
-        ==== will be spoken, after printend to the screen.
+        The text files are in two parts delimited by a line beginning with ====.  
+        Everything before ==== will be spoken, after printend to the screen.
         
         Run the function walk to see a slide show.  For every slide for which
         there is a spoken text file it will be spoken.  The printed text will
@@ -36,6 +37,8 @@ def dohelp():
             conda activate slides
             pip install gtts
             pip install pygame 
+            
+        The gtts / pygame combination also works on a Raspberry Pi and on the Mac.
             
         Gtts requires an internet connection.  There may be a short delay in the
         audio.
