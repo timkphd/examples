@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include <mpi.h>
 #include <math.h>
-void sinkfile_(double *dt, int *gt, int *theid, char *afile,int dummy);
+void sinkfile_(double *dt, int *gt, int *theid, char *afile, char *bfile,int dummy);
  
 /************************************************************
 This is a simple hello world program. Each processor prints out
@@ -39,30 +41,48 @@ od -vAn -d -N1048576 < /dev/urandom > segment
 
 ************************************************************/
 #ifdef DO_C_TEST
-int main(argc,argv)
-int argc;
-char *argv[];
+int main(int argc, char **argv,char *envp[])
 {
     int myid, numprocs;
     FILE *f1;
     int i;
     double the_time;
-    int id_sink,i_got;
+    int id_sink,i_got,resultlen;
+    char myname[MPI_MAX_PROCESSOR_NAME];
+    char src[128],dest[128];
  
     MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
- 
+    MPI_Get_processor_name( myname,&resultlen );
+    
+    if (myid == 0 ) {
+		if (argc > 1)
+			strcpy(src,argv[1]);
+		else
+			strcpy(src,"source");
+		if (argc > 2)
+			strcpy(dest,argv[2]);
+		else
+			strcpy(dest,"dest");
+    }
+    	
+    	
+    MPI_Bcast( src,128,MPI_CHAR,0,MPI_COMM_WORLD);
+    MPI_Bcast(dest,128,MPI_CHAR,0,MPI_COMM_WORLD);
 
-    printf("Hello from %d of %d\n",myid,numprocs);
-    sinkfile_(&the_time, &i_got, &id_sink,"segment",0);
+
+    printf("Hello from %d of %d on %s %s %s \n",myid,numprocs,myname,src,dest);
+    sinkfile_(&the_time, &i_got, &id_sink,src,dest,0);
+
+    
 	printf(" for proc %d time= %g for %d bytes\n",id_sink,the_time,i_got);
     MPI_Finalize();
    
 }
 #endif
 /****************************************/
-void sinkfile_(double *dt, int *gt, int *theid, char *afile,int dummy) {
+void sinkfile_(double *dt, int *gt, int *theid, char *afile, char *bfile,int dummy) {
 #include <mpi.h>
 #include <string.h>
 #include <unistd.h>
@@ -83,7 +103,7 @@ size_t buffer_size;
 int got;
 char fname[256];
 char bonk[16];
-FILE *file;
+FILE *infile,*outfile;
 
 mpi_root=0;
 buffer_size=1024*1024;
@@ -94,7 +114,7 @@ MPI_Comm_rank(MPI_COMM_WORLD,&myid);
 MPI_Get_processor_name( myname,&resultlen );
 *theid=myid;
 
-
+//printf("%d %s\n",myid,myname);
 if(myid == mpi_root) {
 	alist=(char*)malloc(numprocs*(MPI_MAX_PROCESSOR_NAME)*sizeof(char));
 	include=(int*)malloc(numprocs*sizeof(int));
@@ -168,7 +188,7 @@ if(myid == mpi_root) {
 	}
 /* if part of the new copy the file */
 	MPI_Comm_rank(SINK_COMM_WORLD,&used_id);
-	/* printf("included %d %d\n",myid,used_id); */
+	//printf("included %d %d\n",myid,used_id);
 
 	if( myid == mpi_root) {
 		if (used_id != mpi_root) {
@@ -187,44 +207,61 @@ if(myid == mpi_root) {
 		else {
 			strcpy(fname,afile);
 		}
-		MPI_Bcast(fname,256,MPI_CHAR,mpi_root,SINK_COMM_WORLD);
+		// printf("210 %d %d %s\n",myid,used_id,bfile);
+		MPI_Bcast(bfile,128,MPI_CHAR,mpi_root,SINK_COMM_WORLD);
+		// printf("210b %d %d\n",myid,used_id);
 /*     opens for read */
-		file=fopen(fname,"r");
+		infile=fopen(afile,"r");
+		printf("open for write %s from %d\n",bfile,myid);
+		outfile=fopen(bfile,"w");
 /*     reads upto buffer char */
-		got=fread(buffer,1,buffer_size,file);
+		got=fread(buffer,1,buffer_size,infile);
+		fwrite(buffer,1,got,outfile);
+		   
 		*gt=*gt+got;
 /*     bcast number read */
+		// printf("222 %d %d\n",myid,used_id);
 		MPI_Bcast(&got,1,MPI_INT,mpi_root,SINK_COMM_WORLD);
 		while(got > 0){
 /*     bcast buffer */
 			MPI_Bcast(buffer,got,MPI_CHAR,mpi_root,SINK_COMM_WORLD);
-			got=fread(buffer,1,buffer_size,file);
+			got=fread(buffer,1,buffer_size,infile);
+			fwrite(buffer,1,got,outfile);
 			*gt=*gt+got;
 			MPI_Bcast(&got,1,MPI_INT,mpi_root,SINK_COMM_WORLD);
+			
 		}
+		fclose(infile);
 	}
 	else {
 /* other  */
-		MPI_Bcast(fname,256,MPI_CHAR,mpi_root,SINK_COMM_WORLD);
+		// printf("237 %d %d %s\n",myid,used_id,bfile);
+		MPI_Bcast(bfile,128,MPI_CHAR,mpi_root,SINK_COMM_WORLD);
+		// printf("237b %d %d\n",myid,used_id);
+
 /* next two lines are for testing only in a shared file system */
 #ifdef DO_LOCAL_FILE_TEST
 		 sprintf(bonk,"%5.5d",used_id);
-		 strcat(fname,bonk); 
+		 strcat(bfile,bonk); 
 #endif
 /*     opens for write */
-		file=fopen(fname,"w");
+		printf("open for write %s from %d\n",bfile,myid);
+		outfile=fopen(bfile,"w");
 /*     get bcast number read */
+		// printf("248 %d %d\n",myid,used_id);
 		MPI_Bcast(&got,1,MPI_INT,mpi_root,SINK_COMM_WORLD);
 		while( got > 0 ){
 /*     get bcast buffer */
+		// printf("252 %d %d\n",myid,used_id);
 			MPI_Bcast(buffer,got,MPI_CHAR,mpi_root,SINK_COMM_WORLD);
 /*     writes buffer */
-			fwrite(buffer,1,got,file);
+			fwrite(buffer,1,got,outfile);
 			*gt=*gt+got;
+		// printf("257 %d %d\n",myid,used_id);
 			MPI_Bcast(&got,1,MPI_INT,mpi_root,SINK_COMM_WORLD);
 		}
 	}
-	fclose(file);
+	fclose(outfile);
 /* close the file clean up and return*/
 	free(buffer);
 	MPI_Barrier(MPI_COMM_WORLD);

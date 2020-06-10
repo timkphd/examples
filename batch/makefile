@@ -15,20 +15,20 @@ hellof: hellof.f
 	mpif90 -o hellof hellof.f
 
 hybrid:hybrid.f90
-	mpif90 -openmp hybrid.f90 -o hybrid	
+	mpif90 -fopenmp hybrid.f90 -o hybrid	
 
 info_c:
-	icc info.c -o info_c
+	cc info.c -o info_c
 
 info_f:info.f90
-	ifort info.f90 -o info_f
+	gfortran info.f90 -o info_f
 
 info_p:info.py
 	cp info.py info_p
 	chmod 700 info_p
 
 fillmem:pointer.f90
-	ifort -O3 -mkl -openmp pointer.f90 -o fillmem
+	ifort -O3 -mkl -fopenmp pointer.f90 -o fillmem
 
 clean:
 	rm -rf c_ex00 f_ex00 info_c info_f info_p fmpi.mod fillmem *o *mod
@@ -51,10 +51,12 @@ sinkf: sinkfile.o sinkf.f90
 	mpif90 sinkf.f90 sinkfile.o -o sinkf
 
 sinkfile.o: sinkfile.c
-	mpicc -DDO_LOCAL_FILE_TEST -c sinkfile.c
+	#mpicc -DDO_LOCAL_FILE_TEST -c sinkfile.c
+	mpicc -c sinkfile.c
 
 sinkfile:sinkfile.c
-	mpicc -DDO_LOCAL_FILE_TEST -DDO_C_TEST sinkfile.c -o sinkfile
+	#mpicc -DDO_LOCAL_FILE_TEST -DDO_C_TEST sinkfile.c -o sinkfile
+	mpicc                      -DDO_C_TEST sinkfile.c -o sinkfile
 
 segment:
 	od -vAn -d -N1048576 < /dev/urandom > segment

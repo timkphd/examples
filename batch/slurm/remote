@@ -1,14 +1,32 @@
-#!/bin/bash -x
+#!/bin/bash
 #SBATCH --job-name="hybrid"
-#SBATCH --nodes=4
+#SBATCH --nodes=2
 #SBATCH --ntasks-per-node=4
-#SBATCH --ntasks=16
 #SBATCH --exclusive
 #SBATCH --export=ALL
 #SBATCH --time=00:02:00
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=joeuser@mines.edu
+#SBATCH --partition=debug
+#SBATCH --account=hpcapps
 
+#Currently Loaded Modules:
+#
+if false ; then
+	module use /nopt/nrel/apps/modules/test/modulefiles/
+	module purge
+	module load comp-intel/2018.0.3
+	module load gcc/7.3.0
+	module load openmpi/4.0.x-65219eb-ucx/gcc-7.3.0
+	module load mkl/2018.3.222
+else
+	module use /nopt/nrel/apps/compilers/intel/2020.1.217/mods
+	module purge
+	module load compilervars 
+	module load mpivars
+	export IPPROOT=/nopt/nrel/apps/compilers/intel/2020.1.217/compilers_and_libraries_2020.1.217/linux/ipp
+	export I_MPI_ROOT=/nopt/nrel/apps/compilers/intel/2020.1.217/compilers_and_libraries_2020.1.217/linux/mpi
+	export I_MPI_PMI_LIBRARY=/nopt/slurm/current/lib/libpmi.so
+	export LD_LIBRARY_PATH=/nopt/nrel/apps/compilers/intel/2020.1.217/compilers_and_libraries_2020.1.217/linux/mpi/intel64/lib/release:$LD_LIBRARY_PATH
+fi
 # Go to the directoy from which our job was launched
 cd $SLURM_SUBMIT_DIR
 
@@ -19,29 +37,27 @@ JOBID=`echo $SLURM_JOBID`
 # in which our job will run
 # For production runs this should be in $SCRATCH
 MYBASE=$SLURM_SUBMIT_DIR
-#MYBASE=$SCRATCH/mc2_tests
 
-# We could create a directoy for our run based on the date/time
-export NEW_DIR=`date +%y%m%d%H%M%S`
-# But here we create a directoy for our run based on the $JOBID and go there
 mkdir -p $MYBASE/$JOBID
 cd $MYBASE/$JOBID
 odir=`pwd`
 export ODIR=`pwd`
-# Create a link back to our starting directory
-ln -s $SLURM_SUBMIT_DIR submit
+
 cp $SLURM_SUBMIT_DIR/data.tgz .
 tar -xzf data.tgz
 
 if [ -n "$JOBTMP" ] ; then
   echo using $JOBTMP from environment
 else
-  export JOBTMP=~/scratch/local_sim
+  export JOBTMP=/tmp/scratch
 fi
 
+sleep 10
 
 #get a list of nodes...
-export nlist=`/opt/utility/expands`
+export nlist=`scontrol show hostnames $SLURM_JOB_NODELIST`
+
+export NEW_DIR=$JOBID
 # For each node...
 for i in $nlist
 do 
@@ -53,23 +69,26 @@ do
 done
 
 # save a copy of our nodes
-/opt/utility/expands > nlist.$JOBID
-/opt/utility/expands > flist.$JOBID
-
-#save a copy of this sciprt
-cat $0 > runscript.$JOBID
-
-#save our environment
-printenv >> env.$JOBID
-ls -lt >> env.$JOBID
-
-#Go to our working directory
-cd $JOBTMP/$NEW_DIR
+scontrol show hostnames $SLURM_JOB_NODELIST | sort -u > flist.$JOBID
 
 
 export APP=$SLURM_SUBMIT_DIR/sinkfile
-match $ODIR/flist.$JOBID -p"$APP" > appfile
-mpiexec -app appfile  >& screen.$JOBID
+
+#mpiexec -np 8 $APP $JOBTMP/$NEW_DIR/segment $JOBTMP/$NEW_DIR/acopy >& screen.$JOBID
+
+../match $ODIR/flist.$JOBID -p"$APP" 4 > appfile
+#### sed only expands if you use " ####
+sed "s,$,  $JOBTMP/$NEW_DIR/segment $JOBTMP/$NEW_DIR/acopy ," appfile > appfile2
+
+# for Openmpi and appfile
+#mpiexec -app appfile2  >& screen.$JOBID
+
+# for IntelMPI and appfile
+mpiexec --configfile  appfile2  >& screen.$JOBID
+
+#srun -n 8 $APP $JOBTMP/$NEW_DIR/segment $JOBTMP/$NEW_DIR/acopy >& screen.$JOBID
+
+
 
 #for each node...
 for i in $nlist
@@ -77,7 +96,7 @@ do
 # Copy files from our local space on each node back to
 # my working directory creating a subdirectory for each node.
   mkdir -p $ODIR/$i
-  scp -r $USER@$i:$JOBTMP/$NEW_DIR/* $USER@aun.mines.edu:$ODIR/$i
+  scp -r $USER@$i:$JOBTMP/$NEW_DIR/* $USER@eagle:$ODIR/$i
 ##### or #####
 # ssh -r $USER@$i cp -r $JOBTMP/$NEW_DIR/* $SLURM_SUBMIT_DIR/$i 
 
