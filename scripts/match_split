@@ -81,7 +81,7 @@ for d in dat:
     d=d.split()
     if len(d) > 4 :
         list1=list1+d[1]+"\n"
-        list2b=("%4d: %s:%d" %(k,d[4],int(d[3])))
+        list2b=("%4d %s %d" %(k,d[4],int(d[3])))
         if len(d) > 5:
                 for n in d[5:]:
                     list2b=list2b+" "+n
