@@ -232,16 +232,6 @@ ls -ld d0o750 d0o755 d0o770
 ls -lR d0o750 d0o755 d0o770
 """)
           
-
-
-
-
-# In[ ]:
-
-
-if __name__ == '__main__' or doit == True:
-    testit()
-
 shell="""
 masks=(000 017 007 027 077 022)
 names=(0o777 0o760 0o770 0o750 0o700 0o755)
@@ -253,7 +243,7 @@ chown :naermpcm d0o750
 chown :naermpcm d0o755
 setfacl -d -mg::rx d0o750
 
-echo 'main () {int printf(const char *f, ...) ; printf("hi\n");}' > hi.c
+echo 'main () {int printf(const char *f, ...) ; printf("hi\\n");}' > hi.c
 cd d0o750
 touch afile
 gcc ../hi.c 
@@ -271,4 +261,14 @@ ls -ld d0o750 d0o755 d0o770
 ls -lR d0o750 d0o755 d0o770
 
 """
+
+
+
+
+# In[ ]:
+
+
+if __name__ == '__main__' or doit == True:
+    testit()
+
 
