@@ -4,9 +4,16 @@ from pandas import Series, DataFrame
 import perfplot 
 import os
 import sys
+# here we need to point to the directory that contains tymer
 sys.path.append("/Users/tkaiser2/bin")
 sys.path.append("/home/tkaiser2/bin")
-from tymer import tymer
+try :
+    from tymer import tymer
+except:
+    print("Can't import tymer.  You need to change the line: ")
+    print('sys.path.append("/home/tkaiser2/bin")'
+    print("to point to the directory containing tymer.py")
+
 from math import log10,acos,sqrt,sin,cos
 
 #see https://engineering.upside.com/a-beginners-guide-to-optimizing-pandas-code-for-speed-c09ef2c6a4d6
