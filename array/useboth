@@ -25,6 +25,7 @@
 
 module purge
 module load   gcc/7.3.0   comp-intel/2018.0.3 intel-mpi/2018.0.3 mkl/2018.3.222
+source /home/tkaiser2/bin/doconda
 
 #export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_THREADS=1

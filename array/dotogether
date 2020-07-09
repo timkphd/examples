@@ -10,14 +10,14 @@ export ACC=--account=hpcapps
 ##run assuming each line of "in_list" contains our input
 export LIST=in_list
 export USEDIRS=no
-sbatch $ACC --array=1-24  useboth
-sbatch $ACC --array=25-48  useboth
+sbatch $ACC --array=1-24  --qos=high useboth
+sbatch $ACC --array=25-48 --qos=high useboth
 
 #run assuming data in in directories specified in "dir_list"
 export LIST=dir_list
 export USEDIRS=yes
-sbatch $ACC --array=1-24  useboth
-sbatch $ACC --array=25-48  useboth
+sbatch $ACC --array=1-24 --qos=high  useboth
+sbatch $ACC --array=25-48 --qos=high  useboth
 
 unset LIST
 unset USEDIRS
