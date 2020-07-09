@@ -174,7 +174,7 @@ doit=False
 #testit sets up files and directories with various permissions
 #'rwxrwxrwx','rwxrw----','rwxrwx---','rwxr-x---','rwxrwx---','rwx------','rwxr-xr-x'
 def testit():
-    sets=['rwxrwxrwx','rwxrw----','rwxrwx---','rwxr-x---','rwxrwx---','rwx------','rwxr-xr-x']
+    sets=['rwxrwxrwx','rwxrw----','rwxrwx---','rwxr-x---','rwx------','rwxr-xr-x']
     force_dir=False
     force_file=False
     for s in sets:
@@ -242,4 +242,33 @@ ls -lR d0o750 d0o755 d0o770
 if __name__ == '__main__' or doit == True:
     testit()
 
+shell="""
+masks=(000 017 007 027 077 022)
+names=(0o777 0o760 0o770 0o750 0o700 0o755)
+rm -rf d* f*
+for i in ${!masks[@]}; do umask ${masks[i]}; mkdir d${names[i]}; touch f${names[i]}; done
+chmod g+s d0o755
+chmod g+s d0o750
+chown :naermpcm d0o750
+chown :naermpcm d0o755
+setfacl -d -mg::rx d0o750
+
+echo 'main () {int printf(const char *f, ...) ; printf("hi\n");}' > hi.c
+cd d0o750
+touch afile
+gcc ../hi.c 
+cd ..
+cd d0o755
+touch afile
+gcc ../hi.c 
+cd ..
+cd d0o770
+touch afile
+gcc ../hi.c 
+cd ..
+ls -ld d*
+ls -ld d0o750 d0o755 d0o770
+ls -lR d0o750 d0o755 d0o770
+
+"""
 
