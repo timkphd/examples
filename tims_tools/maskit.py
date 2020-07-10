@@ -135,6 +135,7 @@ def setfacl(file, perms="rx",who="g"):
     if stderr.find("command not found") > -1:
         # mac os handels acls differently, actually more versatile 
         print("setfacl not supported on this platform. Try chmod +a")
+        print('chmod -R +a "group:staff allow file_inherit,directory_inherit"  d0o750')
         print("see https://gist.github.com/nelstrom/4988643#file-access-control-lists-on-osx-md")
     if len(stdout) > 0:
        print(stdout)
@@ -237,7 +238,9 @@ masks=(000 017 007 027 077 022)
 names=(0o777 0o760 0o770 0o750 0o700 0o755)
 rm -rf d* f*
 for i in ${!masks[@]}; do umask ${masks[i]}; mkdir d${names[i]}; touch f${names[i]}; done
+#new files and subdirectories created within d0o755, inherit the group ID of the directory
 chmod g+s d0o755
+#new files and subdirectories created within d0o750, inherit the group ID of the directory
 chmod g+s d0o750
 chown :naermpcm d0o750
 chown :naermpcm d0o755
