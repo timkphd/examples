@@ -1,6 +1,6 @@
 #!/bin/bash -v
 if [ -z $1 ]; then 
-  GROUP=naermpcm
+  GROUP=naris
 else 
   GROUP=$1
 fi
@@ -28,6 +28,7 @@ start=`pwd`
 # create a source to compile
 echo 'void main(){int printf(const char *f, ...);printf("hi\n");}' > hi.c
 cat hi.c
+chmod 644 hi.c
 
 # make 4 directories
 for s in a b c d ; do
