@@ -1,5 +1,9 @@
 #!/usr/bin/bash -v
-GROUP=naermpcm
+if [ -z $1 ]; then 
+  GROUP=naermpcm
+else 
+  GROUP=$1
+fi
 
 # print our current mask set in .bashrc
 # we have is set as umask 027
@@ -15,7 +19,7 @@ start=`pwd`
 
 
 # create a source to compile
-echo 'main () {int printf(const char *f, ...) ; printf("hi\n");}' > hi.c
+echo 'void main(){int printf(const char *f, ...);printf("hi\n");}' > hi.c
 cat hi.c
 
 # make 4 directories
