@@ -1,12 +1,18 @@
-#!/usr/bin/bash -v
+#!/bin/bash -v
 if [ -z $1 ]; then 
   GROUP=naermpcm
 else 
   GROUP=$1
 fi
 
-# print our current mask set in .bashrc
-# we have is set as umask 027
+# print or set our current umask set in .bashrc
+# we have is set as umask 027  The default is 007.
+if [ -z $2 ]; then 
+  umask 027
+else 
+  umask $2
+fi
+
 umask
 
 
