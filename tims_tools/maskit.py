@@ -215,7 +215,7 @@ setfacl('d0o750')
 dodir()\n""")
     print("""Now create files including executables in the directories and see the diffferences.
 For example, external to python:\n
-echo 'main () {int printf(const char *f, ...) ; printf("hi\\n");}' > hi.c
+echo 'void main(){int printf(const char *f, ...);printf("hi\\n");}' > hi.c
 cd d0o750
 touch afile
 gcc ../hi.c 
