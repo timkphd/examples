@@ -19,6 +19,7 @@ umask
 # make a new directory to play in
 rm -rf new
 mkdir new
+chown :${GROUP} new
 ls -ld new
 cd new
 start=`pwd`
