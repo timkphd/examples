@@ -17,8 +17,9 @@ module purge
 ml comp-intel/2018.0.3 intel-mpi/2018.0.3           
 umask 027
 
-cp ~/examples/hybrid/phostone.c .
-mpiicc -fopenmp phostone.c -o phostone
+#get hello world and compile it with mpicc 
+wget -q https://raw.githubusercontent.com/timkphd/examples/master/hybrid/phostone.c 
+mpicc -fopenmp phostone.c -o phostone
 
 export OMP_NUM_THREADS=4
 srun -n 4 ./phostone - t 10 -F  > output
