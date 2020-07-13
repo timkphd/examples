@@ -15,7 +15,7 @@ cd $SLURM_JOB_ID/ajob
 
 module purge
 ml comp-intel/2018.0.3 intel-mpi/2018.0.3           
-export umask 027
+umask 027
 
 cp ~/examples/hybrid/phostone.c .
 mpiicc -fopenmp phostone.c -o phostone
