@@ -1,28 +1,52 @@
 #!/bin/bash 
 #SBATCH --job-name="hybrid"
 #SBATCH --nodes=1
+#SBATCH --cpus-per-task=4
 #SBATCH --export=ALL
 #SBATCH --time=00:10:00
 #SBATCH --account=hpcapps
-#SBATCH --partition=debug
+#SBATCH --reservation=r9_image_deploy
+#SBATCH -o /scratch/tkaiser2/slurmout/stdout.%j
+#SBATCH -e /scratch/tkaiser2/slurmout/stderr.%j
 
 
 #set up our environment
 umask 027
+
+#set up our environment
 module purge
-ml comp-intel/2018.0.3 intel-mpi/2018.0.3           
+export I_MPI_DEBUG=5
+export KMP_AFFINITY=verbose,scatter
+#export KMP_AFFINITY=verbose,compact
+#export KMP_AFFINITY=verbose,balanced
+if false ; then
+  ml comp-intel/2018.0.3 intel-mpi/2018.0.3           
+else
+  module use /nopt/nrel/apps/compilers/intel/2020.1.217/mods
+  module load compilervars_sh
+  module load mpivars_sh
+  module load gcc/8.2.0
+  export I_MPI_PMI_LIBRARY=/nopt/slurm/current/lib/libpmi.so
+#export IPPROOT=/nopt/nrel/apps/compilers/intel/2020.1.217/compilers_and_libraries_2020.1.217/linux/ipp
+#export I_MPI_ROOT=/nopt/nrel/apps/compilers/intel/2020.1.217/compilers_and_libraries_2020.1.217/linux/mpi
+#export LD_LIBRARY_PATH=/nopt/nrel/apps/compilers/intel/2020.1.217/compilers_and_libraries_2020.1.217/linux/mpi/intel64/lib/release:$LD_LIBRARY_PATH
+
+fi
 
 #make a dir and go there, copy our script
 mkdir -p $SLURM_JOB_ID/ajob
 cat $0 > $SLURM_JOB_ID/script
 cd $SLURM_JOB_ID/ajob
 
+lsb_release -a > version
 
 #get hello world and compile it with mpicc 
 wget -q https://raw.githubusercontent.com/timkphd/examples/master/hybrid/phostone.c 
-mpicc -fopenmp phostone.c -o phostone
+which mpiicc
+mpiicc -fopenmp phostone.c -o phostone
 
-#run hello world for 10 seconds 4 threads, 4 mpi tasks
+#run hello world for 20 seconds 4 threads, 9 mpi tasks
 export OMP_NUM_THREADS=4
-srun -n 4 ./phostone -t 10 -F  > output
-
+srun -n 9 ./phostone -t 20 -F  > output.srun
+mpirun -n 9 ./phostone -t 20 -F  > output.mpirun
+cp /scratch/tkaiser2/slurmout/*$SLURM_JOB_ID .
