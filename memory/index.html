@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <style type="text/css">	
+    p { width: 6in; text-align: justify; margin: .25in; }
+    p.pin0  {margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin1  {margin-left: 2.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin2  {margin-left: 4.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin3  {margin-left: 6.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin4  {margin-left: 8.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin5  {margin-left: 10.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin6  {margin-left: 12.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin7  {margin-left: 14.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin8  {margin-left: 16.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin9  {margin-left: 18.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    p.pin10 {margin-left: 20.0em; margin-bottom: 0.0em; margin-top: 0.25em;}
+    h.hin0  {margin-left: 0.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h3.hin1  {margin-left: 0.0em; margin-bottom: 0.0em; margin-top: 1.5em;}
+    h.hin2  {margin-left: 4.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin3  {margin-left: 6.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin4  {margin-left: 8.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin5  {margin-left: 10.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin6  {margin-left: 12.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin7  {margin-left: 14.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin8  {margin-left: 16.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h.hin9  {margin-left: 18.0em; margin-bottom: 0.25em; margin-top: 0.5em;}
+    h3.hin10 {margin-left: 2.0em; margin-bottom: 0.25em; margin-top: 0.0em; font-style:italic;}
+   </style>
+   <title>Memory Tracking</title>
+</head>
+<body>
+
+<h3 class="hin0">.</h3>
+<p class="pin1"><a href="./stuff.tgz">stuff.tgz</a>  36956 </p> 
+<h3 class="hin10">(contains all of the files)</h3>
+<h3 class="hin1">./bgq</h3><h3 class="hin10">Blue Gene (Mc2) only</h3>
+<p class="pin2"><a href="./bgq/domem.f90">domem.f90</a>  2685</p>
+<p class="pin2"><a href="./bgq/makefile">makefile</a>  624</p>
+<p class="pin2"><a href="./bgq/runit">runit</a>  1312</p>
+<p class="pin2"><a href="./bgq/track.c">track.c</a>  1172</p>
+<h3 class="hin1">./linux</h3> 
+<h3 class="hin10">Works on all platforms but output is obscure.</h3>
+<p class="pin2"><a href="./linux/makefile">makefile</a>  279</p>
+<p class="pin2"><a href="./linux/mallinfo.c">mallinfo.c</a>  2081</p>
+<p class="pin2"><a href="./linux/minfo.c">minfo.c</a>  2448</p>
+<p class="pin2"><a href="./linux/runit">runit</a>  574</p>
+<h3 class="hin1">./malloc_count-0.7.1 </h3> 
+<h3 class="hin10">Replaces malloc with tracking version. Does not work on Mc2.</h3>
+<p class="pin2"><a href="./malloc_count-0.7.1/malloc_count.c">malloc_count.c</a>  11069</p>
+<p class="pin2"><a href="./malloc_count-0.7.1/malloc_count.h">malloc_count.h</a>  2676</p>
+<p class="pin2"><a href="./malloc_count-0.7.1/memprofile.h">memprofile.h</a>  5539</p>
+<p class="pin2"><a href="./malloc_count-0.7.1/README.md">README.md</a>  5741</p>
+<p class="pin2"><a href="./malloc_count-0.7.1/stack_count.c">stack_count.c</a>  2928</p>
+<p class="pin2"><a href="./malloc_count-0.7.1/stack_count.h">stack_count.h</a>  1982</p>
+<h3 class="hin2">./malloc_count-0.7.1/test-malloc_count</h3>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-malloc_count/ftest.f90">ftest.f90</a>  1698</p>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-malloc_count/index.html">index.html</a>  646</p>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-malloc_count/makefile">makefile</a>  571</p>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-malloc_count/runit">runit</a>  556</p>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-malloc_count/test.c">spam.c</a>  2573</p>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-malloc_count/test.c">setup.py</a>  2573</p>
+<h3 class="hin2">./malloc_count-0.7.1/test-memprofile</h3>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-memprofile/index.html">index.html</a>  684</p>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-memprofile/Makefile">Makefile</a>  372</p>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-memprofile/memprofile.gnuplot">memprofile.gnuplot</a>  320</p>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-memprofile/memprofile.pdf">memprofile.pdf</a>  20774</p>
+<p class="pin3"><a href="./malloc_count-0.7.1/test-memprofile/test.cc">test.cc</a>  1374</p>
+
+</body>
+</html>
+

@@ -1,0 +1,53 @@
+#!/bin/bash
+#SBATCH --job-name="memory"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks=1
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:15:00
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# We use multiple threads to fill up memory
+export OMP_NUM_THREADS=16
+
+ulimit -c unlimited
+
+
+# Time our run, just for fun (blxlf is much faster)
+# Timestamps will be accumulated in time.$SLURM_JOBID
+# Do a /opt/utility/tymer -h to see how this works.
+/opt/utility/tymer time.$SLURM_JOBID
+
+# Run using the IBM compiler.
+srun -n 1 ./trackit > trackit.$SLURM_JOBID
+
+/opt/utility/tymer time.$SLURM_JOBID
+
+# Run using gfortran.
+srun -n 1 ./track_g >> trackit.$SLURM_JOBID
+
+/opt/utility/tymer time.$SLURM_JOBID
+
+# Run using gfortran.
+# This next run will crash & produce a core file.
+# See the note in the source file about this.
+srun -n 1 ./track_g crash  >> trackit.$SLURM_JOBID
+
+/opt/utility/tymer time.$SLURM_JOBID
+
+# Ok, we have a core file.  The utilities 
+# bgcore_backtrace and bgq_stack parse the
+# core file.  For this simple one their 
+# outputs are similar.
+if [ -f core.0 ] ;
+then
+module load PrgEnv/Debug/stacktools
+bgcore_backtrace track_g core.0 > track_g.backtrace
+bgq_stack track_g core.0        > track_g.stack
+else
+   echo "no corefile to process"
+fi
+
