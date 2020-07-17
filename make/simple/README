@@ -1,0 +1,29 @@
+There are three makefiles in this directory
+makef, makec, and makefile.
+
+makef - builds a Fortran program
+makec - builds a C program
+makefile - build both programs
+
+The syntax to use a nonstandard file for make is
+to list the file on the command line as shown
+below
+
+make -f makef
+ or
+make -f makec
+
+
+The file st.in is input for the two programs.
+
+The command
+  make clean 
+will remove all of the compiled codes.
+
+The Fortran builds use the Portland Group compiler.  
+You can edit the files to change this or use the
+options on the command line to do so.  For example:
+
+make -f makef -e F90=ifort
+  or
+make -e F90=ifort

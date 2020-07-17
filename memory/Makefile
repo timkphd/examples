@@ -40,4 +40,5 @@ printvars:
 #https://lackof.org/taggart/hacking/make-example/
 #http://mrbook.org/blog/tutorials/make/
 #https://www.gnu.org/software/make/manual/make.html
-#https://www.cmcrossroads.com/article/dumping-every-makefile-variable - 
+#https://www.cmcrossroads.com/article/dumping-every-makefile-variable 
+
