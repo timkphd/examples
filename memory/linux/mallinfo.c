@@ -3,6 +3,7 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 // #include "tlpi_hdr.h"
 
 static void

@@ -4,11 +4,13 @@
 both:minfo mallinfo
 
 minfo:minfo.c
-	 gcc minfo.c -o minfo -lpthread
+	$(CC) -Wno-int-to-pointer-cast minfo.c -o minfo -lpthread
 
 mallinfo:mallinfo.c
-	gcc mallinfo.c -o mallinfo
+	$(CC) -Wno-int-to-pointer-cast mallinfo.c -o mallinfo
 
+
+.PHONY: clean
 
 clean:
 	rm -rf minfo mallinfo *[0-9]*

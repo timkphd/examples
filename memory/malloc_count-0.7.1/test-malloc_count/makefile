@@ -1,11 +1,6 @@
 # Simplistic Makefile for malloc_count example
 
-CC = gcc
-FC = gfortran
-CC=icc
-FC=ifort
 CFLAGS = -g  -I..
-#LDFLAGS = -Wl,--allow-multiple-definition
 LIBS = -ldl
 OBJS = test.o ../malloc_count.o ../stack_count.o
 FOBJS = ftest.o ../malloc_count.o ../stack_count.o

@@ -1,0 +1,16 @@
+# Use Intel compilers if found.  The idea came from:
+# https://stackoverflow.com/questions/5618615/check-if-a-program-exists-from-a-makefile
+INTEL := $(shell command -v icc 2> /dev/null)
+ifdef INTEL
+   CC=icc
+   CXX=icpc
+   FC=ifort
+   F90=ifort
+else
+   CC=gcc
+   CXX=g++
+   FC=gfortran
+   F90=gfortran
+endif
+
+
