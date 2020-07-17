@@ -19,5 +19,7 @@ all: test
 test: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
+.PHONY: clean
+
 clean:
 	rm -f *.o test
