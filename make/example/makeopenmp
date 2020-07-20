@@ -1,0 +1,13 @@
+CFLAGS = -fopenmp
+LDFLAGS= -fopenmp
+OBJECTS = data.o main.o io.o
+
+project1: $(OBJECTS)
+	$(CC) $(OBJECTS) $(LDFLAGS) -o project1
+
+data.o main.o: data.h
+
+io.o main.o: io.h
+
+clean:
+	rm -rf project1 $(OBJECTS)

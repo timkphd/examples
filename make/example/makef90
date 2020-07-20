@@ -1,0 +1,26 @@
+default: invert
+FC= gfortran $(FFLAGS)
+
+# We tell make that we are compiling *.f90 files.
+.SUFFIXES: .f90 .mod
+
+# This is the default way we build .o file from .f90 files.
+.f90.o:
+	$(FC)  -c $<
+
+# This is how we build .mod file from .f90 files.
+.f90.mod:
+	$(FC)  -c $<
+
+
+invert.o: ccm_numz.mod invert.f90
+
+ccm_numz.mod: ccm_numz.f90
+
+invert:invert.o
+	$(FC) -o invert invert.o ccm_numz.o
+
+.PHONY: clean
+
+clean:
+	rm -rf invert invert.o ccm_numz.o ccm_numz.mod
