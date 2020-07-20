@@ -107,6 +107,7 @@ int main(int argc, char **argv,char *envp[])
     sprintf(version,"%s","Pure OpenMP version");
     numprocs=1;
     myid=0;
+    newid=0;
     gethostname(myname, 128);
     slow=0;
     wait=0;
