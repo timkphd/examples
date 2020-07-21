@@ -96,12 +96,9 @@ PyInit_spam(void)
     return PyModule_Create(&spammodule);
 }
 
-/*
-python setup.py build
-cp build/lib.linux-x86_64-3.8/spam.cpython-38-x86_64-linux-gnu.so .
-
-LD_PRELOAD=spam.cpython-38-x86_64-linux-gnu.so python
-
+#ifdef JUNK
+#PYTHON_START
+# LD_PRELOAD=spam.cpython-38-x86_64-linux-gnu.so python
 import spam
 
 def loop2(base,n):
@@ -120,4 +117,6 @@ def loop2(base,n):
 
 base=spam.stack_count_clear()
 loop2(base,0)
-*/
+#PYTHON_END
+#endif
+

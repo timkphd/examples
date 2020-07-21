@@ -1,0 +1,23 @@
+# A relatively simple makefile for a C program. The C files have a 
+# dependency on headers.h
+#
+stc_00: utility.o calculate.o output.o stc_00.o
+	$(CC) $(OPT) utility.o calculate.o output.o stc_00.o -lm -o stc_00
+
+CC=gcc
+OPT=-O3 -g
+
+utility.o: utility.c headers.h
+	$(CC) $(OPT) -c utility.c
+
+calculate.o: calculate.c headers.h
+	$(CC) $(OPT) -c calculate.c
+
+output.o: output.c headers.h
+	$(CC) $(OPT) -c output.c
+
+# For the stc_00.o file we rely on the default build procedure for c files
+# You will note that this gives your different compile line options.
+stc_00.o: stc_00.c headers.h
+clean:
+	rm -rf utility.o  calculate.o  output.o  stc_00.o stc_00 

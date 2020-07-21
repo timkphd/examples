@@ -1,0 +1,14 @@
+default: C FORT
+
+.PHONY: makec
+C: makec
+	make -f makec
+
+.PHONY: makef
+FORT: makef 
+	make -f makef
+
+.PHONY: clean
+clean:
+	make -f makec clean
+	make -f makef clean

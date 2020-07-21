@@ -1,7 +1,10 @@
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <pthread.h>
+#ifndef __APPLE__
 #include <malloc.h>
+#endif
 #include <errno.h>
 
 static size_t blockSize;

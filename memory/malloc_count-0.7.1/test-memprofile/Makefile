@@ -1,7 +1,5 @@
 # Simplistic Makefile for malloc_count example
 
-CC = gcc
-CXX = g++
 CFLAGS = -g -W -Wall -ansi -I..
 CXXFLAGS = -g -W -Wall -ansi -I..
 LDFLAGS =
@@ -18,6 +16,8 @@ all: test
 
 test: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+.PHONY: clean
 
 clean:
 	rm -f *.o test

@@ -1,0 +1,28 @@
+# A relatively simple makefile for a Fortran program 
+# The Fortran files have a dependency on the mods.o 
+# file.
+
+stf_00: utilityf.o calculatef.o outputf.o stf_00.o mods.o
+	$(F90) $(OPT) utilityf.o calculatef.o outputf.o stf_00.o mods.o -o stf_00
+
+F90=ifort
+OPT=-O3 -g
+
+mods.o: mods.f90
+	$(F90) $(OPT) -c mods.f90
+
+utilityf.o: utilityf.f90 mods.o
+	$(F90) $(OPT) -c utilityf.f90
+
+calculatef.o: calculatef.f90 mods.o
+	$(F90) $(OPT) -c calculatef.f90
+
+outputf.o: outputf.f90 mods.o
+	$(F90) $(OPT) -c outputf.f90
+
+stf_00.o: stf_00.f90 mods.o
+	$(F90) $(OPT) -c stf_00.f90
+
+
+clean:
+	rm -rf utilityf.o calculatef.o outputf.o stf_00.o mods.o stf_00 *.mod

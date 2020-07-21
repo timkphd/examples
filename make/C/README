@@ -1,0 +1,55 @@
+Time-stamp: <2002-03-23 16:29:18 piet>
+
+READ ME
+
+The Code `nbody_sh1.C' is a simple stand-alone version of an N-body
+system with shared but variable time steps, based on the fourth-order
+Hermite integration scheme.  A code similar to this one will appear in
+our book `Writing an N-Body Code', which will be the first volume in a
+series titled `Pure Gravity, or Particles at Play.'
+
+The file `nbody_sh1.C' contains a C++ program, and can be compiled
+directly as is, without any need to link to anything else.  For example,
+on a Linux system you can use the GNU g++ compiler, and simply type:
+"g++ -o nbody_sh1 nbody_sh1.C" to produce the executable "nbody_sh1".
+The 325 lines of code are pretty standard, so we don't expect any
+serious problems to occur in other environments, but we have only
+tested the code for the GNU compiler.
+
+The postscript file `nbody_sh1.ps' contains an early draft of a
+discussion of the code, to be included (eventually) in our book.
+Note that both code and discussion are beta versions, so we would
+appreciate it if you would notify us of any remaining bugs.
+
+To run the code, you have to specify initial conditions.  Here is
+a nice example for a three-body system where the stars will run
+around each other in a figure-8 configuration (for background, see 
+http://www.ams.org/new-in-math/cover/orbits1.html):
+
+  3
+  0
+  1   0.9700436  -0.24308753   0   0.466203685   0.43236573   0
+  1  -0.9700436   0.24308753  -0   0.466203685   0.43236573   0
+  1   0           0            0  -0.932407370  -0.86473146  -0
+
+If you enter these five lines of numbers in a file "figure8.in", you
+can run the nbody code by typing: "nbody_sh1 < figure8.in" .  Snapshots
+will appear by default on the standard output stream once every time unit,
+while energy conservation diagnostics will appear on the standard error
+stream.  You can use your favorite plotting package to view the orbits,
+with a more frequent snapshot output.  To accumulate the orbit data,
+you can try "nbody_sh1 -o 0.01 < figure8.in > figure8.out" and plot the
+data in the second and third column of the file "figure8.out" .  A quick
+way to get those data directly into a file "figure8.plot", say, would be:
+"nbody_sh1 -o 0.01 < figure8.in | awk '{print $2 " " $3}' > figure8.plot" .
+
+If you're feeling adventurous, you can start experimenting further.
+However, if you prefer to have more guidance as to generating initial
+conditions, plotting, and analyzing the data, please wait a few more
+months until the first volume of our book series will be finished.
+
+Happy orbiting!
+
+Piet Hut and Jun Makino,
+
+March 2002.
