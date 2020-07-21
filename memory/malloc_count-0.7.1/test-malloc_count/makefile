@@ -2,8 +2,8 @@
 
 CC = gcc
 FC = gfortran
-CC=icc
-FC=ifort
+#CC=icc
+#FC=ifort
 CFLAGS = -g  -I..
 #LDFLAGS = -Wl,--allow-multiple-definition
 LIBS = -ldl
