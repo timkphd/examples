@@ -33,16 +33,16 @@ clean:
 	rm -rf nbody $(OBJS) lib* nbody.shar nbody.stat
 	
 STATCLIB: $(LIB)
-	ar cr libnb.a $(LIB)
+	$(AR) cr libnb.a $(LIB)
 
 nbody.stat:STATCLIB main.o
 	$(CC) main.o -L. -lnb -o nbody.stat
 
 SHARLIB: $(LIB)
 	mkdir ./lib
-	$(CC) -shared -o ./lib/libnb.so $(LIB)
+	$(CC) -shared -o ./lib/libnbs.so $(LIB)
 
 nbody.shar:SHARLIB main.o
-	$(CC) main.o -L./lib -lnb -o nbody.shar
+	$(CC) main.o -L./lib -lnbs -o nbody.shar
 	
 all: nbody nbody.shar nbody.stat
