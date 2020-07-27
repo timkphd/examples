@@ -1,4 +1,4 @@
-#!/opt//python/gcc/3.4.3/bin/python3
+#!/usr/bin/env python3
 """
 Show how to make date plots in matplotlib using date tick locators and
 formatters.  See major_minor_demo1.py for more information on
@@ -28,7 +28,7 @@ cumu=[]
 when=[]
 x=[]
 
-f=open("2017.bike","r")
+f=open("2016.bike","r")
 lines=f.readlines()
 for l in lines:
 	l=l.split("\t")
@@ -64,7 +64,7 @@ for tl in ax.get_yticklabels():
 ax2.set_ylabel('Cumulative', color='r')
 ax.set_ylabel('Daily', color='b')
 ax.set_xlabel('Date')
-ax.set_title('2017 Cycling History')
+ax.set_title('2016 Cycling History')
 
 
 
