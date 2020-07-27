@@ -27,7 +27,7 @@ nodes=[]
 cumu=[]
 when=[]
 x=[]
-
+####
 f=open("2016.bike","r")
 lines=f.readlines()
 for l in lines:

@@ -1,5 +1,5 @@
 #!/bin/bash 
-# remove extended attributes from Mac Files
+# remove extended attributes from macOS Files 
 for var in "$@" ; do 
   for x in `xattr $var` ; do 
     echo $x 
