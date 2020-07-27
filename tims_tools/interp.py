@@ -44,8 +44,14 @@ methods = [None, 'none', 'nearest', 'bilinear', 'bicubic', 'spline16',
            'catrom', 'gaussian', 'bessel', 'mitchell', 'sinc', 'lanczos']
 #methods = [None, 'nearest', 'bilinear']
 methods = ['nearest', 'bilinear']
-methods = [ 'bilinear']
-methods = [ 'none']
+try:
+	method=os.environ['METHOD']
+	print(method)
+	methods=[method]
+except:
+	methods = [ 'bilinear']
+#methods=['kaiser']
+#methods = [ 'none']
 fname=0
 try:
 	sigmoid=os.environ['SIGMOID']
@@ -58,9 +64,8 @@ except:
 for f in sys.argv[1:] :
 	fname=fname+1
 	print fname
-	grid = np.random.rand(65,65)
-	d1=250
-	d2=473
+	d1=64
+	d2=64
 #	grid = np.random.rand(d2,d1)
 	grid = np.random.rand(d1,d2)
 	input=f
@@ -79,6 +84,7 @@ for f in sys.argv[1:] :
 # 		k=k+1
 	for d in data[1:] :
 		l=l+1
+		#print(d)
 		d=d.split()
 		for v in d:
 #			grid[j][k]=float(v)
@@ -113,6 +119,7 @@ for f in sys.argv[1:] :
 		print(t,ymin,ymax)
 		
 	#fig, axes = plt.subplots(3, 6, figsize=(12, 6), subplot_kw={'xticks': [], 'yticks': []})
+	#print(grid,len(grid),grid[0,:],grid[:,0])
 	try:
 		cm=os.environ['CMAP']
 	except:
