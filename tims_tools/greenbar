@@ -4,7 +4,7 @@ import os
 header="""
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head>    
 	<meta charset="utf-8" />
 	<title>Untitled</title>
 
@@ -151,7 +151,7 @@ if len(sys.argv) > 1:
 	data=f.read()
 print(header)
 if len(sys.argv) == 1 :
-	print('<h4>export HEADER="title to set title"</h4>')
+	sys.stderr.write('export HEADER="title to set title"')
 if len(sys.argv) > 2:
 	color=sys.argv[2]
 if(color=="green"):
