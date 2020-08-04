@@ -1,0 +1,33 @@
+#!/bin/bash
+action="stop"
+# use $1 if available
+if [ $#  -gt 0 ] ; then
+	if test $1 = "start" ;then 
+		action="start"
+	else 
+		echo "stopvpn " > /dev/null
+	fi
+else
+# else base action on name of the script
+	echo $0 | grep start > /dev/null
+	if [ $? -eq 0 ] ;then 
+		action="start"
+	else 
+		echo "stopvpn " > /dev/null
+	fi
+fi
+
+if [ $action = "start" ] ; then
+	echo "starting vpn"
+	systemctl start vncserver-x11-serviced.service
+	systemctl start vncserver-virtuald.service
+else
+	echo "stopping vpn"
+	systemctl stop vncserver-x11-serviced.service
+	systemctl stop vncserver-virtuald.service
+fi
+
+#Mark or unmark the service to be started at boot time with:
+#  systemctl (enable|disable) vncserver-x11-serviced.service
+#  systemctl (enable|disable) vncserver-virtuald.service
+
