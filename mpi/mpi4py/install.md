@@ -80,6 +80,13 @@ pip install mpi4py
 
 ## Test mpi4py
 
+You can download the example below:
+
+```
+git clone https://github.com/timkphd/examples
+```
+
+
 In the text below you will need "cd" to the directory contining the file report.py and replace "hpcapps" with a valid account number.
 
 ```
