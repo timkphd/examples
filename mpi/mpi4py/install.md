@@ -43,7 +43,7 @@ This should return something like:
 <strong>
 -rw- - - - - - -.    1 tkaiser2 tkaiser2      3845 Aug  5 14:00 .bashrc.2008051421
 -rw- - - - - - -.    1 tkaiser2 tkaiser2      3845 Aug  5 14:21 bashrc.2008051421
--rw-rw - - - - -.    1 tkaiser2 tkaiser2         0 Aug  5 14:21 conda.2008051421
+-rw-rw - - - - -.    1 tkaiser2 tkaiser2       512 Aug  5 14:21 conda.2008051421
 </strong>
 
 ### logout/in
