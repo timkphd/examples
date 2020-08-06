@@ -9,7 +9,7 @@ from time import sleep
 # Initialize MPI
 comm=MPI.COMM_WORLD
 
-# What information about this run
+# Get information about this run
 numprocs=comm.Get_size()
 myid=comm.Get_rank()
 name = MPI.Get_processor_name()
@@ -20,11 +20,10 @@ version=version.replace(",",".")
 version=version.replace(" ","")
 
 if myid == 0:
-	print("Running MPI libary ",lib)
 	print("Tasks: ",numprocs," MPI Version ",version)
+	print("Running MPI libary ",lib)
 
 print("xxxxxx Hello from ",myid," on ",name)
 
 # Shut down MPI
 MPI.Finalize()
-

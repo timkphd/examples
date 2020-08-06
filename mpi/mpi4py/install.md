@@ -50,7 +50,7 @@ This should return something like:
 
 ## Create a new environment, mpi4pi0805
 
-
+You'll need to answer yes to the question posed by the conda create command.  
 ```
 module use /nopt/nrel/apps/modules/centos77/modulefiles/
 module purge
@@ -87,7 +87,7 @@ git clone https://github.com/timkphd/examples
 ```
 
 
-In the text below you will need "cd" to the directory contining the file report.py and replace "hpcapps" with a valid account number.
+In the text below you will need "cd" to the directory contining the file report.py and replace "hpcapps" with a valid account number.  Note that we use srun to get our interactive session and to start the application, not mpirun.
 
 ```
 cd ~/examples/mpi/mpi4py
