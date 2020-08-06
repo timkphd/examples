@@ -4,7 +4,6 @@ import numpy
 from numpy import *
 # mpi4py module
 from mpi4py import MPI
-from time import sleep
 
 # Initialize MPI
 comm=MPI.COMM_WORLD
