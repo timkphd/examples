@@ -1,0 +1,47 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --account=hpcapps
+#SBATCH --partition=debug
+#SBATCH --export=ALL
+#SBATCH --time=00:02:00
+
+# Go to the directoy from which our job was launched
+cd $SLURM_SUBMIT_DIR
+
+# Run our program with output put into out.dat
+
+module purge
+ml conda/2020.07
+
+####### build
+#conda create --name planet3.7 python=3.7 jupyter matplotlib pandas scipy
+#conda activate planet3.7
+#ml intel-mpi/2020.1.217
+#pip install mpi4py
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/nopt/nrel/apps/anaconda/2020.07/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/nopt/nrel/apps/anaconda/2020.07/etc/profile.d/conda.sh" ]; then
+        . "/nopt/nrel/apps/anaconda/2020.07/etc/profile.d/conda.sh"
+    else
+        export PATH="/nopt/nrel/apps/anaconda/2020.07/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+conda activate planet3.7
+which python
+
+ml intel-mpi/2020.1.217
+srun ./report.py
+
+ml intel-mpi/2018.0.3
+srun ./report.py
+
