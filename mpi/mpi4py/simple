@@ -1,11 +1,11 @@
 #!/bin/bash 
 #SBATCH --job-name="hybrid"
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=8
+#SBATCH --ntasks-per-node=2
 #SBATCH --account=hpcapps
 #SBATCH --partition=debug
 #SBATCH --export=ALL
-#SBATCH --time=00:02:00
+#SBATCH --time=01:00:00
 
 # Go to the directoy from which our job was launched
 cd $SLURM_SUBMIT_DIR
