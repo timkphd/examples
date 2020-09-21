@@ -171,7 +171,7 @@ int main (int argc, char **argv) {
 /*********
     ierr=MPI_Info_create(&fileinfo);
 *********/
-t2=MPI_Wtime()
+t2=MPI_Wtime();
 /* create a file name based on the grid size */
 	for(j=1;j<80;j++) {
 		fname[j]=(char)0;
