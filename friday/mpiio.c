@@ -171,6 +171,7 @@ int main (int argc, char **argv) {
 /*********
     ierr=MPI_Info_create(&fileinfo);
 *********/
+t2=MPI_Wtime()
 /* create a file name based on the grid size */
 	for(j=1;j<80;j++) {
 		fname[j]=(char)0;
@@ -299,6 +300,14 @@ int main (int argc, char **argv) {
 /*********
     ierr=MPI_Info_free(&fileinfo);
 *********/
+    t3=MPI_Wtime();
+    t2=t3-t2;
+    t3=t2;
+    ierr=MPI_Allreduce ( &t2, &t3, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
+    if(myid == 0){ 
+        printf("time= %g %g\n",t2,t3);
+    }
+
     MPI_Finalize();
     exit(0);
 /********** 07 ***********/
