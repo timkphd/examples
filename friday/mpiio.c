@@ -305,7 +305,7 @@ t2=MPI_Wtime()
     t3=t2;
     ierr=MPI_Allreduce ( &t2, &t3, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
     if(myid == 0){ 
-        printf("time= %g %g\n",t2,t3);
+        printf("time= %g  %g\n",t2,t3);
     }
 
     MPI_Finalize();
