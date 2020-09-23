@@ -74,7 +74,7 @@ int main (int argc, char **argv) {
 	long i,j,k;
 	long ltmp,ntmp,mtmp,val;
 	int ***vol,*ptr;
-	double t2,t3,t5,t6,t7,dt[6];
+	double t2,t3,t4,t5,t6,t7,dt[6];
 	int max_size,min_size,do_call,do_call_max,buf_size;
 	int hl,header[3];
 	long isize,i2;
