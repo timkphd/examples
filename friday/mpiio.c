@@ -48,9 +48,11 @@ portions:
 
 #define FLT int
 // #define NUM_VALS 1000000
-#define NUM_VALS 10000000
+#define NUM_VALS_SET 1000000
 
 int myid,ierr;	 
+
+int NUM_VALS;
 
 void mysubgrid0(int nx, int ny, int nz,
 				int sx, int sy, int sz, 
@@ -95,9 +97,10 @@ int main (int argc, char **argv) {
 	MPI_Comm_size( MPI_COMM_WORLD, &numprocs);
 	MPI_Get_processor_name(name,&resultlen);
 	printf("process %d running on %s\n",myid,name);
+	
 /* we read and broadcast the global grid size (nx,ny,nz) */
 	if(myid == 0) {
-		if(argc != 4){
+		if(argc < 4){
 			printf("the grid size is not on the command line assuming 100 x 50 x 75\n");
 			gblsize[0]=100;
 			gblsize[1]=50;
@@ -107,9 +110,17 @@ int main (int argc, char **argv) {
 			gblsize[0]=atoi(argv[1]);
 			gblsize[1]=atoi(argv[2]);
 			gblsize[2]=atoi(argv[3]);
+			if (argc == 5) {
+				NUM_VALS=atoi(argv[4]);
+			}
+			else {
+				NUM_VALS=NUM_VALS_SET;
+			}
+				
 		}
 	}
 	MPI_Bcast(gblsize,3,MPI_INT,0,MPI_COMM_WORLD);
+	MPI_Bcast(&NUM_VALS,1,MPI_INT,0,MPI_COMM_WORLD);
 /********** a ***********/	
    
 /* the routine three takes the number of processors and
@@ -307,7 +318,7 @@ t2=MPI_Wtime();
     ierr=MPI_Allreduce ( &t7, &t3, 1, MPI_DOUBLE, MPI_MIN,  MPI_COMM_WORLD);
     ierr=MPI_Allreduce ( &t7, &t4, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
     if(myid == 0){ 
-        printf("# writes= %g  %g\n",t3,t4);
+        printf("# writes= %g  %g     buffer size (elements) %d \n",t3,t4,NUM_VALS);
     }
     ierr=MPI_Allreduce ( &dt[5], &t3, 1, MPI_DOUBLE, MPI_MIN,  MPI_COMM_WORLD);
     ierr=MPI_Allreduce ( &dt[5], &t4, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
