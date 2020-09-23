@@ -47,7 +47,8 @@ portions:
 #include <limits.h>
 
 #define FLT int
-#define NUM_VALS 1000000
+// #define NUM_VALS 1000000
+#define NUM_VALS 10000000
 
 int myid,ierr;	 
 
