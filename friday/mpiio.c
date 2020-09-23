@@ -248,8 +248,8 @@ t2=MPI_Wtime();
     for(l = y0; l < grid_l; l = l + sample) {
       for(m = z0; m < grid_m; m = m + sample) { 
         for(n = x0; n < grid_n; n = n + sample) {
-          ptr[i2] = getS3D(vol,l, m, n,y0,z0,x0); 
-//          ptr[i2]=(myid+1);
+//          ptr[i2] = getS3D(vol,l, m, n,y0,z0,x0); 
+          ptr[i2]=(myid+1);
 //          ptr[i2]=ptr[i2] / (myid+1);
 
           
@@ -303,11 +303,14 @@ t2=MPI_Wtime();
     t3=MPI_Wtime();
     t2=t3-t2;
     t3=t2;
+    ierr=MPI_Allreduce ( &dt[5], &t3, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
+    if(myid == 0){ 
+        printf("write time= %g  %g\n",dt[5],t3);
+    }
     ierr=MPI_Allreduce ( &t2, &t3, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
     if(myid == 0){ 
-        printf("time= %g  %g\n",t2,t3);
+        printf("total time= %g  %g\n",t2,t3);
     }
-
     MPI_Finalize();
     exit(0);
 /********** 07 ***********/
