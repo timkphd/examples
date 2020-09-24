@@ -315,6 +315,10 @@ t2=MPI_Wtime();
     t3=MPI_Wtime();
     t2=t3-t2;
     t3=t2;
+	if(myid == 0 ) {
+   	 printf("size  & mpDecomposition %5d%5d%5d%5d%5d%5d\n",gblsize[1],gblsize[2],gblsize[0],  
+   	                                                        comp[1],   comp[2],   comp[0]);
+    }
     ierr=MPI_Allreduce ( &t7, &t3, 1, MPI_DOUBLE, MPI_MIN,  MPI_COMM_WORLD);
     ierr=MPI_Allreduce ( &t7, &t4, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
     if(myid == 0){ 
