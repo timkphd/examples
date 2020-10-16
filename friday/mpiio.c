@@ -47,9 +47,12 @@ portions:
 #include <limits.h>
 
 #define FLT int
-#define NUM_VALS 1000000
+// #define NUM_VALS 1000000
+#define NUM_VALS_SET 1000000
 
 int myid,ierr;	 
+
+int NUM_VALS;
 
 void mysubgrid0(int nx, int ny, int nz,
 				int sx, int sy, int sz, 
@@ -74,7 +77,7 @@ int main (int argc, char **argv) {
 	long i,j,k;
 	long ltmp,ntmp,mtmp,val;
 	int ***vol,*ptr;
-	double t2,t3,t5,t6,t7,dt[6];
+	double t2,t3,t4,t5,t6,t7,dt[6];
 	int max_size,min_size,do_call,do_call_max,buf_size;
 	int hl,header[3];
 	long isize,i2;
@@ -94,9 +97,10 @@ int main (int argc, char **argv) {
 	MPI_Comm_size( MPI_COMM_WORLD, &numprocs);
 	MPI_Get_processor_name(name,&resultlen);
 	printf("process %d running on %s\n",myid,name);
+	
 /* we read and broadcast the global grid size (nx,ny,nz) */
 	if(myid == 0) {
-		if(argc != 4){
+		if(argc < 4){
 			printf("the grid size is not on the command line assuming 100 x 50 x 75\n");
 			gblsize[0]=100;
 			gblsize[1]=50;
@@ -106,9 +110,17 @@ int main (int argc, char **argv) {
 			gblsize[0]=atoi(argv[1]);
 			gblsize[1]=atoi(argv[2]);
 			gblsize[2]=atoi(argv[3]);
+			if (argc == 5) {
+				NUM_VALS=atoi(argv[4]);
+			}
+			else {
+				NUM_VALS=NUM_VALS_SET;
+			}
+				
 		}
 	}
 	MPI_Bcast(gblsize,3,MPI_INT,0,MPI_COMM_WORLD);
+	MPI_Bcast(&NUM_VALS,1,MPI_INT,0,MPI_COMM_WORLD);
 /********** a ***********/	
    
 /* the routine three takes the number of processors and
@@ -248,8 +260,8 @@ t2=MPI_Wtime();
     for(l = y0; l < grid_l; l = l + sample) {
       for(m = z0; m < grid_m; m = m + sample) { 
         for(n = x0; n < grid_n; n = n + sample) {
-          ptr[i2] = getS3D(vol,l, m, n,y0,z0,x0); 
-//          ptr[i2]=(myid+1);
+//          ptr[i2] = getS3D(vol,l, m, n,y0,z0,x0); 
+          ptr[i2]=(myid+1);
 //          ptr[i2]=ptr[i2] / (myid+1);
 
           
@@ -303,11 +315,25 @@ t2=MPI_Wtime();
     t3=MPI_Wtime();
     t2=t3-t2;
     t3=t2;
-    ierr=MPI_Allreduce ( &t2, &t3, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
-    if(myid == 0){ 
-        printf("time= %g  %g\n",t2,t3);
+	if(myid == 0 ) {
+   	 printf("size  & mpDecomposition %5d%5d%5d%5d%5d%5d\n",gblsize[1],gblsize[2],gblsize[0],  
+   	                                                        comp[1],   comp[2],   comp[0]);
     }
-
+    ierr=MPI_Allreduce ( &t7, &t3, 1, MPI_DOUBLE, MPI_MIN,  MPI_COMM_WORLD);
+    ierr=MPI_Allreduce ( &t7, &t4, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
+    if(myid == 0){ 
+        printf("# writes= %g  %g     buffer size (elements) %d \n",t3,t4,NUM_VALS);
+    }
+    ierr=MPI_Allreduce ( &dt[5], &t3, 1, MPI_DOUBLE, MPI_MIN,  MPI_COMM_WORLD);
+    ierr=MPI_Allreduce ( &dt[5], &t4, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
+    if(myid == 0){ 
+        printf("write time= %g  %g\n",t3,t4);
+    }
+    ierr=MPI_Allreduce ( &t2, &t3, 1, MPI_DOUBLE, MPI_MIN,  MPI_COMM_WORLD);
+    ierr=MPI_Allreduce ( &t2, &t4, 1, MPI_DOUBLE, MPI_MAX,  MPI_COMM_WORLD);
+    if(myid == 0){ 
+        printf("total time= %g  %g\n",t3,t4);
+    }
     MPI_Finalize();
     exit(0);
 /********** 07 ***********/
