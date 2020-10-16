@@ -4,7 +4,7 @@
 ##SBATCH --ntasks-per-node=12
 ##SBATCH --cpus-per-task=1
 #SBATCH --ntasks-per-node=4
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=1
 #SBATCH --time=00:05:00
 ###### sending output to /dev/null will suppress it
 ###### this is a good idea for array jobs lest it
@@ -15,7 +15,7 @@
 ##SBATCH --partition=shas
 #SBATCH --account=hpcapps
 
-#SBATCH --mem=50000
+#SBATCH --mem=50M
 
 #----------------------
 # example invocation
@@ -25,11 +25,12 @@
 
 module purge
 module load   gcc/7.3.0   comp-intel/2018.0.3 intel-mpi/2018.0.3 mkl/2018.3.222
-source /home/tkaiser2/bin/doconda
+ml intel-mpi/2020.1.217 
+#source /home/tkaiser2/bin/doconda
 
 #export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_THREADS=1
-export OMP_NUM_THREADS=2
+#export OMP_NUM_THREADS=2
 
 
 #run with either the C or python version of our program

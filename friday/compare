@@ -1,0 +1,76 @@
+#!/bin/bash 
+#SBATCH --job-name="hybrid"
+#SBATCH --nodes=4
+#SBATCH --cpus-per-task=1
+#SBATCH --export=ALL
+#SBATCH --time=00:10:00
+#SBATCH --account=hpcapps
+#SBATCH --partition=debug
+##SBATCH --reservation=r9_image_deploy
+#SBATCH -o stdout.%j
+#SBATCH -e stderr.%j
+
+
+#set up our environment
+umask 027
+
+#set up our environment
+module use /nopt/nrel/apps/modules/centos77/modulefiles
+
+#make a dir and go there, copy our script
+mkdir -p $SLURM_JOB_ID/ajob
+cat $0 > $SLURM_JOB_ID/script
+cd $SLURM_JOB_ID/ajob
+
+#get hello world and compile it with mpicc 
+wget -q https://raw.githubusercontent.com/timkphd/examples/master/hybrid/phostone.c 
+wget -q https://raw.githubusercontent.com/timkphd/examples/master/friday/mpiio.c
+export OMP_NUM_THREADS=1
+ 
+
+
+
+module purge
+module load intel-mpi/2020.1.217
+
+mpiicc -fopenmp phostone.c  -o phostone.icc
+mpicc mpiio.c  -lm -o mpiio.icc 
+
+export KMP_AFFINITY=scatter
+rm -rf mpiio_dat*
+srun --tasks-per-node=36 ./phostone.icc -t 20 -F  > output.scatter
+srun --tasks-per-node=36 ./mpiio.icc 2000 2000 2000  80000000 >> output.scatter
+
+ls -lt
+
+module purge
+ml mpt/2.22
+
+mpicc -fopenmp phostone.c  -o phostone.mpt
+mpicc mpiio.c  -lm -o mpiio.mpt 
+
+rm -rf mpiio_dat*
+mpirun  ./phostone.mpt -t 20 -F  > output.mpt
+mpirun  ./mpiio.mpt 2000 2000 2000  80000000 >> output.mpt
+
+ls -lt
+
+#export KMP_AFFINITY=compact
+#srun --tasks-per-node=36 ./phostone.icc -t 20 -F  > output.compact
+#srun --tasks-per-node=36 ./mpiio.icc 2000 2000 2000  >> output.compact
+
+
+unset KMP_AFFINITY
+export OMP_PLACES=cores
+export OMP_PROC_BIND=spread
+
+export MPI_XPMEM_ENABLED=disabled 
+export MPI_IB_CONGESTED=true 
+
+rm -rf mpiio_dat*
+mpirun  ./phostone.mpt -t 20 -F  > output2.mpt
+mpirun  ./mpiio.mpt 2000 2000 2000  80000000 >> output2.mpt
+
+ls -lt
+rm -rf mpiio_dat*
+

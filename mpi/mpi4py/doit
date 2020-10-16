@@ -1,0 +1,6 @@
+###### build
+conda create -y --name planet3.7 python=3.7 jupyter matplotlib pandas scipy
+conda activate planet3.7
+ml intel-mpi/2020.1.217
+pip install mpi4py
+

@@ -16,7 +16,7 @@ module purge
 ml conda/2020.07
 
 ####### build
-#conda create --name planet3.7 python=3.7 jupyter matplotlib pandas scipy
+#conda create -y --name planet3.7 python=3.7 jupyter matplotlib pandas scipy
 #conda activate planet3.7
 #ml intel-mpi/2020.1.217
 #pip install mpi4py
