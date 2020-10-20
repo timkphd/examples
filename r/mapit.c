@@ -51,13 +51,13 @@ void p_to_c (int * pid ,int *core) {
 	cpu_set_t set; 
 	pid_t apid;
         int i;
-	apid=(pid_t)*pid;
-	CPU_ZERO(&set);        // clear cpu mask 
         int bonk; 
+	CPU_ZERO(&set);        // clear cpu mask 
         bonk=*core; 
 	CPU_SET(bonk, &set);      // set cpu 0 
+	apid=(pid_t)*pid;
 	i=sched_setaffinity(apid, sizeof(cpu_set_t), &set);   
-        printf("%d\n",i);
+        printf("%d %ld %d\n",i,apid,bonk);
 } 
 
 #ifdef DOMAIN
@@ -72,7 +72,5 @@ findcore(&ic);
 printf("%d %d\n",getpid(),ic); 
 scanf("%d %d",&pid,&ic);
 p_to_c(&pid,&ic);
-findcore(&ic); 
-printf("%d\n",ic); 
 } 
 #endif
