@@ -23,23 +23,26 @@ def test(i,j=10):
 
 def main():
 #get command line arguments controling launch
-   if(len(sys.argv) > 1):
-     tasks=int(sys.argv[1])
-   else:
-     tasks=8
-   DOTHREADS=False
-   if(len(sys.argv) > 2):
-     DOTHREADS = (sys.argv[2] == "True")
+   threads=1
+   workers=8
+   for x in sys.argv[1:] :
+     if x.find("threads") > -1 :
+        z=x.split("=")
+        threads=int(z[1])
+     if x.find("workers") > -1 :
+        z=x.split("=")
+        workers=int(z[1])
 
-# launch with either threads or processes
-   print('Thread centric:',DOTHREADS)
-   if DOTHREADS :
-      print("lanching 1 workers %d threads_per_worker" % (tasks))
-      cluster = LocalCluster(n_workers=1, threads_per_worker=tasks)
-   else:
-      print("lanching %d workers" % (tasks))
-      #cluster = LocalCluster(n_workers=tasks)
-      cluster = LocalCluster(n_workers=tasks,threads_per_worker=1)
+# launch with either threads and/or workers specified (0 = default)
+   if threads == 0 and workers != 0 :
+      print("lanching  %d workers, default threads" % (workers))
+      cluster = LocalCluster(n_workers=workers)
+   if threads != 0 and workers == 0 :
+      print("lanching  %d threads, defalut workers" % (threads))
+      cluster = LocalCluster(threads_per_worker=threads)
+   if threads != 0 and workers != 0 :
+      print("lanching  %d workers  with %d threads" % (workers,threads))
+      cluster = LocalCluster(n_workers=workers,threads_per_worker=threads)
    print(cluster)
    client = Client(cluster)
    print(client)
