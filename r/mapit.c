@@ -50,12 +50,14 @@ void forcecore (int *core) {
 void p_to_c (int * pid ,int *core) { 
 	cpu_set_t set; 
 	pid_t apid;
-	apid=(pid_t)pid;
+        int i;
+	apid=(pid_t)*pid;
 	CPU_ZERO(&set);        // clear cpu mask 
         int bonk; 
         bonk=*core; 
 	CPU_SET(bonk, &set);      // set cpu 0 
-	sched_setaffinity(getpid(), sizeof(cpu_set_t), &set);   
+	i=sched_setaffinity(apid, sizeof(cpu_set_t), &set);   
+        printf("%d\n",i);
 } 
 
 #ifdef DOMAIN

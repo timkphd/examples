@@ -47,15 +47,17 @@ void FINDCORE (int *ic)
 
 
 void P_TO_C (int * pid ,int *core) { 
-	int bonk;
-	cpu_set_t set; 
-	pid_t p;
-    bonk=*core; 
-	CPU_ZERO(&set);        // clear cpu mask 
-	CPU_SET(bonk, &set);      // set cpu 0 
-	p=(pid_t)*pid;	
-	printf("not working %ld %d call from process\n",(long)p,bonk);
-	sched_setaffinity(p, sizeof(cpu_set_t), &set);   
+        cpu_set_t set;
+        pid_t apid;
+        int i;
+        apid=(pid_t)*pid;
+        CPU_ZERO(&set);        // clear cpu mask 
+        int bonk;
+        bonk=*core;
+        CPU_SET(bonk, &set);      // set cpu 0 
+        i=sched_setaffinity(apid, sizeof(cpu_set_t), &set);
+        printf("%d\n",i);
+	printf("not working %ld %d call from process\n",(long)apid,bonk);
 } 
 
 
