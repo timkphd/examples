@@ -95,6 +95,15 @@ class MyScene (Scene):
         self.background_color = 'midnightblue'
         self.lastt=0.0
         self.pick=-1
+        self.hide_close(True)
+        
+    def hide_close(self,state=True):
+    	from objc_util import ObjCInstance
+    	v=ObjCInstance(self.view)
+    	for x in v.subviews() :
+    		if str(x.description()).find('UIButton') >=0 :
+    			x.setHidden(state)
+
 
     def touch_began(self, touch):
         global warn
@@ -103,6 +112,10 @@ class MyScene (Scene):
         global lan2
         global whole
         x, y = touch.location
+        if abs(x-self.size.x) < 50 and (y < 50) :
+            speech.say("exit")
+            time.sleep(0.5)
+            os.abort()
         #x,y=[10,10]
         if doblock:
         	dis=1e6
@@ -195,4 +208,6 @@ lan1=speech.get_languages()[16]
 lan2=speech.get_languages()[14]
 getone()
 startit()
+import ui
+
 run(MyScene())
