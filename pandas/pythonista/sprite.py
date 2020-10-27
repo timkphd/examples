@@ -13,6 +13,8 @@ global first
 global doblock
 global lan1,lan2
 from time import sleep
+global hideit
+hideit=True
 
 first=[]
 doran=False
@@ -92,10 +94,11 @@ def startit():
 
 class MyScene (Scene):
     def setup(self):
+        global hideit
         self.background_color = 'midnightblue'
         self.lastt=0.0
         self.pick=-1
-        self.hide_close(True)
+        self.hide_close(hideit)
         
     def hide_close(self,state=True):
     	from objc_util import ObjCInstance
@@ -111,8 +114,9 @@ class MyScene (Scene):
         global pres
         global lan2
         global whole
+        global hideit
         x, y = touch.location
-        if abs(x-self.size.x) < 50 and (y < 50) :
+        if hideit and abs(x-self.size.x) < 50 and (y < 50) :
             speech.say("exit")
             time.sleep(0.5)
             os.abort()
