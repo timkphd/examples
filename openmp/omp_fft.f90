@@ -78,6 +78,8 @@ program two_d_fft
         real(b8) gen,fft1,fft2,trans,totf,fact
         real(b8) t0,t1,t2,t3,t4,t5
         integer OMP_GET_MAX_THREADS
+        integer, allocatable :: seed(:)
+        integer nseed
         interface
             subroutine shuff(index,m,n)
               dimension index(:)
@@ -100,6 +102,10 @@ program two_d_fft
         call shuff(index,size,8)
 !       dummy=ran1(iseed)
 !       write(*,*)"dummy=",dummy
+        call random_seed(size = nseed)
+        allocate(seed(nseed))
+        seed=1234
+        call random_seed(put=seed)
         t0=ccm_time ()
         do j=1,size
            call random_number(x)
@@ -108,6 +114,7 @@ program two_d_fft
            enddo
         enddo
         write(*,'(("(",g20.10,",",g20.10,")"))')a(size/2+1,size-2)
+        write(*,'(("(",g20.10,",",g20.10,")"))')a(1,1:10)
         
 !        do 10 ijk=1,20  ! change to 4 to run faster
         do 10 ijk=1,20
@@ -164,6 +171,7 @@ program two_d_fft
     10  continue
         write(*,*)
         write(*,'(("(",g20.10,",",g20.10,")"))')a(size/2+1,size-2)
+        write(*,'(("(",g20.10,",",g20.10,")"))')a(1,1:10)
         write(*,*)"number of  transforms",ijk-1
         !write(*,'("generation time= ",f7.1)')gen
         write(*,'("      fft1 time= ",f9.4)')fft1
@@ -176,13 +184,25 @@ program two_d_fft
         stop
 end program two_d_fft
 
-      subroutine four1(data,nn,isign)
+      subroutine four1(cdata,nn,isign)
+      !subroutine four1(data,nn,isign)
       use ccm_numz
       implicit none
       integer i,j,isign,nn,n,m,mmax,istep
       real(b8), parameter :: two_pi = 6.283185307179586477_b8
       real(b8) wr,wi,wpr,wpi,wtemp,theta,tempr,tempi
+      complex(b8) cdata(8192)
       real(b8) data(16384)
+      integer ir,ii
+      ir=1
+      ii=2
+      do i=1,nn
+        data(ir)=dble(cdata(i))
+        data(ii)=dimag(cdata(i))
+        ir=ir+2
+        ii=ii+2
+      enddo
+       
       n=2*nn
       j=1
       do 11 i=1,n,2
@@ -227,6 +247,13 @@ end program two_d_fft
         mmax=istep
       go to 2
       endif
+      ir=1
+      ii=2
+      do i=1,nn
+        cdata(i)=dcmplx(data(ir), data(ii))
+        ir=ir+2
+        ii=ii+2
+      enddo
       return
       end
 

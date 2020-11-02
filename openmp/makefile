@@ -2,7 +2,7 @@ all: cexam fexam
 
 CC=icc
 FC=ifort
-OMP=-qopenmp
+OMP=-fopenmp
 
 CEXES =atomic  invertc  private  schedule  singleSubsectionc  sortc
 
@@ -15,14 +15,14 @@ cexam: $(CEXES)
 fexam: $(FEXES)
 
 %:%.c
-	$(CC) $(OMP)  $< -o $@
+	$(CC) $(OMP)  $< -o $@ -lm
 %:%.f90
 	$(FC) $(OMP)  $< -o $@
 	rm -f *mod
 
 task:task.f90
-#	ifort -qopenmp -O3 -liompprof5 task.f90 -o task
-	ifort -qopenmp -O3             task.f90 -o task
+#	ifort -fopenmp -O3 -liompprof5 task.f90 -o task
+	$(FC) -fopenmp -O3             task.f90 -o task
 
 clean:
 	rm -rf $(CEXES) $(FEXES) err.pbs out.pbs a.out *mod
