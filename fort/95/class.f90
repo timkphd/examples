@@ -46,14 +46,14 @@ program test_ptr
             r8(i,j)=cmplx(k,-k)
         enddo
     enddo
-    i=10
+    read(*,*)i
     do while (i > 0)                 
-        read(*,*)i
         if (i == 4) then
             p => r4
         else
             p => r8
         end if
     call sumit(p)
+    read(*,*)i
     end do
 end program
