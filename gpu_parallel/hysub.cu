@@ -42,11 +42,13 @@ extern "C" void  cumain(int myid, int gx, int gy,int bx, int by, int bz) {
 // The program should return the same results independent of
 // the setting for kmax and jmax.
 // Set jmax to a larger value to slow it down more.
-#define SLOW slow
+#ifndef SLOW
+#define SLOW slow 
+#endif
 int __device__ slow(int input){
   int i;
   int jmax,kmax;
-  jmax=10;
+  jmax=5;
   kmax=100000;
   for (int j=1; j <=jmax ; j++) {
     i=j;
