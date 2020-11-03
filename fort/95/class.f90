@@ -2,8 +2,8 @@
 module bonk
     contains 
     subroutine sumit(p)
-        real(kind(0.)), pointer :: r4(:,:),r3(:,:,:)
-        complex(kind(0d0)), pointer :: r8(:,:)
+        real(kind(0.0)), pointer :: r4(:,:),r3(:,:,:)
+        complex(kind(0.0d0)), pointer :: r8(:,:)
         class(*), target :: p(:,:)
         select type (p)
             type is (real(kind(0.)))
@@ -17,6 +17,8 @@ module bonk
                 allocate(r3(2,4,4))
                 do j=1,4
                     do i=1,4
+                    ! if you use the normal real and imag conversions
+                    ! the values will get truncated
                     r3(1,i,j)=dble(r8(i,j))
                     r3(2,i,j)=dimag(r8(i,j))
                     !write(*,'(2f10.2)') r3(:,i,j)
@@ -33,8 +35,9 @@ program test_ptr
     use bonk
     implicit none
     integer i,j,k
-    real(kind(0.)), target :: r4(4,4)
-    complex(kind(0d0)), target :: r8(4,4)
+    real(kind(0.0)), target :: r4(4,4)
+    ! note the complex in this case is 2 - 8 byte reals
+    complex(kind(0.0d0)), target :: r8(4,4)
     class(*), pointer :: p(:,:)
 
     ! some assignments, etc.
