@@ -46,7 +46,7 @@ program test_ptr
         do i=1,4
             k=k+1
             r4(i,j)=k
-            r8(i,j)=cmplx(k,-k)
+            r8(i,j)=dcmplx(k,-k)
         enddo
     enddo
     read(*,*)i
