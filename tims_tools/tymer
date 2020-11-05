@@ -5,6 +5,12 @@ import os.path
 global doquit
 doquit=False
 
+import io 
+def sprint(*args, **kwargs): 
+    sio = io.StringIO() 
+    print(*args, **kwargs, file=sio) 
+    return sio.getvalue() 
+     
 def tymer(sys_argv=""):
 	secs=time.time()
 	date=time.asctime()
