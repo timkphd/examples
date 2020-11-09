@@ -1,0 +1,13 @@
+CWD=`pwd`
+cd ~
+module load conda
+conda create --name dompi python=3.8 jupyter matplotlib scipy pandas xlwt -y
+conda init
+sed -n '/conda initialize/,/conda initialize/p' .bashrc > ~/conda_init
+cp .bashrc bashrc.save
+sed -i.`date +"%y%m%d%H%M"` '/conda initialize/,/conda initialize/d' .bashrc
+source ~/conda_init
+module load intel-mpi/2020.1.217
+conda activate dompi
+pip install mpi4py
+cd $CWD
