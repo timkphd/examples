@@ -51,6 +51,10 @@ except:
     pass
 print(myid,BSIZE)
 
+if myid == 0:
+    print("Times - Seconds for round Trip")
+    print("Bandwidth - BS Bytes/Second for round Trip")
+    print('{0:4s} {1:4s} {2:10s} {3:10s} {4:10s} {5:10s} {6:15s} {7:7s}'.format("PIDs","PIDr","      Size","     T-min","     T-ave","     T-max"," Best Bandwidth","  Count"))
     
 for isource in range(0,numprocs):
 	for ir in range(isource+1,numprocs):
@@ -96,7 +100,7 @@ for isource in range(0,numprocs):
 			for mysize in range(0,BSIZE+1):
 				isize=round(exp(logs*mysize))
 				if isize > BUFSIZE : isize=BUFSIZE
-				print('{0:4d} {1:4d} {2:10d} {3:10.4g} {4:10.4g} {5:10.4g} {6:15.1f} {7:4d}'.format(isource,ir,isize,mintime[mysize],total[mysize]/count[mysize],maxtime[mysize],isize/mintime[mysize],count[mysize]))
+				print('{0:4d} {1:4d} {2:10d} {3:10.4g} {4:10.4g} {5:10.4g} {6:15.1f} {7:7d}'.format(isource,ir,isize,mintime[mysize],total[mysize]/count[mysize],maxtime[mysize],isize/mintime[mysize],count[mysize]))
 MPI.Finalize();
 
 
