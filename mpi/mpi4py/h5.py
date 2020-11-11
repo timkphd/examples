@@ -30,7 +30,7 @@ else:
         print("my data type is: ",mytype)
     dset=f.create_dataset('xxx', (numprocs,1),dtype=mytype)
     #output is name and rank
-    astr="%s_%3.3d" % (myname,rank)
+    astr="%s %3.3d" % (myname,rank)
     dset[rank]=astr.encode("ascii", "ignore")
     
 f.close()
