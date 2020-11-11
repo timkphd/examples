@@ -25,13 +25,14 @@ if dochar :
     for i in range(0,wlen):
         dset[rank,i] = myname[i]
 else:
-    mytype="S%2.2d" %(wlen)
+    mytype="S%2.2d" %(wlen+4)
     if rank == 0:
         print("my data type is: ",mytype)
     dset=f.create_dataset('xxx', (numprocs,1),dtype=mytype)
-    dset[rank]=myname.encode("ascii", "ignore")
+    #output is name and rank
+    astr="%s_%3.3d" % (myname,rank)
+    dset[rank]=astr.encode("ascii", "ignore")
     
-
 f.close()
 
 """
