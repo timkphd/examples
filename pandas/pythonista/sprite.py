@@ -32,7 +32,7 @@ warn = []
 warn.append("Stop That! It Hurts!")
 warn.append("Keep your hands to yourself.")
 warn.append("Back off! lest I infect your laptop with a virus.")
-#warn.append("Don't blame me I voted for Gary Johnson.")
+warn.append("Don't blame me I voted for Gary Johnson.")
 warn.append("Did you get your computer in a cracker jack box?")
 warn.append("How would you like it if I poked you?")
 warn.append("I like snakes. I just put one in your bag")
