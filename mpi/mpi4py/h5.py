@@ -19,6 +19,7 @@ wlen=len(myname)
 
 #write name as set of characters or as a string
 dochar=False
+dochar=True
 
 if dochar :
     dset = f.create_dataset('test', (numprocs,wlen), dtype='c')

@@ -13,6 +13,7 @@ source ~/conda_init
 conda activate dompi
 module load intel-mpi/2020.1.217
 #cd ~/examples/mpi/mpi4py
+date
 rm -rf parallel_test.hdf5
 export SUB=0
 srun   ./h5b.py -size=64M -count=1 -mb=256
