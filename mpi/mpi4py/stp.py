@@ -280,6 +280,7 @@ if __name__ == '__main__':
 		if ((i+1) % iout) == 0  and myid == 0:
 			print("%8d %18.6e %10.3f" %(i+1,diff,walltime()-t1))
 	t2=walltime()
+# turn off write for benchmarks
 #	write_each(psi,i1,i2,j1,j2,vals.nx,vals.ny,comm)
 	write_one(psi,i1,i2,j1,j2,vals.nx,vals.ny,comm)
 	if(myid == 0) : print("total time=",t2-t1, "  time spent in do_jacobi=",ttot)
