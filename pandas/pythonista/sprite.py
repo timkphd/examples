@@ -5,6 +5,7 @@ from scene import *
 import speech
 import random
 import os
+import sound
 global plist
 global ptr
 global start_t
@@ -18,8 +19,15 @@ global lan1, lan2
 global hideit
 hideit = True
 
+class fart (object):
+	location=(5,5)
+	
+xy=fart()
+
+
 first = []
 doran = False
+#doran = True
 doblock = True
 getlist = open("words", "r")
 people = getlist.read()
@@ -101,6 +109,7 @@ class MyScene (Scene):
     def setup(self):
         global hideit
         self.background_color = 'midnightblue'
+        self.background_color = 'lightgreen'
         self.lastt = 0.0
         self.pick = -1
         self.hide_close(hideit)
@@ -120,11 +129,15 @@ class MyScene (Scene):
         global whole
         global hideit
         x, y = touch.location
+        sound.play_effect("Beep",1.0)
+        #sound.play_effect("Bleep",1.0)
+        #sound.play_effect("Shot",1.0)
+        #sound.play_effect("Woosh_2",1.0)
         if hideit and abs(x-self.size.x) < 50 and (y < 50):
             speech.say("exit")
             time.sleep(0.5)
             os.abort()
-        # x,y=[10,10]
+        #x,y=[10,10]
         if doblock:
             dis = 1e6
             k = -1
@@ -155,7 +168,8 @@ class MyScene (Scene):
         self.pick = pick
         # speech.say(warn[pick],lan2)
         speech.say(whole)
-        if (x < 50) and (y < 50):
+        #if (x < 50) and (y < 50):
+        if (x < self.size.x) and (y < self.size.y) :
             doblock = True
             while (len(self.children) > 0):
                 self.children[0].remove_from_parent()
@@ -209,14 +223,27 @@ class MyScene (Scene):
                     self.children[0].remove_from_parent()
 #    			print(p,tlist[ptr])
                 speech.say(tlist[ptr], lan1)
+                #self.touch_began(xy)
                 ptr = ptr+1
+                
 
+    
 
 startdir = os.getcwd()
 # print(speech.get_languages())
-lan1 = speech.get_languages()[16]
+lan1 = speech.get_languages()[10]
 lan2 = speech.get_languages()[14]
+if False :
+    k=0
+    for l in speech.get_languages():
+        if str(l).find("en") > -1:
+            speech.say('hello '+str(k)+str(l),l)
+        k=k+1
 getone()
 startit()
 
+speech.say("hi - - - To start touch one of the words.",lan1)
+speech.say("After the word finishes you will be presented with more words.",lan1)
+speech.say("Tap to return to the list.",lan1)
+speech.say("To exit tap the lower right corner.",lan1)
 run(MyScene())
