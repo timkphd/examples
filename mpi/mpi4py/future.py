@@ -3,6 +3,8 @@ import mpi4py
 from mpi4py.futures import MPIPoolExecutor
 from random import random
 
+
+
 def task(*args, **kargs) :
     import time
     myval = 0
@@ -12,7 +14,7 @@ def task(*args, **kargs) :
         myval += x
     time.sleep(5)
     et=time.asctime()
-    return st+" "+et+" "+str(myval)
+    return st+" "+et+" "+str(myval)+" "+mpi4py.MPI.Get_processor_name()
 
 
 if __name__ == '__main__' :
@@ -60,3 +62,32 @@ Mon Nov 16 12:00:31 2020 Mon Nov 16 12:00:36 2020 14.14
  end time  Mon Nov 16 12:00:36 2020 15.142319679260254
 (dompi) hexagon:~ tkaiser$ 
 """
+
+"""
+
+el1:mpi4py> srun  --x11 --account=hpcapps --time=1:00:00 --partition=debug --ntasks=8 --nodes=2 --pty bash
+srun: job 5139628 queued and waiting for resources
+srun: job 5139628 has been allocated resources
+r105u33:mpi4py> source ~/conda_init
+(base) r105u33:mpi4py> conda activate /home/tkaiser2/.conda-envs/dompi
+(/home/tkaiser2/.conda-envs/dompi) r105u33:mpi4py> srun -n 7 python -m mpi4py.futures ./future.py 
+start time  Mon Nov 16 20:37:28 2020
+Mon Nov 16 20:37:28 2020 Mon Nov 16 20:37:33 2020 0.0 r105u33
+Mon Nov 16 20:37:28 2020 Mon Nov 16 20:37:33 2020 1.01 r105u33
+Mon Nov 16 20:37:28 2020 Mon Nov 16 20:37:33 2020 2.02 r105u33
+Mon Nov 16 20:37:28 2020 Mon Nov 16 20:37:33 2020 3.03 r105u37
+Mon Nov 16 20:37:28 2020 Mon Nov 16 20:37:33 2020 4.04 r105u37
+Mon Nov 16 20:37:28 2020 Mon Nov 16 20:37:33 2020 5.05 r105u37
+Mon Nov 16 20:37:33 2020 Mon Nov 16 20:37:38 2020 6.06 r105u33
+Mon Nov 16 20:37:33 2020 Mon Nov 16 20:37:38 2020 7.07 r105u33
+Mon Nov 16 20:37:33 2020 Mon Nov 16 20:37:38 2020 8.08 r105u37
+Mon Nov 16 20:37:33 2020 Mon Nov 16 20:37:38 2020 9.09 r105u33
+Mon Nov 16 20:37:33 2020 Mon Nov 16 20:37:38 2020 10.1 r105u37
+Mon Nov 16 20:37:33 2020 Mon Nov 16 20:37:38 2020 11.11 r105u37
+Mon Nov 16 20:37:38 2020 Mon Nov 16 20:37:43 2020 12.12 r105u33
+Mon Nov 16 20:37:38 2020 Mon Nov 16 20:37:43 2020 13.13 r105u33
+Mon Nov 16 20:37:38 2020 Mon Nov 16 20:37:43 2020 14.14 r105u33
+ end time  Mon Nov 16 20:37:43 2020 15.026166200637817
+(/home/tkaiser2/.conda-envs/dompi) r105u33:mpi4py> 
+"""
+
