@@ -33,4 +33,4 @@ rm -rf parallel_test.hdf5
 export SUB=5
 srun   ./h5b.py -size=128M -count=4 -mb=256
 
-
+~/bin/dorun.py  $SLURM_JOB_ID

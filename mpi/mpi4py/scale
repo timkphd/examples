@@ -1,0 +1,35 @@
+#!/bin/bash
+#SBATCH --job-name="mpi4py"
+#SBATCH --nodes=2
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=01:00:00
+#SBATCH --partition=debug
+#SBATCH --account=hpcapps
+
+scontrol show hostnames | sed 's/$/  slots=1/' > hostlist
+module load conda
+
+rm scale_time
+
+#for nt in 2 4 8 12 16 20 24 28 32 36 ; do
+for nt in  24 28  ; do
+tymer scale_time start $nt
+mpirun -n $nt --hostfile hostlist --oversubscribe ./stp.py
+tymer scale_time finish $nt
+done
+
+
+source ~/conda_init
+conda activate dompi
+module load intel-mpi/2020.1.217
+cd ~/examples/mpi/mpi4py
+
+#for nt in 2 4 8 12 16 20 24 28 32 36 ; do
+for nt in  24 28  ; do
+tymer scale_time start $nt
+srun -n $nt ./stp.py
+tymer scale_time finish $nt
+done
+
+
