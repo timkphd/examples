@@ -11,7 +11,7 @@ try :
     from tymer import tymer
 except:
     print("Can't import tymer.  You need to change the line: ")
-    print('sys.path.append("/home/tkaiser2/bin")'
+    print('sys.path.append("/home/tkaiser2/bin")')
     print("to point to the directory containing tymer.py")
 
 from math import log10,acos,sqrt,sin,cos
