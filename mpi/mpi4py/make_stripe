@@ -1,0 +1,21 @@
+dointel: stripe.c
+	mpicc -DENVP=argv stripe.c -o dointel -lhdf5
+
+dompt : stripe.c
+	mpicc -DENVP=argv -I/projects/hpcapps/tkaiser/hdf5_12_03/include -L/projects/hpcapps/tkaiser/hdf5_12_03/lib stripe.c -o dompt -lhdf5
+
+
+clean:
+	rm -rf dointel dompt
+
+
+## See the source for the reason for -DENVP=argv.  It is only
+## needed for IntelMPI but we do it here to be consistent.
+
+## dompt
+##  module load mpt/2.22 gcc/8.4.0 
+##  make -f make_stripe dompt
+
+## dointel
+## module load intel-mpi/2020.1.217 hdf5/1.12.0/intel-impi
+## make -f make_stripe dointel 
