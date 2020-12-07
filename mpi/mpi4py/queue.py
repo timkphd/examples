@@ -3,6 +3,33 @@ import mpi4py
 from mpi4py.futures import MPIPoolExecutor
 from random import random,randint
 
+
+notes="""
+This program shows how to use mpi4py's built in bag of task feature.
+The work being performed is defined in the dummy function task.  task
+gets values from its argument list.  In this case we are passing it
+a random word from the function ranword and an integer.  The integer 
+is just the index of the task that is being run.  task creates a 
+string out of the arguments, sleeps for some time and then returns.
+
+We create a dictionary "future" to hold a list of running tasks.
+
+In the main program we set the total number of runs to be 30 and the
+number of simultaneous tasks to maxq=3.  
+
+We go into the while loop checking if the number of tasks in future
+is less than maxq and we have not launched our whole set of runs.   We
+print when we have added work.
+
+We then check our list of tasks in future for ones that are done.  If
+it is done we print the result and remove it from the list of work.
+
+Note that the call to done is nonblocking.
+
+The srun commands shown at the bottom is for running with mpi4py with
+IntelMPI as the backend MPI inside of a interactive session. 
+"""
+
 def ranword():
     back=""
     for j in range(0,20) :

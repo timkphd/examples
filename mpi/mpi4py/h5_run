@@ -11,6 +11,13 @@
 mkdir $SLURM_JOBID
 cat $0 > $SLURM_JOBID/script
 
+# Run an hdf5 benchmark in python and two versions of MPI IntelMPI and mpt.
+# The applications create different lustre striping from inside of the programs.
+# with a fork command.  The command run is of the form:
+# lfs setstripe -S 64M -c 1 /lustre/eaglefs/scratch/tkaiser2/examples/mpi/mpi4py
+# where "-S 64M" and "-c 1" are set based on the command line options for example
+# -size=64M -count=1.
+
 date
 module purge
 for TEST in h5b dompt dointel ; do

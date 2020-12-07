@@ -3,7 +3,22 @@ import mpi4py
 from mpi4py.futures import MPIPoolExecutor
 from random import random
 
+notes="""
+This program shows how to use mpi4py's built in bag of task feature.
+The work being performed is defined in the dummy function task.  task
+gets values from its argument list.  task creates a  string out of the 
+arguments, sleeps for some time and then returns.
 
+In the main program we set the total number of runs to be 15.
+
+We submit of all of our tasks with the submit command and hold a
+record of them in a future[].
+
+Then we wait for them.  Note that "result" is blocking.
+
+The srun commands shown at the bottom is for running with mpi4py with
+IntelMPI as the backend MPI inside of a interactive session. 
+"""
 
 def task(*args, **kargs) :
     import time
