@@ -53,9 +53,9 @@ date +"%y%m%d%H%M%S"
 export OFFSET=0
 srun   --nodes=1 --relative=0  -n 4  ./report.py 10  > run0 &
 export OFFSET=4
-srun   --nodes=1 --relative=1  -n 4  ./report.py 10  > run1 &
+srun   --nodes=1 --relative=0  -n 4  ./report.py 10  > run1 &
 export OFFSET=8
-srun   --nodes=1 --relative=0  -n 4  ./report.py 10  > run2 &
+srun   --nodes=1 --relative=1  -n 4  ./report.py 10  > run2 &
 export OFFSET=12
 srun   --nodes=1 --relative=1  -n 4  ./report.py 10  > run3 &
 wait
