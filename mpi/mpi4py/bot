@@ -1,0 +1,76 @@
+#!/bin/bash
+#SBATCH --job-name="mpi4py"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=36
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:01:00
+#SBATCH --partition=debug
+#SBATCH --account=hpcapps
+
+# Launching multiple mpi4py programs on a collection of nodes.
+
+# Load my version of mpi4py.
+module load conda
+source ~/conda_init
+conda activate dompi
+module load intel-mpi/2020.1.217
+
+
+date +"%y%m%d%H%M%S"
+# Get a list of our nodes.
+nodes=`scontrol show hostnames`
+
+
+# Run two sets of calculations on each one of our nodes.
+# The inner loop below maps to a particular node.
+# The sets are passed a command line argument 10 or 11
+# from the outside loop.
+# The first set runs on the first 18 cores and the second
+# set runs on the last 18 cores.  
+
+# The program report.py contains code to map tasks to 
+# cores. It maps to core  mpi_id+OFFSET.
+
+# Note we are putting these MPI programs in the background
+# so they run concurrently. The wait command is required.
+
+export OFFSET=0
+for i in 10 11 ; do 
+    for n in $nodes ; do 
+        srun   --nodes=1 --distribution=block  -n 18  --nodelist=$n ./report.py $i > $[i]_$n & 
+    done
+    export OFFSET=18
+done
+wait
+date +"%y%m%d%H%M%S"
+
+
+# Same general idea as above excpet we use the "relative" option instead of 
+# "distribution" and we launch in groups of 4.
+
+date +"%y%m%d%H%M%S"
+export OFFSET=0
+srun   --nodes=1 --relative=0  -n 4  ./report.py 10  > run0 &
+export OFFSET=4
+srun   --nodes=1 --relative=1  -n 4  ./report.py 10  > run1 &
+export OFFSET=8
+srun   --nodes=1 --relative=0  -n 4  ./report.py 10  > run2 &
+export OFFSET=12
+srun   --nodes=1 --relative=1  -n 4  ./report.py 10  > run3 &
+wait
+date +"%y%m%d%H%M%S"
+
+# Sort our output based on the core on which a process is running
+for i in 10 11 ; do
+    for n in $nodes ; do
+        echo $[i]_$n
+        grep Hello $[i]_$n | sort -n -k8,8
+    done
+done
+
+for n in run0 run1 run2 run3 ; do
+    echo $n
+    grep Hello $n | sort -n -k8,8
+done
+

@@ -35,7 +35,7 @@ if rank == 0 :
     doit=os.popen(icommand,"r")
     out=doit.read()
     print(out)
-    print(icommand,"    file size=",mb," MB")
+    print(icommand,"    file size=",mb," M(ints)/task")
     sleep(5)
 mb=comm.bcast(mb, root=0)
 comm.Barrier()    

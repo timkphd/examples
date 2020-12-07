@@ -109,9 +109,9 @@ int main(int argc, char **argv,char *envp[])
     getcwd(cwd, (size_t)(256));
     sprintf(icommand,"lfs setstripe -S %s -c %s %s",size,count,cwd);
     iret=system(icommand);
+    sscanf(mbin,"%d",&mb);
     printf("%s error code=%d file size %d M(ints)/task\n",icommand,iret,mb);
     sleep(5);
-    sscanf(mbin,"%d",&mb);
 	}
 	MPI_Bcast(&mb,1,MPI_INT,0,MPI_COMM_WORLD);
 	MPI_Barrier(MPI_COMM_WORLD);
