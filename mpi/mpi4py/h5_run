@@ -58,5 +58,5 @@ for TEST in h5b dompt dointel ; do
 	mv times*$SLURM_JOBID* $SLURM_JOBID/$TEST
 done
 
-#~/bin/dorun.py  $SLURM_JOB_ID
+~/bin/dorun.py  $SLURM_JOB_ID
 cp slurm-$SLURM_JOBID.out $SLURM_JOBID
