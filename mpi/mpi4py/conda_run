@@ -9,10 +9,9 @@
 #SBATCH --account=hpcapps
 
 module load conda
-source ~/conda_init
-conda activate dompi
+source activate dompi
 module load intel-mpi/2020.1.217
-cd ~/examples/mpi/mpi4py
+#cd ~/examples/mpi/mpi4py
 srun -n 2 ./ppong.py 
 
 

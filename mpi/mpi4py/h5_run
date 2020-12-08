@@ -24,8 +24,7 @@ for TEST in h5b dompt dointel ; do
 	LIB_SAVE=$LD_LIBRARY_PATH
 	if [ $TEST == "h5b" ] ; then
 		module load conda
-		source ~/conda_init
-		conda activate dompi
+		source activate dompi
 		module load intel-mpi/2020.1.217
 	fi
 	if [ $TEST == "dompt" ] ; then

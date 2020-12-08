@@ -1,13 +1,23 @@
+### Build a new version of python with Intel's MPI version of mpi4py
 CWD=`pwd`
+export MYVERSION=dompi
 cd ~
 module load conda 2> /dev/null || echo "module load conda failed"
-conda create --name dompi python=3.8 jupyter matplotlib scipy pandas xlwt -y
-conda init
-sed -n '/conda initialize/,/conda initialize/p' .bashrc > ~/conda_init
-cp .bashrc bashrc.save
-sed -i.`date +"%y%m%d%H%M"` '/conda initialize/,/conda initialize/d' .bashrc
-source ~/conda_init
+conda create --name $MYVERSION python=3.8 jupyter matplotlib scipy pandas xlwt -y
+
+### As per Harry's suggestion we don't do conda init
+# conda init
+# sed -n '/conda initialize/,/conda initialize/p' .bashrc > ~/conda_init
+# cp .bashrc bashrc.save
+# sed -i.`date +"%y%m%d%H%M"` '/conda initialize/,/conda initialize/d' .bashrc
+# source ~/conda_init
+# conda activate $MYVERSION
+
+### Just do source activate
+source activate $MYVERSION
+
+### Install mpi4py
 module load intel-mpi/2020.1.217  2> /dev/null || echo "module load intel-mpi/2020.1.217 failed"
-conda activate dompi
 pip install mpi4py
+
 cd $CWD

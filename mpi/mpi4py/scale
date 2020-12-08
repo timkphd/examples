@@ -20,10 +20,11 @@ tymer scale_time finish $nt
 done
 
 
-source ~/conda_init
-conda activate dompi
+module load conda
 module load intel-mpi/2020.1.217
-cd ~/examples/mpi/mpi4py
+source activate dompi
+
+#cd ~/examples/mpi/mpi4py
 
 #for nt in 2 4 8 12 16 20 24 28 32 36 ; do
 for nt in  24 28  ; do

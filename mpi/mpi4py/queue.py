@@ -101,8 +101,9 @@ if __name__ == '__main__' :
 el1:mpi4py> srun  --x11 --account=hpcapps --time=1:00:00 --partition=debug --ntasks=8 --nodes=2 --pty bash
 srun: job 5139628 queued and waiting for resources
 srun: job 5139628 has been allocated resources
-r105u33:mpi4py> source ~/conda_init
-(base) r105u33:mpi4py> conda activate /home/tkaiser2/.conda-envs/dompi
+r105u33:mpi4py> module load conda
+r105u33:mpi4py> module load intel-mpi/2020.1.217
+(base) r105u33:mpi4py> source activate dompi
 (/home/tkaiser2/.conda-envs/dompi) r105u33:mpi4py> srun -n 7 python -m mpi4py.futures ./queue.py 
 ...
 """

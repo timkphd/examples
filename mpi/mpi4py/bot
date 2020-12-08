@@ -12,8 +12,7 @@
 
 # Load my version of mpi4py.
 module load conda
-source ~/conda_init
-conda activate dompi
+source activate dompi
 module load intel-mpi/2020.1.217
 
 
@@ -54,9 +53,9 @@ export OFFSET=0
 srun   --nodes=1 --relative=0  -n 4  ./report.py 10  > run0 &
 export OFFSET=4
 srun   --nodes=1 --relative=0  -n 4  ./report.py 10  > run1 &
-export OFFSET=8
+export OFFSET=0
 srun   --nodes=1 --relative=1  -n 4  ./report.py 10  > run2 &
-export OFFSET=12
+export OFFSET=4
 srun   --nodes=1 --relative=1  -n 4  ./report.py 10  > run3 &
 wait
 date +"%y%m%d%H%M%S"
