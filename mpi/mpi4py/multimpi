@@ -30,6 +30,8 @@ nodes=`scontrol show hostnames`
 
 # The program report.py contains code to map tasks to 
 # cores. It maps to core  mpi_id+OFFSET.
+# For full functinality is requires installing a external
+# python module.  See the source on how to do that.
 
 # Note we are putting these MPI programs in the background
 # so they run concurrently. The wait command is required.
