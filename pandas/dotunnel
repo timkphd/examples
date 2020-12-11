@@ -1,0 +1,36 @@
+tunnel() {
+# Bash function to set up a ssh tunnel to connect to a jupyter 
+# notebook running on Eagle or a compute node.
+# 
+# To use this add it in your .bashrc file or save it to dotunnel
+# and do a source dotunnel.
+#
+# Takes two arguments, the node running our notebook and port number
+# from the http string returned by jupyter.
+# 
+# Note: the -t option for the ssh command allows an interactive 
+# session on the node to which we are connecting.
+#
+# Check for the correct number of arguments. We should check that
+# the port is an integer. e.g. check=`echo "$2" | grep -E ^\-?[0-9]+$` ; echo $?
+# but we just let ssh return an error.  
+    if [ $# -ne 2 ]; then 
+        echo "Usage:"
+        echo "tunnel NODE_NAME PORT"
+    else
+# If we are running on a login node (starts with e) then use the 
+# short form of the tunnel, no hop. 
+        if [[ $1 = e* ]] ; then 
+            echo "Running:"
+            echo ssh -t -L $2:localhost:$2 $1.hpc.nrel.gov
+                 ssh -t -L $2:localhost:$2 $1.hpc.nrel.gov
+        else
+# If we are running on a compute node (does not start with e) then use the 
+# long form of the tunnel. We pick a random intermediate port for the tunnel.
+            let p=`jot -r 1 8100 9100`
+            echo "Running:"
+            echo ssh -t -L $2:localhost:$p eagle ssh -L $p:localhost:$2 $1
+                 ssh -t -L $2:localhost:$p eagle ssh -L $p:localhost:$2 $1
+        fi
+    fi 
+}
