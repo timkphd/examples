@@ -12,30 +12,37 @@ tunnel() {
 # Note: the -t option for the ssh command allows an interactive 
 # session on the node to which we are connecting.
 #
-# Check for the correct number of arguments. We should check that
-# the port is an integer. e.g. check=`echo "$2" | grep -E ^\-?[0-9]+$` ; echo $?
-# but we just let ssh return an error.  
+# Check for the correct number of arguments.
     if [ $# -ne 2 ]; then 
         echo "Usage:"
         echo "tunnel NODE_NAME PORT"
-    else
+        return -1
+    fi
+# Check that the second argument in an integer
+    echo "$2" | grep -E ^\-?[0-9]+$ > /dev/null
+    if [ $? -ne 0 ]  ; then 
+        echo "Usage:"
+        echo "tunnel NODE_NAME PORT"
+        return -1
+	fi
+	port=$2
+	node=$1       
 # If we are running on a login node (starts with e) then use the 
 # short form of the tunnel, no hop. 
-        if [[ $1 = e* ]] ; then 
-            echo "Running:"
-            echo ssh -t -L $2:localhost:$2 $1.hpc.nrel.gov
-                 ssh -t -L $2:localhost:$2 $1.hpc.nrel.gov
-        else
+	if [[ $node = e* ]] ; then 
+		echo "Running:"
+		echo ssh -t -L $port:localhost:$port $node.hpc.nrel.gov
+			 ssh -t -L $port:localhost:$port $node.hpc.nrel.gov
+	else
 # If we are running on a compute node (does not start with e) then use the 
 # long form of the tunnel. We pick a random intermediate port for the tunnel.
-            #let p=`jot -r 1 8100 9100`
-            now=`date +"%s"`
-            diff=`echo ${now:7:10}`
-            p=$(( 8100 + $diff))
+		#let p=`jot -r 1 8100 9100`
+		now=`date +"%s"`
+		diff=`echo ${now:7:10}`
+		p=$(( 8100 + $diff))
 
-            echo "Running:"
-            echo ssh -t -L $2:localhost:$p eagle ssh -L $p:localhost:$2 $1
-                 ssh -t -L $2:localhost:$p eagle ssh -L $p:localhost:$2 $1
-        fi
-    fi 
+		echo "Running:"
+		echo ssh -t -L $port:localhost:$p eagle ssh -L $p:localhost:$port $node
+			 ssh -t -L $port:localhost:$p eagle ssh -L $p:localhost:$port $node
+	fi
 }
