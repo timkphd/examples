@@ -62,9 +62,8 @@ tunnel() {
 # If we are running on a compute node (does not start with e) then use the 
 # long form of the tunnel. We pick a random intermediate port for the tunnel.
 		#let p=`jot -r 1 8100 9100`
-		now=`date +"%s"`
-		diff=`echo ${now:7:10}`
-		p=$(( 8100 + $diff))
+		addto=$(( $RANDOM % 1000 ))
+		p=$(( 8100 + $addto))
 
 		echo "Running:"
 		echo ssh -t -L $lport:localhost:$p eagle ssh -L $p:localhost:$port $node
