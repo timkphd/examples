@@ -33,17 +33,17 @@ if myid == 0:
 
 tag=comm.bcast(tag, root=0)
 try :
-# to force a task to a specific core...
-# See examples/bot/dask/[spam.c setup.py] for 
-# the source for the spam module.  It contains
-# code to get the calling process's core and to
-# force is to a particular core.
+# To force a task to a specific core...
+# See [spam.c setup.py] for  the source for 
+# the spam module.  It contains  code to get 
+# the calling process's core and to  force it 
+# to a particular core.
 # In particular to build the module:
 # Load your conda environment then:
-# cp ../../bot/dask/spam.c .
-# cp ../../bot/dask/setup.py .
 # python setup.py install
 # cp build/lib.*/*so .
+# or set your PYTHONPATH variable to point
+# to the directory containing the library.
 
 	cores=36
 	from spam import *
