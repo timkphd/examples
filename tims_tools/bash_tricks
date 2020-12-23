@@ -1,0 +1,282 @@
+**** Redirect  
+  
+  
+command 1> cmd.out 2> cmd.err   
+Send normal output to cmd.out and errors to cmd.err  
+command 2> cmd.err  
+Send errors to a file,  Normal output would go to the screen  
+command > both 2>&1  
+Send errors and output to a file “both”  
+command 2>&1     
+Send errors to the terminal along with the standard output.  This   
+would normally be used if you want to pipe “errors” into another command.  
+  
+HERE parameter   See note below about null command and comments
+mac:slurm> cat > afile <<++++
+> line1
+> line2
+> ++++
+mac:slurm> cat afile
+line1
+line2
+
+  
+**** Share setting for files and directories  
+  
+find burger -type f -exec chmod 0644 {} \;  
+find burger -type d -exec chmod 0755 {} \;   
+  
+  
+find burger -type f -exec chmod o+r {} \;  
+find burger -type d -exec chmod o+x {} \;   
+  
+find burger -type f -exec chmod g+r {} \;  
+find burger -type d -exec chmod g+x {} \;  
+  
+find . -perm -u=x -exec chmod go+x {} \;   
+find . -perm -u=r -exec chmod go+r {} \;   
+  
+find burger -perm -u=w -exec chmod g+w {} \;   
+  
+  
+  
+**** Sed blocks of text between patterns  
+  
+sed -n '/PYTHON_START/,/PYTHON_END/p;/PYTHON_END/q' file.txt  
+  
+sed -n '/conda initialize/,/conda initialize/p' .bashrc  
+  
+sed -i.`date +"%y%m%d%H%M"` '/conda initialize/,/conda initialize/d' .bashrc  
+  
+seq 1 30 > test  
+sed -n '/3$/,/5$/p' test12  
+  
+**** Get unique lines in a file  
+  
+cat afile | awk '!visited[$0]++'   
+  
+**** Remove everything after a period  
+sed "s/\..*//"   
+  
+  
+  
+**** Remove everything before <r  
+sed "s/.*<r//"  
+  
+  
+Print the last item on every line of a file   
+awk '{print $NF}'  
+  
+  
+**** Clean a Directory based on  a *tgz file  
+  
+tar -tzf week.tgz  | \  
+grep -v tymer      | \  
+sed "s,/.*,,"      | \  
+sort -u            | \  
+while IFS= read -r line  
+ do rm -rf "$line"   
+done  
+  
+  
+**** Process a file line by line  
+  
+#!/bin/bash  
+input="/path/to/txt/file"  
+while IFS= read -r line  
+do  
+  echo "$line"  
+done < "$input"  
+  
+  
+  
+  
+  
+**** Command line arguments  
+  
+#!/bin/bash  
+# use predefined variables to access passed arguments  
+# echo arguments to the shell  
+echo '    echo $1 $2 $3'  
+echo $1 $2 $3   
+echo  
+# We can also store arguments from bash command line in special array  
+args=("$@")  
+#echo arguments to the shell  
+echo '    echo ${args[0]} ${args[1]} ${args[2]}'  
+echo ${args[0]} ${args[1]} ${args[2]}   
+echo  
+#use $@ to print out all arguments at once  
+echo '    echo $@'  
+echo $@ ' -> echo $@'  
+echo  
+# use $# variable to print out  
+# number of arguments passed to the bash script  
+echo '    echo Number of arguments passed: $# '  
+echo Number of arguments passed: $#   
+echo  
+  
+echo using for  
+for a in $@ ; do  
+  echo "for" $a  
+done  
+echo  
+#this prints all arguments  
+echo using shift  
+while test $# -gt 0  
+do  
+    echo $1  
+    shift  
+done  
+  
+  
+  
+  
+  
+**** Math  
+  
+  
+  
+for tpn in 1 9 18 27 36 ; do  
+    for nnodes in  2 256 384 512 ; do  
+        if [ "$nnodes" -gt "$SLURM_NNODES" ] ; then  
+            break  
+        fi  
+  
+       let "tasks = $tpn * $nnodes "  
+         
+       let nodes=$(($tasks / 36))  
+  
+       frack1=`echo 1.2 3.4 | awk '{ print $2/$1 }'`  
+       frack2=`python3 -c “print(3/4)"`  
+  
+  
+    done  
+done  
+  
+  
+np=`expr 3 + 4`  
+np=`expr $PBS_NUM_NODES \* 4`  
+np=`expr $PBS_NUM_NODES / 4`  
+  
+  
+  
+# this is a “trick” to comment-out a block of code  
+       if false ; then  
+        echo “don’t echo this”   
+       fi  
+
+
+**** Null command to create blocks of comments
+
+: is the null command in bash.  It can be used with a HERE parameter to create block comments
+
+:<<++++
+line 1
+line 2
+++++
+  
+  
+**** Test and Break  
+  
+  
+  
+rm -f a_dummy_file   
+while true ; do  
+  ls a_dummy_file >& /dev/null  
+  if [ $? -eq 0 ] ; then  
+    echo "ls of a_dummy_file successful"  
+  else  
+    echo "ls of a_dummy_file failed"  
+  fi  
+  if [ -a a_dummy_file ] ; then  
+    echo "a_dummy_file exists, breaking"  
+    break  
+  else  
+    echo "a_dummy_file does not exist"  
+  fi  
+  touch a_dummy_file  
+  echo ; echo "bottom of while loop" ; echo  
+done  
+  
+  
+  
+**** On Error and success  
+  
+  
+ls a_dummy_file >& /dev/null  
+  
+if [ $? -eq 0 ] ; then  
+    echo "ls of a_dummy_file successful"  
+fi  
+  
+&&  and || can be put between two commands  
+&& - run the second command only if the first is successful  
+|| - run the second command if the first fails  
+  
+  
+  
+  
+  
+**** String tests  
+  
+  
+if test "abc" = "def" ;then echo "abc = def" ; else echo "nope 1" ; fi  
+  
+if test "abc" != "def" ;then echo "abc != def" ; else echo "nope 2" ; fi  
+  
+if  [ "abc" \< "def" ];then echo "abc < def" ; else echo "nope 3" ; fi  
+  
+if  [ "abc" \> "def" ]; then echo "abc > def" ; else echo "nope 4" ; fi  
+  
+if  [ "abc" \> "abc" ]; then echo "abc > abc" ; else echo "nope 5" ; fi  
+  
+if test "abc" = "def" ;then echo "abc = def" ; else echo "nope 1" ; fi  
+  
+if test "abc" != "def" ;then echo "abc != def" ; else echo "nope 2" ; fi  
+  
+if  [ "abc" \< "def" ];then echo "abc < def" ; else echo "nope 3" ; fi  
+  
+if  [ "abc" \> "def" ]; then echo "abc > def" ; else echo "nope 4" ; fi  
+  
+if  [ "abc" \> "abc" ]; then echo "abc > abc" ; else echo "nope 5" ; fi  
+  
+**** Variable tests  
+  
+for i in 1 2 3 ; do  
+	echo "i=" $i  
+	if [ $i == 1 ] ; then unset var ; fi  
+	if [ $i == 2 ] ; then var="" ; fi  
+	if [ $i == 3 ] ; then var="abcd" ; fi  
+	  
+	if [ -z "$var" ]  ;     then echo "var is unset or empty A"; fi   
+	if [ ! -n "$var" ] ;    then echo "var is unset or empty A2"; fi   
+	if [ -z "${var-x}" ]  ; then echo "var is set but empty B"; fi   
+	if [ -n "$var" ] ;      then echo "var is set and not empty C"; fi   
+       echo  
+done  
+
+
+
+**** Change lists to arrays and iterate over them
+
+
+#create our hostlist file 8 total tasks
+# counts should match what we have used in our config_file
+counts="1 7"
+# convert the counts string into an array
+c_ray=(${counts})
+
+# get a list of nodes
+nodes=`scontrol show hostnames`
+# convert the nodes string into an array
+n_ray=(${nodes})
+# iterate through our arrays and 
+#print out "count" copies of the node
+len=${#n_ray[@]}
+rm -rf hostlist
+for (( i=0; i<$len; i++ )); do
+	for x in `seq ${c_ray[$i]}` ; do
+		echo "${n_ray[$i]}" >> hostlist
+    done
+done
