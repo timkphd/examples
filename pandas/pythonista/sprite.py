@@ -1,3 +1,4 @@
+import sys
 import ui
 import time
 from time import sleep
@@ -17,23 +18,27 @@ global first
 global doblock
 global lan1, lan2
 global hideit
+global wait
+wait = 5
 hideit = True
-Alice=False
+Alice = True
+startdir = "bruce"
+if len(sys.arg) > 1:
+    startdir = sys.argv[1]
+os.chdir(startdir)
+
 
 class fart (object):
-	location=(5,5)
-	
-xy=fart()
+    location = (5, 5)
+
+
+xy = fart()
 
 
 first = []
 doran = False
 #doran = True
 doblock = True
-if Alice:
-	os.chdir("alice")
-else:
-	os.chdir("bruce")
 getlist = open("words", "r")
 people = getlist.read()
 people = people.split("\n")
@@ -136,15 +141,15 @@ class MyScene (Scene):
         global whole
         global hideit
         x, y = touch.location
-        sound.play_effect("Beep",1.0)
-        #sound.play_effect("Bleep",1.0)
-        #sound.play_effect("Shot",1.0)
-        #sound.play_effect("Woosh_2",1.0)
+        sound.play_effect("Beep", 1.0)
+        # sound.play_effect("Bleep",1.0)
+        # sound.play_effect("Shot",1.0)
+        # sound.play_effect("Woosh_2",1.0)
         if hideit and abs(x-self.size.x) < 50 and (y < 50):
             speech.say("exit")
             time.sleep(0.5)
             os.abort()
-        #x,y=[10,10]
+        # x,y=[10,10]
         if doblock:
             dis = 1e6
             k = -1
@@ -174,9 +179,9 @@ class MyScene (Scene):
             pick = int(random.random()*len(warn))
         self.pick = pick
         # speech.say(warn[pick],lan2)
-        #speech.say(whole)
-        #if (x < 50) and (y < 50):
-        if (x < self.size.x) and (y < self.size.y) :
+        # speech.say(whole)
+        # if (x < 50) and (y < 50):
+        if (x < self.size.x) and (y < self.size.y):
             doblock = True
             while (len(self.children) > 0):
                 self.children[0].remove_from_parent()
@@ -188,6 +193,7 @@ class MyScene (Scene):
         global flist
         global doblock
         global lan1
+        global wait
         if speech.is_speaking():
             self.lastt = time.time()
         else:
@@ -203,7 +209,8 @@ class MyScene (Scene):
                         rat = rat*0.1
                         self.s2.size = self.s2.size*rat
                         self.s2.position = [self.size.x*k/9, self.size.y*j/5]
-                        self.s2.position= [self.size.x*(k/9.),self.size.y*(1.1-j/5.)]
+                        self.s2.position = [self.size.x *
+                                            (k/9.), self.size.y*(1.1-j/5.)]
                         # self.s2.position[0]=200
                         # self.s2.position.y=self.size.y*random.random()
 #    					print(self.s2.position)
@@ -226,36 +233,35 @@ class MyScene (Scene):
                 self.s2.size = self.s2.size*rat
                 self.add_child(self.s2)
                 if ptr == 0:
-                    sleep(2)
+                    sleep(wait)
                 if (len(self.children) > 1):
                     self.children[0].remove_from_parent()
 #    			print(p,tlist[ptr])
                 speech.say(tlist[ptr], lan1)
-                #self.touch_began(xy)
+                # self.touch_began(xy)
                 ptr = ptr+1
-                
 
-    
 
 startdir = os.getcwd()
 # print(speech.get_languages())
 lan1 = speech.get_languages()[10]
 lan2 = speech.get_languages()[7]
-lan1=lan2
-if False :
-    k=0
+lan1 = lan2
+if False:
+    k = 0
     for l in speech.get_languages():
         if str(l).find("en") > -1:
-            speech.say('hello '+str(k)+str(l),l)
-        k=k+1
+            speech.say('hello '+str(k)+str(l), l)
+        k = k+1
 getone()
 startit()
 
-if Alice :
-	speech.say("hi - - - To start touch one of the words.",lan1)
-	speech.say("After the word finishes you will be presented with more words.",lan1)
-	speech.say("Tap to return to the list.",lan1)
-	speech.say("To exit tap the lower right corner.",lan1)
+if Alice:
+    speech.say("hi - - - To start touch one of the words.", lan1)
+    speech.say(
+        "After the word finishes you will be presented with more words.", lan1)
+    speech.say("Tap to return to the list.", lan1)
+    speech.say("To exit tap the lower right corner.", lan1)
 else:
-	speech.say("hi - - - Welcome to mother Bruce",lan1)
+    speech.say("hi - - - Welcome to mother Bruce", lan1)
 run(MyScene())
