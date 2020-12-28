@@ -18,6 +18,7 @@ global doblock
 global lan1, lan2
 global hideit
 hideit = True
+Alice=False
 
 class fart (object):
 	location=(5,5)
@@ -29,13 +30,17 @@ first = []
 doran = False
 #doran = True
 doblock = True
+if Alice:
+	os.chdir("alice")
+else:
+	os.chdir("bruce")
 getlist = open("words", "r")
 people = getlist.read()
 people = people.split("\n")
 if(len(people[-1])) < 2:
     people = people[0:len(people)-1]
 # print(people)
-people = [people[i] for i in range(len(people)-1, -1, -1)]
+#people = [people[i] for i in range(len(people)-1, -1, -1)]
 warn = []
 warn.append("Stop That! It Hurts!")
 warn.append("Keep your hands to yourself.")
@@ -110,6 +115,8 @@ class MyScene (Scene):
         global hideit
         self.background_color = 'midnightblue'
         self.background_color = 'lightgreen'
+        self.background_color = 'lightblue'
+        #self.background_color ='white'
         self.lastt = 0.0
         self.pick = -1
         self.hide_close(hideit)
@@ -167,7 +174,7 @@ class MyScene (Scene):
             pick = int(random.random()*len(warn))
         self.pick = pick
         # speech.say(warn[pick],lan2)
-        speech.say(whole)
+        #speech.say(whole)
         #if (x < 50) and (y < 50):
         if (x < self.size.x) and (y < self.size.y) :
             doblock = True
@@ -196,6 +203,7 @@ class MyScene (Scene):
                         rat = rat*0.1
                         self.s2.size = self.s2.size*rat
                         self.s2.position = [self.size.x*k/9, self.size.y*j/5]
+                        self.s2.position= [self.size.x*(k/9.),self.size.y*(1.1-j/5.)]
                         # self.s2.position[0]=200
                         # self.s2.position.y=self.size.y*random.random()
 #    					print(self.s2.position)
@@ -232,7 +240,8 @@ class MyScene (Scene):
 startdir = os.getcwd()
 # print(speech.get_languages())
 lan1 = speech.get_languages()[10]
-lan2 = speech.get_languages()[14]
+lan2 = speech.get_languages()[7]
+lan1=lan2
 if False :
     k=0
     for l in speech.get_languages():
@@ -242,8 +251,11 @@ if False :
 getone()
 startit()
 
-speech.say("hi - - - To start touch one of the words.",lan1)
-speech.say("After the word finishes you will be presented with more words.",lan1)
-speech.say("Tap to return to the list.",lan1)
-speech.say("To exit tap the lower right corner.",lan1)
+if Alice :
+	speech.say("hi - - - To start touch one of the words.",lan1)
+	speech.say("After the word finishes you will be presented with more words.",lan1)
+	speech.say("Tap to return to the list.",lan1)
+	speech.say("To exit tap the lower right corner.",lan1)
+else:
+	speech.say("hi - - - Welcome to mother Bruce",lan1)
 run(MyScene())
