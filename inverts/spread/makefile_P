@@ -1,0 +1,17 @@
+all: fillmemlapc_papi  fillmemnrc_papi fillmem_papi
+
+fillmemlapc_papi: pointercs.f90 mymod.o
+	ifort -O3  -I/opt/papi/include -L/opt/papi/lib  -L/opt/lib/lapack/3.2.1/intel pointercs.f90 -openmp  -o fillmemlapc_papi  -llapack -lblas  -ltmglib  -lpapi
+
+fillmemnrc_papi: pointernrcs.f90 mymod.o
+	ifort -O3 -I/opt/papi/include -L/opt/papi/lib -openmp pointernrcs.f90 -o fillmemnrc_papi -lpapi
+
+fillmem_papi: pointercs.f90 mymod.o
+	ifort -O3 -I/opt/papi/include -L/opt/papi/lib -mkl -openmp pointercs.f90 -o fillmem_papi -lpapi
+
+
+mymod.o: mymod.f90
+	ifort -mkl -c mymod.f90
+
+clean:
+	rm -rf fillmemlapc_papi  fillmemnrc_papi mymod.o fillmem_papi *mod
