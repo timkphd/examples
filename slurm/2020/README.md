@@ -12,6 +12,8 @@ sbatch –A myaccount --partition=debug --nodes=N script-to-run
 
 * [`multinode-task-per-core.sh`](./multinode-task-per-core.sh) - Example of mapping process execution to each core on an arbitrary amount of nodes.
 
+* [`openmp.sh`](./openmp.sh) - Runs an OpenMP  program with a set number of cores per node.
+
 * [`simple.sh`](./simple.sh) - Runs an MPI program with a set number of cores per node.
 
 * [`hybrid.sh`](./hybrid.sh) - Runs an MPI/OpenMP program with a set number of cores per node.
@@ -72,6 +74,8 @@ These files are in a subdirectory for organizational purposes.  After checkout, 
 * [`hysub.cu`](source/hysub.cu) - Simple routine that accesses GPUs. 
 
 * [`invertc.c`](source/invertc.c) - Matrix inversion program.
+
+* [`slowinvert.f90`](source/slowinvert.f90) - Matrix inversion program with a single thread assigned to each invert.
 
 * [`report.py`](source/report.py) - A python mpi4py program showing for mapping tasks to cores.
 
