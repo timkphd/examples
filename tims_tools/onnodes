@@ -1,11 +1,42 @@
-#!/usr/bin/bash
-list=`squeue -u $USER -j $1 -ho %N`
-#echo $list
-long=`~/bin/expands $list`
-#echo $long
-for l in $long ; do  
-  echo $l 
-  echo "   PID    LWP PSR COMMAND         %CPU"  
-  ssh $l ps -U $USER -L -o pid,lwp,psr,comm,pcpu | grep -v COMMAND | sort -k3n 
-done
-
+#!/usr/bin/env python3
+import sys
+import os
+if len(sys.argv) > 1 :
+    job=sys.argv[1]
+else:
+    command="squeue -hu $USER"
+    f2=os.popen(command,"r")
+    job=f2.read()
+    job=job.split()
+    job=job[0]
+command='squeue -u $USER -j $1 -ho %N'
+command=command.replace("$1",job)
+f2=os.popen(command,"r")
+list=f2.read()
+f2.close()
+command="scontrol show hostnames $list"
+command=command.replace("$list",list)
+f2=os.popen(command,"r")
+long=f2.readlines()
+for l in long:
+    l=l.strip()
+    print(l)
+    print("   PID    LWP PSR COMMAND         %CPU %mem")
+    command="ssh $l ps -U $USER -L -o pid,lwp,psr,comm,pcpu,%mem | grep -v COMMAND | sort -k3n"
+    command=command.replace("$l",l)
+    f2=os.popen(command,"r")
+    while 1:
+        try:
+            line = f2.readline()
+        except KeyboardInterrupt:
+            break
+        if not line:
+            break
+        f=line.split()
+        if (len(f) > 1): 
+            same=False
+            if(str.isdigit(f[0])):
+                same=f[0] == f[1]
+            if (same):print("\u001b[31m",end="")
+            print(line.strip())
+            if (same):print("\u001b[30m",end="")
