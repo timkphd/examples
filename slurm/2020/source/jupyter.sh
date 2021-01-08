@@ -22,7 +22,7 @@ CWD=`pwd`
 export MYVERSION=dompi
 cd ~
 module load conda 2> /dev/null || echo "module load conda failed"
-conda create --name $MYVERSION python=3.8 jupyter matplotlib scipy pandas xlwt -y
+conda create --name $MYVERSION python=3.8 jupyter matplotlib scipy pandas xlwt dask -y
 
 ### Don't do conda init
 ### Just do source activate
