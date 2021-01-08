@@ -6,8 +6,9 @@ global doquit
 doquit=False
 
 import io 
-def sprint(*args, **kwargs): 
-    sio = io.StringIO() 
+def sprint(*args, **kwargs):
+    from io import StringIO
+    sio = StringIO() 
     print(*args, **kwargs, file=sio) 
     return sio.getvalue() 
      

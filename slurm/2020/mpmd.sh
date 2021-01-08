@@ -24,7 +24,7 @@ Here we create the file on the fly but it could be done
 beforehand.
 
 We have two MPI programs to run together c_ex02 and f_ex02.
-They are actually the same program writtne in C and Fortran.
+They are actually the same program written in C and Fortran.
 But normally MPMD applications would maybe run a GUI or a 
 manager for  one task and rest workers.  The syntax here is
 
@@ -35,7 +35,7 @@ where mapfile is the config_file.
 It is possible to pass different arguments to each program
 as discussed in the link above.
 
-We also lanunch the application with mpiexec.  In this case
+We also launch the application with mpiexec.  In this case
 we just list the applications on the command line with the
 number of each as would normally be done with a ":" between
 listings.

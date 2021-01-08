@@ -42,9 +42,6 @@ inputs.
 
 ++++
 
-
-
-chmod 755 tymer
 # tymer nedas a recent version of python
 module load conda
 
@@ -56,19 +53,10 @@ export OMP_NUM_THREADS=4
 #export OMP_PROC_BIND=spread
 
 
-# The programs tymer and phostone can be downloaded via
-#    git clone https://github.com/timkphd/examples
-# Tymer is a glorified wallclock timer.  It can be
-# found in the tims_tools directory.  
-#
 # Phostone.c is hello world on steroids and can be 
-# found at start/phostone.c.  After loading the modules
-# given above it can be compiled using
-#    mpiicc -fopenmp phostone.c -o phostone
-# Run with the -t option is will run at least the
-# given number of seconds.
+# found at source/phostone.c.  
+# tymer is a glorified wallclock timer.  
 
-# This script is at scripts/two
 
 rm -rf mytimes
 # The file mytimes will have a record of what happened
@@ -100,6 +88,7 @@ for t in 5 10 15 ; do
     srun -n 2 ./phostone -F -t $t -T > $SLURM_JOBID.$t
     ./tymer mytimes done $t
 done
+
 
 :<<++++
 

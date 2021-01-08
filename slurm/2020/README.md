@@ -28,7 +28,7 @@ sbatch –A myaccount --partition=debug --nodes=N script-to-run
 
 * [`mpmd2.sh`](./mpmd2.sh) - MPI with different programs on two nodes with different counts on each node.
 
-* [`multi1.sh`](./multi1.sh) - Multiple applications in a single sbatch submission.
+* [`multi.sh`](./multi.sh) - Multiple applications in a single sbatch submission.
 
 * [`gpucpu.sh`](./gpucpu.sh) - Run a cpu and gpu job in the same script concurrently.
 
@@ -69,15 +69,15 @@ These files are in a subdirectory for organizational purposes.  After checkout, 
 
 * [`makefile`](source/makefile) - Makefile for examples. Loads module then compiles.
 
-* [`hymain.c`](source/hymain.c) - MPI program that calls a routine that uses GPUS.
+* [`hymain.c`](source/hymain.c) - MPI program that calls a routine that uses GPUs.
 
 * [`hysub.cu`](source/hysub.cu) - Simple routine that accesses GPUs. 
 
-* [`invertc.c`](source/invertc.c) - Matrix inversion program.
-
 * [`slowinvert.f90`](source/slowinvert.f90) - Matrix inversion program with a single thread assigned to each invert.
 
-* [`report.py`](source/report.py) - A python mpi4py program showing for mapping tasks to cores.
+* [`report.py`](source/report.py) - A python mpi4py program for showing mapping tasks to cores.
+
+* [`prolog.py`](source/prolog.py) - A python script designed to be run as a srun prolog command.
 
 * [`spam.c`](source/spam.c) - Source for a C/python library/module for mapping tasks to cores.
 

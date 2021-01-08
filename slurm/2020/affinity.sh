@@ -45,7 +45,7 @@ KMP_AFFINITY=verbose,compact
 We still get the report but the system tries to not map multiple
 threads to the same core.  
 
-Fore each run we put the output in a seperate file.  If we run
+For each run we put the output in a seperate file.  If we run
 the program phostone with the -F option we will get a report of
 mappings of MPI tasks and threads to cores.  
 

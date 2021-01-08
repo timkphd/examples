@@ -14,10 +14,10 @@ Author: Tim Kaiser
 
 Script that runs a MPI program "purempi" on the
 specified number of --nodes=2.  This can be changed
-in the script or specifing a different number on the
+in the script or specifying a different number on the
 command line.  
 
-We first run specifing the number of tasks on the srun
+We first run specifying the number of tasks on the srun
 line.  Note that we have not specified an output file
 on the command line.  In the script header we have the
 line: #SBATCH --out=%J.out  This indicates that the

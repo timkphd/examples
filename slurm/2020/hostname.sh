@@ -29,6 +29,7 @@ cd $SLURM_SUBMIT_DIR
 
 #run an application
 srun hostname
+date
 
 :<<++++
 Example Output:
@@ -42,6 +43,5 @@ r105u33
 r105u37
 r105u37
 r105u37
-
+Thu Jan  7 10:46:36 MST 2021
 ++++
-date
