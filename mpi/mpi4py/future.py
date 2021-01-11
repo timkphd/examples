@@ -41,9 +41,9 @@ if __name__ == '__main__' :
     with MPIPoolExecutor() as executor:
         for i in range(0,nruns) : 
             future.append(executor.submit(task, i, i/100.0))
-            #print(i)
+            print(i)
 
-        #print(future)
+        print(future)
         for i in range(0,nruns) : 
             f=future[i]
             # We can check on [running,done,cancelled] 

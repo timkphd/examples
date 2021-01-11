@@ -104,7 +104,7 @@ srun: job 5139628 has been allocated resources
 r105u33:mpi4py> module load conda
 r105u33:mpi4py> module load intel-mpi/2020.1.217
 (base) r105u33:mpi4py> source activate dompi
-(/home/tkaiser2/.conda-envs/dompi) r105u33:mpi4py> srun -n 7 python -m mpi4py.futures ./queue.py 
+(/home/tkaiser2/.conda-envs/dompi) r105u33:mpi4py> srun -u -n 4 python -m mpi4py.futures ./queue.py
 ...
 """
 

@@ -1,4 +1,5 @@
-#!/scratch/tkaiser2/conda/.conda-envs/oct19/bin/python
+#!/usr/bin/env python
+
 import time
 import os
 import sys
