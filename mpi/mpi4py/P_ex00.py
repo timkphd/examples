@@ -15,7 +15,10 @@ myid=comm.Get_rank()
 # How many processors (nPEs) are there?
 numprocs=comm.Get_size()
 
-print("Hello from ",myid," Numprocs is ",numprocs)
+# Processor name?
+name = MPI.Get_processor_name()
+
+print("Hello from ",myid," on",name," Numprocs is ",numprocs)
 
 print("python is not about snakes")
 
