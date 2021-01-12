@@ -1,8 +1,9 @@
-### Build a new version of python with Intel's MPI version of mpi4py
+### Build a new version of python with mpt MPI version of mpi4py
 CWD=`pwd`
-export MYVERSION=dompi
+export MYVERSION=mpt
 cd ~
 module load conda 2> /dev/null || echo "module load conda failed"
+source activate 
 conda create --name $MYVERSION python=3.8 jupyter matplotlib scipy pandas xlwt -y
 
 ### As per Harry's suggestion we don't do conda init
@@ -17,7 +18,7 @@ conda create --name $MYVERSION python=3.8 jupyter matplotlib scipy pandas xlwt -
 source activate $MYVERSION
 
 ### Install mpi4py
-module load intel-mpi/2020.1.217  2> /dev/null || echo "module load intel-mpi/2020.1.217 failed"
-pip install mpi4py
+module load mpt  2> /dev/null || echo "module load mpt failed"
+pip --no-cache-dir install mpi4py
 
 cd $CWD

@@ -2,7 +2,8 @@
 import mpi4py
 from mpi4py.futures import MPIPoolExecutor
 from random import random,randint
-
+import sys
+import os
 
 notes="""
 This program shows how to use mpi4py's built in bag of task feature.
@@ -12,22 +13,25 @@ a random word from the function ranword and an integer.  The integer
 is just the index of the task that is being run.  task creates a 
 string out of the arguments, sleeps for some time and then returns.
 
-We create a dictionary "future" to hold a list of running tasks.
+We create a dictionary "marty" to hold a list of running tasks.
 
 In the main program we set the total number of runs to be 30 and the
 number of simultaneous tasks to maxq=3.  
 
-We go into the while loop checking if the number of tasks in future
+We go into the while loop checking if the number of tasks in marty
 is less than maxq and we have not launched our whole set of runs.   We
 print when we have added work.
 
-We then check our list of tasks in future for ones that are done.  If
+We then check our list of tasks in marty for ones that are done.  If
 it is done we print the result and remove it from the list of work.
 
 Note that the call to done is nonblocking.
 
 The srun commands shown at the bottom is for running with mpi4py with
 IntelMPI as the backend MPI inside of a interactive session. 
+
+srun  -u -n 4 --nodes=2 python -m mpi4py.futures ./primes.py 
+hangs on multiple nodes with Intel MPI, works with mpt and openmpi
 """
 
 def ranword():
@@ -62,35 +66,44 @@ def task(*args, **kargs) :
 if __name__ == '__main__' :
     import time
     now1=time.time()
+    from mpi4py import MPI
+    comm=MPI.COMM_WORLD
     print("start time ",time.asctime())
     # our dictionary to hold things in progress
-    future={}
+    marty={}
     # number of runs to do
     nruns=30
     # maximum number to be running at one time
     maxq=3
     done = 0
+    myid=comm.Get_rank()
+    print("starting loop",myid)
     started = 0
-    with MPIPoolExecutor() as executor:
+    onetime=-1
+    with MPIPoolExecutor(10) as executor:
+        if onetime == -1 :
+            print("inloop ",comm.Get_rank())
+            onetime=1
         while done < nruns :
-            if len(future) < maxq  and  started < nruns :
+            if len(marty) < maxq  and  started < nruns :
                 # our input is just a random word, could be a list of inputs or directories
                 x=ranword()
                 # put the work in the queue
-                future[x]=executor.submit(task,x,started)
+                marty[x]=executor.submit(task,x,started)
                 started=started+1
                 print("added work ",done,started,x)
             # check our list for done work
-            for key in  list(future) : 
-                f=future[key]
+            for key in  list(marty) : 
+                f=marty[key]
                 if f.done() :
                     # print result and remove it from the dictionary
                     done = done+1
                     print(f.result(),started,done)
-                    del future[key]
+                    del marty[key]
+        executor.shutdown(False)
+        print("out of loop",myid)
     now2=time.time()
     print(" end time ",time.asctime(),now2-now1)
-     
 """
 (dompi) hexagon:mpi4py tkaiser$ mpirun -n 1 ./queue.py 
 ... 
@@ -105,6 +118,8 @@ r105u33:mpi4py> module load conda
 r105u33:mpi4py> module load intel-mpi/2020.1.217
 (base) r105u33:mpi4py> source activate dompi
 (/home/tkaiser2/.conda-envs/dompi) r105u33:mpi4py> srun -u -n 4 python -m mpi4py.futures ./queue.py
-...
+#...
+srun  -u -n 4 --nodes=2 python -m mpi4py.futures ./primes.py 
+hangs on multiple nodes with Intel MPI, works with mpt and openmpi
 """
 

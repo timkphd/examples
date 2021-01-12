@@ -14,6 +14,7 @@ USAGE:
    source activate
    source activate $MYVERSION
    module load intel-mpi/2020.1.217
+   #module load mpt
 
 ++++
 
@@ -31,6 +32,7 @@ source activate $MYVERSION
 
 ### Install mpi4py
 module load intel-mpi/2020.1.217  2> /dev/null || echo "module load intel-mpi/2020.1.217 failed"
+#module load mpt  2> /dev/null || echo "module load mpt failed"
 pip --no-cache-dir install mpi4py
 
 
