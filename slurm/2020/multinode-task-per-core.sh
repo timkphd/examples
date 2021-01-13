@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+#SBATCH --nodes=2   # Change this number to get different outputs
+#SBATCH --time=00:10:00
+#SBATCH --job-name=node_rollcall
+#SBATCH -o node_rollcall.%j # output to node_rollcall.<job ID>
+
 
 :<<++++
 
@@ -10,11 +15,6 @@ be an entry for 36 * N CPU ranks in the job output.
 
 USAGE: sbatch –A <project_handle> -N <node amount> multinode-task-per-core.sh
 ++++
-
-#SBATCH --nodes=2   # Change this number to get different outputs
-#SBATCH -t 1
-#SBATCH --job-name=node_rollcall
-#SBATCH -o node_rollcall.%j # output to node_rollcall.<job ID>
 
 PROCS=$(($SLURM_NNODES * $SLURM_CPUS_ON_NODE)) # Number of CPUs * number of nodes
 

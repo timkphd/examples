@@ -48,7 +48,7 @@ par[1-4] and the final in directory final.
 
 Usage:
 
-./FAN account
+./FAN.sh account
 
 
 ++++

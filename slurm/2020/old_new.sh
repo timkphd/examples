@@ -18,7 +18,7 @@ complex workflows.  See FAN for a complete description.
 
 cd $SLURM_SUBMIT_DIR
 module purge
-module load intel-mpi/2020.1.217
+module load mpt
 
 
 # Make a directory for this run and go there.

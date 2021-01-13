@@ -50,7 +50,7 @@ USAGE:
 
 
 # load our version of MPI
-module load intel-mpi/2020.1.217
+module load mpt
 
 # Go to the directory from which our job was launched
 cd $SLURM_SUBMIT_DIR

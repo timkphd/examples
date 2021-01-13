@@ -4,6 +4,7 @@
 #SBATCH --exclusive
 #SBATCH --export=ALL
 #SBATCH --time=00:10:00
+#SBATCH --gres=gpu:2
 #SBATCH --out=%J.out
 #SBATCH --error=%J.err
 
@@ -21,23 +22,28 @@ The difficulty here is if you ask slurm to give you GPU access
 it will normally expect every application in your workflow to
 use them.  Thus it will wait until the GPUs are free to run
 the CPU only applicaiton.  The workaround for this situation 
-is to unset the environmental variables while using 
+is to unset the environmental variables while the GPUs are
+running. 
+
+Submission line:
+
+sbatch -p debug -A hpcapps gpucpu.sh
+
 ++++
 
   
 # load our version of MPI
 module purge   
-module load intel-mpi/2020.1.217
+module load mpt
 module load cuda
    
 # Make a directory for our run and go there.
 mkdir $SLURM_JOB_ID   
 cat $0 > $SLURM_JOB_ID/script   
-cp input $SLURM_JOB_ID   
 cd $SLURM_JOB_ID   
    
 # run our MPI/GPU application but put it in the background
-srun  -n 2 --gpus=2 -o mpigpu.out ../mpigpu < input &   
+srun  -n 2 --gpus=2 -o mpigpu.out ../mpigpu  &   
 sleep 10   
 date   
 

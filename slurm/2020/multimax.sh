@@ -13,7 +13,7 @@
 
 :<<++++
 
-Author: Tim Kaiser
+Author: Ethan Young, Tim Kaiser
 
 This script is show two ways to map MPI tasks to node when we
 have multiple mpi applications running simultaneously on a
@@ -53,15 +53,9 @@ Also, report.py calls two functions findcore and forcecore that are
 defined in the file spam.c.  After you have your conda environment
 set up you can build the spam module with the command:
 
+cd source
 python setup.py install
 
-
-You will want to copy it to your directory using the command:
-
-cp build/lib.*/*so .
-
-or set your PYTHONPATH variable to point to the directory containing 
-the library.
 
 The routines findcore and forcecore find the core on which the
 calling process is running and force it to a particular core.  
@@ -86,8 +80,10 @@ and then on node "one" using the relative option.
 
 # Load my version of mpi4py.
 module load conda
+source activate
 source activate dompi
-module load intel-mpi/2020.1.217
+module load gcc/8.4.0 
+module load mpt
 
 
 date +"%y%m%d%H%M%S"

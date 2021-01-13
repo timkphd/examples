@@ -49,7 +49,7 @@ the scope here.  Contact the author for more information.
 
 
 # load our version of MPI
-module load intel-mpi/2020.1.217
+module load mpt
 
 #create our config_file
 echo "#" $SLURM_JOBID " mapfile "> mapfile
@@ -71,6 +71,7 @@ srun -n8 --multi-prog mapfile > used_mapfile
 # The next line prevents warnings when using mpiexec with IntelMPI
 unset I_MPI_PMI_LIBRARY
 # Run using mpiexec 4 copies of each app
+# THIS DOES NOT WORK WITH MPT
 mpiexec -n 4 ./c_ex02  : -n 4 ./f_ex02 > used_mpiexec 
 
 

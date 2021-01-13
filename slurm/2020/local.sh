@@ -113,8 +113,6 @@ Example output:
 
 
 el3:tkaiser2> sbatch -A hpcapps local.sh 
-
-el3:tkaiser2> sbatch -A hpcapps local.sh 
 Submitted batch job 5414451
 el3:tkaiser2> 
 el3:tkaiser2> 

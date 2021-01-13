@@ -38,14 +38,14 @@ sbatch –A myaccount --partition=debug --nodes=N script-to-run
 
 * [`old_new_.sh`](./old_new_.sh) - Job submitted by FAN.sh or CHAIN.sh.  Can copy old run data to new directories and rerun.  
 
-* [`uselist.sh`](./uselist.sh) - Array jobs, multiple jobs submitted with a single script.
+* [`uselist.sh`](./uselist.sh) - Array jobs, multiple jobs submitted with a single script. "Use the slurm option --array=1-24 to submit"
 
 * [`redirect.sh`](./redirect.sh) - Low level file redirection, allows putting slurm std{err,out} anywhere.
 
 * [`multimax.sh`](./multimax.sh) - Multiple nodes, multiple jobs concurrently with also forcing affinity.
 
 
-* [`local.sh`](./local.sh) - slrum script showing how to use local \"tmp\" disk.
+* [`local.sh`](./local.sh) - slurm script showing how to use local \"tmp\" disk.
 
 
 ## Source code, extra scripts, and makefile to use with the above scripts.
@@ -81,9 +81,9 @@ These files are in a subdirectory for organizational purposes.  After checkout, 
 
 * [`spam.c`](source/spam.c) - Source for a C/python library/module for mapping tasks to cores.
 
-* [`setup.py`](source/setup.py) - Build file for spam.c.
+* [`setup.py`](source/setup.py) - Build file for spam.c. See multimax.sh.
 
-* [`jupyter.sh`](source/jupyter.sh) - Create jupyter/mpi4py/pandas environment with Intel MPI. 
+* [`jupyter.sh`](source/jupyter.sh) - Create jupyter/mpi4py/pandas environment with a user defined version of  MPI. 
 
 * [`tunnel.sh`](source/tunnel.sh) - Bash function for creating a ssh tunnel to connect to a jupyter notebook.  
  
@@ -91,7 +91,7 @@ These files are in a subdirectory for organizational purposes.  After checkout, 
 
 
 ```
-You can get copies of the script without comments by running the command:
+You can get copies of the scripts without comments by running the command:
 for script in `ls *sh` ; do
     out=`echo $script | sed s/.sh$/.slurm/`
     echo $out

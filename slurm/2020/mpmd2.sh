@@ -38,7 +38,7 @@ The number of tasks running is fixed in this script at 8
 
 
 # load our version of MPI
-module load intel-mpi/2020.1.217
+module load mpt
 
 #create our config_file 8 total tasks
 echo "#" $SLURM_JOBID " config_file "> config_file
@@ -123,3 +123,5 @@ Hello from fortran process:    6  Numprocs is    8 r103u23
 Hello from fortran process:    7  Numprocs is    8 r103u23
  i=         200
 el2:collect> 
+++++
+

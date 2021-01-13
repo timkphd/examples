@@ -36,7 +36,7 @@ This helps us keep track of what we did.
 
 
 # load our version of MPI
-module load intel-mpi/2020.1.217
+module load mpt
 
 
 if [ -z ${INPUT+x} ]; then 

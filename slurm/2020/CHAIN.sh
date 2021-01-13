@@ -23,7 +23,7 @@ export ACC=$1
 
 unset OLD_DIR
 export NEW_DIR=job1
-jid=`sbatch old_new | awk '{print $NF }'`
+jid=`sbatch -A $ACC old_new.sh | awk '{print $NF }'`
 echo $jid
  
 for job in job2 job3 job4 job5 ; do

@@ -46,7 +46,7 @@ inputs.
 module load conda
 
 # load our version of MPI
-module load intel-mpi/2020.1.217
+module load mpt
 
 export OMP_NUM_THREADS=4
 #export OMP_PLACES=cores 

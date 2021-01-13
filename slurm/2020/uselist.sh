@@ -16,14 +16,8 @@
 Author: Tim Kaiser
 
 This script is designed to run array jobs.  Array jobs are often
-a collection of similar jobs with different inputs.  Here we run
-program that does four matrix inversions.  The matricies are set
-up based on the command line input.  Fore example
+a collection of similar jobs with different inputs.  
 
-./invertc 10 56 23 43 400
-
-where 400 is the size and the other integers are used to set values
-for the matricies.
 
 When an slurm runs a collection of array jobs it assigns two additional
 variables:
@@ -46,7 +40,15 @@ again 1-24 for each subjob.  The subdirectory contains a copy of the input,
 output, the node on which it was run, our script, the environment, and timing
 information.  
 
-As a convenience we have the  python script doarray.py creates creates the 
+Here we run program that does four matrix inversions.  The matricies 
+are set up based on the command line input.  For example
+
+./invertc 10 56 23 43 400
+
+where 400 is the size and the other integers are used to set values
+for the matricies.
+
+As a convenience we have the  python script doarray.py that creates the 
 input file in_file and then runs this script.  doarray.py takes an account
 string as input.
 

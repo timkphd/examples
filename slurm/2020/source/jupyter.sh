@@ -2,8 +2,8 @@
 
 Author: Tim Kaiser
 
-Build a new version of python with and Intel MPI version of mpi4py
-Works with OpenMPI, just change the module load commands.
+Build a new version of python mpi4py.
+Works with IntelMPI, MPT, and OpenMPI, just change the module load commands.
 
 
 USAGE:
@@ -13,8 +13,9 @@ USAGE:
    module load conda
    source activate
    source activate $MYVERSION
-   module load intel-mpi/2020.1.217
-   #module load mpt
+   module load gcc/8.4.0 
+   #module load intel-mpi/2020.1.217
+   module load mpt
 
 ++++
 
@@ -31,8 +32,9 @@ source activate
 source activate $MYVERSION
 
 ### Install mpi4py
-module load intel-mpi/2020.1.217  2> /dev/null || echo "module load intel-mpi/2020.1.217 failed"
-#module load mpt  2> /dev/null || echo "module load mpt failed"
+module load gcc/8.4.0  2> /dev/null || echo "module load gcc failed"
+#module load intel-mpi/2020.1.217  2> /dev/null || echo "module load mpi failed"
+module load mpt  2> /dev/null || echo "module load mpi failed"
 pip --no-cache-dir install mpi4py
 
 

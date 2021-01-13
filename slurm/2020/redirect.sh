@@ -43,7 +43,8 @@ individual execuatables.
 cd $SLURM_SUBMIT_DIR
 
 # Load our version of mpi
-module load intel-mpi/2020.1.217
+module load mpt
+export OMP_NUM_THREADS=2
 
 ###############
 # http://compgroups.net/comp.unix.shell/bash-changing-stdout/497180

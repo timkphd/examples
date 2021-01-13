@@ -47,7 +47,7 @@ USAGE:
 
 
 # load our version of MPI
-module load intel-mpi/2020.1.217
+module load mpt
 
 # Go to the directory from which our job was launched
 cd $SLURM_SUBMIT_DIR
@@ -56,11 +56,11 @@ echo running glorified hello world
 
 date +"starting %y-%m-%d %H:%M:%S"
 echo "first run"
-srun --ntasks=4 --cpus-per-task=2  ./purempi -t 10 -T
+srun --ntasks=4 --cpus-per-task=2  ./purempi -t 10 -T -F
 
 date +"starting %y-%m-%d %H:%M:%S"
 echo "second run"
-srun   ./purempi -t 10 -T > $SLURM_JOBID.stdout
+srun   ./purempi -t 10 -T -F > $SLURM_JOBID.stdout
 date +"finished %y-%m-%d %H:%M:%S"
 
 :<<++++
