@@ -11,7 +11,7 @@ recurse:
 	source $$MODULESHOME/init/bash ; ml $(MOD)  ; $(MAKE) -f $(firstword $(MAKEFILE_LIST)) programs
 
 #here we list the real targets
-programs: phostone stf_01 f_ex02 c_ex02 mpigpu slowinvert purempi
+programs: phostone stf_01 f_ex02 c_ex02 mpigpu slowinvert purempi afile
 
 phostone: phostone.c 
 	$(MPICC) -fopenmp phostone.c -o phostone
@@ -35,8 +35,12 @@ mpigpu: hysub.cu hymain.c
 	nvcc -c hysub.cu
 	$(MPICC) hymain.c hysub.o -lcudart -lstdc++ -o mpigpu
 
+afile:
+	echo line1 > afile
+	echo line2 >> afile
+
 clean:
-	rm -rf phostone stf_01 f_ex02 c_ex02 mpigpu *mod slowinvert hysub.o purempi
+	rm -rf afile phostone stf_01 f_ex02 c_ex02 mpigpu *mod slowinvert hysub.o purempi build
 
 install: recurse
 	cp  afile phostone stf_01 f_ex02 c_ex02 mpigpu doarray.py report.py slowinvert tymer purempi ..
@@ -44,4 +48,5 @@ install: recurse
 dist-clean: clean
 	rm -rf  ../afile ../phostone ../stf_01 ../f_ex02 ../c_ex02 ../mpigpu ../doarray.py ../report.py ../tymer ../slowinvert ../purempi
 
+#.PHONY: afile
 

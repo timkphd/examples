@@ -43,10 +43,10 @@ We assume we are using Intel MPI for the backend.  The script jupyter.sh
 can be used to create a conda environment with mpi4py with an
 Intel backend in the file .  
 
-In this script our conda environement is called "dompi" as seen in 
+In this script our conda environement is called "dompt" as seen in 
 the line:
 
-source activate dompi
+source activate dompt
 
 
 Also, report.py calls two functions findcore and forcecore that are 
@@ -81,7 +81,7 @@ and then on node "one" using the relative option.
 # Load my version of mpi4py.
 module load conda
 source activate
-source activate dompi
+source activate dompt
 module load gcc/8.4.0 
 module load mpt
 

@@ -68,11 +68,25 @@ cat mapfile
 #Run with it
 srun -n8 --multi-prog mapfile > used_mapfile
 
+# Run using mpiexec 4 copies of each app
 # The next line prevents warnings when using mpiexec with IntelMPI
 unset I_MPI_PMI_LIBRARY
-# Run using mpiexec 4 copies of each app
-# THIS DOES NOT WORK WITH MPT
-mpiexec -n 4 ./c_ex02  : -n 4 ./f_ex02 > used_mpiexec 
+# THIS DOES NOT WORK WITH MPT SO WE DON'T RUN IT.
+# THE MAN PASE SAYS IT SHOULD. 	INSTEAD IT RUNS
+# 8 COPIES OF c_ex02.
+# WE SKIP IT BY CHECKING IF MODULE mpt IS LOADED.
+ml  2>&1 | grep mpt > /dev/null
+if [ $? -eq 1 ] ; then
+  # mpt not loaded, safe to run
+  mpiexec -n 4 ./c_ex02  : -n 4 ./f_ex02 > used_mpiexec 
+else
+  echo "+++++++++++++++++++++++++++++++" > used_mpiexec
+  echo "mpiexec -n 4 ./c_ex02  : -n 4 ./f_ex02 NOT RUN WITH MPT" >> used_mpiexec
+  echo "See the script." >> used_mpiexec
+  echo "+++++++++++++++++++++++++++++++" >> used_mpiexec
+fi
+
+
 
 
 # sort and reprint our output
