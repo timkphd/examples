@@ -1,12 +1,18 @@
 # Sample Slurm Batch Scripts
 
-A showcase various programflow techniques by leveraging bash and slurm features.  For MPI examples we assume we will be using Intel MPI but the scripts will work with mpt also.  OpenMP programs are compiled with Intel compilers unless otherwise noted.  
+Thes scripts showcase various program flow techniques by leveraging bash and slurm features.  For 
+MPI examples we assume we will be using mpt MPI but the scripts will work with Intel 
+also.  
 
-These examples run quickly and most can be run in the debug partition.  The submission line is of the form
+These examples run quickly and most can be run in the debug partition.  For most 
+scripts the submission line is of the form:
 
 ```
 sbatch –A myaccount --partition=debug --nodes=N script-to-run
 ```
+
+See testit for more details.
+
 
 * [`hostname.sh`](./hostname.sh) - Simple script that just does hostname on all cores.  
 
@@ -53,7 +59,9 @@ sbatch –A myaccount --partition=debug --nodes=N script-to-run
 ### Note:
 
 ```
-These files are in a subdirectory for organizational purposes.  After checkout, go to this directory and do a make install which will compile and copy files up on level.  Also, you can create a python environment for the examples by sourcing the file jupyter.sh.
+These files are in a subdirectory for organizational purposes.  After checkout, go 
+to this directory and do a make install which will compile and copy files up one level.  
+Also, you can create a python environment for the examples by sourcing the file jupyter.sh.
  
 ```
 
@@ -98,21 +106,23 @@ These files are in a subdirectory for organizational purposes.  After checkout, 
 * [`slurm_variables`](source/slurm_variables) - List of slurm variables.
 
 
+### Remove block comments
 ```
-You can get copies of the scripts without comments by running the command:
+You can get copies of the scripts without block comments by running the command:
+
 for script in `ls *sh` ; do
     out=`echo $script | sed s/.sh$/.slurm/`
     echo $out
-    chmod 750 $out
     sed  '/:<<++++/,/^++++/d' $script > $out
+    chmod 750 $out
 done
 ```
 
 ### Intel MPI
 
 ```
-These scripts are designed to run using mpt MPI.  You can create scripts
-for using Intel MPI by running the following commands.
+These scripts are set up to run using mpt MPI.  You can create scripts
+for using Intel MPI by running the following commands in the slurm directory.
 
 for script in `ls *sh` ; do
     out=`echo $script | sed s/.sh$/.impi/`
@@ -121,9 +131,9 @@ for script in `ls *sh` ; do
     chmod 750 $out
 done
 
-To make the examples with Intel MPI run make makefile.intel in the source directory.
-
 Change old_new.sh to old_new.intel in FAN.intel and CHAIN.intel.
+
+Make the examples with Intel MPI by running make makefile.intel in the source directory.
 
 To build the conda enviroment with Intel MPI change the module load command in source/jupyter.sh.
 
