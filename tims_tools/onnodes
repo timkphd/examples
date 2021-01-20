@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 import sys
 import os
+domem=False
+dops=False
+me=sys.argv[0]
+if me.find("onnodes")> -1 : dops=True
+if me.find("mem")> -1 : domem=True
+if me.find("ps")> -1 : dops=True
 if len(sys.argv) > 1 :
     job=sys.argv[1]
 else:
     command="squeue -hu $USER"
     f2=os.popen(command,"r")
     job=f2.read()
+    if len(job) == 0:
+       print("no jobs found")
+       sys.exit()
     job=job.split()
     job=job[0]
 command='squeue -u $USER -j $1 -ho %N'
@@ -21,9 +30,23 @@ long=f2.readlines()
 for l in long:
     l=l.strip()
     print(l)
+    if domem :
+        command="ssh $l cat /proc/meminfo | grep Mem"
+    # idea: cat /proc/1234/stat
+    # see  man proc for a description of what is in /proc
+        command=command.replace("$l",l)
+        f2=os.popen(command,"r")
+        lines=f2.readlines()
+        for x in lines:
+            print(x.strip())
+        f2.close()
+    if not dops : 
+        continue
     print("   PID    LWP PSR COMMAND         %CPU %mem")
-    command="ssh $l ps -U $USER -L -o pid,lwp,psr,comm,pcpu,%mem | grep -v COMMAND | sort -k3n"
-    command=command.replace("$l",l)
+    command="ssh XXXX ps -U $USER -L -o pid,lwp,psr,comm,pcpu,%mem | grep -v COMMAND | sort -k3n"
+    #print(command)
+    command=command.replace("XXXX",l)
+    #print(command)
     f2=os.popen(command,"r")
     while 1:
         try:

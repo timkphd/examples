@@ -22,6 +22,8 @@ for l in long:
     l=l.strip()
     print(l)
     command="ssh $l cat /proc/meminfo | grep Mem"
+    # idea: cat /proc/1234/stat
+    # see  man proc for a description of what is in /proc
     command=command.replace("$l",l)
     f2=os.popen(command,"r")
     lines=f2.readlines()
