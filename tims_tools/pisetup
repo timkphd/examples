@@ -67,9 +67,11 @@ sudo apt-get -y install git-gui
 
 ##### install openmpi 
  
-wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.1.tar.gz 
-tar -xzf  openmpi-4.0.1.tar.gz 
-cd openmpi-4.0.1 
+wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.0.tar.gz
+ 
+tar -xzf  openmpi-4.1.0.tar.gz 
+cd openmpi-4.1.0
+#./configure --prefix=/opt/mpi/openmpi/4.1.0
 ./configure 
 make -j 4
 sudo make install 
@@ -150,8 +152,8 @@ export LD_LIBRARY_PATH=/usr/local:$LD_LIBRARY_PATH
 XXX
 
 #### Get some ssh and apache templates
-curl https://petra.acns.colostate.edu/pie/config_template -o ssh_template
-curl https://petra.acns.colostate.edu/pie/piChanges -o apache_settings
+#curl https://petra.acns.colostate.edu/pie/config_template -o ssh_template
+#curl https://petra.acns.colostate.edu/pie/piChanges -o apache_settings
 
 # get notebook
 mkdir ~/public_html
