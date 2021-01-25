@@ -75,14 +75,36 @@ cd openmpi-4.1.0
 ./configure 
 make -j 4
 sudo make install 
+
+# install python3.9
+cd /opt
+sudo mkdir python
+cd python
+wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
+tar -xzf Python-3.9.1
+cd python3.9
+./configure --enable-optimizations --prefix=/opt/python/3.9.1
+make
+make install
+
+export PATH=/opt/python/3.9.1/bin:$PATH
+
+sudo apt install virtualenv
+mkdir ~/python-environments && cd ~/python-environments
+virtualenv --python=python3 env3.9.1a
+source env3.9.1a/bin/activate
+
+sudo pip3 install matplotlib 
+sudo pip3 install xkcd
+
+
  
 cd ~
 ### install mpi4py 
-
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-export PATH=/usr/local/bin:$PATH
+#export PATH=/usr/local/bin:$PATH
 sudo LD_LIBRARY_PATH=/usr/local/lib pip3 install mpi4py
-sudo LD_LIBRARY_PATH=/usr/local/lib pip2 install mpi4py
+#sudo LD_LIBRARY_PATH=/usr/local/lib pip2 install mpi4py
  
 ##### install R from source since package version is old
 export VERSION=3.6.1 
@@ -114,11 +136,11 @@ make install
 cd ~
 curl https://codeload.github.com/timkphd/examples/zip/master -o examples.Z  
 unzip examples.Z  
-mv examples-master examples 
+mv examples-master new_examples 
 
 ##### copy tools to ~/bin
 mkdir ~/bin
-cp -r examples/tims_tools/* ~/bin
+cp -r new_examples/tims_tools/* ~/bin
 chmod 755 ~/bin/*
 
 
@@ -152,6 +174,7 @@ export LD_LIBRARY_PATH=/usr/local:$LD_LIBRARY_PATH
 XXX
 
 #### Get some ssh and apache templates
+#### Already in new_examples
 #curl https://petra.acns.colostate.edu/pie/config_template -o ssh_template
 #curl https://petra.acns.colostate.edu/pie/piChanges -o apache_settings
 
