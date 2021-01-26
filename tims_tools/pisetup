@@ -27,12 +27,12 @@ sudo apt-get -y install tcl8.6-dev
 
 sudo apt-get -y install subversion 
  
-sudo pip3 install matplotlib 
-sudo pip3 install xkcd
+#sudo pip3 install matplotlib 
+#sudo pip3 install xkcd
  
-sudo pip2 install cairocffi 
-sudo pip2 install matplotlib 
-sudo pip2 install xkcd
+#sudo pip2 install cairocffi 
+#sudo pip2 install matplotlib 
+#sudo pip2 install xkcd
 
 sudo apt-get -y install libatlas-base-dev 
     
@@ -65,46 +65,103 @@ sudo apt-get -y install ccrypt
 
 sudo apt-get -y install git-gui
 
+sudo apt -y install virtualenv
+
 ##### install openmpi 
  
 wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.0.tar.gz
  
 tar -xzf  openmpi-4.1.0.tar.gz 
 cd openmpi-4.1.0
-#./configure --prefix=/opt/mpi/openmpi/4.1.0
-./configure 
+./configure --prefix=/opt/mpi/openmpi/4.1.0
+#./configure 
 make -j 4
 sudo make install 
 
-# install python3.9
+##### install mpich 
+cd ..
+wget http://www.mpich.org/static/downloads/3.4/mpich-3.4.tar.gz
+tar -xzf  mpich-3.4.tar.gz 
+cd mpich-3.4
+./configure --prefix=/opt/mpi/mpich/3.4
+#./configure 
+make -j 4
+sudo make install 
+
+
+export PATH=/opt/mpi/openmpi/4.1.0/bin:$PATH
+
+# install newer python
+#sqlite is needed fot jupyter to work
+sudo apt install sqlite
+sudo apt install libsqlite3-dev
+
 cd /opt
 sudo mkdir python
+sudo chown pi:pi python
 cd python
+
+# need to adjust swap for scipy to build
+cat << END > bigswap
+sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
+sudo /sbin/mkswap /var/swap.1
+sudo chmod 600 /var/swap.1
+sudo /sbin/swapon /var/swap.1
+END
+
+cat << END > normswap
+sudo swapoff /var/swap.1
+sudo rm /var/swap.1
+END
+
 wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
-tar -xzf Python-3.9.1
-cd python3.9
-./configure --enable-optimizations --prefix=/opt/python/3.9.1
-make
+cd Python-3.9.1
+./configure --enable-optimizations --prefix=/opt/python/3.9.1 --enable-loadable-sqlite-extensions
+make -j  4
+make install
+export PATH=/opt/python/3.9.1/bin:$PATH
+python3 -m pip install --upgrade pip
+pip3 install wheel
+pip3 install matplotlib 
+pip3 install xkcd
+pip3 install notebook
+# pandas/scipy takes a long time to install
+source /opt/python/bigswap
+#pip3 install pandas
+#pip3 install scipy
+source /opt/python/normswap
+
+cd /opt/python
+
+wget https://www.python.org/ftp/python/3.8.7/Python-3.8.7.tgz
+./configure --enable-optimizations --prefix=/opt/python/3.8.7 --enable-loadable-sqlite-extensions 
+make -j  4
 make install
 
-export PATH=/opt/python/3.9.1/bin:$PATH
+export PATH=/opt/python/3.8.7/bin:$PATH
+python3 -m pip install --upgrade pip
+pip3 install wheel
+pip3 install matplotlib 
+pip3 install xkcd
+pip3 install notebook
+# pandas/scipy takes a long time to install
+source /opt/python/bigswap
+#pip3 install pandas
+#pip3 install scipy
+source /opt/python/normswap
 
-sudo apt install virtualenv
-mkdir ~/python-environments && cd ~/python-environments
-virtualenv --python=python3 env3.9.1a
-source env3.9.1a/bin/activate
-
-sudo pip3 install matplotlib 
-sudo pip3 install xkcd
 
 
- 
+mkdir ~/python-environments
+cd ~/python-environments 
+virtualenv env3.8.7a
+source env3.8.7a/bin/activate
+
 cd ~
-### install mpi4py 
-export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-#export PATH=/usr/local/bin:$PATH
-sudo LD_LIBRARY_PATH=/usr/local/lib pip3 install mpi4py
-#sudo LD_LIBRARY_PATH=/usr/local/lib pip2 install mpi4py
+### install mpi4py in our virtual environment
+export LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib pip3 install mpi4py
+
  
 ##### install R from source since package version is old
 export VERSION=3.6.1 
@@ -146,13 +203,13 @@ chmod 755 ~/bin/*
 
 ##### install Rmpi 
 export PATH=$RBASE/bin:$PATH  
-export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib:$LD_LIBRARY_PATH
 
 rm -rf Rmpi_0.6-9.tar.gz 
  
 curl https://cran.r-project.org/src/contrib/Rmpi_0.6-9.tar.gz -o Rmpi_0.6-9.tar.gz  
 
-R CMD INSTALL --configure-args=" --with-Rmpi-include='/usr/local/include' --with-Rmpi-libpath='/usr/local/lib' --with-mpi='/usr/local/bin/mpicc' --with-Rmpi-type='OPENMPI' "  Rmpi_0.6-9.tar.gz    
+R CMD INSTALL --configure-args=" --with-Rmpi-include='/opt/mpi/openmpi/4.1.0/include' --with-Rmpi-libpath='/opt/mpi/openmpi/4.1.0/lib' --with-mpi='/opt/mpi/openmpi/4.1.0/bin/mpicc' --with-Rmpi-type='OPENMPI' "  Rmpi_0.6-9.tar.gz    
 
 cd ~
 Rscript examples/r/doinstall.R 
@@ -170,7 +227,8 @@ export VERSION=3.6.1
 export RBASE=/home/$USER/R/\$VERSION 
 export PATH=$RBASE/bin:\$PATH   
 export R_LIBS=$RBASE/local 
-export LD_LIBRARY_PATH=/usr/local:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib:/usr/local/lib:$LD_LIBRARY_PATH
+export PATH=/opt/mpi/openmpi/4.1.0/bin:\$PATH
 XXX
 
 #### Get some ssh and apache templates
