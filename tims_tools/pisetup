@@ -89,7 +89,6 @@ sudo make install
 
 
 # install newer python
-
 cd /opt
 sudo mkdir python
 sudo chown pi:pi python
@@ -107,13 +106,14 @@ cat << END > normswap
 sudo swapoff /var/swap.1
 sudo rm /var/swap.1
 END
-
-wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
-cd Python-3.9.1
-./configure --enable-optimizations --prefix=/opt/python/3.9.1 --enable-loadable-sqlite-extensions
+for PIV in 3.9.1 ; do
+wget https://www.python.org/ftp/python/${PIV}/Python-${PIV}.tgz
+tar -xzf Python-${PIV}.tgz
+cd Python-${PIV}
+./configure --enable-optimizations --prefix=/opt/python/${PIV} --enable-loadable-sqlite-extensions
 make -j  4
 make install
-export PATH=/opt/python/3.9.1/bin:$PATH
+export PATH=/opt/python/${PIV}/bin:$PATH
 python3 -m pip install --upgrade pip
 pip3 install wheel
 pip3 install matplotlib 
@@ -125,56 +125,43 @@ source /opt/python/bigswap
 #pip3 install scipy
 source /opt/python/normswap
 
-cd /opt/python
-
-wget https://www.python.org/ftp/python/3.8.7/Python-3.8.7.tgz
-./configure --enable-optimizations --prefix=/opt/python/3.8.7 --enable-loadable-sqlite-extensions 
-make -j  4
-make install
-
-export PATH=/opt/python/3.8.7/bin:$PATH
-python3 -m pip install --upgrade pip
-pip3 install wheel
-pip3 install matplotlib 
-pip3 install xkcd
-pip3 install notebook
-# pandas/scipy takes a long time to install
-source /opt/python/bigswap
-#pip3 install pandas
-#pip3 install scipy
-source /opt/python/normswap
 
 
 export SPATH=$PATH
 export SLIB=$LD_LIBRARY_PATH
 
-mkdir ~/python-environments
-cd ~/python-environments 
+mkdir ~/conda
+cd ~/conda 
 
-virtualenv 3.9.1a -p /opt/python/3.9.1/bin/python3 --system-site-packages
-source env3.9.1a/bin/activate
+virtualenv ${PIV}a -p /opt/python/${PIV}/bin/python3 --system-site-packages
+source ${PIV}a/bin/activate
 
 cd ~
 ### install mpi4py in our virtual environment
 export LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib:$LD_LIBRARY_PATH
+export PATH=/opt/mpi/openmpi/4.1.0/bin:$PATH
 pip3 install --no-cache-dir mpi4py
 deactivate
 
 export PATH=$SPATH
-exportLD_LIBRARY_PATH=$SLIB
+export LD_LIBRARY_PATH=$SLIB
 
-cd ~/python-environments 
-virtualenv 3.9.1b -p /opt/python/3.9.1/bin/python3 --system-site-packages
-source env3.9.1b/bin/activate
+cd ~/conda 
+virtualenv ${PIV}b -p /opt/python/${PIV}/bin/python3 --system-site-packages
+source ${PIV}b/bin/activate
 
 export LD_LIBRARY_PATH=/opt/mpi/mpich/3.4/lib:$LD_LIBRARY_PATH
 export PATH=/opt/mpi/mpich/3.4/bin:$PATH
 pip3 install --no-cache-dir mpi4py
 
 export PATH=$SPATH
-exportLD_LIBRARY_PATH=$SLIB
+export LD_LIBRARY_PATH=$SLIB
 
- 
+done
+
+
+# install newer python done
+
 ##### install R from source since package version is old
 export VERSION=3.6.1 
  
@@ -241,6 +228,20 @@ export PATH=$RBASE/bin:\$PATH
 export R_LIBS=$RBASE/local 
 export LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib:/usr/local/lib:$LD_LIBRARY_PATH
 export PATH=/opt/mpi/openmpi/4.1.0/bin:\$PATH
+export MANPATH=/opt/mpi/openmpi/4.1.0/shared/man:\$MANPATH
+
+dompich() {
+export LD_LIBRARY_PATH=`echo $LD_LIBRARY_PATH | sed "s,openmpi/4.1.0,mpich/3.4,g"`
+export PATH=`echo $PATH | sed "s,openmpi/4.1.0,mpich/3.4,g"`
+export MANPATH=`echo $MANPATH | sed "s,openmpi/4.1.0,mpich/3.4,g"`
+}
+doopenmpi() {
+export LD_LIBRARY_PATH=`echo $LD_LIBRARY_PATH | sed "s,mpich/3.4,openmpi/4.1.0,g"`
+export PATH=`echo $PATH | sed "s,mpich/3.4,openmpi/4.1.0,g"`
+export MANPATH=`echo $MANPATH | sed "s,mpich/3.4,openmpi/4.1.0,g"`
+}
+
+
 XXX
 
 #### Get some ssh and apache templates
@@ -272,4 +273,6 @@ echo "##### To install the R GUI:"
 echo "Rscript examples/r/ircmdr.R"
 
 date
+
+
 
