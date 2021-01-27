@@ -27,13 +27,6 @@ sudo apt-get -y install tcl8.6-dev
 
 sudo apt-get -y install subversion 
  
-#sudo pip3 install matplotlib 
-#sudo pip3 install xkcd
- 
-#sudo pip2 install cairocffi 
-#sudo pip2 install matplotlib 
-#sudo pip2 install xkcd
-
 sudo apt-get -y install libatlas-base-dev 
     
 sudo apt-get -y install libreadline-dev 
@@ -67,6 +60,11 @@ sudo apt-get -y install git-gui
 
 sudo apt -y install virtualenv
 
+#sqlite is needed fot jupyter to work
+sudo apt -y install sqlite
+sudo apt -y install libsqlite3-dev
+
+
 ##### install openmpi 
  
 wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.0.tar.gz
@@ -83,18 +81,14 @@ cd ..
 wget http://www.mpich.org/static/downloads/3.4/mpich-3.4.tar.gz
 tar -xzf  mpich-3.4.tar.gz 
 cd mpich-3.4
-./configure --prefix=/opt/mpi/mpich/3.4
+./configure --prefix=/opt/mpi/mpich/3.4 --with-device=ch3
 #./configure 
 make -j 4
 sudo make install 
 
 
-export PATH=/opt/mpi/openmpi/4.1.0/bin:$PATH
 
 # install newer python
-#sqlite is needed fot jupyter to work
-sudo apt install sqlite
-sudo apt install libsqlite3-dev
 
 cd /opt
 sudo mkdir python
@@ -151,16 +145,34 @@ source /opt/python/bigswap
 source /opt/python/normswap
 
 
+export SPATH=$PATH
+export SLIB=$LD_LIBRARY_PATH
 
 mkdir ~/python-environments
 cd ~/python-environments 
-virtualenv env3.8.7a
-source env3.8.7a/bin/activate
+
+virtualenv 3.9.1a -p /opt/python/3.9.1/bin/python3 --system-site-packages
+source env3.9.1a/bin/activate
 
 cd ~
 ### install mpi4py in our virtual environment
 export LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib pip3 install mpi4py
+pip3 install --no-cache-dir mpi4py
+deactivate
+
+export PATH=$SPATH
+exportLD_LIBRARY_PATH=$SLIB
+
+cd ~/python-environments 
+virtualenv 3.9.1b -p /opt/python/3.9.1/bin/python3 --system-site-packages
+source env3.9.1b/bin/activate
+
+export LD_LIBRARY_PATH=/opt/mpi/mpich/3.4/lib:$LD_LIBRARY_PATH
+export PATH=/opt/mpi/mpich/3.4/bin:$PATH
+pip3 install --no-cache-dir mpi4py
+
+export PATH=$SPATH
+exportLD_LIBRARY_PATH=$SLIB
 
  
 ##### install R from source since package version is old
