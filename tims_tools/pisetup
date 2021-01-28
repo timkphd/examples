@@ -64,6 +64,9 @@ sudo apt -y install virtualenv
 sudo apt -y install sqlite
 sudo apt -y install libsqlite3-dev
 
+#needed by R 4.x
+sudo apt install libpcre2-dev
+
 
 ##### install openmpi 
  
@@ -163,14 +166,29 @@ done
 
 # install newer python done
 
+##### Get Tims examples 
+cd ~
+curl https://codeload.github.com/timkphd/examples/zip/master -o examples.Z  
+unzip examples.Z  
+mv examples-master new_examples 
+
+##### copy tools to ~/bin
+mkdir ~/bin
+cp -r new_examples/tims_tools/* ~/bin
+chmod 755 ~/bin/*
+
 ##### install R from source since package version is old
 export VERSION=3.6.1 
+export VERSION=4.0.3
+
+## get top level version number for wget
+RC=`echo ${VERSION:0:1}`
  
 export RBASE=/home/$USER/R/$VERSION 
 mkdir -p ${RBASE}_src 
 cd ${RBASE}_src 
  
-wget https://cran.r-project.org/src/base/R-3/R-$VERSION.tar.gz 
+wget https://cran.r-project.org/src/base/R-$RC/R-$VERSION.tar.gz 
 tar -xzf R-$VERSION.tar.gz 
 cd R-$VERSION 
  
@@ -189,16 +207,12 @@ mkdir -p $R_LIBS
 make -j 4
 make install 
  
-##### Get Tims examples 
-cd ~
-curl https://codeload.github.com/timkphd/examples/zip/master -o examples.Z  
-unzip examples.Z  
-mv examples-master new_examples 
 
-##### copy tools to ~/bin
-mkdir ~/bin
-cp -r new_examples/tims_tools/* ~/bin
-chmod 755 ~/bin/*
+
+
+# some R stuff
+cd ~
+Rscript new_examples/r/doinstall.R 
 
 
 ##### install Rmpi 
@@ -212,9 +226,6 @@ curl https://cran.r-project.org/src/contrib/Rmpi_0.6-9.tar.gz -o Rmpi_0.6-9.tar.
 R CMD INSTALL --configure-args=" --with-Rmpi-include='/opt/mpi/openmpi/4.1.0/include' --with-Rmpi-libpath='/opt/mpi/openmpi/4.1.0/lib' --with-mpi='/opt/mpi/openmpi/4.1.0/bin/mpicc' --with-Rmpi-type='OPENMPI' "  Rmpi_0.6-9.tar.gz    
 
 cd ~
-Rscript examples/r/doinstall.R 
-
-cd ~
 ##### Update .bashrc 
 cp .bashrc .bashrc.`date +"%y%m%d%H%M"`
 cat << XXX >> .bashrc 
@@ -224,7 +235,7 @@ alias keys='ssh-add -t 28800 ~/.ssh/forhpc'
 alias killkeys='ssh-add -D'
 export PATH=/home/$USER/bin:\$PATH  
 ## point to R
-export VERSION=3.6.1 
+export VERSION=$VERSION
 export RBASE=/home/$USER/R/\$VERSION 
 export PATH=$RBASE/bin:\$PATH   
 export R_LIBS=$RBASE/local 
