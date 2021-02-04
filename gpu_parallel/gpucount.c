@@ -4,7 +4,7 @@
 int cudaGetDeviceCount(int *i);
 int cudaRuntimeGetVersion(int *i);
 int cudaDriverGetVersion(int *i);
-void main(int argc, char **argv) {
+int main(int argc, char **argv) {
 	int num_devices;
         int rt,dr;
 	cudaGetDeviceCount(&num_devices);
@@ -14,4 +14,8 @@ void main(int argc, char **argv) {
          cudaDriverGetVersion(&dr);
          printf("\nRuntimeVersion= %d  DriverVersion= %d\n",rt,dr);
         }
+        if (num_devices > 0 ) 
+          return 0;
+        else 
+          return 1;
 }
