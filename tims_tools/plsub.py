@@ -130,6 +130,10 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
     yray={}
     i=0
     dosmall=False
+    try:
+        xkcd(False)
+    except:
+        pass
     if(sys.argv[0].find("xkcd")> 0 or ((ismain == False ) and doxkcd==True)):
         try:
             # If the name of the program contains xkcd, that is we do a link
@@ -238,6 +242,10 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
              'ytick.labelsize':'2'}
         rcParams.update(params)
     else:
+        params = {
+             'xtick.labelsize':'10',
+             'ytick.labelsize':'10'}
+        rcParams.update(params)
         xlabel(bottom)
         ylabel(side)
     title(top)
