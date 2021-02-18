@@ -86,9 +86,24 @@ printf("\n");
 printf(" -T          : Print time/date at the beginning/end of the run.\n");
 printf("\n");
 }
+/* valid is used to get around an issue in some versions of 
+ * MPI that screw up the environmnet passed to programs. Its
+ * usage is not recommended.  See:
+ * https://wiki.sei.cmu.edu/confluence/display/c/MEM10-C.+Define+and+use+a+pointer+validation+function
+ *
+ * "The valid() function does not guarantee validity; it only 
+ * identifies null pointers and pointers to functions as invalid. 
+ * However, it can be used to catch a substantial number of 
+ * problems that might otherwise go undetected."
+ */
+  int valid(void *p) {
+  extern char _etext;
+  return (p != NULL) && ((char*) p > &_etext);
+}
  
 int main(int argc, char **argv,char *envp[])
 {
+    char *eql ;
     int myid,numprocs,resultlen;
     int mycolor,new_id,new_nodes;
     int i,k;
@@ -217,15 +232,33 @@ int main(int argc, char **argv,char *envp[])
 		}
 	 }
 /* here we print out the environment in which a MPI task is running */
+/* We try to determine if the passed environment is valid but sometimes
+ * it just does not work and this can crash.  Try taking out myid==0
+ * and setting PID to a nonzero value.
+ */
 		//if (envs == 1 && new_id==1) {
-		if (envs == 1 && new_id==PID) {
+		if (envs == 1 && (myid==PID || myid==0)) {
 			k=0;
-			while(envp[k]) {
-				printf("%s\n",envp[k]);
-				k++;
+                        if (valid(envp)==1) {
+				//while(envp[k]) {
+				while(valid(envp[k])==1) {
+					if (strlen(envp[k]) > 3) {
+						eql=strchr(envp[k],'=');
+						if (eql == NULL) break;
+						printf("? %d %s\n",myid,envp[k]);
+					}
+					else {
+						break;
+					}
+					//printf("? %d %d\n",myid,k);
+					k++;
+				}
+			}
+			else {
+				printf("? %d %s\n",myid,"Environmnet not set");
 			}
 		}
-    }
+}
 	if(myid == 0){
 		dt=0;
 		if(wait ) {
