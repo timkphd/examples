@@ -1,0 +1,59 @@
+account() {
+    if (( $# > 0 )) ; then
+      sacctmgr show assoc user=$1 format=account
+      lslogins $1
+    else
+      sacctmgr show assoc user=tkaiser2 format=account
+    fi
+}
+
+scr() {
+    if [ $# -lt 1 ]; then 
+    cd /scratch/$USER
+    else
+    cd /scratch/$USER/$1
+    fi
+    }
+
+today() {     
+     local now=`date +"%Y-%m-%d"`
+     if (( $# > 0 )) ; then   
+         if [[ $1 == "-f" ]] ; then 
+            find . -type f -newermt $now
+         fi
+         if [[ $1 == "-d" ]] ; then 
+            find . -type d -newermt $now
+         fi
+    else
+        find .  -newermt $now
+    fi
+    }
+
+
+cstrip() {
+# You can effectively make comments in a
+# bash script by delimiting with :<<++++ and ++++
+# This function removes them.
+for script in "$@" ; do
+    out=_$script
+    echo $out
+    sed  '/:<<++++/,/^++++/d' $script > $out
+done
+}
+
+dogpu() until sq | grep $1 > /dev/null ; (($?)) ;do date ; gpus ; sleep 5; done
+docpu() until sq | grep $1 > /dev/null ; (($?)) ;do date ; onnodes  ; sleep 5; done
+
+
+
+running() { nl=`sq | wc -l`; if [ "$nl" -gt "1" ] ; then return 0 ; else return 1 ; fi; }
+
+dorunning() { running ; while [ $? -eq "0" ] ; do echo "running" ; sleep 10 ; running ; done }
+
+setperm() {
+    echo setting permissions for $1
+    find $1 -perm -u=x -exec chmod go+x {} \; 
+    find $1 -perm -u=r -exec chmod go+r {} \; 
+}
+
+
