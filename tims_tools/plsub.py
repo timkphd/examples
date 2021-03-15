@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 from pylab import *
+from matplotlib.pyplot import gcf
 import math
 import warnings
 import time
@@ -54,7 +55,7 @@ myplot(sets=sets,topl="hello",doxkcd=True)
 
 """
 
-def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="title",do_log="none",xr="auto",yr="auto",do_sym="n",width="1",doxkcd=False,sets=None):
+def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="title",do_log="none",xr="auto",yr="auto",do_sym="n",width="1",doxkcd=False,sets=None,outname=None,showit=True):
 #sets=[[[1,2,3,4],[1,4,9,16],"square"],[[1,2,3],[1,16,27],"qube"]]
     if len(sys.argv) > 1:
         if (sys.argv[1] == "--help" or sys.argv[1] == "-help" or sys.argv[1] == "-h"):
@@ -102,6 +103,7 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
     bottom=" "
     side=" "
     top=" "
+    myout=None
     if(ismain):
         bottom=AskString("bottom label","x axis")
         side=AskString("side label","y axis")
@@ -116,6 +118,7 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
         lw=1
         lw=AskString("lw","1")
         lw=float(lw)
+        showit=True
     else:
         bottom=bl
         side=sl
@@ -126,6 +129,7 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
         dosym=do_sym
         dosym=(dosym == "y")
         lw=width
+        myout=outname
     xray={}
     yray={}
     i=0
@@ -177,10 +181,14 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
             yray[i]=s[1]
             i=i+1
 
+    doxl=False
+    doyl=False
     if(log.find("x") > -1 or  log.find("X") > -1 or log.find("both") > -1 or log.find("Both") > -1):
         xscale("log")
+        doxl=True
     if(log.find("y") > -1 or  log.find("Y") > -1 or log.find("both") > -1 or log.find("Both") > -1):
         yscale("log")
+        doyl=True
 
     leg=[]
     sym=['+','o','*','x','#','X','0']
@@ -202,6 +210,8 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
         ip=len(sets)
         for s in sets:
             leg.append(s[2])
+    if doxl == False and doyl == False :
+        fig,ax=subplots()    
     for myplot in range(0,ip) :
             if(dosym):
                 if (lw == 0):
@@ -216,22 +226,38 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
     if(len(leg) > 0):
         legend(leg,loc=0)
     if(xrange != "auto"):
-        xrange=xrange.replace(","," ")
-        xrange=xrange.replace(":"," ")
-        xrange=xrange.strip()
-        [xmin,xmax]=xrange.split()
-        xmin=float(xmin)
-        xmax=float(xmax)
-        xlim(xmin,xmax)
+        if type(xrange)==type("str") :
+            xrange=xrange.replace(","," ")
+            xrange=xrange.replace(":"," ")
+            xrange=xrange.strip()
+            xmin,xmax=xrange.split()
+            xmin=float(xmin)
+            xmax=float(xmax)
+            xlim(xmin,xmax)
+        else:
+            xticks=xrange[2]
+            xmin=float(xrange[0])
+            xmax=float(xrange[1])
+            xlim(xmin,xmax)
+            if doxl == False and doyl == False :
+                ax.xaxis.set_ticks(xticks)
 
     if(yrange != "auto"):
-        yrange=yrange.replace(","," ")
-        yrange=yrange.replace(":"," ")
-        yrange=yrange.strip()
-        [ymin,ymax]=yrange.split()
-        ymin=float(ymin)
-        ymax=float(ymax)
-        ylim(ymin,ymax)
+        if type(yrange)==type("str") :
+            yrange=yrange.replace(","," ")
+            yrange=yrange.replace(":"," ")
+            yrange=yrange.strip()
+            ymin,ymax=yrange.split()
+            ymin=float(ymin)
+            ymax=float(ymax)
+            ylim(ymin,ymax)
+        else:
+            yticks=yrange[2]
+            ymin=float(yrange[0])
+            ymax=float(yrange[1])
+            ylim(ymin,ymax)
+            if doxl == False and doyl == False :
+                ax.yaxis.set_ticks(yticks)        
     
     if dosmall:
         xlabel(bottom,fontsize='x-small')
@@ -252,29 +278,48 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
     grid(True)
     x=time.localtime()
     stime=("%2.2d%2.2d%2.2d%2.2d%2.2d%2.2d" % (x[0]-2000,x[1],x[2],x[3],x[4],x[5]))
-    stime=os.getenv("HOME")+"/plot/"+stime+".pdf"
+    if myout != None :
+        stime=myout
+    dsave=os.getenv("HOME")+"/plot"
+    if os.path.isdir(dsave) == False:
+        dsave="."
+    sfile=dsave+"/"+stime+".pdf"
     didsave=False
     didshow=False
+    fig = gcf()
+    (w,h)=fig.get_size_inches()
+    ar=[11.0,8.5]
+    scale=0.75
+    ar[0]=ar[0]*scale
+    ar[1]=ar[1]*scale
+    #fig.set_size_inches(11.0,8.5)
+    
+    fig.set_size_inches(ar[0],ar[1])
+    #fig.savefig('test2png.png', dpi=100)
+
     try:
-        savefig(stime)
-        didsave=True
+        if myout != "none" :
+            savefig(sfile)
+            didsave=True
     except:
-        print("save to ",stime," failed.  Directory exists: ",os.path.isdir(os.getenv("HOME")+"/plot"),os.getenv("HOME")+"/plot")
+        print("save to ",sfile," failed.")
         pass
     host=os.getenv("HOSTNAME")
-    who=os.getlogin()
-    #print who+"@"+host+":"+stime
+    #who=os.getlogin()
+    #print who+"@"+host+":"+sfile
+    fig.set_size_inches(w,h)
     try:
-        show()
-        didshow=True
+        if showit :
+            show()
+            didshow=True
     except:
         pass
     if (didsave):
-        print("saved to:",stime," displayed:",didshow)
+        print("saved to:",sfile," displayed:",didshow)
     else :
         print("saved:",didsave," displayed:",didshow)
-
-
+    fig=None 
+    ax=None
 
 if __name__ == '__main__':
     myplot(True)

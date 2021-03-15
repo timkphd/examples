@@ -1,0 +1,94 @@
+
+prepend() {
+  END=`printenv $1`
+  if [ -z "$END" ]  ; then
+    export $1=$2
+  else
+    export $1=$2:$END
+  fi
+}
+
+
+append() {
+  END=`printenv $1`
+  if [ -z "$END" ]  ; then
+    export $1=$2
+  else
+    export $1=$END:$2
+  fi
+}
+
+today() {
+     local now=`date +"%Y-%m-%d"`
+     if (( $# > 0 )) ; then
+         if [[ $1 == "-f" ]] ; then
+            find . -type f -newermt $now
+         fi
+         if [[ $1 == "-d" ]] ; then
+            find . -type d -newermt $now
+         fi
+    else
+        find .  -newermt $now
+    fi
+    }
+
+setperm() {
+echo setting permissions for $1
+find $1 -perm -u=x -exec chmod go+x {} \;
+find $1 -perm -u=r -exec chmod go+r {} \;
+}
+
+
+cstrip() {
+# You can effectively make comments in a
+# bash script by delimiting with :<<++++ and ++++
+# This function removes them.
+for script in "$@" ; do
+    out=_$script
+    echo $out
+    sed  '/:<<++++/,/^++++/d' $script > $out
+done
+}
+
+
+account() {
+    if (( $# > 0 )) ; then
+      sacctmgr show assoc user=$1 format=account
+      lslogins $1
+    else
+      sacctmgr show assoc user=tkaiser2 format=account
+    fi
+}
+
+scr() {
+    if [ $# -lt 1 ]; then
+    cd /scratch/$USER
+    else
+    cd /scratch/$USER/$1
+    fi
+    }
+
+alias sq="squeue -u $USER --format='%18A%15l%15L%6D%20S%15P%15r%20V%N'"
+alias sqd="squeue -u $USER --format='%18A%15l%15L%6D%20S%15P%15r%20V%20N%20E'"
+
+dogpu() until sq | grep $1 > /dev/null ; (($?)) ;do date ; gpus ; sleep 5; done
+docpu() until sq | grep $1 > /dev/null ; (($?)) ;do date ; onnodes  ; sleep 5; done
+alias showuser="lslogins"
+
+
+
+running() { nl=`sq | wc -l`; if [ "$nl" -gt "1" ] ; then return 0 ; else return 1 ; fi; }
+dorunning() { running ; while [ $? -eq "0" ] ; do echo "running" ; sleep 10 ; running ; done }
+
+
+dompt() {
+export MYVERSION=dompt
+module load conda
+source activate
+source activate $MYVERSION
+module load gcc/8.4.0
+module load mpt
+}
+
+
+
