@@ -1,0 +1,20 @@
+module purge
+module load gcc/8.4.0
+tymer timeit start config
+export PATH=/nopt/nrel/apps/openmpi/4.1.0-gcc-8.4.0-j15/jdk-15.0.2/bin:$PATH
+./configure --prefix=/nopt/nrel/apps/openmpi/4.1.0-gcc-8.4.0-j15 \
+--with-slurm --with-pmi=/nopt/slurm/current --with-gnu-ld --with-lustre \
+--with-zlib --without-psm --without-psm2 --with-ucx --without-verbs \
+--enable-mpi-java \
+--with-jdk-headers=/nopt/nrel/apps/openmpi/4.1.0-gcc-8.4.0-j15/jdk-15.0.2/include \
+--with-jdk-bindir=/nopt/nrel/apps/openmpi/4.1.0-gcc-8.4.0-j15/jdk-15.0.2/bin \
+--with-hwloc=external --with-hwloc-libdir=/nopt/nrel/apps/base/2020-05-12/spack/opt/spack/linux-centos7-x86_64/gcc-8.4.0/hwloc-1.11.11-mb5lwdajmllvrdtwltwe3r732aca76ny/lib \
+--enable-cxx-exceptions --enable-mpi-cxx --enable-mpi-fortran --enable-static \
+LDFLAGS="-L/nopt/nrel/apps/base/2020-05-12/spack/opt/spack/linux-centos7-x86_64/gcc-8.4.0/11.0.2-4x2ws7fkooqbrerbsnfbzs6wyr5xutdk/lib64 \
+         -L/nopt/nrel/apps/base/2020-05-12/spack/opt/spack/linux-centos7-x86_64/gcc-8.4.0/cuda-11.0.2-4x2ws7fkooqbrerbsnfbzs6wyr5xutdk/lib64 \
+         -Wl,-rpath=/nopt/nrel/apps/base/2020-05-12/spack/opt/spack/linux-centos7-x86_64/gcc-8.4.0/hwloc-1.11.11-mb5lwdajmllvrdtwltwe3r732aca76ny/lib \
+         -Wl,-rpath=/nopt/nrel/apps/base/2020-05-12/spack/opt/spack/linux-centos7-x86_64/gcc-8.4.0/cuda-11.0.2-4x2ws7fkooqbrerbsnfbzs6wyr5xutdk/lib64" \
+         CPPFLAGS=-I/nopt/nrel/apps/base/2020-05-12/spack/opt/spack/linux-centos7-x86_64/gcc-8.4.0/hwloc-1.11.11-mb5lwdajmllvrdtwltwe3r732aca76ny/include
+tymer timeit end config
+
+
