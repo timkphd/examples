@@ -1,5 +1,5 @@
 ### export MODULEPATH=/nopt/nrel/apps/modules/test/modulefiles:$MODULEPATH
-### ml openmpi/4.1.0-gcc-8.4.0/gcc-8.4.0-j15cd ex
+### ml openmpi/4.1.0-gcc-8.4.0/gcc-8.4.0-j15
 
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)

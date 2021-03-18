@@ -25,7 +25,7 @@ class Ring {
 	int myrank = MPI.COMM_WORLD.getRank() ;
 	int size = MPI.COMM_WORLD.getSize() ;
         long t1=System.nanoTime();
-        System.out.println("core: "+Util.getName());
+        System.out.println("core: "+Util.getCore());
 
 	/* Calculate the rank of the next process in the ring.  Use the
 	   modulus operator so that the last process "wraps around" to
@@ -66,7 +66,7 @@ class Ring {
 
 	    MPI.COMM_WORLD.send(message, 1, MPI.INT, next, tag);
 	    if (0 == message[0]) {
-		System.out.println("core "+Util.getName()+" Process " + myrank + " exiting ");
+		System.out.println("core "+Util.getCore()+" Process " + myrank + " exiting ");
 		break;
 	    }
 	}
