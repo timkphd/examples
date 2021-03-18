@@ -56,4 +56,4 @@ setperm() {
     find $1 -perm -u=r -exec chmod go+r {} \; 
 }
 
-
+mdiff(){ d1=$1 ;  while test $# -gt 0; do     ls -lt $1 ; diff $d1 $1;     echo ++++++++++++++++++++++++++++++ ;shift; done;  }

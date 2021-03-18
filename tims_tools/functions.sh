@@ -91,4 +91,4 @@ module load mpt
 }
 
 
-
+mdiff(){ d1=$1 ;  while test $# -gt 0; do     ls -lt $1 ; diff $d1 $1;     echo ++++++++++++++++++++++++++++++ ;shift; done;  }
