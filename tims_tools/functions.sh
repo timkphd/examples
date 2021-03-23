@@ -92,3 +92,21 @@ module load mpt
 
 
 mdiff(){ d1=$1 ;  while test $# -gt 0; do     ls -lt $1 ; diff $d1 $1;     echo ++++++++++++++++++++++++++++++ ;shift; done;  }
+wackit () { 
+# function to remove an entry from a variable such as PATH based on a substring
+# export PATH=`wackit PATH mypath`
+str=`printenv $1`
+IFS=':'                    # set delimiter
+read -ra ADDR <<< "$str"   # str is read into an array as tokens separated by IFS
+SUB=$2
+export NP=""
+for i in "${ADDR[@]}"; do  # access each element of array
+    if grep -q "$SUB" <<< "$i"; then
+       :                   # put it back together skipping entires that contain the substring
+    else 
+       NP=`echo ${NP}" "${i}`
+    fi
+done
+                           # print is out with ":" replacing " " and stripping the first if needed
+echo $NP | sed "s, ,:,g" | sed "s,^:,,"
+}
