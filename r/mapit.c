@@ -37,15 +37,32 @@ void findcore (int *ic)
 { 
     ic[0] = sched_getcpu(); 
 } 
-void forcecore (int *core) { 
+void forcecore_org (int *core) { 
 	cpu_set_t set; 
 	pid_t getpid(void); 
 	CPU_ZERO(&set);        // clear cpu mask 
-        int bonk; 
-        bonk=*core; 
+	int bonk; 
+	bonk=*core; 
 	CPU_SET(bonk, &set);      // set cpu 0 
 	sched_setaffinity(getpid(), sizeof(cpu_set_t), &set);   
 } 
+
+
+void forcecore (int *core) { 
+	int bonk; 
+	pid_t getpid(void);
+	cpu_set_t set; 
+	bonk=*core; 
+	bonk=abs(bonk) ;
+	CPU_ZERO(&set);        // clear cpu mask 
+	CPU_SET(bonk, &set);      // set cpu 0 
+	if (*core < 0 ){
+	 	sched_setaffinity(0, sizeof(cpu_set_t), &set);   
+    }else{
+	 	sched_setaffinity(getpid(), sizeof(cpu_set_t), &set);   
+    }
+} 
+
 
 void p_to_c (int * pid ,int *core) { 
 	cpu_set_t set; 
