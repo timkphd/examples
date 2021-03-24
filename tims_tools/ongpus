@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+echo $1
+list=`squeue -u $USER -j $1 -ho %N`
+echo $list
+long=`scontrol show hostnames $list | sort -u`
+echo $long
+for l in $long ; do  
+  echo $l 
+  ssh $l uptime
+  echo "   PID    LWP PSR COMMAND         %CPU"  
+  ssh $l ps -U $USER -L -o pid,lwp,psr,comm,pcpu | grep -v COMMAND | sort -k3n 
+  ssh $l nvidia-smi 
+done
+
