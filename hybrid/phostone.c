@@ -28,6 +28,8 @@
 #define PID 0
 #endif
 
+void dothreads(int full,char *myname,int myid,int mycolor,int new_id);
+
 char *trim ( char *s );
 void slowit(long nints,int val);
 int node_color();
@@ -53,6 +55,27 @@ int findcore ()
 #endif
     return cpu;
 }
+
+int str_upr(char *cstr)
+{
+    char *str=cstr;
+    for (;*str;str++) {
+        if (isalpha(*str))
+            if (*str >= 'a' ){ *str += 'A' - 'a';}
+    }
+    return 0;
+}
+
+int str_low(char *cstr)
+{
+    char *str=cstr;
+    for (;*str;str++) {
+        if (isalpha(*str))
+            if (*str < 'a'){ *str += 'a' - 'A';}
+    }
+    return 0;
+}
+
 void dohelp();
 void dohelp() {
 
@@ -72,6 +95,8 @@ printf("\n");
 printf(" -F or -2    : Add columns to tell first MPI task on a node and and the\n");
 printf("               numbering of tasks on a node. (Hint: pipe this output in\n");
 printf("               to sort -r\n");
+printf("\n");
+printf(" -E or -B    : Print thread info at 'E'nd of the run or 'B'oth the start and end\n");
 printf("\n");
 printf(" -a          : Print a listing of the environmental variables passed to\n");
 printf("               MPI task. (Hint: use the -l option with SLURM to prepend MPI\n");
@@ -100,6 +125,7 @@ printf("\n");
   extern char _etext;
   return (p != NULL) && ((char*) p > &_etext);
 }
+    char f1234[128],f1235[128],f1236[128];
  
 int main(int argc, char **argv,char *envp[])
 {
@@ -109,16 +135,15 @@ int main(int argc, char **argv,char *envp[])
     int i,k;
     MPI_Comm node_comm;
     char lname[MPI_MAX_PROCESSOR_NAME] ;
-#ifdef MPI_MAX_LIBRARY_VERSION_STRING
+//#ifdef MPI_MAX_LIBRARY_VERSION_STRING
     char version[MPI_MAX_LIBRARY_VERSION_STRING] ;
-#else
-    char version[40];
-#endif
+//#else
+//    char version[40];
+//#endif
     char *myname,*cutit;
-    int full,envs,iarg,tn,nt,help,slow,vlan,wait,dotime;
+    int full,envs,iarg,tn,nt,help,slow,vlan,wait,dotime,when;
     long nints;
     double t1,t2,dt;
-    char f1234[128],f1235[128],f1236[128];
 
 /* Format statements */
 //    char *f1234="%4.4d      %4.4d    %18s        %4.4d         %4.4d  %4.4d\n";
@@ -128,11 +153,11 @@ int main(int argc, char **argv,char *envp[])
     strcpy(f1235,"%s %4.4d %4.4d\n");
     strcpy(f1236,"%s\n");
     MPI_Init(&argc,&argv);
-#ifdef MPI_MAX_LIBRARY_VERSION_STRING
+//#ifdef MPI_MAX_LIBRARY_VERSION_STRING
     MPI_Get_library_version(version,&vlan);
-#else
-    sprintf(version,"%s","UNDEFINED - consider upgrading");
-#endif
+//#else
+//    sprintf(version,"%s","UNDEFINED - consider upgrading");
+//#endif
     MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
     MPI_Get_processor_name(lname,&resultlen); 
@@ -152,6 +177,7 @@ int main(int argc, char **argv,char *envp[])
     	envs=0;
         help=0;
         dotime=0;
+        when=1;
     	if (argc > 1 ) {
     	  for (iarg=1;iarg<argc;iarg++) {
     	  	if ( (strcmp(argv[iarg],"-h")    == 0) || 
@@ -171,8 +197,11 @@ int main(int argc, char **argv,char *envp[])
     	  	if (strcmp(argv[iarg],"-a") == 0)         envs=1;
 /**/
     	  	if (strcmp(argv[iarg],"-T") == 0)         dotime=1;
-        }
+    	  	
+    	  	if (strcmp(argv[iarg],"-B") == 0)         when=3;
+    	  	if (strcmp(argv[iarg],"-E") == 0)         when=2;
     	}
+    }
     }
 /* send info to all tasks, if doing help doit and quit */
     MPI_Bcast(&help,1,MPI_INT,0,MPI_COMM_WORLD);
@@ -183,6 +212,7 @@ int main(int argc, char **argv,char *envp[])
 	}
     MPI_Bcast(&full,1,MPI_INT,0,MPI_COMM_WORLD);
     MPI_Bcast(&envs,1,MPI_INT,0,MPI_COMM_WORLD);
+    MPI_Bcast(&when,1,MPI_INT,0,MPI_COMM_WORLD);
     if(myid == 0 && dotime == 1)ptime();
     if(myid == 0 && full == 2){
     	
@@ -207,30 +237,10 @@ int main(int argc, char **argv,char *envp[])
     for (i=0;i<numprocs;i++) {
 	MPI_Barrier(MPI_COMM_WORLD);
         if ( i != myid ) continue;
-#pragma omp parallel 
-	{
-		nt=omp_get_num_threads();
-		if ( nt == 0 ) nt=1;
-#pragma omp critical 
-		{
-			if ( nt < 2 ) {
-			  nt=1;
-			  tn=0;
-			}
-			else {
-				tn=omp_get_thread_num();
-			}
-			if(full == 0) {
-				if(tn == 0)printf(f1236,trim(myname));
-			}
-			if(full == 1) {
-				printf(f1235,trim(myname),myid,tn);
-			}
-			if(full == 2){
-				printf(f1234,myid,tn,trim(myname),mycolor,new_id,findcore());
-			}
-		}
-	 }
+    if (when == 3) str_low(myname);
+    if (when != 2) dothreads(full,myname, myid, mycolor, new_id);
+
+
 /* here we print out the environment in which a MPI task is running */
 /* We try to determine if the passed environment is valid but sometimes
  * it just does not work and this can crash.  Try taking out myid==0
@@ -302,6 +312,14 @@ int main(int argc, char **argv,char *envp[])
     }
 
     if(myid == 0 && dotime == 1)ptime();
+    if (when > 1 ) {
+        for (i=0;i<numprocs;i++) {
+			MPI_Barrier(MPI_COMM_WORLD);
+        	if ( i != myid ) continue;
+        	if (when == 3) str_upr(myname);
+    		dothreads(full,myname, myid, mycolor, new_id);
+		}
+}
     MPI_Finalize();
     return 0;
 }
@@ -413,3 +431,35 @@ int omp_get_thread_num(void) { return 0; }
 int omp_get_num_threads(void){ return 1; }
 #endif
 
+
+
+
+
+
+void dothreads(int full,char *myname,int myid,int mycolor,int new_id) {
+int nt,tn;
+#pragma omp parallel 
+	{
+		nt=omp_get_num_threads();
+		if ( nt == 0 ) nt=1;
+#pragma omp critical 
+		{
+			if ( nt < 2 ) {
+			  nt=1;
+			  tn=0;
+			}
+			else {
+				tn=omp_get_thread_num();
+			}
+			if(full == 0) {
+				if(tn == 0)printf(f1236,trim(myname));
+			}
+			if(full == 1) {
+				printf(f1235,trim(myname),myid,tn);
+			}
+			if(full == 2){
+				printf(f1234,myid,tn,trim(myname),mycolor,new_id,findcore());
+			}
+		}
+	 }
+}
