@@ -13,6 +13,7 @@
 //
 #include <ctype.h>
 #include <math.h>
+#include <unistd.h>
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +22,8 @@
 #include <time.h>
 #include <utmpx.h>
 
+
+#define MPI_Wtime omp_get_wtime
 // which processor on a node will
 // print env if requested
 #ifndef PID
@@ -302,13 +305,13 @@ int main(int argc, char **argv, char *envp[]) {
   }
   if (dt > 0) {
     nints = 100000;
-    t1 = omp_get_wtime();
+    t1 = MPI_Wtime();
     t2 = t1;
     while (dt > t2 - t1) {
       for (i = 1; i <= 1000; i++) {
         slowit(nints, i);
       }
-      t2 = omp_get_wtime();
+      t2 = MPI_Wtime();
     }
     if (myid == 0)
       printf("total time %10.3f\n", t2 - t1);
@@ -324,11 +327,11 @@ int main(int argc, char **argv, char *envp[]) {
     }
   }
   if (nints > 0) {
-    t1 = omp_get_wtime();
+    t1 = MPI_Wtime();
     for (i = 1; i <= 1000; i++) {
       slowit(nints, i);
     }
-    t2 = omp_get_wtime();
+    t2 = MPI_Wtime();
     if (myid == 0)
       printf("total time %10.3f\n", t2 - t1);
   }
@@ -383,7 +386,7 @@ void slowit(long nints, int val) {
   long i, sum;
 #ifdef VERBOSET
   double t2, t1;
-  t1 = omp_get_wtime();
+  t1 = MPI_Wtime();
 #endif
   block = (int *)malloc(nints * sizeof(int));
 #pragma omp parallel for
@@ -396,7 +399,7 @@ void slowit(long nints, int val) {
     sum = sum + block[i];
   }
 #ifdef VERBOSET
-  t2 = omp_get_wtime();
+  t2 = MPI_Wtime();
   printf("sum of integers %ld %10.3f\n", sum, t2 - t1);
 #endif
   free(block);
