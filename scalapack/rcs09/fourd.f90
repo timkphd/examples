@@ -399,7 +399,7 @@ program rcs
         es=-es*pi*k*j/2.0_b4
 !       write(*,"(4g20.10)")xin,yin,es
 !       write(10,16)m,20.0_b4*log10(abs(es)/0.001_b4)
-        write(10,'(g10.5,2x,g20.10)')ang1,20.0_b4*log10(abs(es)/0.001_b4)
+        write(10,'(g13.5,2x,g20.10)')ang1,20.0_b4*log10(abs(es)/0.001_b4)
 !       write(11)abs(es)
     enddo
     tend=ccm_time()
