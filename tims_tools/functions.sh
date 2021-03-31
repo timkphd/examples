@@ -1,20 +1,34 @@
 
 prepend() {
-  END=`printenv $1`
-  if [ -z "$END" ]  ; then
-    export $1=$2
+# prepend PATH /bonk
+  if [ $1 == "-h" ] ; then
+     echo "prepend P_VAR new_item"
+     echo "prepends new_item to the path P_VAR"
+     return 0
   else
-    export $1=$2:$END
+    END=`printenv $1`
+    if [ -z "$END" ]  ; then
+      export $1=$2
+    else
+      export $1=$2:$END
+    fi
   fi
 }
 
 
 append() {
-  END=`printenv $1`
-  if [ -z "$END" ]  ; then
-    export $1=$2
+# append PATH /bonk
+  if [ $1 == "-h" ] ; then
+     echo "append P_VAR new_item"
+     echo "appends new_item to the path P_VAR"
+     return 0
   else
-    export $1=$END:$2
+    END=`printenv $1`
+    if [ -z "$END" ]  ; then
+      export $1=$2
+    else
+      export $1=$END:$2
+    fi
   fi
 }
 
@@ -36,6 +50,13 @@ setperm() {
 echo setting permissions for $1
 find $1 -perm -u=x -exec chmod go+x {} \;
 find $1 -perm -u=r -exec chmod go+r {} \;
+}
+
+
+# Function for printing and executing commands
+cmd() {
+  echo "+ $@";
+  eval "$@";
 }
 
 
