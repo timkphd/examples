@@ -131,3 +131,21 @@ done
                            # print is out with ":" replacing " " and stripping the first if needed
 echo $NP | sed "s, ,:,g" | sed "s,^:,,"
 }
+
+
+
+userinfo() {
+ #allow input as uid instead of name
+ #either should work
+ u=`id -nu $1`
+ echo $u
+ id $u 2>/dev/null  && echo "  +++++++++++ "
+ getent passwd $u 2>/dev/null && echo "  +++++++++++ "
+ finger $u 2>/dev/null && echo "  +++++++++++ "
+ last $u 2>/dev/null && echo "  +++++++++++ "
+ lslogins $u 2>/dev/null && echo "  +++++++++++ "
+ sacctmgr show associations user=$u format=account%15 2>/dev/null && echo "  +++++++++++ "
+ w $u 2>/dev/null && echo "  +++++++++++ "
+}
+
+
