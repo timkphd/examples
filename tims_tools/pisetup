@@ -1,4 +1,7 @@
 ##### install a bunch of packages need by other things 
+##### before running this you may need to 
+##### sudo visudo
+##### add the line: tkaiser ALL=(ALL) NOPASSWD:ALL
 date
 #First window
 #touch new.log
@@ -84,6 +87,7 @@ cd ..
 wget http://www.mpich.org/static/downloads/3.4/mpich-3.4.tar.gz
 tar -xzf  mpich-3.4.tar.gz 
 cd mpich-3.4
+export FFLAGS="-w -fallow-argument-mismatch -O2"
 ./configure --prefix=/opt/mpi/mpich/3.4 --with-device=ch3
 #./configure 
 make -j 4
