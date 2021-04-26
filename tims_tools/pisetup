@@ -1,4 +1,7 @@
 ##### install a bunch of packages need by other things 
+##### before running this you may need to 
+##### sudo visudo
+##### add the line: tkaiser ALL=(ALL) NOPASSWD:ALL
 date
 #First window
 #touch new.log
@@ -81,10 +84,11 @@ sudo make install
 
 ##### install mpich 
 cd ..
-wget http://www.mpich.org/static/downloads/3.4/mpich-3.4.tar.gz
-tar -xzf  mpich-3.4.tar.gz 
-cd mpich-3.4
-./configure --prefix=/opt/mpi/mpich/3.4 --with-device=ch3
+wget http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz
+tar -xzf  mpich-3.4.1.tar.gz 
+cd mpich-3.4.1
+export FFLAGS="-w -fallow-argument-mismatch -O2"
+./configure --prefix=/opt/mpi/mpich/3.4.1 --with-device=ch3
 #./configure 
 make -j 4
 sudo make install 
@@ -154,8 +158,8 @@ cd ~/conda
 virtualenv ${PIV}b -p /opt/python/${PIV}/bin/python3 --system-site-packages
 source ${PIV}b/bin/activate
 
-export LD_LIBRARY_PATH=/opt/mpi/mpich/3.4/lib:$LD_LIBRARY_PATH
-export PATH=/opt/mpi/mpich/3.4/bin:$PATH
+export LD_LIBRARY_PATH=/opt/mpi/mpich/3.4.1/lib:$LD_LIBRARY_PATH
+export PATH=/opt/mpi/mpich/3.4.1/bin:$PATH
 pip3 install --no-cache-dir mpi4py
 
 export PATH=$SPATH
@@ -179,7 +183,7 @@ chmod 755 ~/bin/*
 
 ##### install R from source since package version is old
 export VERSION=3.6.1 
-export VERSION=4.0.3
+export VERSION=4.0.5
 
 ## get top level version number for wget
 RC=`echo ${VERSION:0:1}`
@@ -243,14 +247,14 @@ export LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib:/usr/local/lib:\$LD_LIBRARY_PA
 export PATH=/opt/mpi/openmpi/4.1.0/bin:\$PATH
 export MANPATH=/opt/mpi/openmpi/4.1.0/shared/man:\$MANPATH
 dompich() {
-export LD_LIBRARY_PATH=\`echo \$LD_LIBRARY_PATH | sed "s,openmpi/4.1.0,mpich/3.4,g"\`
-export PATH=\`echo \$PATH | sed "s,openmpi/4.1.0,mpich/3.4,g"\`
-export MANPATH=\`echo \$MANPATH | sed "s,openmpi/4.1.0,mpich/3.4,g"\`
+export LD_LIBRARY_PATH=\`echo \$LD_LIBRARY_PATH | sed "s,openmpi/4.1.0,mpich/3.4.1,g"\`
+export PATH=\`echo \$PATH | sed "s,openmpi/4.1.0,mpich/3.4.1,g"\`
+export MANPATH=\`echo \$MANPATH | sed "s,openmpi/4.1.0,mpich/3.4.1,g"\`
 }
 doopenmpi() {
-export LD_LIBRARY_PATH=\`echo \$LD_LIBRARY_PATH | sed "s,mpich/3.4,openmpi/4.1.0,g"\`
-export PATH=\`echo \$PATH | sed "s,mpich/3.4,openmpi/4.1.0,g"\`
-export MANPATH=\`echo \$MANPATH | sed "s,mpich/3.4,openmpi/4.1.0,g"\`
+export LD_LIBRARY_PATH=\`echo \$LD_LIBRARY_PATH | sed "s,mpich/3.4.1,openmpi/4.1.0,g"\`
+export PATH=\`echo \$PATH | sed "s,mpich/3.4.1,openmpi/4.1.0,g"\`
+export MANPATH=\`echo \$MANPATH | sed "s,mpich/3.4.1,openmpi/4.1.0,g"\`
 }
 
 
