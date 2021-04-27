@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/bin/env python3
 # numpy is required
 import numpy
 import sys

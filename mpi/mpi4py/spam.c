@@ -147,3 +147,21 @@ PyInit_spam(void)
 }
 
 #endif
+/*************
+cat << AFILE > setup.py
+#setup.py 
+from distutils.core import setup, Extension
+
+module1 = Extension('spam',
+                    sources = ['spam.c'])
+
+setup (name = 'PackageName',
+       version = '1.0',
+       description = 'This is a process - core mapping package',
+       ext_modules = [module1])
+
+
+##python3 setup.py install
+AFILE
+*************/
+
