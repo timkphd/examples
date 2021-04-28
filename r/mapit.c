@@ -74,7 +74,7 @@ void p_to_c (int * pid ,int *core) {
 	CPU_SET(bonk, &set);      // set cpu 0 
 	apid=(pid_t)*pid;
 	i=sched_setaffinity(apid, sizeof(cpu_set_t), &set);   
-        printf("%d %ld %d\n",i,apid,bonk);
+        printf("%d %ld %d\n",i,(long)apid,bonk);
 } 
 
 #ifdef DOMAIN
