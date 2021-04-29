@@ -29,7 +29,7 @@ CPU_SET(int num, cpu_set_t *cs) { cs->count |= (1 << num); }
 int sched_getcpu() {
 	return(0);
 }
-void sched_setaffinity(pid_t i, int thesize, cpu_set_t *set) {
+int sched_setaffinity(pid_t i, int thesize, cpu_set_t *set) {
 
 }
 #endif
