@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #total time= 4720.508449077606   time spent in do_jacobi= 4678.393705606461
 #['0', '<=', 'i', '<=', '201', ',', '0', '<=', 'j', '<=', '201']
 # C version run time =       3.04

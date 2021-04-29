@@ -29,7 +29,7 @@ CPU_SET(int num, cpu_set_t *cs) { cs->count |= (1 << num); }
 int sched_getcpu() {
 	return(0);
 }
-void sched_setaffinity(pid_t i, int thesize, cpu_set_t *set) {
+int sched_setaffinity(pid_t i, int thesize, cpu_set_t *set) {
 
 }
 #endif
@@ -74,7 +74,7 @@ void p_to_c (int * pid ,int *core) {
 	CPU_SET(bonk, &set);      // set cpu 0 
 	apid=(pid_t)*pid;
 	i=sched_setaffinity(apid, sizeof(cpu_set_t), &set);   
-        printf("%d %ld %d\n",i,apid,bonk);
+        printf("%d %ld %d\n",i,(long)apid,bonk);
 } 
 
 #ifdef DOMAIN

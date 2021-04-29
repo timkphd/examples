@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import numpy
 from numpy import *
 from mpi4py import MPI

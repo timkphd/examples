@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # numpy is required
 import numpy
 from numpy import *

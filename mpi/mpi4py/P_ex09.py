@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # This program shows how to use Alltoallv
 # Each processor gets amounts of data from each other processor.

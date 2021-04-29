@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # This program shows how to use Scatterv.  Each processor gets a
 # different amount of data from the root processor.  We use MPI_Gather

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from math import pi,sin
 from math import fabs as abs
 #from Numeric import empty

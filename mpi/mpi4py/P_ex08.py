@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # This program shows how to use MPI_Gatherv.  Each processor sends a
 # different amount of data to the root processor.  We use MPI_Gather

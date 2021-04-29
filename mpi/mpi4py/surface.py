@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # based on https://matplotlib.org/examples/mplot3d/surface3d_demo.html
 
 from mpl_toolkits.mplot3d import Axes3D

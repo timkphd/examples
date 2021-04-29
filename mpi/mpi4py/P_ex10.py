@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Pass a "token" from one task to the next with
 # a single task reading token from a file.
 
