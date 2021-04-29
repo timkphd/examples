@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # This program shows how to use MPI_Alltoall.  Each processor
 # send/rec a different random number to/from other processors. 

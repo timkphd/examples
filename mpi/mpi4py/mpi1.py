@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from mpi4py import MPI
 # A very simple send/recv example from the page:
 # http://mpi4py.scipy.org/docs/usrman/tutorial.html
