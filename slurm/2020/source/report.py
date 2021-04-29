@@ -1,4 +1,30 @@
-#!/usr/bin/env python
+#!/bin/env python3
+# get the number of cores on a node
+# multiprocessing.cpu_count() and os.cpu_count()
+# might return the wrong number if hyperthreading
+# is turned on
+def get_cores():
+    from os.path import exists
+    # linux
+    if exists("/proc/cpuinfo"):
+        p=0
+        f=open("/proc/cpuinfo","r")
+        for x in f.readlines():
+            if x.find("processor") == 0 :
+                p=p+1
+        return p
+    # mac os
+    try:
+        from os import popen
+        f=popen("sysctl -n hw.physicalcpu","r")
+        x=f.readline()
+        return int(x)
+    except:
+    # last resort...
+    # assume hyperthreading is on
+        from os import cpu_count
+        return(cpu_count()/2)
+
 # numpy is required
 import numpy
 import sys
@@ -45,11 +71,16 @@ try :
 # or set your PYTHONPATH variable to point
 # to the directory containing the library.
 
+
 	cores=36
+# cat /proc/cpuinfo | grep2 processor | wc -l
+# sysctl -n hw.physicalcpu
+	cores=get_cores()
 	from spam import *
 	offset=getenv('OFFSET','0')
 	offset=int(offset)
-	forcecore((myid+offset) % cores)
+	if offset >=  0 :
+		forcecore((myid+offset) % cores)
 	core=findcore()
 except:
 	core=-1

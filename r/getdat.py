@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Program to download earthquake data and to 
 # split it in to "tasks" more or less equal sized
 # files.  "tasks" is taken from the command line
