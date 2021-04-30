@@ -1,3 +1,4 @@
+#!/usr/bin/env R
 if (!is.loaded("mpi_initialize")) {     
     library("Rmpi")     
     }  
@@ -5,10 +6,6 @@ mpi_comm_world<-0
 myid <- mpi.comm.rank(comm=mpi_comm_world)
 numprocs <- mpi.comm.size(comm=mpi_comm_world)
 myname <- mpi.get.processor.name()
-tag<-1234;
-source<-0;
-destination<-1;
-count<-1;
 cat("I am",myid,"of",numprocs,"on",myname,"\n")
 if (myid == 0 ) {
   library(datasets)
@@ -48,10 +45,10 @@ if (myid == 0 ) {
    status<-as.integer(0)
    myset<-mpi.recv.Robj(0,tag=1234,comm=mpi_comm_world,status)
 }
-#print(myset)
+#head(myset)
 #Sepal.Length Sepal.Width Petal.Length Petal.Width
-sizes=c(sum(myset[["Sepal.Length"]]),sum(myset[["Sepal.Width"]]),
-        sum(myset[["Petal.Length"]]),sum(myset[["Petal.Width"]]))
+sizes<-c(sum(myset[["Sepal.Length"]]),sum(myset[["Sepal.Width"]]),
+         sum(myset[["Petal.Length"]]),sum(myset[["Petal.Width"]]))
 cat(myid,"sums",sizes,"\n")
 thetot<-mpi.reduce(sizes, type=2, op="sum",dest = 0, comm = mpi_comm_world)
 if(myid == 0) {
