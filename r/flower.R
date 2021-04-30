@@ -9,7 +9,7 @@ tag<-1234;
 source<-0;
 destination<-1;
 count<-1;
-paste("I R am",myid,"of",numprocs,"on",myname)
+paste("R am",myid,"of",numprocs,"on",myname)
 bots<-integer(numprocs)
 tops<-integer(numprocs)
 if (myid == 0 ) {
@@ -55,4 +55,4 @@ if(myid == 0) {
   cat("Final sizes =",thetot,"\n")
 }
 bonk<-mpi.finalize()
-#bonk<-mpi.exit()
+
