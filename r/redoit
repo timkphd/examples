@@ -3,7 +3,7 @@ curl --insecure https://cran.r-project.org/src/contrib/Rmpi_0.6-9.1.tar.gz -o Rm
 MY_MPI_PATH=`which mpicc| sed s,/bin/mpicc,,`
 
 echo $MY_MPI_PATH | grep open > /dev/null
-if [[ $? == 1 ]] ; then TYPE=MPICH; else TYPE=OPENMPI; fi
+if [[ $? == 1 ]] ; then TYPE=MPICH2; else TYPE=OPENMPI; fi
 
 echo MY_MPI_PATH= $MY_MPI_PATH
 echo TYPE=$TYPE
