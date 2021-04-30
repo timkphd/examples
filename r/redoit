@@ -1,0 +1,14 @@
+curl --insecure https://cran.r-project.org/src/contrib/Rmpi_0.6-9.1.tar.gz -o Rmpi.tar.gz
+
+MY_MPI_PATH=`which mpicc| sed s,/bin/mpicc,,`
+
+echo MY_MPI_PATH= $MY_MPI_PATH
+
+R CMD INSTALL --configure-args="\
+--with-Rmpi-include='$MY_MPI_PATH/include' \
+--with-Rmpi-libpath='$MY_MPI_PATH/lib' \
+--with-mpi='$MY_MPI_PATH/bin/mpicc' \
+--with-Rmpi-type='MPICH2'"  \
+Rmpi.tar.gz    
+
+#the type of MPI: OPENMPI,LAM,MPICH,MPICH2, or CRAY

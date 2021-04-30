@@ -15,7 +15,7 @@ tops<-integer(numprocs)
 if (myid == 0 ) {
   library(datasets)
   set1<-iris[iris$Species == "setosa", ]
-  #set2<-iris[iris$Species == "versicolor", ]
+  set2<-iris[iris$Species == "versicolor", ]
   #set3<-iris[iris$Species == "virginica", ]
   each=as.integer(nrow(set1)/numprocs)
   for (n in 1:numprocs) {
@@ -26,14 +26,23 @@ if (myid == 0 ) {
   print(bots)
   print(tops)
   myset<-set1[bots[1]:tops[1],]
+} else {
+set2<-integer(1)
 }
+Sys.sleep(2)
+set2<-mpi.bcast.Robj(set2,0,comm=mpi_comm_world)
+if (myid == 1) {
+    head(set2)
+}
+Sys.sleep(2)
 if (myid == 0 ) {
-  for (n in 1:numprocs-1) {
+  for (n in 1:(numprocs-1)) {
     tosend<-set1[bots[n+1]:tops[n+1],]
     mpi.send.Robj(tosend,n,tag=1234,comm=mpi_comm_world)
   }
 } else {
-   myset<-mpi.recv.Robj(0,tag=1234,comm=mpi_comm_world,status=0)
+   status<-as.integer(0)
+   myset<-mpi.recv.Robj(0,tag=1234,comm=mpi_comm_world,status)
 }
 #print(myset)
 #Sepal.Length Sepal.Width Petal.Length Petal.Width
