@@ -50,8 +50,8 @@ if (myid == 0 ) {
 }
 #print(myset)
 #Sepal.Length Sepal.Width Petal.Length Petal.Width
-sizes=c(sum(myset[["Sepal.Length"]]),mean(myset[["Sepal.Width"]]),
-        sum(myset[["Petal.Length"]]),mean(myset[["Petal.Width"]]))
+sizes=c(sum(myset[["Sepal.Length"]]),sum(myset[["Sepal.Width"]]),
+        sum(myset[["Petal.Length"]]),sum(myset[["Petal.Width"]]))
 cat(myid,"sums",sizes,"\n")
 thetot<-mpi.reduce(sizes, type=2, op="sum",dest = 0, comm = mpi_comm_world)
 if(myid == 0) {
