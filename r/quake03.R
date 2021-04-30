@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 source("tymer.R")
 
 quake <-function(x){

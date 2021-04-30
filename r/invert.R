@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 dyn.load("mapit.so")
  threadfunc <-function() {
  trd=c(0)

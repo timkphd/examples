@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(tictoc) 
 size <- 4000
 mymat <- matrix(nrow=size, ncol=size)

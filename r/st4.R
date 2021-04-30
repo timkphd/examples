@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 if(FALSE){
 library(parallel,quietly = TRUE)
 library(doParallel,quietly = TRUE)

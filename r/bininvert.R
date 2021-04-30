@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 source("tymer.R")
 size=1000
 mymat <- matrix(0.0,nrow=size, ncol=size)

@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 source("tymer.R")
 
 do_force<-function(i1,i2,j1,j2,alpha){

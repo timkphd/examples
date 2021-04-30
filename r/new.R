@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
  threadfunc <-function() {  
  trd=c(0)  
  out <- .C("findcore",ic=as.integer(trd),package="thread")  

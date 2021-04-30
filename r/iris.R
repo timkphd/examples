@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(foreach)
 library(doParallel)
 library(tictoc)

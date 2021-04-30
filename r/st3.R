@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(foreach,quietly = TRUE)
 library(dplyr,quietly = TRUE)
 library(parallel,quietly = TRUE)

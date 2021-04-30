@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 # This is a bag-of-tasks program.  We define a manager task
 # that distributes work to workers.  Actually, the workers
 # request input data.  The manager sits in a loop calling

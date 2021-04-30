@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 if (!is.loaded("mpi_initialize")) {library("Rmpi")} 
  
 mpi_comm_world<-0 

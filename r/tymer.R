@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 #' A nice timing routine: tymer
 #' 
 #' @param lab A label for the output

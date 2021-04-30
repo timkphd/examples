@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 #https://cran.r-project.org/web/packages/foreach/foreach.pdf
 # clear stuff
 rm(list=ls())

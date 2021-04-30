@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 # Load the R MPI package if it is not already loaded.
 if (!is.loaded("mpi_initialize")) {
     library("Rmpi")
