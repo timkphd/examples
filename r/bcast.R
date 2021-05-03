@@ -18,7 +18,7 @@ if (myid == source){
 
 buffer1<-mpi.bcast(buffer1,type=1,comm = mpi_comm_world)
 
-print(c(myid,buffer1))
+#print(c(myid,buffer1))
 
 buffer2<-as.integer(myid+1)
 
@@ -37,3 +37,4 @@ if(myid == 0){
 }
 
 bonk<-mpi.finalize()
+

@@ -26,11 +26,11 @@ char *argv[];
     if(myid == source){
       buffer=5678;
       MPI_Send(&buffer,count,MPI_INT,destination,tag,MPI_COMM_WORLD);
-      printf("processor %d  sent %d\n",myid,buffer);
+      printf(" C processor %d  sent %d\n",myid,buffer);
     }
     if(myid == destination){
         MPI_Recv(&buffer,count,MPI_INT,source,tag,MPI_COMM_WORLD,&status);
-        printf("processor %d  got %d\n",myid,buffer);
+        printf("C processor %d  got %d\n",myid,buffer);
     }
     MPI_Finalize();
 }
