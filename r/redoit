@@ -8,11 +8,14 @@ if [[ $? == 1 ]] ; then TYPE=MPICH2; else TYPE=OPENMPI; fi
 echo MY_MPI_PATH= $MY_MPI_PATH
 echo TYPE=$TYPE
 
+mkdir -p /home/tkaiser/RMPI/$TYPE
+
 R CMD INSTALL --configure-args="\
 --with-Rmpi-include='$MY_MPI_PATH/include' \
 --with-Rmpi-libpath='$MY_MPI_PATH/lib' \
 --with-mpi='$MY_MPI_PATH/bin/mpicc' \
 --with-Rmpi-type='$TYPE'"  \
+--library=/home/tkaiser/RMPI/$TYPE \
 Rmpi.tar.gz    
 
 #the type of MPI: OPENMPI,LAM,MPICH,MPICH2, or CRAY
