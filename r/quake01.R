@@ -15,39 +15,39 @@ quake <-function(x){
              a<-(-0.279157)
              b<-0.3160013
           }
-    	}
+        }
      t<-a+b*x
      10**t
 }
 
 atin<-function(dis){
-	if(dis > 100.0){
-		y<-5.333253/(dis**2)
-	}else{
-		if(dis < 3.0)dis<-3.0
-		x<-log10(dis)
-		y<-1.56301016+x*(0.54671034+x*(-0.54724666))
-		y<-0.017535744506694952*(10.8**y)
-	}
+    if(dis > 100.0){
+        y<-5.333253/(dis**2)
+    }else{
+        if(dis < 3.0)dis<-3.0
+        x<-log10(dis)
+        y<-1.56301016+x*(0.54671034+x*(-0.54724666))
+        y<-0.017535744506694952*(10.8**y)
+    }
 }
 
 # assume energy goes as (10^mag)/(d^2.5)
 whack <- function(lat1,lon1,lat2,lon2,mag,dep) {
-	lat1<-lat1*0.01745329
-	lat2<-lat2*0.01745329
-	lon1<-lon1*0.01745329
-	lon2<-lon2*0.01745329
-	ang1<-(sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1)
-	if(ang1 > 1.0)ang1<-1.0
-	d <- 6377.83 * acos(ang1)
-	d <- sqrt(d*d+dep*dep)
-	if(mag > 0.0){
-#	i <-(quake(mag))/(d^2.5)
-	i <-atin(d)*(quake(mag))
-	} else {
-	i=0
-	}
-	return(i)
+    lat1<-lat1*0.01745329
+    lat2<-lat2*0.01745329
+    lon1<-lon1*0.01745329
+    lon2<-lon2*0.01745329
+    ang1<-(sin(lat1) * sin(lat2)) + cos(lat1) * cos(lat2) * cos(lon2-lon1)
+    if(ang1 > 1.0)ang1<-1.0
+    d <- 6377.83 * acos(ang1)
+    d <- sqrt(d*d+dep*dep)
+    if(mag > 0.0){
+#    i <-(quake(mag))/(d^2.5)
+    i <-atin(d)*(quake(mag))
+    } else {
+    i=0
+    }
+    return(i)
 }
 if(FALSE){
 # read in our character data
@@ -76,10 +76,10 @@ rm(rdf)
 rm(idf)
 rm(chars)
 }else {
-	sfile<-"start"
-	dat<-read.delim(sfile,header=F,sep="")
-	thehead=c("year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly")
-	colnames(dat)<-thehead
+    sfile<-"start"
+    dat<-read.delim(sfile,header=F,sep="")
+    thehead=c("year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly")
+    colnames(dat)<-thehead
 }
 #print(dat)
 library(parallel)
@@ -110,8 +110,8 @@ dlon<-as.integer(myinput[2,3])
 lon.seq<-seq(lonb[1],lonb[2],length=dlon)
 lat.seq<-seq(latb[1],latb[2],length=dlat)
 if(TRUE){
-	print(lon.seq)
-	print(lat.seq)
+    print(lon.seq)
+    print(lat.seq)
 }
 
 cores<-4
@@ -124,63 +124,61 @@ jkl=1:length(lat.seq)
 
 
 dorows<-nrow(dat)
-dorows=20
+dorows=2000
 if(TRUE){
-	print(tymer(reset=T))
+    print(tymer(reset=T))
 }
 
 for (i in jkl){
-	mylat=lat.seq[i]
-	aset <- foreach (ijk=1:length(lon.seq)) %dopar% {
-		mymax=0.0
-		mytot=0.0
-		mylon<-lon.seq[ijk]
-		for (row in 1:dorows) {
-			slat<-dat[row,"latitude"]
-			slon<-dat[row,"longitude"]
-			mag<-dat[row,"SCSN"]
-			dep<-dat[row,"depth"]
-			ouch<-whack(mylat,mylon,slat,slon,mag,dep)
-			if(ouch > mymax){mymax=ouch}
-			mytot=mytot+ouch
-		}
-		aset<-c(mylat,mylon,mytot,mymax,Sys.getpid())
-	}
+    mylat=lat.seq[i]
+    aset <- foreach (ijk=1:length(lon.seq)) %dopar% {
+        mymax=0.0
+        mytot=0.0
+        mylon<-lon.seq[ijk]
+        for (row in 1:dorows) {
+            slat<-dat[row,"latitude"]
+            slon<-dat[row,"longitude"]
+            mag<-dat[row,"SCSN"]
+            dep<-dat[row,"depth"]
+            ouch<-whack(mylat,mylon,slat,slon,mag,dep)
+            if(ouch > mymax){mymax=ouch}
+            mytot=mytot+ouch
+        }
+        aset<-c(mylat,mylon,mytot,mymax,Sys.getpid())
+    }
     #print(aset)
-	if(TRUE){print(tymer(paste("done",mylat)))}
-	nresults=length(aset)
-	for (ijk in 1:nresults){
+    if(TRUE){print(tymer(paste("done",mylat)))}
+    nresults=length(aset)
+    for (ijk in 1:nresults){
         r<-unlist(aset[ijk])
         therow=nrow(df) + 1
-        df[therow,'lat']=r[1]
-        df[therow,'lon']=r[2]
-        df[therow,'tot']=r[3]
-        df[therow,'max']=r[4]
-        df[therow,'pid']=as.integer(r[5])
-	}
+        r<-unlist(aset[ijk])
+        df[therow,1:4]<-r[1:4]
+        df[therow,5]<-as.integer(r[5])
+    }
 }
 stopCluster(cluster)
 tymer()
 #print(df)
 if(TRUE){
-	# put our values back in df
-	mymax<-matrix(df$max,nrow=dlat,ncol=dlon,byrow=TRUE)
-	mymax<-as.data.frame(mymax,row.names=lat.seq)
-	colnames(mymax)<-lon.seq
-	print(mymax)
-	mytot<-matrix(df$tot,nrow=dlat,ncol=dlon,byrow=TRUE)
-	mytot<-as.data.frame(mytot,row.names=lat.seq)
-	colnames(mytot)<-lon.seq
-	print(mytot)
-	#sanity check
-	writeLines(paste("at",lat.seq[1],lon.seq[1],"sum=",mytot[1,1],"max=",mymax[1,1]))
-	writeLines(paste("at",lat.seq[1],lon.seq[dlon],"sum=",mytot[1,dlon],"max=",mymax[1,dlon]))
-	writeLines(paste("at",lat.seq[dlat],lon.seq[1],"sum=",mytot[dlat,1],"max=",mymax[dlat,1]))
-	writeLines(paste("at",lat.seq[dlat],lon.seq[dlon],"sum=",mytot[dlat,dlon],"max=",mymax[dlat,dlon]))
-	save(mytot,file="mytotp.Rda")
-	save(mymax,file="mymaxp.Rda")
-	write.csv(mytot,file="mytotp.csv")
-	write.csv(mymax,file="mymaxp.csv")
+    # put our values back in df
+    mymax<-matrix(df$max,nrow=dlat,ncol=dlon,byrow=TRUE)
+    mymax<-as.data.frame(mymax,row.names=lat.seq)
+    colnames(mymax)<-lon.seq
+    print(mymax)
+    mytot<-matrix(df$tot,nrow=dlat,ncol=dlon,byrow=TRUE)
+    mytot<-as.data.frame(mytot,row.names=lat.seq)
+    colnames(mytot)<-lon.seq
+    print(mytot)
+    #sanity check
+    writeLines(paste("at",lat.seq[1],lon.seq[1],"sum=",mytot[1,1],"max=",mymax[1,1]))
+    writeLines(paste("at",lat.seq[1],lon.seq[dlon],"sum=",mytot[1,dlon],"max=",mymax[1,dlon]))
+    writeLines(paste("at",lat.seq[dlat],lon.seq[1],"sum=",mytot[dlat,1],"max=",mymax[dlat,1]))
+    writeLines(paste("at",lat.seq[dlat],lon.seq[dlon],"sum=",mytot[dlat,dlon],"max=",mymax[dlat,dlon]))
+    save(mytot,file="mytotp.Rda")
+    save(mymax,file="mymaxp.Rda")
+    write.csv(mytot,file="mytotp.csv")
+    write.csv(mymax,file="mymaxp.csv")
 }
 
 #// source("works.R")

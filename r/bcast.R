@@ -18,7 +18,7 @@ if (myid == source){
 
 buffer1<-mpi.bcast(buffer1,type=1,comm = mpi_comm_world)
 
-#print(c(myid,buffer1))
+print(c(myid,buffer1))
 
 buffer2<-as.integer(myid+1)
 
@@ -31,10 +31,17 @@ mysum<-mpi.reduce(buffer2, type=1, op="sum",dest = 0, comm = mpi_comm_world)
 myprod<-mpi.reduce(buffer2, type=1, op="prod",dest = 0, comm = mpi_comm_world)
 
 if(myid == 0){
-	print(stuff)
-	print(mysum)
-	print(myprod)
+	cat("stuff=",stuff,"\n")
+	cat("the sum",mysum,"\n")
+	cat("the product",myprod,"\n")
+	
+    stuff<-append(stuff,stuff*10)
+    print(stuff)
 }
 
-bonk<-mpi.finalize()
+twovals<-vector("integer",2)
+twovals<-mpi.scatter(stuff, type=1, twovals,root = 0, comm = mpi_comm_world)
 
+cat("on ",myid," i got these two values ",twovals,"\n")
+
+bonk<-mpi.finalize()
