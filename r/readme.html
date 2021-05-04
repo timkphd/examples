@@ -1,95 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <title>Some Examples</title>
-    <meta name="generator" content="BBEdit 12.6" />
-<style>
-pre	{ color: #ff0000; font-size: large;}
-b { color: #000;}
+	<title>R stuff</title>
+	<meta name="generator" content="BBEdit 13.5" />
+		<style>
+	BODY { background-color: #eee; }
+	code {style=display:block;white-space:pre-wrap}
+	dt
+	{
+		color: deepskyblue;
+	}
+
 </style>
+
 </head>
 <body>
-<pre>
-bcast.R
-	<b>MPI Program testing various routines</b>
-bininvert.R
-	<b>Simple matrix inversion example</b>
-bot.R
-	<b>Bag of task program - creates laser images</b>
-bounds
-	<b>Input for earthquake simulation</b>
-c_ex01.c
-	<b>MPI Send and Recv example; mpicc c_ex01.c -o c_ex01</b>
-doin.R
-	<b>Install some packages</b>
-doinstall.R
-	<b>Install some packages</b>
-doit
-	<b>Run some tests</b>
-getdat.py
-	<b>Gets earthquake data, split it into N files where N is on the command line</b>
-infile
-	<b>File list for bot.R - laser intensities</b>
-invert.R
-	<b>Does multiple matrix inversions inside of a foreach loop</b>
-invert1.R
-	<b>Simple matrix inversion example</b>
-iris.R
-	<b>Foreach on known data set</b>
-mapit.c
-	<b>C routine to force processes to cores</b>
-may29c
-	<b>Example slurm script</b>
-mpicor.r (see also bigcor.r and pcor.r)
-	<b>Parallel correlation</b>
-new.R
-	<b>Real research code</b>
-pieit.R
-	<b>Simple graphics</b>
-quake.f90
-	<b>Earthquake simulation in Fortran</b>
-quake01.R
-	<b>Earthquake simulation with foreach, slowest version</b>
-quake02.R
-	<b>Earthquake simulation in MPI and R, slower version</b>
-quake03.R
-	<b>Earthquake simulation in MPI and R, not as slow version</b>
-r_ex01.R
-	<b>MPI Send and Recv example; try mpiexec -n 1 ./c_ex01 : -n 1 Rscript r_ex01.R</b>
-rcheat.html
-	<b>Notes on how to do various things in R</b>
-readq.f90
-	<b>Read earthquake data write it as binary</b>
-semantics
-	<b>Directory with same calls as semantics.R but in individual files</b>
-semantics.R
-	<b>A bunch of loop examples; some broken but should still not crash</b>
-spawn.R
-	<b>Simple MPI spawn more tasks example</b>
-spawn2.R
-	<b>Complex MPI spawn more tasks example then launches invert.R for two level parallelism</b>
-st_00.R
-	<b>Serial Stommel finite difference code</b>
-st_01.R
-	<b>MPI Stommel finite difference code</b>
-st.in
-	<b>Input for Stommel finite difference code</b>
-st2.R
-	<b>Real research code, parallel foreach</b>
-st3.R
-	<b>Real research code, MPI generating data and MPI for analysis</b>
-st3.R
-	<b>Real research code, parallel foreach generating data and MPI for analysis</b>
-stc_01.c
-	<b>MPI Stommel finite difference code</b>
-stom01.out
-	<b>Output from st_01.R</b>
-threads.txt
-	<b>Input for invert.R - how many tasks to run</b>
-tymer.R
-	<b>A nice timing routine</b>
-zap
-	<b>Script to get laser data</b>
-</pre>
+<h3>R codes</h3>
+<dl>
+	<dt>bcast.R</dt>
+		<dd>	MPI bcast,gather,reduce,scatter</dd>
+	<dt>bigcor.R</dt>
+		<dd>	Testing some correlation ideas, work in progress.</dd>
+	<dt>bind.R</dt>
+		<dd>	foreach with combine=rbind and combine=cbind</dd>
+	<dt>bininvert.R</dt>
+		<dd>	Simple matrix inversion, not parallel</dd>
+	<dt>bot.R</dt>
+		<dd>	MPI Bag of tasks</dd>
+	<dt>doin.R</dt>
+		<dd>	Install script</dd>
+	<dt>doinstall.R</dt>
+		<dd>	Install script</dd>
+	<dt>flower.R</dt>
+		<dd>	Iris data set analysis in MPI with bcast.Robj, send.Robj, reduce</dd>
+	<dt>hellop.R</dt>
+		<dd>	foreach hello world</dd>
+	<dt>invert1.R</dt>
+		<dd>	Another serial matrix inversion program</dd>
+	<dt>invert.R</dt>
+		<dd>	Matrix inversion program, forcing task to a given core, called by spawn</dd>
+	<dt>ircmdr.R</dt>
+		<dd>	Install Script</dd>
+	<dt>iris.R</dt>
+		<dd>	Compares random data to iris data set with foreach</dd>
+	<dt>pcor.R</dt>
+		<dd>	Testing some correlation ideas, work in progress.</dd>
+	<dt>new.R</dt>
+		<dd>	Real research code work in progress</dd>
+	<dt>pcor.R</dt>
+		<dd>	Testing some correlation ideas, work in progress.</dd>
+	<dt>pieit.R</dt>
+		<dd>	Make a pie chart</dd>
+	<dt>piris.R</dt>
+		<dd>	Iris data set analysis with foreach, see flower.R</dd>
+	<dt>qsort.R</dt>
+		<dd>	Simple recursive sort with foreach</dd>
+	<dt>quake01.R</dt>
+		<dd>	Earthquake hazard map with foreach</dd>
+	<dt>quake02.R</dt>
+		<dd>	Earthquake hazard map with MPI</dd>
+	<dt>quake03.R</dt>
+		<dd>	Earthquake hazard map with MPI, faster</dd>
+	<dt>r_ex01.R</dt>
+		<dd>	Send/Recv in MPI, see c_ex01.c</dd>
+	<dt>semantics.R</dt>
+		<dd>	A bunch of foreach examples, some show how it can be broken.</dd>
+	<dt>spawn2.R</dt>
+		<dd>	MPI spawn program calls invert.R</dd>
+	<dt>spawn.R</dt>
+		<dd>	Simple MPI spawn program</dd>
+	<dt>st_00.R</dt>
+		<dd>	Finite difference code</dd>
+	<dt>st_01.R</dt>
+		<dd>	Finite difference code with MPI</dd>
+	<dt>st2.R</dt>
+		<dd>	Real research code, work in progress</dd>
+	<dt>st3.R</dt>
+		<dd>	Real research code, work in progress</dd>
+	<dt>st4.R</dt>
+		<dd>	Real research code, work in progress</dd>
+	<dt>sys.R</dt>
+		<dd>	Utility functions, sys - system and srun</dd>
+	<dt>tymer.R</dt>
+		<dd>	Nice timing routine, matches Tim's python version</dd>
+</dl>
+
+<hr>
+<h3>C codes</h3>
+
+<dl>
+	<dt>	c_ex01.c</dt>
+		<dd>		Send/Recv in MPI, see r_ex01.R</dd>
+	<dt>	mapit.c</dt>
+		<dd>		Forces tasks to a specified core.  See spawn2.R and invert.R</dd>
+	<dt>	stc_01.c</dt>
+		<dd>		Finite difference code with MPI</dd>
+</dl>
+<hr>
+
+<h3>Python</h3>
+<dl>
+	<dt>	getdat.py</dt>
+		<dd>		Download and preprocess earthquake data.</dd>
+</dl>
+<hr>
+	
+<h3>Fortran</h3>
+<dl>
+	<dt>quake.f90</dt>
+		<dd>	Earthquake hazard map</dd>
+	<dt>readq.f90</dt>
+		<dd>	Shows how to read/write data in binary in Fortran</dd>
+</dl>
+
+<hr>
+<h3>Data</h3>
+
+<dl>
+	<dt>bounds</dt>
+		<dd>	Bounds for earthquake hazard map calaulation</dd>
+	<dt>st.in</dt>
+		<dd>	Input for finite difference calculation	</dd>
+	<dt>redoit</dt>
+		<dd>	Build Rmpi</dd>
+	<dt>laser.tgz</dt>
+		<dd>	Input for Bag of Task program	</dd>
+	<dt>infile</dt>
+		<dd>	Input for Bag of Task program</dd>
+</dl>
+	<hr>
+<h3>Other</h3>
+
+<dl>
+
+		<dd>rcheat.html</dd>
+	<dt>	Some ways to do things in R</dt>
+		<dd>readme.html</dd>
+	<dt>	This file</dt>
+</dl>
+
+
 </body>
 </html>

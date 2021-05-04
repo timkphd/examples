@@ -1,1 +1,0 @@
-curl https://petra.acns.colostate.edu/docs/slides/MPI4PY/laser.tgz | tar -xz
