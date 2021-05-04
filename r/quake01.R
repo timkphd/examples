@@ -118,13 +118,13 @@ cores<-4
 #cluster <- create_cluster(cores)  
 cluster <- makeCluster(cores)  
 registerDoParallel(cluster)  
-df<-data.frame(lat=double(),lon=double(),tot=double(),max=double())
+df<-data.frame(lat=double(),lon=double(),tot=double(),max=double(),pid=integer())
 tymer(reset=T)
 jkl=1:length(lat.seq)
 
 
 dorows<-nrow(dat)
-#dorows=10000
+dorows=20
 if(TRUE){
 	print(tymer(reset=T))
 }
@@ -144,12 +144,19 @@ for (i in jkl){
 			if(ouch > mymax){mymax=ouch}
 			mytot=mytot+ouch
 		}
-		aset<-c(mylat,mylon,mytot,mymax)
+		aset<-c(mylat,mylon,mytot,mymax,Sys.getpid())
 	}
+    #print(aset)
 	if(TRUE){print(tymer(paste("done",mylat)))}
 	nresults=length(aset)
 	for (ijk in 1:nresults){
-		df[nrow(df) + 1,] <-aset[[ijk]]
+        r<-unlist(aset[ijk])
+        therow=nrow(df) + 1
+        df[therow,'lat']=r[1]
+        df[therow,'lon']=r[2]
+        df[therow,'tot']=r[3]
+        df[therow,'max']=r[4]
+        df[therow,'pid']=as.integer(r[5])
 	}
 }
 stopCluster(cluster)
@@ -191,5 +198,9 @@ if(TRUE){
 #// at 33 -121 sum= 24.3447944967845 max= 0.504810265218713
 #// >
 
-
+pids=unique(df['pid'])
+for (p in pids[,]) {
+    n=nrow(df[df['pid'] == p,])
+    print(c(p,n))
+}
 
