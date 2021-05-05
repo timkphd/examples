@@ -10,10 +10,28 @@ sys_vec<-function(command){
     x<-system(command,intern=TRUE)
 }
 
+sys_df<-function(command){
+    x<-system(command,intern=TRUE)
+    x<-data.frame(x)
+}
+
 sys_py<-function(command){
     x<-system(command,intern=TRUE)
     x<-paste(x, collapse = '\n')
 }
+
+library('IRdisplay') 
+
+html<-function(x){
+    display_html(file=x)
+}
+
+image<-function(x){
+    z<-paste('<img src="',x,'">',sep='')
+    display_html(z)
+}
+
+
 # adapt this for local usage
 srun<-function(inputs) {
     x<-sys_vec("printenv PATH")
