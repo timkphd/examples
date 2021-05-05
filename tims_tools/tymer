@@ -11,6 +11,22 @@ def sprint(*args, **kwargs):
     print(*args, **kwargs, file=sio) 
     return sio.getvalue() 
      
+#returns output from the magic command %%capture as a list
+def clist(cap):
+    if len(cap._stdout.__getstate__()[0]) > 0:
+        return(cap.stdout.split())
+    rstr=""
+    for i in cap._outputs :
+        try:
+            s=i['data']['text/plain']
+            s=s.replace("\\n","\n")
+            s=s.strip("'")
+            rstr=rstr+sprint(s)
+        except:
+            pass
+    return(rstr.split())
+
+
 def tymer(sys_argv=""):
 	secs=time.time()
 	date=time.asctime()
