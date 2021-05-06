@@ -7,27 +7,31 @@ doquit=False
 
 import io 
 def sprint(*args, **kwargs): 
-    sio = io.StringIO() 
-    print(*args, **kwargs, file=sio) 
-    return sio.getvalue() 
-     
+	'''Use like print but returns a string instead of printing.'''
+	sio = io.StringIO() 
+	print(*args, **kwargs, file=sio) 
+	return sio.getvalue() 
+	 
 #returns output from the magic command %%capture as a list
 def clist(cap):
-    if len(cap._stdout.__getstate__()[0]) > 0:
-        return(cap.stdout.split())
-    rstr=""
-    for i in cap._outputs :
-        try:
-            s=i['data']['text/plain']
-            s=s.replace("\\n","\n")
-            s=s.strip("'")
-            rstr=rstr+sprint(s)
-        except:
-            pass
-    return(rstr.split())
+	'''Returns output from the magic command %%capture as a list'''
+	if len(cap._stdout.__getstate__()[0]) > 0:
+		return(cap.stdout.split())
+	rstr=""
+	for i in cap._outputs :
+		try:
+			s=i['data']['text/plain']
+			s=s.replace("\\n","\n")
+			s=s.strip("'")
+			rstr=rstr+sprint(s)
+		except:
+			pass
+	return(rstr.split())
 
 
 def tymer(sys_argv=""):
+	'''nice timer. For help tymer("-h")'''
+
 	secs=time.time()
 	date=time.asctime()
 	delta=0
@@ -79,12 +83,12 @@ def tymer(sys_argv=""):
 		print("")
 		print("tymer can be called as a function:")
 		print("from tymer import *")
-		print('tymer()                          prints to stdout')                      
-		print('tymer("file")                    prints to file')
-		print('tymer("-i")                      use an internal file for saving time')
-		print('tymer(["file","comments"])       prints to file with comments')
-		print('tymer(["","comments"])           prints to stdout with comments')
-		print('tymer(["/dev/null","comments"])  prints to stdout with comments')
+		print('tymer()							prints to stdout')						
+		print('tymer("file")					prints to file')
+		print('tymer("-i")						use an internal file for saving time')
+		print('tymer(["file","comments"])		prints to file with comments')
+		print('tymer(["","comments"])			prints to stdout with comments')
+		print('tymer(["/dev/null","comments"])	prints to stdout with comments')
 		print("")
 		print(s)
 		if doquit : 
