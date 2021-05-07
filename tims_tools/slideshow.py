@@ -166,13 +166,25 @@ class mysay:
 					tts = gTTS(text=txt, lang='en')
 					mp3 = BytesIO()   
 					tts.write_to_fp(mp3)   
-					mp3.seek(0)   
-					mixer.init()   
-					mixer.music.load(mp3)   
-					mixer.music.play() 
+					try:
+						mp3.seek(0)   
+						mixer.init()   
+						mixer.init(44100,16,2,4096)   
+						mixer.music.load(mp3)   
+						mixer.music.play() 
+					except:
+						print("talk failed")
 				speakversion="gtts (Internet Connection) "
 			except:
-				dohelp()
+				def wsay(afile):
+					global speakversion
+					x=open(afile,"r")
+					txt=x.read()
+					txt=txt.split("====")
+					txt=txt[0]
+					x.close()
+					tts = gTTS(text=txt, lang='en')
+					print("no speech module found")
 
 		username = getpass.getuser()
 		self.wsay=wsay
