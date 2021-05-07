@@ -116,6 +116,7 @@ class mysay:
 		self.name = name
 		self.counter=1
 		self.startdir=startdir
+		self.failed=False
 
 		if platform.system() == "Darwin" :
 			try:
@@ -158,6 +159,7 @@ class mysay:
 				from pygame import mixer 
 				def wsay(afile):
 					global speakversion
+					if self.talkfailed : return()
 					x=open(afile,"r")
 					txt=x.read()
 					txt=txt.split("====")
@@ -174,6 +176,7 @@ class mysay:
 						mixer.music.play() 
 					except:
 						print("talk failed")
+						self.talkfailed=True
 				speakversion="gtts (Internet Connection) "
 			except:
 				def wsay(afile):
