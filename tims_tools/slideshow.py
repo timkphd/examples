@@ -1,15 +1,18 @@
+''' Contains class mysay for doing presentations in a Jupyter notebook
+    from slideshow import mysay
+    help(mysat)
+'''
+
 #!/usr/bin/env python
 # coding: utf-8
 import os
 import platform
-from time import time
 from time import sleep
 from IPython.display import Image,display
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
 import getpass
 from IPython.display import clear_output
-from time import sleep
 class mysay:
 	'''Class for displaying Presentations in Jupyter notebooks
 	   dohelp() 
@@ -63,7 +66,7 @@ class mysay:
  			Passing False to walk will surpress the speech.
  			
  			
- 				dis.nxt()  
+ 				dis.nx()  
  			will show the next slide.  It has several options.  The
  			defaluts are:
  				dn=1           : advance dn slides before presenting
@@ -73,21 +76,21 @@ class mysay:
  				time=0         : sleep before proceeding
  				
  			Useful combinations:
- 				dis.nxt(talk=True,wait=True)
- 	 			dis.nxt(talk=False,wait=True)
+ 				dis.nx(talk=True,wait=True)
+ 	 			dis.nx(talk=False,wait=True)
  	 			# put 5 images in a window quickly
  	 			for i in range(0,5):
- 	 			    dis.nxt(talk=False,wait=False,clear=False)
+ 	 			    dis.nx(talk=False,wait=False,clear=False)
   	 			# put 5 images in a window waiting for user input
  	 			for i in range(0,5):
- 	 			    dis.nxt(talk=True,wait=True,clear=False)
+ 	 			    dis.nx(talk=True,wait=True,clear=False)
   	 			# put 5 images in a window waiting 5 seconds between images
  	 			for i in range(0,5):
- 	 			    dis.nxt(talk=True,clear=False,time=5)
+ 	 			    dis.nx(talk=True,clear=False,time=5)
   	 			# put 5 images in a window waiting 5 seconds between images
   	 			# but clearing the previous image
  	 			for i in range(0,5):
- 	 			    dis.nxt(talk=True,clear=True,time=5)
+ 	 			    dis.nx(talk=True,clear=True,time=5)
             
             
             ####################################################
@@ -281,10 +284,10 @@ class mysay:
 		print("txt:" ,len(self.txt))
 		print("img:" ,len(self.img))
 
-	def nxt(self,dn=1,talk=False,wait=False,clear=False,time=0):
+	def nx(self,dn=1,talk=False,wait=False,clear=False,time=0):
 		'''Show a slide from a presentation.
 		
-		 nxt(dn=1,talk=False,wait=False,clear=False,time=0)
+		 nx(dn=1,talk=False,wait=False,clear=False,time=0)
 	   
 	   dohelp() for a complete description'''
 
