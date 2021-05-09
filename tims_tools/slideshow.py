@@ -8,7 +8,8 @@
 import os
 import platform
 from time import sleep
-from IPython.display import Image,display
+from time import time seconds
+from IPython.display import Image,display,HTML
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
 import getpass
@@ -113,6 +114,8 @@ class mysay:
 		print("using "+speakversion+" for audio")
 
 	def __init__(self,name="none",startdir=".."):
+		if name == "none" :
+			name=str(int(seconds()))
 		self.name = name
 		self.counter=1
 		self.startdir=startdir
@@ -155,8 +158,8 @@ class mysay:
 			##### pip install gtts   
 			##### pip install pygame   
 				from gtts import gTTS
-				from io import BytesIO
-				from pygame import mixer 
+#				from io import BytesIO
+#				from pygame import mixer 
 				def wsay(afile):
 					global speakversion
 					if self.talkfailed : return()
@@ -166,14 +169,34 @@ class mysay:
 					txt=txt[0]
 					x.close()
 					tts = gTTS(text=txt, lang='en')
-					mp3 = BytesIO()   
-					tts.write_to_fp(mp3)   
+					tts.save(name+".mp3")
+					afile="""<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<audio controls autoplay>
+  <source src="OUT.mp3" type="audio/mp3">
+  Your browser does not support the audio element.
+</audio>
+<h3>Hello</h3>
+</body>
+</html>
+"""
+					afile=afile.replace("OUT",name)
+					#f=open(name+".html","w")
+					#dummy=f.write(afile)
+					#f.close()
+					HTML(afile)
+#					mp3 = BytesIO()   
+#					tts.write_to_fp(mp3)   
 					try:
-						mp3.seek(0)   
-						mixer.init()   
-						mixer.init(44100,16,2,4096)   
-						mixer.music.load(mp3)   
-						mixer.music.play() 
+# 						mp3.seek(0)   
+# 						mixer.init()   
+# 						mixer.init(44100,16,2,4096)   
+# 						mixer.music.load(mp3)   
+# 						mixer.music.play() 
 					except:
 						print("talk failed")
 						self.talkfailed=True
