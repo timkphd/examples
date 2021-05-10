@@ -176,11 +176,11 @@ Your browser does not support the audio element.
 </html>
 """
 				ofile=ofile.replace("OUT",afile)
-				print(ofile)
+#				print(ofile)
 				try:
 					display(HTML(ofile))
 				except:
-#					print("talk failed")
+					print("talk failed")
 					self.talkfailed=True
 			self.speakversion="local "
 
