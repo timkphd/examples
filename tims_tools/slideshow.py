@@ -8,7 +8,7 @@
 import os
 import platform
 from time import sleep
-from time import time seconds
+from time import time as seconds
 from IPython.display import Image,display,HTML
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
@@ -16,11 +16,10 @@ import getpass
 from IPython.display import clear_output
 class mysay:
 	'''Class for displaying Presentations in Jupyter notebooks
-	   dohelp() 
+	   help() 
 	   for a complete description'''
-	speakversion="none"
 
-	def dohelp(self):
+	def help(self):
 		text="""Script takes two sets of files in numerical order starting at 1.
 			Images:         either 
 					*[0-9[[0-9][0-9].png 
@@ -111,7 +110,7 @@ class mysay:
 		
 		"""
 		print(text)
-		print("using "+speakversion+" for audio")
+		print("using "+self.speakversion+" for audio")
 
 	def __init__(self,name="none",startdir=".."):
 		if name == "none" :
@@ -119,7 +118,9 @@ class mysay:
 		self.name = name
 		self.counter=1
 		self.startdir=startdir
-		self.failed=False
+		self.talkfailed=False
+		self.speakversion="none"
+
 
 		if platform.system() == "Darwin" :
 			try:
@@ -136,7 +137,7 @@ class mysay:
 					txt=txt[0]
 					x.close()
 					speechSynthesizer.startSpeakingString_(txt)
-				speakversion="Mac NSSpeechSynthesizer"
+				self.speakversion="Mac NSSpeechSynthesizer"
 			except:
 				def wsay(afile):
 					x=open(afile,"r")
@@ -147,7 +148,7 @@ class mysay:
 					txt=txt.replace('"',"'")
 					cmd="echo \""+txt+"\" | say -v Karen --quality=128"
 					x=os.popen(cmd,"r")
-				speakversion="Mac say"
+				self.speakversion="Mac say"
 			
 
 		#if platform.system() == "Darwin" :
@@ -168,8 +169,9 @@ class mysay:
 					txt=txt.split("====")
 					txt=txt[0]
 					x.close()
-					tts = gTTS(text=txt, lang='en')
-					tts.save(name+".mp3")
+					if len(txt) > 0:
+						tts = gTTS(text=txt, lang='en')
+						tts.save(self.name+".mp3")
 					afile="""<!DOCTYPE html>
 <html>
 <head>
@@ -180,15 +182,13 @@ class mysay:
   <source src="OUT.mp3" type="audio/mp3">
   Your browser does not support the audio element.
 </audio>
-<h3>Hello</h3>
 </body>
 </html>
 """
-					afile=afile.replace("OUT",name)
+					afile=afile.replace("OUT",self.name)
 					#f=open(name+".html","w")
 					#dummy=f.write(afile)
 					#f.close()
-					HTML(afile)
 #					mp3 = BytesIO()   
 #					tts.write_to_fp(mp3)   
 					try:
@@ -197,10 +197,13 @@ class mysay:
 # 						mixer.init(44100,16,2,4096)   
 # 						mixer.music.load(mp3)   
 # 						mixer.music.play() 
+						if len(txt) > 0:
+							display(HTML(afile))
+						#os.remove(self.name+".mp3")
 					except:
 						print("talk failed")
 						self.talkfailed=True
-				speakversion="gtts (Internet Connection) "
+				self.speakversion="gtts (Internet Connection) "
 			except:
 				def wsay(afile):
 					global speakversion
@@ -209,7 +212,7 @@ class mysay:
 					txt=txt.split("====")
 					txt=txt[0]
 					x.close()
-					tts = gTTS(text=txt, lang='en')
+					#tts = gTTS(text=txt, lang='en')
 					print("no speech module found")
 
 		username = getpass.getuser()
@@ -269,9 +272,11 @@ class mysay:
 
 	def showit(self,txt,img,out,j,talk=True):
 		i=j-1
-		if talk :
-			self.wsay(txt[i])
+		#if talk :
+		#	self.wsay(txt[i])
+		#sleep(10)
 		display(Image(filename=img[i]))
+		if talk : self.wsay(txt[i])
 	#optional test for copy paste written after the slide
 		if len(out[i]) > 0:
 			#print("\033[31m")
@@ -284,7 +289,7 @@ class mysay:
 		
 		walk(talk=True)
 		
-	   dohelp() for a complete description'''
+	   help() for a complete description'''
 
 
 		out=self.out
@@ -312,11 +317,13 @@ class mysay:
 		
 		 report()
 		 
-	   dohelp() for a complete description'''
+	   help() for a complete description'''
 
-		print("name: ",self.name)
-		print("counter: ",self.counter)
-		print("directory: ",self.startdir)
+		print("            name: ",self.name)
+		print("         counter: ",self.counter)
+		print("       directory: ",self.startdir)
+		print("     talk failed: ",self.talkfailed)
+		print("speech synthesis: ",self.speakversion)
 		print("# data:" )
 		print("out:" ,len(self.out))
 		print("txt:" ,len(self.txt))
@@ -327,13 +334,14 @@ class mysay:
 		
 		 nx(dn=1,talk=False,wait=False,clear=False,time=0)
 	   
-	   dohelp() for a complete description'''
+	   help() for a complete description'''
 
 		txt=self.txt
 		out=self.out
 		img=self.img
 		jmax=len(self.img)
 		dn=dn-1
+		# counter actually points to the next scheduled slide
 		j=self.counter+dn
 		if(j < 1): j=1
 		if(j > jmax) :
