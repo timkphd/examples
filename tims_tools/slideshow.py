@@ -112,7 +112,7 @@ class mysay:
 		print(text)
 		print("using "+self.speakversion+" for audio")
 
-	def __init__(self,name="none",startdir=".."):
+	def __init__(self,name="none",startdir="..",system="none"):
 		if name == "none" :
 			name=str(int(seconds()))
 		self.name = name
@@ -120,9 +120,11 @@ class mysay:
 		self.startdir=startdir
 		self.talkfailed=False
 		self.speakversion="none"
-
-
-		if platform.system() == "Darwin" :
+		if system == "none" :
+			self.system=platform.system()
+		else:
+			self.system=system
+		if self.system == "Darwin" :
 			try:
 				from AppKit import NSSpeechSynthesizer
 				#from AppKit import NSSpeechSynthesizer
@@ -149,18 +151,46 @@ class mysay:
 					cmd="echo \""+txt+"\" | say -v Karen --quality=128"
 					x=os.popen(cmd,"r")
 				self.speakversion="Mac say"
-			
+#local
+		if self.system == "local"  :
+#			print("local")
+			def wsay(afile):
+				if self.talkfailed : return()
+				from os.path import isfile
+				afile=afile+".wave"
+				if isfile(afile) :
+					pass
+				else :
+					return
+				ofile="""<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+</head>
+<body>
+<audio controls autoplay>
+<source src="OUT" type="audio/wave">
+Your browser does not support the audio element.
+</audio>
+</body>
+</html>
+"""
+				ofile=ofile.replace("OUT",afile)
+				print(ofile)
+				try:
+					display(HTML(ofile))
+				except:
+#					print("talk failed")
+					self.talkfailed=True
+			self.speakversion="local "
 
-		#if platform.system() == "Darwin" :
-		if platform.system() == "Windows" or platform.system() == "Linux" :
+
+		if self.system == "Windows" or self.system == "Linux" :
 			try:
 			##### conda create --name slides Jupiter Matplotlib scipy pandas 
 			##### conda activate slides 
 			##### pip install gtts   
-			##### pip install pygame   
 				from gtts import gTTS
-#				from io import BytesIO
-#				from pygame import mixer 
 				def wsay(afile):
 					global speakversion
 					if self.talkfailed : return()
@@ -186,17 +216,7 @@ class mysay:
 </html>
 """
 					afile=afile.replace("OUT",self.name)
-					#f=open(name+".html","w")
-					#dummy=f.write(afile)
-					#f.close()
-#					mp3 = BytesIO()   
-#					tts.write_to_fp(mp3)   
 					try:
-# 						mp3.seek(0)   
-# 						mixer.init()   
-# 						mixer.init(44100,16,2,4096)   
-# 						mixer.music.load(mp3)   
-# 						mixer.music.play() 
 						if len(txt) > 0:
 							display(HTML(afile))
 						#os.remove(self.name+".mp3")
@@ -218,7 +238,6 @@ class mysay:
 		username = getpass.getuser()
 		self.wsay=wsay
 
-		#dir="/Users/tkaiser2/Desktop/sshPics"
 		if (self.startdir == "..") :
 			dir=os.getcwd()
 		else:
