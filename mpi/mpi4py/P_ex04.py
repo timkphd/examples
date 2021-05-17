@@ -35,8 +35,8 @@ if myid == source:
     buffer3=array(['abcd'],"str")
 else:
 	# The buffers should be the same length
-	# lest strange things happen. Here we will 
-	# get extra characters, 5678, not overwritten.
+	# lest strange things happen. If we have
+	# characters, say 5678, not overwritten.
 	# This would normally be a bug in your program.
 	buffer3=array(["1234"],"str")
 
