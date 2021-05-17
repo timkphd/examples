@@ -14,6 +14,10 @@ from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
 import getpass
 from IPython.display import clear_output
+global startdir
+startdir=os.getcwd()
+
+
 class mysay:
 	'''Class for displaying Presentations in Jupyter notebooks
 	   help() 
@@ -44,12 +48,12 @@ class mysay:
 			This should be run from a jupyter notebook.  For example:
 		   
 			   from show import mysay
-			   dis=mysay("linux",startdir="..")
+			   dis=mysay("linux",datadir="..")
 			   dis.walk()
 			   
-			The startdir is the directory containing the files.  It defaults to the
-			current directory.  
-			
+			The datadir is the directory containing the files.  It defaults to the
+			current directory.  It can be a subdirectory but you must specify a 
+			relative, not absolute path.
 			
 			
 			"linux" is this case is just an arbitrary name given to this presentation.
@@ -101,23 +105,47 @@ class mysay:
 				conda create --name slides Jupyter Matplotlib scipy pandas 
 				conda activate slides
 				pip install gtts
-				pip install pygame 
+ 
 			
-			The gtts / pygame combination also works on a Raspberry Pi and on the Mac.
+			The gtts  also works on a Raspberry Pi and on the Mac.
 			
 			Gtts requires an internet connection.  There may be a short delay in the
 			audio.
-		
+			
+		DEMO with mpi4py and some canned presentations
+			from slideshow import mysay
+			pwd
+			ls
+			slides=mysay(datadir="slides")
+			pwd
+			slides.walk()
+			pwd
+			cd ..
+			ssh=mysay(datadir="sshtalk",system="local")
+			ssh.report()
+			ssh.walk()
+			slides.report()
+			slides.nx(talk=True)
+			cd ~/examples/mpi/mpi4py
+			ls
+			%load_ext slurm_magic
+			srun -n 4 ./P_ex02.py
+			slides.nx(talk=True)
 		"""
 		print(text)
 		print("using "+self.speakversion+" for audio")
 
-	def __init__(self,name="none",startdir="..",system="none"):
+	def __init__(self,name="none",datadir="..",system="none"):
 		if name == "none" :
 			name=str(int(seconds()))
 		self.name = name
-		self.counter=1
+		
+		global startdir
 		self.startdir=startdir
+		self.counter=1
+		os.chdir(datadir)
+		self.datadir=datadir
+		self.saveddir=self.startdir
 		self.talkfailed=False
 		self.speakversion="none"
 		if system == "none" :
@@ -169,14 +197,15 @@ class mysay:
 </head>
 <body>
 <audio controls autoplay>
-<source src="OUT" type="audio/wave">
+<source src="../OUT" type="audio/wave">
 Your browser does not support the audio element.
 </audio>
 </body>
 </html>
 """
 				ofile=ofile.replace("OUT",afile)
-#				print(ofile)
+				ofile=ofile.replace("..",self.datadir)
+				#print(ofile)
 				try:
 					display(HTML(ofile))
 				except:
@@ -202,23 +231,25 @@ Your browser does not support the audio element.
 					if len(txt) > 0:
 						tts = gTTS(text=txt, lang='en')
 						tts.save(self.name+".mp3")
-					afile="""<!DOCTYPE html>
+					ofile="""<!DOCTYPE html>
 <html>
 <head>
 	<title></title>
 </head>
 <body>
 <audio controls autoplay>
-  <source src="OUT.mp3" type="audio/mp3">
+  <source src="../OUT.mp3" type="audio/mp3">
   Your browser does not support the audio element.
 </audio>
 </body>
 </html>
 """
-					afile=afile.replace("OUT",self.name)
+					ofile=ofile.replace("OUT",self.name)
+					ofile=ofile.replace("..",self.datadir)
 					try:
 						if len(txt) > 0:
-							display(HTML(afile))
+							#print(ofile)
+							display(HTML(ofile))
 						#os.remove(self.name+".mp3")
 					except:
 						print("talk failed")
@@ -238,12 +269,12 @@ Your browser does not support the audio element.
 		username = getpass.getuser()
 		self.wsay=wsay
 
-		if (self.startdir == "..") :
+		if (self.datadir == "..") :
 			dir=os.getcwd()
 		else:
-			dir=startdir
-		self.startdir=dir
-		os.chdir(dir)
+			dir=datadir
+		self.datadir=dir
+		#os.chdir(dir)
 
 		# text to be spoken
 		txt=[]
@@ -288,12 +319,23 @@ Your browser does not support the audio element.
 		self.out=out
 		self.txt=txt
 		self.img=img
+	def popd(self):
+		#print("poping to: ",self.saveddir,"from",os.getcwd())
+		os.chdir(self.saveddir)
+		
+	def pushd(self):
+		self.saveddir=os.getcwd()
+		#print("pushing: ",self.saveddir,"going to",self.startdir)
+		os.chdir(self.startdir)
+		os.chdir(self.datadir)
 
 	def showit(self,txt,img,out,j,talk=True):
+		self.pushd()
 		i=j-1
 		#if talk :
 		#	self.wsay(txt[i])
 		#sleep(10)
+		
 		display(Image(filename=img[i]))
 		if talk : self.wsay(txt[i])
 	#optional test for copy paste written after the slide
@@ -301,6 +343,7 @@ Your browser does not support the audio element.
 			#print("\033[31m")
 			print(out[i])
 			#print("\033[30m")
+		self.popd()
 		return(j+1)
 
 	def walk(self,talk=True):
@@ -340,7 +383,7 @@ Your browser does not support the audio element.
 
 		print("            name: ",self.name)
 		print("         counter: ",self.counter)
-		print("       directory: ",self.startdir)
+		print("       directory: ",self.datadir)
 		print("     talk failed: ",self.talkfailed)
 		print("speech synthesis: ",self.speakversion)
 		print("# data:" )
