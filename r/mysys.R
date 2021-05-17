@@ -88,11 +88,7 @@ nextim<-function(j){
     return(file)
     }
 
-<<<<<<< HEAD
 # work in progress puts out junk along with sound
-=======
-#work in progress puts out junk along with sound
->>>>>>> 2a8802d30ce3b77472c810aae983f5ba9777d926
 wav<-function(file="out.wav",type="wav"){
     s<-'<!DOCTYPE html>
 <html>
