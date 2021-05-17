@@ -78,6 +78,7 @@ class mysay:
  				wait=False     : wait for user to enter a responce before proceeding 
  				clear=False    : clear the previous image before the next
  				time=0         : sleep before proceeding
+ 				slide=0        : if > 0 go to that slide
  				
  			Useful combinations:
  				dis.nx(talk=True,wait=True)
@@ -391,7 +392,7 @@ Your browser does not support the audio element.
 		print("txt:" ,len(self.txt))
 		print("img:" ,len(self.img))
 
-	def nx(self,dn=1,talk=False,wait=False,clear=False,time=0):
+	def nx(self,dn=1,talk=False,wait=False,clear=False,time=0,slide=0):
 		'''Show a slide from a presentation.
 		
 		 nx(dn=1,talk=False,wait=False,clear=False,time=0)
@@ -409,6 +410,7 @@ Your browser does not support the audio element.
 		if(j > jmax) :
 			print("at the end")
 			return (0)
+		if(slide > 0) : j=slide
 		j=self.showit(txt,img,out,j,talk)
 		if wait :
 			jmax=len(self.img)
