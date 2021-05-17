@@ -2,7 +2,7 @@
 source("tymer.R")
 
 quake <-function(x){
-     if(x < 0.1){x=0.1}
+     if(x < 0.1){x<-0.1}
      if(x >=0.1 && x <=2.0){
         a<-(-2.146128)
         b<-1.146128
@@ -45,7 +45,7 @@ whack <- function(lat1,lon1,lat2,lon2,mag,dep) {
 #	i <-(quake(mag))/(d^2.5)
 	i <-atin(d)*(quake(mag))
 	} else {
-	i=0
+	i<-0
 	}
 	return(i)
 }
@@ -77,14 +77,14 @@ if(FALSE){
 
 	# read in our character data
 	chars<-read.csv(afile,header=F)
-	lines=nrow(chars)
+	lines<-nrow(chars)
 	names(chars)<-c("le","ct","poly")
 
 	# read in our real data
 	reals<-readBin(rfile,what="double",n=lines*10)
 	r<-matrix(reals,lines,byrow=T)
 	rm(reals)
-	rdf=as.data.frame(r)
+	rdf<-as.data.frame(r)
 	rm(r)
 	names(rdf) <- c("second","latitude","longitude","depth","SCSN","residual","stdpos","stddepth","stdhorrel","stddeprel")
 
@@ -92,11 +92,11 @@ if(FALSE){
 	ints<-readBin(ifile,what="int",n=lines*13)
 	i<-matrix(ints,lines,byrow=T)
 	rm(ints)
-	idf=as.data.frame(i)
+	idf<-as.data.frame(i)
 	rm(i)
 	names(idf) <- c("year","month","day","hour","minute","cuspid","PandS","statino","tod","method","ec","nen","dt")
 
-	dat=cbind(rdf,idf,chars)
+	dat<-cbind(rdf,idf,chars)
 	rm(rdf)
 	rm(idf)
 	rm(chars)
@@ -104,17 +104,17 @@ if(FALSE){
 	sfile<-paste("start",letters[l1],letters[l2],sep="")
 	print(paste(myid,sfile))
 	dat<-read.delim(sfile,header=F,sep="")
-	thehead=c("year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly")
+	thehead<-c("year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly")
 	colnames(dat)<-thehead
 }
 #if(myid == 0)print(dat)
 latb<-c(35,32)
 lonb<-c(-115,-121)
 dlon<-abs(4*((lonb[2]-lonb[1])+1))
-dlon=5
+dlon<-5
 # dlon should be a multiple of cores
 dlat<-abs(4*((latb[2]-latb[1])+1))
-dlat=5
+dlat<-5
 myinput<-read.table("bounds")
 latb[1]<-as.double(myinput[1,1])
 latb[2]<-as.double(myinput[1,2])
@@ -135,8 +135,8 @@ df<-data.frame(lat=double(),lon=double(),tot=double(),max=double())
 if(myid == 0){tymer(reset=T)}
 dorows<-nrow(dat)
 drow<-as.integer(dorows/50)
-frow=0
-dat=subset(dat,,c(latitude,longitude,SCSN,depth))
+frow<-0
+dat<-subset(dat,,c(latitude,longitude,SCSN,depth))
 mytot<-matrix(0,nrow=dlat,ncol=dlon)
 mymax<-matrix(0,nrow=dlat,ncol=dlon)
 for (row in 1:dorows) {
@@ -145,7 +145,7 @@ for (row in 1:dorows) {
 	mag<-dat[row,"SCSN"]
 	dep<-dat[row,"depth"]
 		for (i in 1:length(lat.seq)){
-		mylat=lat.seq[i]
+		mylat<-lat.seq[i]
 		for(j in 1:length(lon.seq)) {
 			mylon<-lon.seq[j]
 			#if(myid == 0)print(mylon)
@@ -164,7 +164,7 @@ if(myid == 0)print(tymer(frow))
 # pack our dataframe so it is like the original code
 for(j in 1:length(lon.seq)) {
 for (i in 1:length(lat.seq)){
-	mylat=lat.seq[i]
+	mylat<-lat.seq[i]
 		mylon<-lon.seq[j]
 		df[nrow(df) + 1,]<-c(mylat,mylon,mytot[i,j],mymax[i,j])
 	}

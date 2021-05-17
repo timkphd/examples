@@ -1,12 +1,12 @@
 #!/usr/bin/env Rscript
 dyn.load("mapit.so")
  threadfunc <-function() {
- trd=c(0)
+ trd<-c(0)
  out <- .C("findcore",ic=as.integer(trd),package="thread")
  return(out$ic)
  }
  forceit <-function(core) {
- trd=c(core)
+ trd<-c(core)
  out <- .C("forcecore",ic=as.integer(trd),package="core")
  return(out$ic)
  }
@@ -15,7 +15,7 @@ library(foreach)
 library(doParallel)
 library(tictoc) 
 con=file("threads.txt","r")
-linn=readLines(con,1)
+linn<-readLines(con,1)
 nt<-strtoi(linn)
 cl <- makeCluster(nt)
 registerDoParallel(cl)
@@ -37,8 +37,8 @@ ptime <- system.time({
 	}
 })
 tim<-toc() 
-dt=tim[[2]][[1]]-tim[[1]][[1]]
-stats=c("results",nt,dt)
+dt<-tim[[2]][[1]]-tim[[1]][[1]]
+stats<-c("results",nt,dt)
 print(stats)
 #print(r)
 x<-paste(c(c(nt,dt),r[2,]))

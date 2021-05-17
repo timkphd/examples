@@ -2,8 +2,8 @@
 library(foreach)
 library(doParallel)
 library(tictoc)
-con=file("threads.txt","r")
-linn=readLines(con,1)
+con<-file("threads.txt","r")
+linn<-readLines(con,1)
 nt<-strtoi(linn)
 cl <- makeCluster(nt)
 registerDoParallel(cl)
@@ -19,7 +19,7 @@ r <- foreach(icount(trials), .combine=cbind) %dopar% {
   coefficients(result1)}
 })
 tim<-toc()
-dt=tim[[2]][[1]]-tim[[1]][[1]]
+dt<-tim[[2]][[1]]-tim[[1]][[1]]
 x<-paste(c(nt,dt))
 t<-tempfile(pattern="output")
 v<-strsplit(t,"/")

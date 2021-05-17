@@ -6,7 +6,7 @@ library(dplyr)
 #library(multidplyr) 
 library(doParallel)
 print("Use 4 cores for our parallel machine")
-cores=4
+cores<-4
 
 
 # (1) #########
@@ -14,7 +14,7 @@ cores=4
 print("Do a very simple loop, not in parallel")
 
 nt<-10
-asum=0
+asum<-0
 for(ijk in 1:nt ){ 
 	asum<-asum+ijk
 }
@@ -31,7 +31,7 @@ registerDoParallel(ct)
 ##
 
 nt<-10
-asum=0
+asum<-0
 foreach(ijk=1:nt ) %dopar% { 
 	asum<-asum+ijk
 }
@@ -51,7 +51,7 @@ registerDoParallel(ct)
 ##
 
 nt<-10
-asum=0
+asum<-0
 bsum<-foreach(ijk=1:nt ) %dopar% { 
 	asum<-asum+ijk
 }
@@ -70,7 +70,7 @@ registerDoParallel(ct)
 ##
 
 nt<-10
-asum=0
+asum<-0
 bsum<-foreach(ijk=1:nt , .combine=rbind ) %dopar% { 
 	asum<-asum+ijk
 }
@@ -133,8 +133,8 @@ registerDoParallel(ct)
 nt<-10
 mymat<-matrix(nrow=nt,ncol=nt)
 mymat[1:nt,]<-0
-asum=0
-bsum=0
+asum<-0
+bsum<-0
 bsum<-foreach(ijk = 1:nt ) %dopar% { 
 	set.seed(ijk) 
 	mymat[,ijk]<-rnorm(mymat[,ijk])
@@ -158,7 +158,7 @@ registerDoParallel(ct)
 nt<-10
 mymat<-matrix(nrow=nt,ncol=nt)
 mymat[1:nt,]<-0
-bsum=0
+bsum<-0
 bsum<-foreach(ijk = 1:nt, .combine=cbind ) %dopar% { 
 	set.seed(ijk) 
 	mymat[,ijk]<-rnorm(mymat[,ijk])
@@ -179,7 +179,7 @@ writeLines("The export may generate a warning.")
 ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
-if(!exists("doverbose")){doverbose=FALSE}
+if(!exists("doverbose")){doverbose<-FALSE}
 nt<-10
 asum<-0
 writeLines("\nasum is zero")
@@ -204,7 +204,7 @@ bsum<-foreach(ijk=1:nt , .combine=cbind,.export=(c('asum')) ) %dopar% {
 print(asum)
 print(bsum)
 
-asum=vector(mode="double",length=nt)+2000
+asum<-vector(mode="double",length=nt)+2000
 writeLines("\nasum is vector of 2000")
 bsum<-foreach(ijk=1:nt , .combine=cbind,.export=(c('asum')) ) %dopar% { 
 	asum<-2**ijk
@@ -234,7 +234,7 @@ print(asum)
 print(bsum)
 
 
-asum=vector(mode="double",length=5)
+asum<-vector(mode="double",length=5)
 writeLines("\nasum is vector of on length 5 on the right hand side")
 
 for (ijk in 1:length(asum))asum[ijk]<-asum[ijk]+ijk
@@ -245,7 +245,7 @@ bsum<-foreach(ijk=1:nt , .combine=rbind ,.export=(c('asum')),.verbose=doverbose)
 print(asum)
 print(bsum)
 
-asum=vector(mode="double",length=15)
+asum<-vector(mode="double",length=15)
 writeLines("\nasum is vector of on length 15 on the right hand side")
 writeLines("We add the pid for each task/iteration to the output")
 for (ijk in 1:length(asum))asum[ijk]<-asum[ijk]+ijk
@@ -270,7 +270,7 @@ print("Work on a matrix")
 ct <- makeCluster(cores)  
 registerDoParallel(ct)
 ##
-if(!exists("mymean")){mymean=0}
+if(!exists("mymean")){mymean<-0}
 nt<-8
 mymat<-matrix(nrow=nt,ncol=nt)
 mymat[1:nt,]<-mymean
@@ -305,7 +305,7 @@ csum<-foreach(ijk = 1:nt, .combine=cbind ) %dopar% {
 	junk<-rnorm(nt,mean=mymat[,ijk])
 }
 print(csum)
-bonk=vector(mode="double",length=nt)
+bonk<-vector(mode="double",length=nt)
 for (i in 1:nt){bonk[i]=sum(csum[,i])}
 print(bonk)
 print(sum(mymat))
@@ -323,7 +323,7 @@ print("Not in parallel")
 nt<-10
 mymat<-matrix(nrow=nt,ncol=nt)
 mymat[1:nt,]<-0
-bsum=0
+bsum<-0
 bsum<-for(ijk in 1:nt  )  { 
 	set.seed(ijk) 
 	mymat[,ijk]<-rnorm(mymat[,ijk])
@@ -335,7 +335,7 @@ print(mymat)
 # (14) #########
 
 print("A very simple loop, not in parallel")
-bsum=0
+bsum<-0
 nt<-20
 myvect<-vector(length=nt)
 myvect[1:nt]<-1
@@ -355,7 +355,7 @@ ct <- makeCluster(cores)
 registerDoParallel(ct)
 ##
 
-bsum=0
+bsum<-0
 nt<-20
 myvect[1:nt]<-1
 

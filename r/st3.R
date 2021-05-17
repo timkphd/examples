@@ -18,8 +18,8 @@ if(myid == 0){
 #### Reproducible example for "unused argument" error
 
 set.seed(1)
-rows = 60000
-cols = 9
+rows <- 60000
+cols <- 9
 
 nCores <- detectCores()-4
 nCores <-4
@@ -64,7 +64,7 @@ tmpData$V9 <- as.numeric(levels(tmpData$V9)[tmpData$V9])
 #str(tmpData)
 if(myid == 0)tymer("at 4")
 stopCluster(cluster)
-nCores=numprocs
+nCores<-numprocs
 for(i in 1:(numprocs)) {
     inds <- seq(from=(i-1)*ceiling(nrow(tmpData)/nCores)+1, to=min(i*ceiling(nrow(tmpData)/nCores),nrow(tmpData)), by=1)
 	tmp <- tmpData[inds, ]
@@ -79,7 +79,7 @@ for(i in 1:(numprocs)) {
 	tmpData<-tmp
 
 }else{
-status=1234
+status<-1234
 while(mpi.iprobe(0, 1234, comm = mpi_comm_world, status)==FALSE){
 	Sys.sleep(0.25)
 	#print(myid)

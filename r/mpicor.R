@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
-args = commandArgs(trailingOnly=TRUE)
+args <- commandArgs(trailingOnly=TRUE)
 cores<-4
-block=10
+block<-10
 msize <- 100
 set.seed(1234)
 if (length(args) > 2)cores <- as.integer(args[3] )
@@ -10,26 +10,26 @@ if (length(args) > 0)msize <- as.integer(args[1] )
 #library(ff)
 mpicor <- function(
 x, 
-y = NULL,
-fun = c("cor", "cov"), 
-size = 2000, 
-verbose = TRUE, 
+y <- NULL,
+fun <- c("cor", "cov"), 
+size <- 2000, 
+verbose <- TRUE, 
 ...)
 {
-	STR="parallel "
+	STR<-"parallel "
 ## send data to each task
 	myid <<- mpi.comm.rank(comm=mpi_comm_world)
 	numprocs <<- mpi.comm.size(comm=mpi_comm_world)
 	if (myid == 0){
-		ncol1=ncol(x)
-		nrow1=nrow(x)
+		ncol1<-ncol(x)
+		nrow1<-nrow(x)
 		if (is.null(y)){
-			ncol2=0
-			nrow2=0
+			ncol2<-0
+			nrow2<-0
 		}
 		else {
-			ncol2=ncol(y)
-			nrow2=nrow(y)
+			ncol2<-ncol(y)
+			nrow2<-nrow(y)
 		}
 	}
 	else {
@@ -45,14 +45,14 @@ verbose = TRUE,
 	nrow2<-mpi.bcast(nrow2,    type=1,comm = mpi_comm_world)
 	size<-mpi.bcast(size,    type=1,comm = mpi_comm_world)
 	FUN <- cor
-	verbose = TRUE
+	verbose <- TRUE
  
 
    
   NCOL <- ncol1
   YCOL <- ncol2
   if (YCOL == 0) {
-  	y=NULL
+  	y<-NULL
 # if y is null then we will need all of X on each node
 # since it replaces y
   	mpi.bcast.Robj(x,comm = mpi_comm_world)  	
@@ -98,8 +98,8 @@ verbose = TRUE,
 # every task has all of the data
 # each just needs to do its portion
 
-  RES=list(1)
-  k=1
+  RES<-list(1)
+  k<-1
 	  for (i in start_block:end_block) {
 		COMB <- COMBS[i, ]    
 		G1 <- SPLIT[[COMB[1]]]
@@ -110,9 +110,9 @@ verbose = TRUE,
 if(verbose)print(paste(myid,"done calculating"))
 
 	if(myid == 0){
-		#xout=matrix(-10,NROW(x),NCOL(x))
-		xout=matrix(-10,NCOL(x),NCOL(x))
-		i=myid
+		#xout<-matrix(-10,NROW(x),NCOL(x))
+		xout<-matrix(-10,NCOL(x),NCOL(x))
+		i<-myid
 		start_block<-as.integer(i*ea+1)
 		end_block<-as.integer((i+1)*ea)
 		if(myid == numprocs-1)end_block<-lc
@@ -168,8 +168,8 @@ if(verbose)print(paste(myid,"done calculating"))
 			start_block<-as.integer(j*ea+1)
 			end_block<-as.integer((j+1)*ea)
 			if(j == numprocs-1)end_block<-lc
-			section=list(1)
-			k=1
+			section<-list(1)
+			k<-1
 			for ( i in start_block:end_block) {
 				COMB <- COMBS[i, ]    
 				G1 <- SPLIT[[COMB[1]]]
@@ -185,8 +185,8 @@ if(verbose)print(paste("sent section @ 2 to ",j))
 		start_block<-as.integer(i*ea+1)
 		end_block<-as.integer((i+1)*ea)
 		if(j == numprocs-1)end_block<-lc
-		section=list(1)
-		k=1
+		section<-list(1)
+		k<-1
 		for ( i in start_block:end_block) {
 			COMB <- COMBS[i, ]    
 			G1 <- SPLIT[[COMB[1]]]
@@ -196,7 +196,7 @@ if(verbose)print(paste("sent section @ 2 to ",j))
     } else {
 		stat<-0
 if(verbose)print(paste(myid,"waiting for section @ 2"))
-		pre_recv=as.integer(-1)	
+		pre_recv<-as.integer(-1)	
 		mpi.recv(pre_recv,source=0,type=1,tag=1234,comm = mpi_comm_world)
 if(verbose)print(paste(myid,"got pre_recv @ 2"))
 section<-NULL	
@@ -209,8 +209,8 @@ if(verbose)print(paste(myid," got section @ 2"))
    start_block<-as.integer(myid*ea+1)
    end_block<-as.integer((myid+1)*ea)
    if(myid == numprocs-1)end_block<-lc
-   xout=list(1)
-   k=1
+   xout<-list(1)
+   k<-1
 	for ( i in start_block:end_block) {
 		## if y = NULL
 		if (is.null(y)) {

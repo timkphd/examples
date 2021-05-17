@@ -2,7 +2,7 @@
 # start the cluster
 library(foreach)
 library(doParallel)
-numprocs=parallel::detectCores()
+numprocs<-parallel::detectCores()
 cl <- makeCluster(numprocs)
 registerDoParallel(cl)
 
@@ -24,7 +24,7 @@ for (ijk in 1:nresults){
 
 str(df)
 df2<-data.frame(pid=integer(),its=integer(),load=double())
-pids=unique(df['pid'])
+pids<-unique(df['pid'])
 for (p in pids[,]) {
     n<-nrow(df[df['pid'] == p,])
     load<-100.0*(n/nt)

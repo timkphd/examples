@@ -1,17 +1,17 @@
 #!/usr/bin/env Rscript
  threadfunc <-function() {  
- trd=c(0)  
+ trd<-c(0)  
  out <- .C("findcore",ic=as.integer(trd),package="thread")  
  return(out$ic)  
  }  
  forceit <-function(core) {  
- trd=c(core)  
+ trd<-c(core)  
  out <- .C("forcecore",ic=as.integer(trd),package="core")  
  return(out$ic)  
  }  
  p2c <-function(pid,core) { 
- cr=c(core) 
- pr=c(pid) 
+ cr<-c(core) 
+ pr<-c(pid) 
   out <- .C("p_to_c",ip=as.integer(pr),ic=as.integer(cr),package="ptwoc")  
  return(out$ic)  
 } 
@@ -34,8 +34,8 @@ cols <- 9
 
 meth <- 0
  
-con=file("threads.txt","r")  
-linn=readLines(con,1)  
+con<-file("threads.txt","r")  
+linn<-readLines(con,1)  
 nt<-strtoi(linn) 
 # force master to core 23 
 dyn.load("mapit.so") 
@@ -48,7 +48,7 @@ foreach(ijk=1:nt, .combine=cbind) %dopar% {
 	dyn.load("mapit.so")
 	docore <- 2+((ijk-1) %% 23) 
 	forceit(docore) 
-	one=c(ijk,threadfunc())
+	one<-c(ijk,threadfunc())
 }
  
 t1<-as.numeric(Sys.time()) 
@@ -56,8 +56,8 @@ t1<-as.numeric(Sys.time())
 load("/home/timk@colostate.edu/scratch/home/mcandrew/Reproducible_Examples_Space.RData")
 
 # Grow our data set...
-y=rbind(tmpData,2*tmpData)
-tmpData=rbind(y,2*y)
+y<-rbind(tmpData,2*tmpData)
+tmpData<-rbind(y,2*y)
 
 str(tmpData) 
 t2<-as.numeric(Sys.time()) 
@@ -70,7 +70,7 @@ foreach(ijk=1:nt, .combine=cbind) %dopar% {
 	dyn.load("mapit.so")
 	docore <- 2+((ijk-1) %% 23) 
 	forceit(docore) 
-	one=c(ijk,threadfunc())
+	one<-c(ijk,threadfunc())
 }
 t3<-as.numeric(Sys.time()) 
 if( meth == 1) {
@@ -104,11 +104,11 @@ print(c(nt))
 print(c(t0,t1,t2,t3,t4,t5),digits=13) 
 print(c(dt1,dt2,dt3,dt4,dt5,dt6),digits=5) 
 #if( meth == 1) {
-#	fname="/home/timk@colostate.edu/scratch/home/mcandrew/Reproducible_Examples_Space_new"
+#	fname<-"/home/timk@colostate.edu/scratch/home/mcandrew/Reproducible_Examples_Space_new"
 #} else {
-#	fname="/home/timk@colostate.edu/scratch/home/mcandrew/Reproducible_Examples_Space_old"
+#	fname<-"/home/timk@colostate.edu/scratch/home/mcandrew/Reproducible_Examples_Space_old"
 #}
-#fname=paste(fname,toString(nt),sep=".")
+#fname<-paste(fname,toString(nt),sep=".")
 #save(createdDF,file=fname) 
 q(save = "no")
  

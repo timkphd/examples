@@ -25,7 +25,7 @@
 #   copy tymer to bonk/R
 #   devtools::document("/Users/tkaiser/examples/r/bonk")
 tymer <-function(lab="",reset=FALSE) {
-	ds=Sys.time()
+	ds<-Sys.time()
 	now<-as.numeric(ds)
 	if (!(exists("tymerstart")) || reset) {
 		assign("tymerstart", now, envir = .GlobalEnv)
@@ -37,9 +37,9 @@ tymer <-function(lab="",reset=FALSE) {
 		dt2<-now-tymerstart
 		assign("lastt", now, envir = .GlobalEnv)
 	}
-	b1=format(now,digits=15,nsmall=3,width=15)
-	b2=toString(ds)
-	b3=format(dt1,digits=3, nsmall=3,width=10)
-	b4=format(dt2,digits=3, nsmall=3,width=10)
+	b1<-format(now,digits=15,nsmall=3,width=15)
+	b2<-toString(ds)
+	b3<-format(dt1,digits=3, nsmall=3,width=10)
+	b4<-format(dt2,digits=3, nsmall=3,width=10)
 	print(paste(b1,b2,b3,b4,lab,sep="  "))
 }
