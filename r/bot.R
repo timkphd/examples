@@ -52,12 +52,11 @@ worker<-function(THE_COMM_WORLD,managerid){
 		buffer="                        "
 		mystat<-as.integer(9876)
 		buffer<-mpi.recv(buffer, 3, managerid, tag=2345,  comm=mpi_comm_world, status=mystat)
-		print(paste(myid,"got",buffer))
-		if (buffer == "stop"){return(ic)}
+		print(paste("worker ",myid," got ",buffer))
+        if (grepl("stop",buffer)){return(ic)}
 		ic<-ic+1
 		##### Do something here
 		doplot(buffer)
-		#Sys.sleep(4)
 		}
 }
 #
@@ -67,6 +66,7 @@ manager<-function(num_used,TODO){
 	mydat<-read.csv("infile",header=F)
 	todo<-nrow(mydat)
 	mydat<-as.vector(mydat$V1)
+    print(paste("manager wants",todo))
 # counters
 	igot<-0   
 	isent<-0
@@ -84,7 +84,7 @@ manager<-function(num_used,TODO){
 			print(paste("worker",gotfrom,"sent",x))
 			if(x > -1){
 				igot<-igot+1
-				print(paste("igot",igot))
+				print(paste("manager got",igot))
 				}
 			if(isent < TODO){
 # send real data #
@@ -95,8 +95,10 @@ manager<-function(num_used,TODO){
 		}
 	}
 # tell everyone to quit #
-	for (i in 1:numprocs-1){
+    print("tell everyone to quit")
+	for (i in 1:(numprocs-1)){
 		send_msg="stop"
+        print(paste("telling",i,send_msg))
 		mpi.send(send_msg, 3, i, tag=2345,  comm=mpi_comm_world)
 		}
 	return( TRUE)
