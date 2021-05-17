@@ -40,7 +40,7 @@ srun<-function(inputs) {
         command<-"mpirun -x R_LIBS_USER -x LD_LIBRARY_PATH -x PATH -hostfile ~/bin/both"
     }
     command<-paste(command,inputs)
-    command<-paste("srun ",inputs)
+    #command<-paste("srun ",inputs)
     #print(command)
     sys(command)
 }
