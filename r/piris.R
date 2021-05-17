@@ -4,7 +4,7 @@
 library(foreach)
 library(doParallel)
 library(tictoc)
-numprocs=parallel::detectCores()
+numprocs<-parallel::detectCores()
 cl <- makeCluster(numprocs)
 registerDoParallel(cl)
 
@@ -13,7 +13,7 @@ library(datasets)
 set1<-iris[iris$Species == "setosa", ]
 
 #figure out how we are going to split it
-each=as.integer(nrow(set1)/numprocs)
+each<-as.integer(nrow(set1)/numprocs)
 bots<-integer(numprocs)
   tops<-integer(numprocs)
   for (n in 1:numprocs) {

@@ -111,7 +111,7 @@ fastCor <-
               sprintf("%3.0f", cSplit[1, nc]),
               "   x   split #",
               sprintf("%3.0f", cSplit[2, nc]),
-              sep = ""
+              sep <- ""
             ),
             ""
           )
@@ -139,11 +139,11 @@ fastCor <-
     return(rr)
   }
 
-size=2000
-#y=matrix(rnorm(size*size),nrow=size,ncol=size)
-x=matrix(rnorm(size*size),nrow=size,ncol=size)
+size<-2000
+#y<-matrix(rnorm(size*size),nrow=size,ncol=size)
+x<-matrix(rnorm(size*size),nrow=size,ncol=size)
 tymer(reset=TRUE)
-t1=cor(x,x)
+t1<-cor(x,x)
 tymer()
 #head(t1)
 cores<-4
@@ -164,7 +164,7 @@ stopCluster(cluster)
 tymer(reset=TRUE)
 
   
- t3=fastCor(x,,nSplit=1,optBLAS=FALSE,verbose = FALSE) 
+ t3<-fastCor(x,,nSplit=1,optBLAS=FALSE,verbose = FALSE) 
  tymer()
  #head(t3)
  print(sum(abs(t1-t2)))

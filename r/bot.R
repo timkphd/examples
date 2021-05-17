@@ -28,8 +28,8 @@
 
 doplot<-function(infile) {
 	library(gplots)
-	outfile=paste(infile,".png",sep="")
-	bonk=readLines(infile)
+	outfile<-paste(infile,".png",sep="")
+	bonk<-readLines(infile)
 	bonk<-bonk[-1]
 	#im<-read.delim(infile,sep="")
 	im<-read.delim(text=bonk,sep="")
@@ -42,7 +42,7 @@ doplot<-function(infile) {
 
 worker<-function(THE_COMM_WORLD,managerid){
 	x<-as.integer(0)
-	comm=mpi_comm_world
+	comm<-mpi_comm_world
 	ic<-as.integer(0)
 	while(TRUE){
 # send message says I am ready for data #
@@ -78,7 +78,7 @@ manager<-function(num_used,TODO){
 # where is it comming from #
 			gotfrom<-mpi.get.sourcetag(status = mystat)
 			sendto<-gotfrom
-			x=as.integer(-1)
+			x<-as.integer(-1)
 			mystat<-as.integer(6789)
 			x<-mpi.recv(x, 1, gotfrom, tag=1234,  comm=mpi_comm_world, status=mystat)
 			print(paste("worker",gotfrom,"sent",x))
@@ -88,7 +88,7 @@ manager<-function(num_used,TODO){
 				}
 			if(isent < TODO){
 # send real data #
-				send_msg=mydat[isent+1]
+				send_msg<-mydat[isent+1]
 				mpi.send(send_msg, 3, sendto, tag=2345,  comm=mpi_comm_world)
 				isent<-isent+1
 			}
@@ -150,7 +150,7 @@ paste("I R am",myid,"of",numprocs,"on",myname)
 # part of the new group do work. #
 		mannum=0;
 		ts<-MPI.Wtime()
-		idid=worker(DEFINED_COMM,mannum)
+		idid<-worker(DEFINED_COMM,mannum)
 		te<-MPI.Wtime()
 		print(paste("worker",myid,"finished",idid,"tasks in",te-ts,"seconds"))
 		mpi.barrier(mpi_comm_world)

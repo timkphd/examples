@@ -19,8 +19,8 @@ print(c(myid,myname,numprocs))
 #### Reproducible example for "unused argument" error
 
 set.seed(1)
-rows = 60000
-cols = 9
+rows <- 60000
+cols <- 9
 
 if(myid == 0)tymer("at 1",reset=TRUE)
 if(FALSE){
@@ -38,7 +38,7 @@ dr<-round(rows/numprocs)
 rstart<-myid*dr+1
 rend<-(myid+1)*dr
 if(myid == numprocs-1) {
-	rend=rows
+	rend<-rows
 }
 tmpData <- as.data.frame(foreach(i = rstart:rend, .combine = "rbind") %do%
 {

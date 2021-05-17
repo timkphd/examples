@@ -9,8 +9,8 @@ source("tymer.R")
 #### Reproducible example for "unused argument" error
 
 set.seed(1)
-rows = 60000
-cols = 9
+rows <- 60000
+cols <- 9
 
 nCores <- detectCores()-4
 nCores <-4

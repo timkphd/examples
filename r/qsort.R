@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 #https://cran.r-project.org/web/packages/foreach/foreach.pdf
 # clear stuff
-rm(list=ls())
+rm(list<-ls())
 
 qsort <- function(x) {
   n <- length(x)
@@ -24,7 +24,7 @@ cores=4
 ct <- makeCluster(cores)
 registerDoParallel(ct)
 
-years=c(2017,2018,2019,2025,2026,2021,2022,2040,2052,2036,2020,2032,2044,2028)
+years<-c(2017,2018,2019,2025,2026,2021,2022,2040,2052,2036,2020,2032,2044,2028)
 syears<-qsort(years)
 print(syears)
 stopCluster(ct)

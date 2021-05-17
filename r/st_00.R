@@ -29,8 +29,8 @@ bc<-function(psi){
 	if(myright == -1){
 		psi[,ncol(psi)]=0.0
 	}
-		psi[1,]=0.0
-		psi[nrow(psi),]=0.0
+		psi[1,]<-0.0
+		psi[nrow(psi),]<-0.0
 	return(psi)
 }
 
@@ -42,16 +42,16 @@ do_jacobi<-function(psi){
 # output is the updated grid in psi and diff which is
 # the sum of the differences between the old and new grids
 	gdiff<<-0.0
-	is=2
-	ie=dim(psi)[1]
-	js=2
-	je=dim(psi)[2]
+	is<-2
+	ie<-dim(psi)[1]
+	js<-2
+	je<-dim(psi)[2]
 	new_psi[,je]<-psi[,je]
 	new_psi[,1]<-psi[,1]
 	new_psi[ie,]<-psi[ie,]
 	new_psi[1,]<-psi[1,]
-	je=je-1
-	ie=ie-1
+	je<-je-1
+	ie<-ie-1
 	for (i in is:ie){
 		for (j in js:je){
 			new_psi[i,j]<-a1*psi[i+1,j] + a2*psi[i-1,j] + a3*psi[i,j+1] + a4*psi[i,j-1] - a5*forf[i,j]
@@ -112,8 +112,8 @@ psi<-bc(psi)
 new_psi<-matrix(0.0,nrow=((i2-i1)+3),ncol=((j2-j1)+3))
 forf<<-do_force(i1,i2,j1,j2,alpha)
 
-iout=steps/100
-if(iout  == 0){iout=1}
+iout<-steps/100
+if(iout  == 0){iout<-1}
 tymer(reset=T)
 for(i in 1:steps){
 	psi<-do_jacobi(psi)

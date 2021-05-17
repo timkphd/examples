@@ -18,8 +18,8 @@ for(i in 1:dim(mymat)[1]) {
 tic()
 b=solve(mymat)
 tim<-toc() 
-one=sum(b %*% mymat)/size
-dt=tim[[2]][[1]]-tim[[1]][[1]]
+one<-sum(b %*% mymat)/size
+dt<-tim[[2]][[1]]-tim[[1]][[1]]
 #dt
 one
 

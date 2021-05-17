@@ -39,8 +39,17 @@ srun<-function(inputs) {
     if (grepl("openmpi",x) == TRUE ) {
         command<-"mpirun -x R_LIBS_USER -x LD_LIBRARY_PATH -x PATH -hostfile ~/bin/both"
     }
+<<<<<<< HEAD
     command<-paste(command,inputs)
     command<-paste("srun ",inputs)
+=======
+<<<<<<< HEAD
+    command<-paste(command,inputs)
+=======
+    command=paste(command,inputs)
+    commmand=paste("srun ",inputs)
+>>>>>>> 00503d61b1a2ffcffeb27171d5372817c2a9105a
+>>>>>>> 2a8802d30ce3b77472c810aae983f5ba9777d926
     #print(command)
     sys(command)
 }
@@ -88,7 +97,11 @@ nextim<-function(j){
     return(file)
     }
 
+<<<<<<< HEAD
 # work in progress puts out junk along with sound
+=======
+#work in progress puts out junk along with sound
+>>>>>>> 2a8802d30ce3b77472c810aae983f5ba9777d926
 wav<-function(file="out.wav",type="wav"){
     s<-'<!DOCTYPE html>
 <html>

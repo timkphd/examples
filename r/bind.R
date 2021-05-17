@@ -2,7 +2,7 @@
 # start the cluster
 library(foreach)
 library(doParallel)
-numprocs=parallel::detectCores()
+numprocs<-parallel::detectCores()
 cl <- makeCluster(numprocs)
 registerDoParallel(cl)
 nt<-900

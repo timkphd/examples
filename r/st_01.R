@@ -16,7 +16,7 @@ do_force<-function(i1,i2,j1,j2,alpha){
 
 getresults<-function(psi,nx,ny){
 	myid <<- mpi.comm.rank(comm=mpi_comm_world)
-	tosend=(nrow(psi)-2)*(ncol(psi)-2)
+	tosend<-(nrow(psi)-2)*(ncol(psi)-2)
 	rcounts<-vector("integer",numprocs)
 	rcounts<-mpi.gather(tosend, 1, rcounts,root = 0, comm = mpi_comm_world)
 	typeof(rcounts)
@@ -46,8 +46,8 @@ bc<-function(psi){
 	if(myright == -1){
 		psi[,ncol(psi)]=0.0
 	}
-		psi[1,]=0.0
-		psi[nrow(psi),]=0.0
+		psi[1,]<-0.0
+		psi[nrow(psi),]<-0.0
 	return(psi)
 }
 
@@ -59,16 +59,16 @@ do_jacobi<-function(psi){
 # output is the updated grid in psi and diff which is
 # the sum of the differences between the old and new grids
 	gdiff<<-0.0
-	is=2
-	ie=dim(psi)[1]
-	js=2
-	je=dim(psi)[2]
+	is<-2
+	ie<-dim(psi)[1]
+	js<-2
+	je<-dim(psi)[2]
 	new_psi[,je]<-psi[,je]
 	new_psi[,1]<-psi[,1]
 	new_psi[ie,]<-psi[ie,]
 	new_psi[1,]<-psi[1,]
-	je=je-1
-	ie=ie-1
+	je<-je-1
+	ie<-ie-1
 	for (i in is:ie){
 		for (j in js:je){
 			new_psi[i,j]<-a1*psi[i+1,j] + a2*psi[i-1,j] + a3*psi[i,j+1] + a4*psi[i,j-1] - a5*forf[i,j]
@@ -79,13 +79,13 @@ do_jacobi<-function(psi){
 }
 
 do_transfer<-function(psi,i1,i2,j1,j2){
-	mystat=0
+	mystat<-0
 	myid <<- mpi.comm.rank(comm=mpi_comm_world)
 	myleft<-myid-1
 	myright<-myid+1
 	if(myleft <= -1){myleft<-(-1)}
 	if(myright >= numprocs){myright=(-1)}
-	lc=dim(psi)[2]
+	lc<-dim(psi)[2]
 	if(is.even(myid)){
 # we are on an even col processor
 # send to left
@@ -147,7 +147,7 @@ if (myid != 0) {
 	alpha<-0.0
 	beta<-0.0
 	gamma<-0.0
-	steps=0
+	steps<-0
 }else{
 	ngrid<-scan("st.in",integer(),2)
 	grid<-scan("st.in",double(),2,skip=1)
@@ -206,7 +206,7 @@ print(paste(myid,"covers",i1,i2,j1,j2))
 psi<-bc(psi)
 new_psi<<-matrix(0.0,nrow=((i2-i1)+3),ncol=((j2-j1)+3))
 forf<<-do_force(i1,i2,j1,j2,alpha)
-iout=steps/100
+iout<-steps/100
 if(iout  == 0){iout=1}
 if(myid == 0){tymer(reset=T)}
 for(i in 1:steps){
