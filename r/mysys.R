@@ -1,3 +1,11 @@
+#!/usr/bin/env Rscript
+#'shorcuts for system command
+#' sys("command")     - cat output 
+#' sys_vec("command") - return as a list
+#' sys_vec("command") - return as a list
+#' sys_py("command")  - return as a python like list
+#' srun("command"     - srun
+
 sys<-function(command){
     x<-system(command,intern=TRUE)
     for (i in 0:length(x)) {
@@ -24,14 +32,15 @@ sys_py<-function(command){
 # adapt this for local usage
 srun<-function(inputs) {
     x<-sys_vec("printenv PATH")
-    command="echo Could not determine MPI version "
+    command<-"echo Could not determine MPI version "
     if (grepl("mpich",x) == TRUE ) {
         command<-"mpirun -envlist R_LIBS_USER,LD_LIBRARY_PATH,PATH -f ~/bin/both "
     }
     if (grepl("openmpi",x) == TRUE ) {
-        command="mpirun -x R_LIBS_USER -x LD_LIBRARY_PATH -x PATH -hostfile ~/bin/both"
+        command<-"mpirun -x R_LIBS_USER -x LD_LIBRARY_PATH -x PATH -hostfile ~/bin/both"
     }
-    command=paste(command,inputs)
+    command<-paste(command,inputs)
+    command<-paste("srun ",inputs)
     #print(command)
     sys(command)
 }
@@ -74,7 +83,26 @@ nextim<-function(j){
             rupahshbbf<<-j
         }
     }
-    file=sprintf("%s.%3.3d.jpeg",uiqsagvsmu,rupahshbbf)
+    file<-sprintf("%s.%3.3d.jpeg",uiqsagvsmu,rupahshbbf)
     image(file)
     return(file)
     }
+
+# work in progress puts out junk along with sound
+wav<-function(file="out.wav",type="wav"){
+    s<-'<!DOCTYPE html>
+<html>
+<body>
+<audio controls autoplay>
+  <source src="FILE" type="audio/KIND">
+  Your browser does not support the audio element.
+</audio>
+</body>
+</html>
+'
+z<-sub("FILE",file,s)
+z<-sub("KIND",type,z)
+    display_html(z)
+}
+
+
