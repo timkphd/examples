@@ -17,6 +17,31 @@ from IPython.display import clear_output
 global startdir
 startdir=os.getcwd()
 
+def mymovie(dir,pause=0.05,set=[0,0],extend="png"):
+    ''' mymovie(dir,pause=0.05,set=[0,0],extend="png")
+        poor man's movie 
+         specify the directory
+         pause between frames
+         set of frames to see, defaults to all
+         file extension
+    '''
+    from IPython.display import Image,display,HTML
+    from IPython.display import clear_output
+    from time import sleep
+    from os import listdir
+    files=listdir(dir)
+    pngs=[]
+    for f in files:
+        if f.find(extend) > -1 :
+            pngs.append(f)
+        pngs.sort()
+    if set[0] == 0 and set[1]==0:
+        set[1]=len(pngs)        
+    for f in pngs[set[0]:set[1]]:
+        clear_output()
+        display(Image(filename=dir+"/"+f))
+        sleep(pause)
+
 
 class mysay:
 	'''Class for displaying Presentations in Jupyter notebooks
