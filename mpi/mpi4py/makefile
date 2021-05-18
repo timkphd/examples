@@ -13,7 +13,7 @@ ccalc: ccalc.c
 	mpicc -DEXTRA -O3 -lm ccalc.c -o ccalc
 
 laser:
-	curl http://hpc.mines.edu/examples/laser.tgz | tar -xz
+	curl https://raw.githubusercontent.com/timkphd/examples/master/r/laser.tgz | tar -xz
 
 clean:
 	rm -rf *out out* f_ex01 stc_03 __pycache__ fmpi.mod ccalc laser mpi4py.tgz  $(PO) $(CO) $(FO) HTML *pyc
