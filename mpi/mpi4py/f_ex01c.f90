@@ -29,15 +29,16 @@
          enddo
          Call MPI_Send(buffer, count, MPI_INTEGER,destination,&
           tag, MPI_COMM_WORLD, ierr)
-         write(*,*)"Fortran processor ",myid," sent ",buffer
+         write(*,1)myid,"sent",buffer
       endif
       if(myid .eq. destination)then
          Call MPI_Recv(buffer, count, MPI_INTEGER,source,&
           tag, MPI_COMM_WORLD, status,ierr)
-         write(*,*)"Fortran processor ",myid," got ",buffer
+         write(*,1)myid,"got",buffer
       endif
       enddo 
       call MPI_FINALIZE(ierr)
+ 1    format("Fortran processor ",i3,a6,1x,8(i5))
       end
 
 
