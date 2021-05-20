@@ -30,7 +30,7 @@ for k in range(1,4):
 # For the upper case calls we need to send/recv numpy arrays	
 		buffer=empty((count),"i")
 		for ic in range(0,count):
-			buffer[ic]=5678+1000*(ic+1)
+			buffer[ic]=5678+1000*(ic+1)+k
 # We are sending a integer, count is optional, to mydestination	
 		comm.Send([buffer, count,MPI.INT],dest=mydestination, tag=mytag)
 		print("Python processor ",myid," sent ",buffer)

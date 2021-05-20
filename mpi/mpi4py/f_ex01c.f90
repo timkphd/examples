@@ -25,7 +25,7 @@
       if(myid .eq. source)then
 !k+5678,k-5678
          do ic=1,count
-          buffer(ic)=5678-1000*ic
+          buffer(ic)=5678-1000*ic+(i-1)
          enddo
          Call MPI_Send(buffer, count, MPI_INTEGER,destination,&
           tag, MPI_COMM_WORLD, ierr)
