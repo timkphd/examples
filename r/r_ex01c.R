@@ -14,6 +14,7 @@ for(i in 1:3) {
 paste("I R am",myid,"of",numprocs,"on",myname)
 if(myid == source){
 	buffer<-as.integer(c(5678+i,1234+i,6789+i,4567+i))
+    print(sprintf("R sending %d %d %d %d",buffer[1],buffer[2],buffer[3],buffer[4]))
 	mpi.send(buffer, 1, destination, tag,  comm=mpi_comm_world)
 	}
 if(myid == destination){
