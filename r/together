@@ -1,3 +1,5 @@
+#r_ex01c.R does not work with openmpi and other programs
+#j_ex01c.java only works with openmpi
 for source in f_ex01c  c_ex01c r_ex01c.R  P_ex01c.py  ; do  
    echo DRIVER: $source  
    mpiexec -n 1 ./$source  2 5 : -n 1 ./f_ex01c : -n 1 ./c_ex01c : -n 1 ./r_ex01c.R  : -n 1  ./P_ex01c.py | egrep "got"
