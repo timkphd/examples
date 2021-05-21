@@ -2,6 +2,7 @@
 # numpy is required
 import numpy
 from numpy import *
+import sys
 
 # mpi4py module
 from mpi4py import MPI
@@ -11,7 +12,10 @@ from mpi4py import MPI
 comm=MPI.COMM_WORLD
 myid=comm.Get_rank()
 numprocs=comm.Get_size()
-print("hello from ",myid," of ",numprocs)
+name = MPI.Get_processor_name()
+print("Python hello from %s # %d of %d" % (name,myid,numprocs))
+
+
 
 # Tag identifies a message
 mytag=1234
@@ -22,10 +26,27 @@ mysource=0
 # Process 1 is going to get the data
 mydestination=1
 
-# Sending a single value each time
-count=4
+times=zeros(1,"i")
+count=zeros(1,"i")
 # Do the send and recv a number of times
-for k in range(1,4):
+times[0]=3
+# Sending a this many values each time
+count[0]=4
+# these can be on the command line
+#srun -n 2 ./P_ex01.py 3 4
+
+
+if (myid == 0):
+    if len(sys.argv) > 1 :
+     times[0]=int(sys.argv[1])   
+    if len(sys.argv) > 2 :
+     count[0]=int(sys.argv[2])   
+comm.Bcast(times)
+comm.Bcast(count)
+times=times[0]
+count=count[0]
+
+for k in range(1,times+1):
 	if myid == mysource:
 # For the upper case calls we need to send/recv numpy arrays	
 		buffer=empty((count),"i")
