@@ -23,7 +23,7 @@ int main(int argc,char *argv[])
     printf("C Hello from %s # %d of %d\n",myname,myid,numprocs);
     tag=1234;
     source=0;
-    destination=1;
+    //destination=1;
 // number of times we will exchange data
     times=3;
 // length of the vector to exchange
@@ -47,22 +47,23 @@ int main(int argc,char *argv[])
         for(int i=0;i<count;i++) {
             buffer[i]=100*i+ic;
         }
-      MPI_Send(buffer,count,MPI_INT,destination,tag,MPI_COMM_WORLD);
-
-printf("C processor %d  send",myid);
-         for(int i=0;i<count;i++) {
-             printf(" %d ",buffer[i]);
-         }
-printf("\n");
+      for (int destination=1;destination<numprocs;destination++) {
+          MPI_Send(buffer,count,MPI_INT,destination,tag,MPI_COMM_WORLD);
+      }
+    printf("C processor %d sent",myid);
+    for(int i=0;i<count;i++) {
+        printf(" %d ",buffer[i]);
     }
-    if(myid == destination){
+    printf("\n");
+    }
+    if(myid != source){
         MPI_Recv(buffer,count,MPI_INT,source,tag,MPI_COMM_WORLD,&status);
+    printf("C processor %d  got",myid);
+    for(int i=0;i<count;i++) {
+        printf(" %d ",buffer[i]);
+    }
+    printf("\n");
 
-printf("C processor %d   got",myid);
-         for(int i=0;i<count;i++) {
-             printf(" %d ",buffer[i]);
-         }
-printf("\n");
 
     }
     }

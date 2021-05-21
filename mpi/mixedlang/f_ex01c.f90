@@ -26,7 +26,7 @@
  2    format("Fortran Hello from ",a6," # ",i2," of ",i2)       
       tag=1234
       source=0
-      destination=1
+      ! destination=1
 ! number of times we will exchange data
       times=3
 ! length of the vector to exchange
@@ -58,11 +58,13 @@
          do ic=1,count
           buffer(ic)=5678-1000*ic+(i-1)
          enddo
+         do destination=1,numprocs-1
          Call MPI_Send(buffer, count, MPI_INTEGER,destination,&
           tag, MPI_COMM_WORLD, ierr)
+         enddo 
          write(*,1)myid,"sent",buffer
       endif
-      if(myid .eq. destination)then
+      if(myid .ne. source)then
          Call MPI_Recv(buffer, count, MPI_INTEGER,source,&
           tag, MPI_COMM_WORLD, status,ierr)
          write(*,1)myid,"got",buffer

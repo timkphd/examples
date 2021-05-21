@@ -13,7 +13,7 @@ comm=MPI.COMM_WORLD
 myid=comm.Get_rank()
 numprocs=comm.Get_size()
 name = MPI.Get_processor_name()
-print("Python hello from %s # %d of %d" % (name,myid,numprocs))
+print("Python Hello from %s # %d of %d" % (name,myid,numprocs))
 
 
 
@@ -54,7 +54,6 @@ for k in range(1,times+1):
 			buffer[ic]=5678+1000*(ic+1)+k
 # We are sending a integer, count is optional, to mydestination	
 		for mydestination in range(1,numprocs):
-			print("dest",mydestination)
 			comm.Send([buffer, count,MPI.INT],dest=mydestination, tag=mytag)
 		print("Python processor ",myid," sent ",buffer)
 

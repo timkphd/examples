@@ -1,4 +1,4 @@
-#!/opt/intel/intelpython3/bin/python
+#!/usr/bin/env python3
 
 '''
 # based on https://matplotlib.org/examples/images_contours_and_fields/interpolation_methods.html

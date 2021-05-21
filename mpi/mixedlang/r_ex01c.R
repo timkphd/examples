@@ -33,21 +33,25 @@ if(myid == source){
     buffer<-c()
     for(j in 1:count) {
         buffer<-c(buffer,j+j+i)    
-    }    
+    }
+    for(destination in 1:(numprocs-1)) {
+        mpi.send(buffer, 1, destination, tag,  comm=mpi_comm_world)
+    }
     head="R sending"
     for(i in 1:count) {
         head<-paste(head,sprintf(" %d",buffer[i]))    
     }
     print(head)
-    mpi.send(buffer, 1, destination, tag,  comm=mpi_comm_world)
+
 }
-if(myid == destination){
+if(myid != source){
     x<-c()
     for(j in 1:count) {
         x<-c(x,as.integer(0))
     }
     x<-mpi.recv(x, 1, source, tag,  comm=mpi_comm_world, status=0)
-    head="R got    "
+    head="R processor  "
+    head<-paste(head,sprintf(" %d got",myid))  
     for(i in 1:count) {
         head<-paste(head,sprintf(" %d",x[i]))    
     }
