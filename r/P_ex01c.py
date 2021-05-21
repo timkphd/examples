@@ -53,10 +53,12 @@ for k in range(1,times+1):
 		for ic in range(0,count):
 			buffer[ic]=5678+1000*(ic+1)+k
 # We are sending a integer, count is optional, to mydestination	
-		comm.Send([buffer, count,MPI.INT],dest=mydestination, tag=mytag)
+		for mydestination in range(1,numprocs):
+			print("dest",mydestination)
+			comm.Send([buffer, count,MPI.INT],dest=mydestination, tag=mytag)
 		print("Python processor ",myid," sent ",buffer)
 
-	if myid == mydestination:
+	if myid != mysource:
 # We are receiving an integer, size is optional, from mysource	
 # For the upper case versions of routines data is returned in a buffer
 # Not as the return value for the function
