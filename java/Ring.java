@@ -7,8 +7,11 @@
 import mpi.* ;
 import ex.Util;
 
-// mpirun -n 36 java -Djava.library.path=/home/tkaiser2 Ring.java
-
+// el1:java> debug
+// r1i7n35:java> ml openmpi/4.1.0-gcc-8.4.0/gcc-8.4.0
+// r1i7n35:java> make clean
+// r1i7n35:java> make
+// r1i7n35:java> mpirun -n 4 java -Djava.library.path=/home/tkaiser2/examples/java Ring.java 
 class Ring {
     static public void main(String[] args) throws MPIException {
 
