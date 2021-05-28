@@ -31,7 +31,7 @@ class Hello {
 			for (int i = 0; i < count; i++) {
 				message[i]=i+it*1000;
 			}
-			for (destination=0; destination<size;destination++) {
+			for (destination=1; destination<size;destination++) {
 				MPI.COMM_WORLD.send(message, count, MPI.INT, destination, tag);
 			}
 			System.out.print("Java processor "+myrank+" sent ");
