@@ -20,7 +20,7 @@ class Hello {
 			MPI.COMM_WORLD.send(message, tosend, MPI.INT, 1, tag);
 		} 
 		if (myrank == 1 ) {
-			int message[] = new int [5];
+			int message[] = new int [10];
 			MPI.COMM_WORLD.recv(message, toget, MPI.INT, 0, tag);
 			for (int i = 0; i < toget; i++) {
 				System.out.println(message[i]);
