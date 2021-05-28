@@ -33,7 +33,7 @@ class Hello {
            for (destination=0; destination<size;destination++) {
             MPI.COMM_WORLD.send(message, count, MPI.INT, destination, tag);
            }
-          System.out.print("Java "+myrank+" sent ");
+			System.out.print("Java processor "+myrank+" sent ");
           for (int i = 0; i < count; i++) {
              System.out.print(message[i]);
              System.out.print(" ");
@@ -43,7 +43,7 @@ class Hello {
         if (myrank != source ) {
           int message[] = new int [count];
           MPI.COMM_WORLD.recv(message, count, MPI.INT, 0, tag);
-          System.out.print("Java "+myrank+"  got ");
+				System.out.print("Java processor "+myrank+"  got ");
           for (int i = 0; i < count; i++) {
              System.out.print(message[i]);
              System.out.print(" ");
