@@ -9,7 +9,7 @@ class Hello {
 		int size = MPI.COMM_WORLD.getSize() ;
 		
 		int tosend=10;
-		int toget=10;
+	        int toget=10;
 		
 		System.out.println("Hello world from rank " + myrank + " of " + size);
 		if (myrank == 0 ) {
