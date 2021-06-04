@@ -87,7 +87,7 @@ program hello
    use numz
    use getit
    implicit none
-   character(len=MPI_MAX_PROCESSOR_NAME+1):: name
+   character(len=MPI_MAX_PROCESSOR_NAME + 1):: name
    integer tn, omp_get_thread_num
    integer myid, ierr, numprocs, nlen
    integer mycol, node_comm, new_id, new_nodes
@@ -243,8 +243,8 @@ subroutine node_color(mycol)
    integer xchng, i, n2, myid, numprocs
    integer ierr, nlen
    integer ib, ie
-   character(len=MPI_MAX_PROCESSOR_NAME+1):: name
-   character(len=MPI_MAX_PROCESSOR_NAME+1)::nlist
+   character(len=MPI_MAX_PROCESSOR_NAME + 1):: name
+   character(len=MPI_MAX_PROCESSOR_NAME + 1)::nlist
    real(b8) t1, t2
 
    call MPI_COMM_RANK(MPI_COMM_WORLD, myid, ierr)
@@ -276,13 +276,13 @@ subroutine node_color(mycol)
                           MPI_COMM_WORLD, ierr)
 !          write(*,*)i,myid,"recv from ",xchng," to ",myid
 ! add 1 here = hack to work with the C version of this code
-            call MPI_Recv(nlist, MPI_MAX_PROCESSOR_NAME+1, &
+            call MPI_Recv(nlist, MPI_MAX_PROCESSOR_NAME + 1, &
                           MPI_CHARACTER, xchng, 12345, &
                           MPI_COMM_WORLD, status, ierr)
          else
 !          write(*,*)i,myid,"recv from ",xchng," to ",myid
 ! add 1 here = hack to work with the C version of this code
-            call MPI_Recv(nlist, MPI_MAX_PROCESSOR_NAME+1, &
+            call MPI_Recv(nlist, MPI_MAX_PROCESSOR_NAME + 1, &
                           MPI_CHARACTER, xchng, 12345, &
                           MPI_COMM_WORLD, status, ierr)
 !          write(*,*)i,myid,"send from ",myid," to ",xchng
