@@ -31,7 +31,7 @@
 void dothreads(int full, char *myname, int myid, int mycolor, int new_id);
 
 char *trim(char *s);
-void slowit(long nints, int val);
+void slowit(int nints, int val);
 int node_color();
 int sched_getcpu();
 
@@ -154,7 +154,7 @@ int main(int argc, char **argv, char *envp[]) {
   //#endif
   char *myname, *cutit;
   int full, envs, iarg, tn, nt, help, slow, vlan, wait, dotime, when;
-  long nints;
+  int nints;
   double t1, t2, dt;
 
   /* Format statements */
@@ -324,11 +324,11 @@ int main(int argc, char **argv, char *envp[]) {
     if (slow == 1) {
       for (iarg = 1; iarg < argc; iarg++) {
         if (atol(argv[iarg]) > 0)
-          nints = atol(argv[iarg]);
+          nints = atoi(argv[iarg]);
       }
     }
   }
-  MPI_Bcast(&nints, 1, MPI_LONG, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&nints, 1, MPI_INT, 0, MPI_COMM_WORLD);
   if (nints > 0) {
     t1 = MPI_Wtime();
     for (i = 1; i <= 1000; i++) {
@@ -433,7 +433,7 @@ int node_color() {
   return mycol;
 }
 
-void slowit(long nints, int val) {
+void slowit(int nints, int val) {
   int *block;
   long i, sum;
 #ifdef VERBOSET
