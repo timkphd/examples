@@ -1,4 +1,7 @@
 !mpif90 -fopenmp -fallow-argument-mismatch -lm fhyb.f90
+module mympi
+   include "mpif.h"
+end module
 
 !****************************************************************
 !  This is a hello world program in MPI and OpenMP. Each thread
@@ -39,9 +42,6 @@ subroutine dohelp
    write (*, *) " -T          : Print time/date at the beginning/end of the run."
    write (*, *)
 end subroutine
-module mympi
-   include "mpif.h"
-end module
 module numz
 ! define the basic real type and pi (not used in this example)
    integer, parameter:: b8 = selected_real_kind(14)
@@ -96,7 +96,7 @@ program hello
    character(len=32) cmdlinearg
    integer full, envs, help, dotime, when, argc, iarg, wait, slow, vlan
    character(len=256) :: argv
-   character(len=1024) :: version
+   character(len=MPI_MAX_LIBRARY_VERSION_STRING+1) :: version
    integer i, nints
    real(b8) dt, dummy, t1, t2
    call MPI_INIT(ierr)
@@ -151,7 +151,7 @@ program hello
    if (myid == 0 .and. dotime == 1) call ptime()
 
    if (myid == 0 .and. full == 2) then
-      write (*, '("MPI Version",a)') trim(version)
+      write (*, '("MPI Version:",a)') trim(version)
       write (*, '(a)') "task    thread             node name  first task    # on node  core"
    end if
    call node_color(mycol)
@@ -300,10 +300,11 @@ end subroutine
 
 subroutine sumit(nvals, val)
    use numz
+   use mympi
    integer, allocatable :: block(:)
    integer val, ktimes
    integer(in8) sum
-   real(b8) t1, t2, mpi_wtime
+   real(b8) t1, t2
    allocate (block(nvals))
    ktimes = 50
    t1 = mpi_wtime()

@@ -1,23 +1,49 @@
 // Normal compile
 // Intel:
-// mpiicc -qopenmp phostone.c -o phostone
+// mpiicc -fopenmp phostone.c -o phostone
 // gcc:
-// mpicc  -qopenmp phostone.c -o phostone
+// mpicc  -fopenmp phostone.c -o phostone
 //
 // To compile without openmp
 // Intel:
-// mpiicc -qopenmp-stubs phostone.c -o purempi
+// mpiicc -fopenmp-stubs phostone.c -o purempi
 // gcc:
 // mpicc  -DSTUBS        phostone.c -o purempi
 //
 //
+#include <unistd.h>
+#include <string.h>
+#include <omp.h>
+
+#ifdef NOMPI
+#define MPI_MAX_LIBRARY_VERSION_STRING 32
+#define MPI_MAX_PROCESSOR_NAME 32 
+#define MPI_Comm int
+#define MPI_COMM_WORLD 0
+#define MPI_INT 0
+#define MPI_CHAR 0
+#define MPI_DOUBLE 0
+#define MPI_Status int
+void MPI_Get_library_version(char *version, int *vlan) {strcpy(version,"NONE");*vlan=4;};
+void MPI_Comm_size(int c, int *numprocs)  {*numprocs=1;};
+void MPI_Comm_rank(int c, int *numprocs)  {*numprocs=0;};
+void MPI_Get_processor_name(char *lname, int *resultlen) { gethostname(lname,MPI_MAX_PROCESSOR_NAME); }
+void MPI_Barrier(int c){}
+void MPI_Finalize(){}
+void MPI_Send(void *s ,int c, int t, int f, int tg, int com ){}
+void MPI_Recv(void *s ,int c, int t, int f, int tg, int com ,void *stat){}
+void MPI_Bcast(void *r, int c, int t, int f, int com){}
+void MPI_Comm_split(int oc, int mycolor, int myid, int *node_comm){*node_comm=0;}
+void MPI_Init(int *argc, char ***argv){}
+double MPI_Wtime() { return omp_get_wtime();}
+#else
+#include <mpi.h>
+#endif
+
 #include <ctype.h>
 #include <math.h>
-#include <mpi.h>
-#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <strings.h>
 #include <time.h>
 #include <utmpx.h>
@@ -425,8 +451,6 @@ char *trim(char *s)
    ! a node.
 
  */
-#include <mpi.h>
-#include <string.h>
 int node_color()
 {
   int mycol;

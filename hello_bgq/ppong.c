@@ -104,11 +104,7 @@ int main(int argc,char *argv[],char *env[])
   FILE *output;
   logs=log((double)step);
 
-#ifdef MPI_MAX_LIBRARY_VERSION_STRING
     char version[MPI_MAX_LIBRARY_VERSION_STRING] ;
-#else
-    char version[256];
-#endif
   MPI_Init(&argc,&argv);
   MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
   MPI_Comm_rank(MPI_COMM_WORLD,&myid);
@@ -132,11 +128,7 @@ int main(int argc,char *argv[],char *env[])
   *****/
   
   if(myid == 0){
-#ifdef MPI_MAX_LIBRARY_VERSION_STRING
     MPI_Get_library_version(version,&vlan);
-#else
-    sprintf(version,"%s","UNDEFINED - consider upgrading");
-#endif
    printf("MPI VERSION %s\n",version);
 }
   if(myid == 0){

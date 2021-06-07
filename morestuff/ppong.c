@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <mpi.h>
 #include <math.h>
-#define BUFSIZE 10000000
-#define BSIZE 7
+#define BUFSIZE 16777216
+#define BSIZE 24
 /*#define BSIZE 4*/
 #define RCOUNT 10
  
@@ -13,6 +13,7 @@
 This is a simple send/receive program in MPI
 ************************************************************/
 
+#define NINT(a) ((a) >= 0.0 ? (int)((a)+0.5) : (int)((a)-0.5))
 double MYCLOCK()
 {
         struct timeval timestr;
@@ -32,7 +33,7 @@ int main(int argc,char *argv[],char *env[])
   char *astr;
   char myname[MPI_MAX_PROCESSOR_NAME];
   MPI_Status status;
-  double total[20],maxtime[20],mintime[20],st,et,dt;
+  double total[BSIZE],maxtime[BSIZE],mintime[BSIZE],st,et,dt;
   int is,ir,mysize,isize,resultlen,repeat;
   MPI_Init(&argc,&argv);
   MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
@@ -44,7 +45,7 @@ int main(int argc,char *argv[],char *env[])
   for(is=0;is<BUFSIZE;is++){
     buffer[is]=(char)0;
   }
-if(myid == 0){
+if(myid == -1){  /* command line arguments is broken so we turn it off */
 i=0;
 astr=env[i];
 while(astr) {
@@ -59,7 +60,8 @@ while(astr) {
       MPI_Barrier(MPI_COMM_WORLD);
       if (myid == is || myid == ir) {
         for (mysize=0;mysize <=BSIZE; mysize++){
-          isize=(int)exp(2.3025850929940459*(double)mysize);
+          // isize=NINT(exp(2.3025850929940459*(double)mysize));
+          isize=NINT(exp(0.6931471805599453*(double)mysize));
           if(isize > BUFSIZE)isize=BUFSIZE;
           total[mysize]=0.0;
           mintime[mysize]=1e6;
@@ -83,10 +85,12 @@ while(astr) {
         }
       }
       if (myid == is){
+	printf("  tasks       size     min time     ave time     max time  round trip b/s\n");
         for (mysize=0;mysize <=BSIZE; mysize++){
-          isize=(int)exp(2.3025850929940459*(double)mysize);
+          // isize=NINT(exp(2.3025850929940459*(double)mysize));
+          isize=NINT(exp(0.6931471805599453*(double)mysize));
           if(isize > BUFSIZE)isize=BUFSIZE;
-          printf("%d %d %10d %e %e %e %15.0f\n",is,ir,isize,
+          printf("%3d %3d %10d %e %e %e %15.0f\n",is,ir,isize,
                   mintime[mysize],total[mysize]/RCOUNT,
                   maxtime[mysize],(double)isize/mintime[mysize]);
           fflush(0);
