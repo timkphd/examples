@@ -1,4 +1,5 @@
-!mpif90 -fopenmp -fallow-argument-mismatch -lm fhyb.f90
+!mpif90 -fopenmp -fallow-argument-mismatch -w -lm fhostone.f90 
+!See mympi.f90 on how to compile this program without MPI - pure openmp
 module mympi
    include "mpif.h"
 end module
@@ -47,7 +48,6 @@ module numz
    integer, parameter:: b8 = selected_real_kind(14)
    real(b8), parameter :: pi = 3.141592653589793239_b8
    integer, parameter :: in8 = selected_int_kind(12)
-
 end module
 
 module getit
@@ -55,6 +55,7 @@ contains
    function get_core_c()
       USE ISO_C_BINDING, ONLY: c_long, c_char, C_NULL_CHAR, c_int
       use numz
+      implicit none
       integer(in8) :: get_core_c
       interface
          !integer(c_long) function cfunc() BIND(C, NAME='pthread_self')
@@ -65,6 +66,7 @@ contains
       get_core_c = cfunc()
    end function
    function strcmp(astr, bstr)
+      implicit none
       integer strcmp
       character(len=*) astr, bstr
       ! write(*,*)trim(astr),trim(bstr),trim(astr).eq. trim(bstr)
@@ -237,7 +239,6 @@ subroutine node_color(mycol)
    use mympi
    use numz
    implicit none
-
    integer mycol
    integer status(MPI_STATUS_SIZE)
    integer xchng, i, n2, myid, numprocs
@@ -301,8 +302,10 @@ end subroutine
 subroutine sumit(nvals, val)
    use numz
    use mympi
+   implicit none
+   integer nvals, val
    integer, allocatable :: block(:)
-   integer val, ktimes
+   integer ktimes,ijk,i
    integer(in8) sum
    real(b8) t1, t2
    allocate (block(nvals))
@@ -326,6 +329,7 @@ end subroutine
 
 subroutine dothreads(full, myname, myid, mycolor, new_id)
    use getit
+   implicit none
    integer full, myid, mycolor, new_id
    character(len=*) myname
    integer nt, tn
@@ -359,6 +363,7 @@ subroutine dothreads(full, myname, myid, mycolor, new_id)
 end subroutine
 
 subroutine ptime()
+   implicit none
    character(len=8) :: date
    character(len=10) :: time
    CALL DATE_AND_TIME(DATE, TIME)
