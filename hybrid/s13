@@ -2,38 +2,45 @@
 #SBATCH --account=hpcapps 
 #SBATCH --time=1:00:00 
 #SBATCH --nodes=2 
-#SBATCH --partition=debug 
-#SBATCH --cpus-per-task=18
-#SBATCH --ntasks=4
+#SBATCH --partition=short 
+##SBATCH --cpus-per-task=18
+##SBATCH --ntasks=4
 ##SBATCH --cpus-per-task=9
 ##SBATCH --ntasks=8
 ##SBATCH --cpus-per-task=6
 ##SBATCH --ntasks=12
-##SBATCH --cpus-per-task=6
-##SBATCH --ntasks=6
+#SBATCH --cpus-per-task=4
+#SBATCH --ntasks=18
 
+if [ -z ${VER+x} ]; then 
+export VER=gcc
+export VER=mpt
+export VER=icc
+fi
 
 module purge
-module load intel-mpi/2020.1.217
+if [[ "$VER" = "mpt" ]] ; then
+	module load mpt/2.23 gcc/10.1.0
+else
+	module load intel-mpi/2020.1.217 gcc/10.1.0
+fi
 
+#ml 2&> $SLURM_JOB_ID.ver
+#echo VERSION=$VER >> $SLURM_JOB_ID.ver
 
 printenv > $SLURM_JOB_ID.env
 cat $0 > $SLURM_JOB_ID.script
 export cpt=$SLURM_CPUS_PER_TASK 
-#for n in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 ; do  
-export KMP_AFFINITY=scatter
-export KMP_AFFINITY=disabled
+
 export OMP_PLACES=cores
-export OMP_PROC_BIND=close
+export OMP_PROC_BIND=spread
 
 for n in `seq 1 $SLURM_CPUS_PER_TASK` ; do  
     request=`python -c "print($n*$SLURM_NTASKS)"`
     have=72
     if ((request <= have)); then 
       export OMP_NUM_THREADS=$n  
-      #srun --cpu-bind=verbose   ./phostone -F > $SLURM_JOB_ID.$SLURM_NTASKS.$OMP_NUM_THREADS
-      srun   ./phostone -F -t 3 > $SLURM_JOB_ID.$SLURM_NTASKS.$OMP_NUM_THREADS
-      srun  --ntasks-per-core=1 -n $SLURM_NTASKS ./phostone -F -t 3 > $SLURM_JOB_ID.$SLURM_NTASKS.$OMP_NUM_THREADS
+      srun  --ntasks-per-core=1 -n $SLURM_NTASKS ./phostone.$VER -F -t 3 > $SLURM_JOB_ID.$SLURM_NTASKS.$OMP_NUM_THREADS
       cores=`cat $SLURM_JOB_ID.$SLURM_NTASKS.$OMP_NUM_THREADS | sort -k3,3 -k6,6 |awk '{print $3, $6}' | grep ^r | sort -u | wc -l`
       echo $cpt $SLURM_NTASKS $OMP_NUM_THREADS $cores 
     fi
