@@ -25,7 +25,7 @@ else
 	module load intel-mpi/2020.1.217 gcc/10.1.0
 fi
 
-#ml 2&> $SLURM_JOB_ID.ver
+#ml 2> $SLURM_JOB_ID.ver
 #echo VERSION=$VER >> $SLURM_JOB_ID.ver
 
 printenv > $SLURM_JOB_ID.env
