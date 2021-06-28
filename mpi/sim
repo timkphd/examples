@@ -3,18 +3,12 @@
 #SBATCH --nodes=1
 #SBATCH --export=ALL
 #SBATCH --oversubscribe
-#SBATCH --time=01:00:00
+#SBATCH --time=00:10:00
+#SBATCH --partition=debug
 #SBATCH --account=hpcapps
-#SBATCH --exclusive=user
-
-#to run:
-#    sbatch sim
-#to check status
-#    squeue -u $USER
-
 
 module purge
-ml comp-intel/2018.0.3 intel-mpi/2018.0.3           
-mpiicc c_ex00.c -o c_ex00
-srun -n 4 ./c_ex00
+ml intel-mpi
+
+srun -n 4 ./example
 
