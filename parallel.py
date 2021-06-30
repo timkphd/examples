@@ -1,12 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from sys import argv
 from os.path import isfile
+from os import remove
+from pathlib import Path
 from time import sleep
 from math import sin,cos
 #
 fname="message"
 my_id=int(argv[1])
-print my_id, "starting program"
+print(my_id, "starting program")
 #
 if (my_id == 1):
 	sleep(2)
@@ -27,7 +29,8 @@ else:
 			total=myval**2+message**2
 		else:
 			sleep(5)
-	print "sin(10)**2+cos(10)**2=",total
+	print("           sin(10)**2+cos(10)**2=",total)
+	remove(fname)
 #
-print my_id, "done with program"
+print(my_id, "done with program")
 
