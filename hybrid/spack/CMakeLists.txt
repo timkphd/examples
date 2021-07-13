@@ -25,3 +25,13 @@ project(fhostone VERSION 1.0)
 # add the executable
 add_executable(fhostone fhostone.f90)
 
+# Set default install path t o build
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE PATH "default install path" FORCE )
+endif()
+
+install(TARGETS fhostone DESTINATION bin)
+
+#install(FILES  ${CMAKE_CURRENT_BINARY_DIR}/fhostone DESTINATION ~/bin)
+
+
