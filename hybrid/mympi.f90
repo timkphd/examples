@@ -5,7 +5,7 @@
 !!!!!!     gfortran -fopenmp -fallow-argument-mismatch -w -lm fhostone.f90
 !!!!!!     unlink mpif.h
     integer,parameter :: MPI_MAX_LIBRARY_VERSION_STRING=4
-    integer,parameter :: MPI_MAX_PROCESSOR_NAME=16
+    integer,parameter :: MPI_MAX_PROCESSOR_NAME=32
     integer,parameter :: MPI_STATUS_SIZE=1
     integer,parameter :: MPI_COMM_WORLD=0
     integer,parameter :: MPI_INTEGER=0
@@ -107,6 +107,8 @@
         integer resultlen,ierr
         character(len=128)::name
         character(len=MPI_MAX_PROCESSOR_NAME+1)::lname
+        !character(len=MPI_MAX_PROCESSOR_NAME)::lname
+        integer hostnm
         ierr= hostnm( name )
         resultlen=LEN_TRIM(name)
         if ( resultlen .le. MPI_MAX_PROCESSOR_NAME)then
