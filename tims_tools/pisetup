@@ -3,12 +3,8 @@
 ##### sudo visudo
 ##### add the line: tkaiser ALL=(ALL) NOPASSWD:ALL
 date
-#First window
-#touch new.log
-#tail -f new.log
-#
-#Second window
-#source new > new.log 2>&1
+
+#source new 2>&1 | tree new.log
 
 STD=`pwd`
 sudo apt-get -y update 
@@ -94,7 +90,7 @@ make -j 4
 sudo make install 
 
 
-
+:<<++++
 # install newer python
 cd /opt
 sudo mkdir python
@@ -114,29 +110,44 @@ sudo swapoff /var/swap.1
 sudo rm /var/swap.1
 END
 
-for PIV in 3.9.1 ; do
-wget https://www.python.org/ftp/python/${PIV}/Python-${PIV}.tgz
-tar -xzf Python-${PIV}.tgz
-cd Python-${PIV}
-./configure --enable-optimizations --prefix=/opt/python/${PIV} --enable-loadable-sqlite-extensions
-make -j  4
-make install
-export PATH=/opt/python/${PIV}/bin:$PATH
-python3 -m pip install --upgrade pip
-pip3 install wheel
-pip3 install matplotlib 
-pip3 install xkcd
-pip3 install notebook
-# pandas/scipy takes a long time to install
-source /opt/python/bigswap
-#pip3 install pandas
-#pip3 install scipy
-source /opt/python/normswap
-
-
-
 export SPATH=$PATH
 export SLIB=$LD_LIBRARY_PATH
+
+#for ver in a b ; do 
+for PIV in 3.9.1 ; do
+  wget https://www.python.org/ftp/python/${PIV}/Python-${PIV}.tgz
+  tar -xzf Python-${PIV}.tgz
+  cd Python-${PIV}
+  ./configure --enable-optimizations --prefix=/opt/python/${PIV}${ver} --enable-loadable-sqlite-extensions
+  make -j  4
+  make install
+  export PATH=/opt/python/${PIV}${ver}/bin:$PATH
+  python3 -m pip install --upgrade pip
+  pip3 install wheel
+  pip3 install matplotlib 
+  pip3 install xkcd
+  pip3 install notebook
+  # pandas/scipy takes a long time to install
+  source /opt/python/bigswap
+  #pip3 install pandas
+  #pip3 install scipy
+  source /opt/python/normswap
+  export PATH=$SPATH
+  export LD_LIBRARY_PATH=$SLIB
+  done
+#done
+
+++++
+
+cd ~
+
+git clone https://github.com/spack/spack.git
+source share/spack/setup-env.sh
+spack install lmod
+spack install python
+exit
+
+:<<++++
 
 mkdir ~/conda
 cd ~/conda 
@@ -184,6 +195,7 @@ chmod 755 ~/bin/*
 ##### install R from source since package version is old
 export VERSION=3.6.1 
 export VERSION=4.0.5
+export VERSION=4.1.0
 
 ## get top level version number for wget
 RC=`echo ${VERSION:0:1}`
@@ -225,7 +237,7 @@ export LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib:$LD_LIBRARY_PATH
 
 rm -rf Rmpi_0.6-9.tar.gz 
  
-curl https://cran.r-project.org/src/contrib/Rmpi_0.6-9.tar.gz -o Rmpi_0.6-9.tar.gz  
+curl https://cran.r-project.org/src/contrib/Rmpi_0.6-9.1.tar.gz -o Rmpi_0.6-9.tar.gz  
 
 R CMD INSTALL --configure-args=" --with-Rmpi-include='/opt/mpi/openmpi/4.1.0/include' --with-Rmpi-libpath='/opt/mpi/openmpi/4.1.0/lib' --with-mpi='/opt/mpi/openmpi/4.1.0/bin/mpicc' --with-Rmpi-type='OPENMPI' "  Rmpi_0.6-9.tar.gz    
 
@@ -290,5 +302,6 @@ echo "Rscript examples/r/ircmdr.R"
 
 date
 
+++++
 
 
