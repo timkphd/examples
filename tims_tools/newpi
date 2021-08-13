@@ -1,0 +1,353 @@
+##### install a bunch of packages need by other things 
+##### before running this you may need to 
+##### sudo visudo
+##### add the line: tkaiser ALL=(ALL) NOPASSWD:ALL
+date
+
+#source pisetup 2>&1 | tee new.log
+
+STD=`pwd`
+sudo apt-get -y update 
+sudo apt-get -y upgrade 
+ 
+sudo apt-get -y install gfortran 
+ 
+sudo apt-get -y install gedit 
+sudo apt-get -y install filezilla 
+ 
+ 
+sudo apt-get -y install libatlas-base-dev 
+sudo apt-get -y install libffi-dev 
+ 
+sudo apt-get -y install mencoder 
+ 
+sudo apt-get -y install tcl8.6
+sudo apt-get -y install tcl8.6-dev
+
+sudo apt-get -y install subversion 
+ 
+sudo apt-get -y install libatlas-base-dev 
+    
+sudo apt-get -y install libreadline-dev 
+ 
+sudo apt-get -y install libx11-dev 
+sudo apt-get -y install x11-common 
+sudo apt-get -y install libxt-dev 
+ 
+sudo apt-get -y install libbz2-dev 
+sudo apt-get -y install liblzma-dev 
+ 
+sudo apt-get -y install libpcre3-dev 
+sudo apt-get -y install libcurl4-openssl-dev 
+ 
+sudo apt-get -y install nedit 
+
+sudo apt-get -y install apache2
+
+sudo apt-get -y install libjpeg-dev
+sudo apt-get -y install libssl-dev
+ 
+sudo apt-get -y update 
+sudo apt-get -y upgrade
+
+sudo apt-get -y install octave
+echo "graphics_toolkit('gnuplot')" > ~/.octaverc
+ 
+sudo apt-get -y install ccrypt
+
+sudo apt-get -y install git-gui
+
+sudo apt -y install virtualenv
+
+#sqlite is needed fot jupyter to work
+sudo apt -y install sqlite
+sudo apt -y install libsqlite3-dev
+
+#needed by R 4.x
+sudo apt install -y libpcre2-dev
+
+sudo install julia
+
+
+###### DO INSTALLS FROM SOURCE AND SPACK
+
+sudo mkdir /nopt
+sudo chmod 777 /nopt
+
+cd ~
+##### install openmpi 
+ 
+wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.0.tar.gz
+ 
+tar -xzf  openmpi-4.1.0.tar.gz 
+cd openmpi-4.1.0
+./configure --prefix=/nopt/mpi/openmpi/4.1.0 --enable-orterun-prefix-by-default
+make -j 4
+sudo make install 
+
+
+## openmpi module
+
+mkdir -p /nopt/mods/mpi/openmpi
+
+cat << END > /nopt/mods/mpi/openmpi/4.1.0.lua
+help([[
+"OpenMPI 4.1.0"
+"
+]])
+
+
+whatis("Name: OpenMPI")
+whatis("Version: 4.1.0")
+
+local base = "/nopt/mpi/openmpi/4.1.0"
+
+setenv("OPENMPI_ROOT_DIR", base)
+
+prepend_path("PATH", pathJoin(base, "bin"))
+prepend_path("MANPATH", pathJoin(base, "share/man"))
+prepend_path("LD_LIBRARY_PATH", pathJoin(base, "lib"))
+prepend_path("LIBRARY_PATH", pathJoin(base, "lib"))
+prepend_path("CPATH", pathJoin(base, "include"))
+prepend_path("PKG_CONFIG_PATH", pathJoin(base, "lib/pkgconfig"))
+prepend_path("CMAKE_PREFIX_PATH", base)
+END
+
+
+##### install mpich 
+cd ~
+wget http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz
+tar -xzf  mpich-3.4.1.tar.gz 
+cd mpich-3.4.1
+if gcc -v 2>&1 | tail -1 | grep 10 ; then
+   export FFLAGS="-w -fallow-argument-mismatch -O2"
+   echo gcc is 10.x
+else
+   echo gcc not 10.x
+fi
+
+./configure --prefix=/nopt/mpi/mpich/3.4.1 --with-device=ch3
+make -j 4
+sudo make install 
+
+
+## mpich module
+
+mkdir -p /nopt/mods/mpi/mpich
+
+cat << END > /nopt/mods/mpi/mpich/3.4.1.lua
+
+help([[
+"mpich 3.4.1"
+"
+]])
+whatis("Name: MPICH")
+whatis("Version: 3.4.1")
+
+local base = "/nopt/mpi/mpich/3.4.1"
+
+
+setenv("OPENMPI_ROOT_DIR", base)
+
+prepend_path("PATH", pathJoin(base, "bin"))
+prepend_path("MANPATH", pathJoin(base, "share/man"))
+prepend_path("LD_LIBRARY_PATH", pathJoin(base, "lib"))
+prepend_path("LIBRARY_PATH", pathJoin(base, "lib"))
+prepend_path("CPATH", pathJoin(base, "include"))
+prepend_path("PKG_CONFIG_PATH", pathJoin(base, "lib/pkgconfig"))
+prepend_path("CMAKE_PREFIX_PATH", base)
+END
+
+cd ~
+
+export I09876=/nopt/spk
+
+
+if [ -z ${I09876+x} ]; then
+    ED=`date +"%y%m%d"a`
+    export I09876=/nopt/apps/$ED
+    echo Install directory not set - defaulting to $I09876
+else
+    echo Install directory - $I09876
+fi
+
+cd ~
+mkdir spackit
+cd spackit
+for l in level00 level01 level02 ; do
+#  mkdir $l
+  cd $l
+#  git clone https://github.com/spack/spack.git
+  cp ~/examples/spack/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
+  cd ..
+done
+
+export EDTFILES=`grep -l -r I09876 .`
+
+for l in $EDTFILES ; do
+	echo $l
+	sed --in-place s,I09876,$I09876, $l
+done
+
+spackit00() {
+	source $STRTDIR/level00/spack/share/spack/setup-env.sh
+}
+spackit01() {
+	source $STRTDIR/level01/spack/share/spack/setup-env.sh
+}
+spackit02() {
+	source $STRTDIR/level02/spack/share/spack/setup-env.sh
+}
+
+spackit00
+spack install lmod
+
+# at least one version below current
+spack install python@3.9.5
+
+arch=`spack find --format {arch} lmod`
+echo $arch
+
+gccv=`ls  /nopt/spk/level00 | grep gcc | tail -1`
+
+lpath=`find /nopt/spk/level00  -type d -name init`
+
+lmodinit=$lpath/bash
+
+echo $lmodinit
+
+echo ". "  $lmodinit >> $HOME/myenv
+
+cd ~/spackit
+
+export EDTFILES=`find $HOME/spackit -name upstreams.yaml`
+
+for l in $EDTFILES ; do
+	echo $l
+	sed --in-place s,ARCH,$arch, $l
+done
+
+for l in $EDTFILES ; do
+	echo $l
+	sed --in-place s,GCC,$gccv, $l
+done
+
+spackit01
+spack install python@3.9.6
+
+spackit02
+spack install python@3.9.6
+
+#install pip for all of our pythons
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+for p in `find $I09876 -name python3` ; do $p get-pip.py ; done
+
+
+#set up module paths
+
+for l in level00 level01 level02 ; do
+x=`ls $I09876/$l//modules/lmod/$arch/gcc`
+echo module use $I09876/$l/modules/lmod/$arch/gcc/$x >> ~/myenv
+done
+echo module use /nopt/mods/mpi >> ~/myenv
+
+
+#https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/
+
+
+
+
+##### install R from source since packaged version is old
+cd ~
+export VERSION=4.1.0
+
+## get top level version number for wget
+RC=`echo ${VERSION:0:1}`
+ 
+export RBASE=/home/$USER/R/$VERSION 
+mkdir -p ${RBASE}_src 
+cd ${RBASE}_src 
+ 
+wget https://cran.r-project.org/src/base/R-$RC/R-$VERSION.tar.gz 
+tar -xzf R-$VERSION.tar.gz 
+cd R-$VERSION 
+ 
+  
+ 
+export CFLAGS="-O2 -fopenmp" 
+export FCFLAGS="-O2 -fopenmp" 
+export CXXFLAGS="-O2 -fopenmp" 
+export LDFLAGS="-fopenmp -lblas -llapack" 
+ 
+export R_LIBS=$RBASE/local 
+mkdir -p $R_LIBS 
+ 
+./configure --with-blas="-L/usr/lib/arm-linux-gnueabihf -lblas" --with-lapack  --prefix=$RBASE 
+ 
+make -j 4
+make install 
+ 
+export PATH=$RBASE/bin:$PATH
+
+
+# some R stuff
+cd ~
+Rscript examples/r/doinstall.R 
+
+
+##### install Rmpi 
+export PATH=$RBASE/bin:$PATH  
+export LD_LIBRARY_PATH=/nopt/mpi/openmpi/4.1.0/lib:$LD_LIBRARY_PATH
+
+rm -rf Rmpi_0.6-9.tar.gz 
+ 
+curl https://cran.r-project.org/src/contrib/Rmpi_0.6-9.1.tar.gz -o Rmpi_0.6-9.tar.gz  
+
+R CMD INSTALL --configure-args=" --with-Rmpi-include='/nopt/mpi/openmpi/4.1.0/include' --with-Rmpi-libpath='/nopt/mpi/openmpi/4.1.0/lib' --with-mpi='/nopt/mpi/openmpi/4.1.0/bin/mpicc' --with-Rmpi-type='OPENMPI' "  Rmpi_0.6-9.tar.gz    
+
+cd ~
+##### Update myenv
+
+cat << XXX >> ~/myenv
+export PATH=/home/$USER/bin:\$PATH  
+## point to R
+export VERSION=$VERSION
+export RBASE=/home/$USER/R/\$VERSION 
+export PATH=$RBASE/bin:\$PATH   
+export R_LIBS=$RBASE/local 
+export LD_LIBRARY_PATH=/opt/mpi/openmpi/4.1.0/lib:/usr/local/lib:\$LD_LIBRARY_PATH
+export PATH=/opt/mpi/openmpi/4.1.0/bin:\$PATH
+export MANPATH=/opt/mpi/openmpi/4.1.0/shared/man:\$MANPATH
+XXX
+
+cat << XXX >> ~/myenv
+
+## alias to enable/disable keys
+alias keys='ssh-add -t 28800 ~/.ssh/forhpc'
+alias killkeys='ssh-add -D'
+}
+
+
+XXX
+
+
+##### Generate a ssh key for localhost access
+
+ssh-keygen -f $HOME/.ssh/id_rsa  -P ""
+cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
+##### Generate a ssh key with random passphrase for remote access
+pw=`LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | dd bs=10 count=1 2>/dev/null`
+echo "MAKE A NOTE OF THIS PASSPHRASE FOR YOUR SSH KEY"
+echo $pw
+echo "MAKE A NOTE OF THIS PASSPHRASE FOR YOUR SSH KEY"
+ssh-keygen -f $HOME/.ssh/forhpc -trsa -P $pw
+
+echo "##### To do your own passphrase run the following command:"
+echo "ssh-keygen -p -P $pw -f $HOME/.ssh/forhpc"
+
+
+date
+
+
+
