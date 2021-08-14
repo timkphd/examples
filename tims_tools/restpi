@@ -1,0 +1,97 @@
+
+cd ~
+sudo apt-get install curl
+export I09876=/nopt/spk
+
+
+if [ -z ${I09876+x} ]; then
+    ED=`date +"%y%m%d"a`
+    export I09876=/nopt/apps/$ED
+    echo Install directory not set - defaulting to $I09876
+else
+    echo Install directory - $I09876
+fi
+
+cd ~
+mkdir spackit
+cd spackit
+export STRTDIR=`pwd`
+for l in level00 level01 level02 ; do
+  mkdir $l
+  cd $l
+  #git clone https://github.com/spack/spack.git
+  cp ~/examples/spack/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
+  cd ..
+done
+
+export EDTFILES=`grep -l -r I09876 .`
+
+for l in $EDTFILES ; do
+	echo $l
+	sed --in-place s,I09876,$I09876, $l
+done
+
+spackit00() {
+	source $STRTDIR/level00/spack/share/spack/setup-env.sh
+}
+spackit01() {
+	source $STRTDIR/level01/spack/share/spack/setup-env.sh
+}
+spackit02() {
+	source $STRTDIR/level02/spack/share/spack/setup-env.sh
+}
+
+spackit00
+spack install lmod
+
+# at least one version below current
+spack install python@3.9.5
+
+arch=`spack find --format {arch} lmod`
+echo $arch
+
+gccv=`ls  /nopt/spk/level00 | grep gcc | tail -1`
+
+lpath=`find /nopt/spk/level00  -type d -name init`
+
+lmodinit=$lpath/bash
+
+echo $lmodinit
+
+echo ". "  $lmodinit >> $HOME/myenv
+
+cd ~/spackit
+
+export EDTFILES=`find $HOME/spackit -name upstreams.yaml`
+
+for l in $EDTFILES ; do
+	echo $l
+	sed --in-place s,ARCH,$arch, $l
+done
+
+for l in $EDTFILES ; do
+	echo $l
+	sed --in-place s,GCC,$gccv, $l
+done
+
+spackit01
+spack install python@3.9.6
+
+spackit02
+spack install python@3.9.6
+
+#install pip for all of our pythons
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+for p in `find $I09876 -name python3` ; do $p get-pip.py ; done
+
+
+#set up module paths
+
+for l in level00 level01 level02 ; do
+x=`ls $I09876/$l//modules/lmod/$arch/gcc`
+echo module use $I09876/$l/modules/lmod/$arch/gcc/$x >> ~/myenv
+done
+echo module use /nopt/mods/mpi >> ~/myenv
+
+
+

@@ -64,9 +64,13 @@ sudo apt -y install sqlite
 sudo apt -y install libsqlite3-dev
 
 #needed by R 4.x
+sudo apt install -y libpng-tools libpng++-dev libpng-dev
+
 sudo apt install -y libpcre2-dev
 
-sudo install julia
+sudo install -y julia
+sudo install -y openssh-server
+
 
 
 ###### DO INSTALLS FROM SOURCE AND SPACK
@@ -175,9 +179,9 @@ cd ~
 mkdir spackit
 cd spackit
 for l in level00 level01 level02 ; do
-#  mkdir $l
+  mkdir $l
   cd $l
-#  git clone https://github.com/spack/spack.git
+  git clone https://github.com/spack/spack.git
   cp ~/examples/spack/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
   cd ..
 done
