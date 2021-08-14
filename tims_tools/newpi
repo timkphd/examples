@@ -68,9 +68,12 @@ sudo apt install -y libpng-tools libpng++-dev libpng-dev
 
 sudo apt install -y libpcre2-dev
 
-sudo install -y julia
-sudo install -y openssh-server
+sudo apt install -y julia
+sudo apt install -y openssh-server
 
+sudo apt install -y curl
+
+sudo apt install -y net-tools
 
 
 ###### DO INSTALLS FROM SOURCE AND SPACK
@@ -178,6 +181,7 @@ fi
 cd ~
 mkdir spackit
 cd spackit
+export STRTDIR=`pwd`
 for l in level00 level01 level02 ; do
   mkdir $l
   cd $l
