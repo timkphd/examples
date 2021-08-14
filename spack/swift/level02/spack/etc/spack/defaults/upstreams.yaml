@@ -1,0 +1,9 @@
+upstreams:
+#  spack-level01:
+#    install_tree: I09876/level01
+#    modules:
+#            lmod: I09876/level01/modules/lmod/ARCH/gcc/GCC
+  spack-level00:
+    install_tree: I09876/level00
+    modules:
+            lmod: I09876/level00/modules/lmod/ARCH/gcc/GCC

@@ -1,0 +1,44 @@
+modules:
+  # Paths to check when creating modules for all module sets
+  prefix_inspections:
+    bin:
+    - PATH
+    man:
+    - MANPATH
+    share/man:
+    - MANPATH
+    share/aclocal:
+    - ACLOCAL_PATH
+    lib/pkgconfig:
+    - PKG_CONFIG_PATH
+    lib64/pkgconfig:
+    - PKG_CONFIG_PATH
+    share/pkgconfig:
+    - PKG_CONFIG_PATH
+    ? ''
+    : - CMAKE_PREFIX_PATH
+
+  # These are configurations for the module set named "default"
+  default:
+    # These values are defaulted in the code. They are not defaulted here so
+    # that we can enable backwards compatibility with the old syntax more
+    # easily (old value is in the config yaml, config:module_roots)
+    # Where to install modules
+    # roots:
+    #  tcl:    $spack/share/spack/modules
+    #  lmod:   $spack/share/spack/lmod
+    roots:
+            #tcl: /nopt/nrel/spack/modules/tcl
+            #lmod: /nopt/nrel/spack/modules/lmod
+      tcl: I09876/level02/modules/tcl
+      lmod: I09876/level02/modules/lmod
+    enable:
+    - tcl
+    - lmod
+
+    # Default configurations if lmod is enabled
+    lmod:
+      hierarchy:
+      - mpi
+      core_compilers:
+      - gcc@9.4.0
