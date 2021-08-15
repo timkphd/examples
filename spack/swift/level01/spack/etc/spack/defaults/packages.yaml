@@ -55,6 +55,18 @@ packages:
       xxd: [xxd-standalone, vim]
       yacc: [bison, byacc]
       ziglang: [zig]
+  git:
+    externals:
+    - spec: "git@2.31.1"
+      prefix: /usr/bin
+  gettext:
+    externals:
+    - spec: "gettext@0.21"
+      prefix: /usr/bin
+  libffi:
+    externals:
+    - spec: "libffi@3.3"
+      prefix: /usr/lib/aarch64-linux-gnu
     permissions:
       read: world
       write: user
