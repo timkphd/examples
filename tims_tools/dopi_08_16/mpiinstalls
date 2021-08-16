@@ -1,0 +1,88 @@
+#!/usr/bin/bash
+
+sudo mkdir /nopt
+sudo chmod 777 /nopt
+
+cd ~
+##### install openmpi 
+ 
+wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.0.tar.gz
+ 
+tar -xzf  openmpi-4.1.0.tar.gz 
+cd openmpi-4.1.0
+./configure --prefix=/nopt/mpi/openmpi/4.1.0 --enable-orterun-prefix-by-default
+make -j 4
+sudo make install 
+
+
+## openmpi module
+
+mkdir -p /nopt/mods/mpi/openmpi
+
+cat << END > /nopt/mods/mpi/openmpi/4.1.0.lua
+help([[
+"OpenMPI 4.1.0"
+"
+]])
+
+
+whatis("Name: OpenMPI")
+whatis("Version: 4.1.0")
+
+local base = "/nopt/mpi/openmpi/4.1.0"
+
+setenv("OPENMPI_ROOT_DIR", base)
+
+prepend_path("PATH", pathJoin(base, "bin"))
+prepend_path("MANPATH", pathJoin(base, "share/man"))
+prepend_path("LD_LIBRARY_PATH", pathJoin(base, "lib"))
+prepend_path("LIBRARY_PATH", pathJoin(base, "lib"))
+prepend_path("CPATH", pathJoin(base, "include"))
+prepend_path("PKG_CONFIG_PATH", pathJoin(base, "lib/pkgconfig"))
+prepend_path("CMAKE_PREFIX_PATH", base)
+END
+
+
+##### install mpich 
+cd ~
+wget http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz
+tar -xzf  mpich-3.4.1.tar.gz 
+cd mpich-3.4.1
+if gcc -v 2>&1 | tail -1 | grep 10 ; then
+   export FFLAGS="-w -fallow-argument-mismatch -O2"
+   echo gcc is 10.x
+else
+   echo gcc not 10.x
+fi
+
+./configure --prefix=/nopt/mpi/mpich/3.4.1 --with-device=ch3
+make -j 4
+sudo make install 
+
+
+## mpich module
+
+mkdir -p /nopt/mods/mpi/mpich
+
+cat << END > /nopt/mods/mpi/mpich/3.4.1.lua
+
+help([[
+"mpich 3.4.1"
+"
+]])
+whatis("Name: MPICH")
+whatis("Version: 3.4.1")
+
+local base = "/nopt/mpi/mpich/3.4.1"
+
+
+setenv("MPICH_ROOT_DIR", base)
+
+prepend_path("PATH", pathJoin(base, "bin"))
+prepend_path("MANPATH", pathJoin(base, "share/man"))
+prepend_path("LD_LIBRARY_PATH", pathJoin(base, "lib"))
+prepend_path("LIBRARY_PATH", pathJoin(base, "lib"))
+prepend_path("CPATH", pathJoin(base, "include"))
+prepend_path("PKG_CONFIG_PATH", pathJoin(base, "lib/pkgconfig"))
+prepend_path("CMAKE_PREFIX_PATH", base)
+END

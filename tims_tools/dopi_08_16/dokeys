@@ -1,0 +1,22 @@
+#!/usr/bin/bash
+
+
+##### Generate a ssh key for localhost access
+
+ssh-keygen -f $HOME/.ssh/id_rsa  -P ""
+cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
+##### Generate a ssh key with random passphrase for remote access
+pw=`LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | dd bs=10 count=1 2>/dev/null`
+echo "MAKE A NOTE OF THIS PASSPHRASE FOR YOUR SSH KEY"
+echo $pw
+echo "MAKE A NOTE OF THIS PASSPHRASE FOR YOUR SSH KEY"
+ssh-keygen -f $HOME/.ssh/forhpc -trsa -P $pw
+
+echo "##### To do your own passphrase run the following command:"
+echo "ssh-keygen -p -P $pw -f $HOME/.ssh/forhpc"
+
+
+
+
+

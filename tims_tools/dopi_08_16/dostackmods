@@ -1,0 +1,36 @@
+#!/usr/bin/bash
+
+cat << END > /nopt/mods/mpi/mpich/3.4.1_stack.lua 
+help([[
+"MPICH stack with python and R"
+]])
+whatis("Name: MPICH_STACK")
+whatis("Version: 3.4.1")
+
+unload("openmpi/4.1.0")
+unload("python/3.9.6_02")
+unload("r/4.1.0_01")
+
+always_load("mpich/3.4.1")
+always_load("python/3.9.6_01")
+always_load("r/4.1.0_02")
+
+END
+
+cat << END > /nopt/mods/mpi/openmpi/4.1.0_stack.lua 
+help([[
+"OPENMPI stack with python and R"
+]])
+whatis("Name: OPENMPI_STACK")
+whatis("Version: 4.1.0")
+
+unload("mpich/3.4.1")
+unload("python/3.9.6_01")
+unload("r/4.1.0_02")
+
+always_load("openmpi/4.1.0")
+always_load("python/3.9.6_02")
+always_load("r/4.1.0_01")
+
+
+END

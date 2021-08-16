@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+export PATH=~/examples/tims_tools:$PATH
+cd ~
+tymer ~/phase03b.time installing python@3.9.6 level02
+
+cd spackit
+export STRTDIR=`pwd`
+export I09876=/nopt/spk
+
+spackit01() {
+	source $STRTDIR/level02/spack/share/spack/setup-env.sh
+}
+
+spackit01
+spack install python@3.9.6
+
+tymer ~/phase03b.time done

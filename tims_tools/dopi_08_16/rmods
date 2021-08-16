@@ -1,0 +1,29 @@
+#!/usr/bin/bash
+
+VERSION=4.1.0
+mkdir -p /nopt/mods/r/r
+for CASE in 01 02 ; do
+export RBASE=/nopt/R/$VERSION/$CASE
+
+
+cat << END >/nopt/mods/r/r/${VERSION}_${CASE}.lua
+help([[
+"R 4.1.0"
+]])
+whatis("Name: R")
+whatis("Version: 4.1.0")
+
+local base = "$RBASE"
+
+setenv("R_LIBS", "$RBASE/local")
+
+
+prepend_path("PATH", pathJoin(base, "bin"))
+prepend_path("MANPATH", pathJoin(base, "share/man"))
+prepend_path("LD_LIBRARY_PATH", pathJoin(base, "lib"))
+prepend_path("LIBRARY_PATH", pathJoin(base, "lib"))
+END
+
+echo +++++++
+
+done

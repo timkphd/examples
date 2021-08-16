@@ -1,0 +1,26 @@
+export PATH=~:$PATH
+tymer times aptinstalls
+./aptinstalls
+tymer times mpiinstalls
+./mpiinstalls
+tymer times spack00
+./spack00
+tymer times spack01
+./spack01
+tymer times spack02
+./spack02
+tymer times pipit
+./pipit
+tymer times dompi4py
+./dompi4py
+tymer times dor
+./dor
+tymer times rmods
+./rmods
+tymer times dormpi
+./dormpi
+tymer times dostackmods
+./dostackmods
+tymer times dokeys
+./dokeys
+tymer times done

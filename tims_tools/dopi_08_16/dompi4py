@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+
+source ~/myenv 
+
+mods=`find /nopt/spk/level01/modules/lmod -name "python*"`
+mv $mods/3.9.6*.lua $mods/3.9.6_01.lua
+
+module load gcc
+module load mpich
+module load python/3.9.6_1
+
+pip3 install --no-cache-dir mpi4py
+
+module purge
+
+mods=`find /nopt/spk/level02/modules/lmod -name "python*"`
+mv $mods/3.9.6*.lua $mods/3.9.6_02.lua
+
+module load gcc
+module load mpich
+module load python/3.9.6_2
+
+pip3 install --no-cache-dir mpi4py

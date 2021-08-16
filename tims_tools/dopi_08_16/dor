@@ -1,0 +1,41 @@
+#!/usr/bin/bash
+
+
+##### install R from source since packaged version is old
+cd ~
+export VERSION=4.1.0
+
+## get top level version number for wget
+RC=`echo ${VERSION:0:1}`
+
+for CASE in 01 02 ; do
+#for CASE in 02 ; do
+export RBASE=/nopt/R/$VERSION/$CASE
+mkdir -p ${RBASE}_src 
+cd ${RBASE}_src 
+ 
+wget https://cran.r-project.org/src/base/R-$RC/R-$VERSION.tar.gz 
+tar -xzf R-$VERSION.tar.gz 
+cd R-$VERSION 
+ 
+  
+ 
+export CFLAGS="-O2 -fopenmp" 
+export FCFLAGS="-O2 -fopenmp" 
+export CXXFLAGS="-O2 -fopenmp" 
+export LDFLAGS="-fopenmp -lblas -llapack" 
+ 
+export R_LIBS=$RBASE/local 
+mkdir -p $R_LIBS 
+ 
+./configure --with-blas="-lblas" --with-lapack  --prefix=$RBASE 
+ 
+make -j 4
+make install 
+ 
+export PATH=$RBASE/bin:$PATH
+
+# some R stuff
+cd ~
+Rscript ~/doinstall.R 
+done

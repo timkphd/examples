@@ -1,0 +1,40 @@
+#!/usr/bin/bash
+
+export PATH=~/examples/tims_tools:$PATH
+cd ~
+tymer ~/pipit.time installing pip
+
+#install pip for all of our pythons
+#and then production software
+export I09876=/nopt/spk
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+for p in `find $I09876 -name python3` ; do 
+  echo piping $p
+  $p get-pip.py 
+ done
+
+for pp in `find $I09876 -name pip3` ; do 
+  tymer ~/pipit.time installing packages for $pp
+  $pp install wheel
+  $pp install matplotlib 
+  $pp install xkcd
+  $pp install notebook
+  # pandas/scipy takes a long time to install
+  $pp install pandas
+  $pp install scipy
+done
+
+tymer ~/pipit.time done installing packages
+
+#set up module paths
+
+
+for l in level00 level01 level02 ; do
+  arch=`ls $I09876/$l/modules/lmod`
+  x=`ls $I09876/$l/modules/lmod/$arch/gcc`
+  echo module use $I09876/$l/modules/lmod/$arch/gcc/$x >> ~/myenv
+done
+echo module use /nopt/mods/mpi >> ~/myenv
+
+
+

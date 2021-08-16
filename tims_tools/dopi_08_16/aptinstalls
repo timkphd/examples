@@ -1,0 +1,79 @@
+#!/usr/bin/bash
+
+##### install a bunch of packages need by other things 
+##### before running this you may need to 
+##### sudo visudo
+##### add the line: tkaiser ALL=(ALL) NOPASSWD:ALL
+date
+
+#source pisetup 2>&1 | tee new.log
+
+STD=`pwd`
+sudo apt-get -y update 
+sudo apt-get -y upgrade 
+ 
+sudo apt-get -y install gfortran 
+ 
+sudo apt-get -y install gedit 
+sudo apt-get -y install filezilla 
+ 
+ 
+sudo apt-get -y install libatlas-base-dev 
+sudo apt-get -y install libffi-dev 
+ 
+sudo apt-get -y install mencoder 
+ 
+sudo apt-get -y install tcl8.6
+sudo apt-get -y install tcl8.6-dev
+
+sudo apt-get -y install subversion 
+ 
+sudo apt-get -y install libatlas-base-dev 
+    
+sudo apt-get -y install libreadline-dev 
+ 
+sudo apt-get -y install libx11-dev 
+sudo apt-get -y install x11-common 
+sudo apt-get -y install libxt-dev 
+ 
+sudo apt-get -y install libbz2-dev 
+sudo apt-get -y install liblzma-dev 
+ 
+sudo apt-get -y install libpcre3-dev 
+sudo apt-get -y install libcurl4-openssl-dev 
+ 
+sudo apt-get -y install nedit 
+
+sudo apt-get -y install apache2
+
+sudo apt-get -y install libjpeg-dev
+sudo apt-get -y install libssl-dev
+ 
+sudo apt-get -y update 
+sudo apt-get -y upgrade
+
+sudo apt-get -y install octave
+echo "graphics_toolkit('gnuplot')" > ~/.octaverc
+ 
+sudo apt-get -y install ccrypt
+
+sudo apt-get -y install git-gui
+
+sudo apt -y install virtualenv
+
+#sqlite is needed fot jupyter to work
+sudo apt -y install sqlite
+sudo apt -y install libsqlite3-dev
+
+#needed by R 4.x
+sudo apt install -y libpng-tools libpng++-dev libpng-dev
+
+sudo apt install -y libpcre2-dev
+
+sudo apt install -y julia
+sudo apt install -y openssh-server
+
+sudo apt install -y curl
+
+sudo apt install -y net-tools
+
