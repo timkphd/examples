@@ -21,7 +21,8 @@ for l in level00 level01 level02 ; do
   mkdir $l
   cd $l
   git clone https://github.com/spack/spack.git
-  cp ~/examples/spack/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
+  #cp ~/examples/spack/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
+  cp ~/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
   cd ..
 done
 
