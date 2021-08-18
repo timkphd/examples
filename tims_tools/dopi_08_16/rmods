@@ -25,5 +25,6 @@ prepend_path("LIBRARY_PATH", pathJoin(base, "lib"))
 END
 
 echo +++++++
-
 done
+
+echo module use /nopt/mods/r >> ~/myenv
