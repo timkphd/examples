@@ -23,4 +23,8 @@ tymer times dostackmods
 ./dostackmods
 tymer times dokeys
 ./dokeys
+tymer srun_nodes
+./srun_nodes
 tymer times done
+
+

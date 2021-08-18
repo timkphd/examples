@@ -1,0 +1,30 @@
+#!/usr/bin/bash
+
+adder=`ifconfig eth0 | grep "inet " | awk '{print $2}'`
+
+mkdir ~/bin
+
+for x in `seq 1 4` ; do 
+  echo $adder >> ~/bin/nodelist 
+done
+
+srun=`find /nopt/mpi/openmpi -name mpiexec | sed s/mpiexec/srun/`
+
+cat << END > $srun
+#!/bin/bash
+#shift
+mpirun -x R_LIBS_USER -x LD_LIBRARY_PATH -x PATH -hostfile ~/bin/nodelist \$@
+END
+
+chmod 755 $srun
+
+srun=`find /nopt/mpi/mpich -name mpiexec | sed s/mpiexec/srun/`
+
+cat << END > $srun
+#!/bin/bash
+#shift
+mpirun -envlist R_LIBS_USER,LD_LIBRARY_PATH,PATH -f ~/bin/nodelist \$@
+END
+
+chmod 755 $srun
+
