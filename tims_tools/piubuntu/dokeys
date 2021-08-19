@@ -17,6 +17,6 @@ echo "##### To do your own passphrase run the following command:"
 echo "ssh-keygen -p -P $pw -f $HOME/.ssh/forhpc"
 
 
-cat ~/.ssh/*pub > authorized_keys
+cat ~/.ssh/*pub > ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/*
 

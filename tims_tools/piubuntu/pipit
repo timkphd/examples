@@ -2,7 +2,7 @@
 
 export PATH=~/examples/tims_tools:$PATH
 cd ~/piubuntu
-tymer ~/pipit.time installing pip
+tymer ~/piubuntu/pipit.time installing pip
 
 #install pip for all of our pythons
 #and then production software
@@ -24,7 +24,7 @@ for pp in `find $I09876 -name pip3` ; do
   $pp install scipy
 done
 
-tymer ~/pipit.time done installing packages
+tymer ~/piubuntu/pipit.time done installing packages
 
 #set up module paths
 

@@ -33,7 +33,7 @@ for l in $EDTFILES ; do
 	sed --in-place s,I09876,$I09876, $l
 done
 
-cat << END >> ~/piubuntu/myenv
+cat << END >> ~/myenv
 
 spackit00() {
 	source $STRTDIR/level00/spack/share/spack/setup-env.sh
