@@ -15,12 +15,12 @@ tymer times dompi4py
 ./dompi4py
 tymer times dor
 ./dor
+tymer times rmods
+./rmods
 tymer times dormpi
 ./dormpi
 tymer times dostackmods
 ./dostackmods
-tymer times rmods
-./rmods
 tymer srun_nodes
 ./srun_nodes
 tymer times dokeys

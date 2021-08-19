@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+source ~/myenv
 rm -rf Rmpi_0.6-9.tar.gz 
 curl https://cran.r-project.org/src/contrib/Rmpi_0.6-9.1.tar.gz -o Rmpi_0.6-9.tar.gz  
 
@@ -9,8 +10,13 @@ ml mpich
 MPI_ROOT=$MPICH_ROOT_DIR
 R CMD INSTALL --configure-args=" --with-Rmpi-include='$MPI_ROOT/include' --with-Rmpi-libpath='$MPI_ROOT/lib' --with-mpi='$MPI_ROOT/bin/mpicc' --with-Rmpi-type='MPICH2' "  Rmpi_0.6-9.tar.gz    
 
+Rscript doinstall.R
+
 module purge
 ml r/4.1.0_02
 ml openmpi
 export MPI_ROOT=$OPENMPI_ROOT_DIR
 R CMD INSTALL --configure-args=" --with-Rmpi-include='$MPI_ROOT/include' --with-Rmpi-libpath='$MPI_ROOT/lib' --with-mpi='$MPI_ROOT/bin/mpicc' --with-Rmpi-type='OPENMPI' "  Rmpi_0.6-9.tar.gz    
+
+Rscript doinstall.R
+

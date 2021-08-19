@@ -36,6 +36,4 @@ make install
 export PATH=$RBASE/bin:$PATH
 
 # some R stuff
-cd ~/piubuntu
-Rscript ~/doinstall.R 
 done
