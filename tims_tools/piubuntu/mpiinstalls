@@ -3,7 +3,7 @@
 sudo mkdir /nopt
 sudo chmod 777 /nopt
 
-cd ~
+cd ~/piubuntu
 ##### install openmpi 
  
 wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.0.tar.gz
@@ -44,7 +44,7 @@ END
 
 
 ##### install mpich 
-cd ~
+cd ~/piubuntu
 wget http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz
 tar -xzf  mpich-3.4.1.tar.gz 
 cd mpich-3.4.1

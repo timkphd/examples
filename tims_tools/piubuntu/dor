@@ -2,7 +2,7 @@
 
 
 ##### install R from source since packaged version is old
-cd ~
+cd ~/piubuntu
 export VERSION=4.1.0
 
 ## get top level version number for wget
@@ -36,6 +36,6 @@ make install
 export PATH=$RBASE/bin:$PATH
 
 # some R stuff
-cd ~
+cd ~/piubuntu
 Rscript ~/doinstall.R 
 done

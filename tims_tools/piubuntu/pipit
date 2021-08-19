@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 export PATH=~/examples/tims_tools:$PATH
-cd ~
+cd ~/piubuntu
 tymer ~/pipit.time installing pip
 
 #install pip for all of our pythons

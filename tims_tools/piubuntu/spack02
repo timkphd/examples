@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
 export PATH=~/examples/tims_tools:$PATH
-cd ~
-tymer ~/phase03b.time installing python@3.9.6 level02
+cd ~/piubuntu
+tymer ~/piubuntu/phase03b.time installing python@3.9.6 level02
 
 cd spackit
 export STRTDIR=`pwd`
@@ -15,4 +15,4 @@ spackit01() {
 spackit01
 spack install python@3.9.6
 
-tymer ~/phase03b.time done
+tymer ~/piubuntu/phase03b.time done

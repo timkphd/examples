@@ -1,7 +1,7 @@
 #!/usr/bin/bash
-export PATH=~/examples/tims_tools:$PATH
-cd ~
-tymer ~/phase02.time installing spack x 3
+export PATH=~/piubuntu/examples/tims_tools:$PATH
+cd ~/piubuntu
+tymer ~/piubuntu/phase02.time installing spack x 3
 export I09876=/nopt/spk
 
 
@@ -13,7 +13,7 @@ else
     echo Install directory - $I09876
 fi
 
-cd ~
+cd ~/piubuntu
 mkdir spackit
 cd spackit
 export STRTDIR=`pwd`
@@ -21,8 +21,8 @@ for l in level00 level01 level02 ; do
   mkdir $l
   cd $l
   git clone https://github.com/spack/spack.git
-  #cp ~/examples/spack/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
-  cp ~/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
+  #cp ~/piubuntu/examples/spack/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
+  cp ~/piubuntu/swift/$l/spack/etc/spack/defaults/*  spack/etc/spack/defaults
   cd ..
 done
 
@@ -33,7 +33,7 @@ for l in $EDTFILES ; do
 	sed --in-place s,I09876,$I09876, $l
 done
 
-cat << END >> ~/myenv
+cat << END >> ~/piubuntu/myenv
 
 spackit00() {
 	source $STRTDIR/level00/spack/share/spack/setup-env.sh
@@ -46,7 +46,7 @@ spackit02() {
 }
 
 END
-tymer ~/phase02.time installing lmod
+tymer ~/piubuntu/phase02.time installing lmod
 
 spackit00() {
 	source $STRTDIR/level00/spack/share/spack/setup-env.sh
@@ -55,13 +55,13 @@ spackit00() {
 spackit00
 spack install lmod
 
-tymer ~/phase02.time installing python@3.8.0
+tymer ~/piubuntu/phase02.time installing python@3.8.0
 
 
 # at least one version below current
 spack install python@3.8.0
 
-tymer ~/phase02.time  updating spack yaml files
+tymer ~/piubuntu/phase02.time  updating spack yaml files
 
 arch=`spack find --format {arch} lmod`
 echo $arch
@@ -76,7 +76,7 @@ echo $lmodinit
 
 echo ". "  $lmodinit >> $HOME/myenv
 
-cd ~/spackit
+cd ~/piubuntu/spackit
 
 export EDTFILES=`find $HOME/spackit -name upstreams.yaml`
 
@@ -90,4 +90,4 @@ for l in $EDTFILES ; do
 	sed --in-place s,GCC,$gccv, $l
 done
 
-tymer ~/phase02.time done
+tymer ~/piubuntu/phase02.time done
