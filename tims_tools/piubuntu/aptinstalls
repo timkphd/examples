@@ -43,6 +43,7 @@ sudo apt-get -y install libpcre3-dev
 sudo apt-get -y install libcurl4-openssl-dev 
  
 sudo apt-get -y install nedit 
+sudo apt-get -y install vim
 
 sudo apt-get -y install apache2
 

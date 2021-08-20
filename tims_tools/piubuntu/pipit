@@ -14,11 +14,12 @@ for p in `find $I09876 -name python3` ; do
  done
 
 for pp in `find $I09876 -name pip3` ; do 
-  tymer ~/pipit.time installing packages for $pp
+  tymer ~/piubuntu/pipit.time installing packages for $pp
   $pp install wheel
   $pp install matplotlib 
   $pp install xkcd
   $pp install notebook
+  $pp install jupyter-lab
   # pandas/scipy takes a long time to install
   $pp install pandas
   $pp install scipy
