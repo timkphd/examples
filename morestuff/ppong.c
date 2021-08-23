@@ -32,6 +32,7 @@ int main(int argc,char *argv[],char *env[])
   char *buffer;
   char *astr;
   char myname[MPI_MAX_PROCESSOR_NAME];
+  char every[128][MPI_MAX_PROCESSOR_NAME];
   MPI_Status status;
   double total[BSIZE],maxtime[BSIZE],mintime[BSIZE],st,et,dt;
   int is,ir,mysize,isize,resultlen,repeat;
@@ -39,8 +40,14 @@ int main(int argc,char *argv[],char *env[])
   MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
   MPI_Comm_rank(MPI_COMM_WORLD,&myid);
   MPI_Get_processor_name(myname,&resultlen); 
-  printf("%d %s %e \n",myid,myname,MPI_Wtick());
-/*  system("sleep 30"); */
+  MPI_Allgather(myname,(int)MPI_MAX_PROCESSOR_NAME,MPI_CHAR,
+                every ,(int)MPI_MAX_PROCESSOR_NAME,MPI_CHAR,
+                MPI_COMM_WORLD);
+  if(myid == 0) {
+	for (is=0;is < numprocs ; is++ )
+  		printf("%d %s %e \n",is,every[is],MPI_Wtick());
+	}
+/*  system("sleep 30");  */
   buffer=(char*)malloc((size_t)BUFSIZE);
   for(is=0;is<BUFSIZE;is++){
     buffer[is]=(char)0;
