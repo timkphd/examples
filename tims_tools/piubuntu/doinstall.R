@@ -10,3 +10,7 @@ install.packages("foreach", repos="http://cran.r-project.org")
 install.packages("tictoc", repos="http://cran.r-project.org")
 install.packages("stringr", repos="http://cran.r-project.org")
 install.packages("doMC", repos="http://cran.r-project.org")
+install.packages("devtools", repos="http://cran.r-project.org")
+devtools::install_github("IRkernel/IRkernel")
+IRkernel::installspec()
+

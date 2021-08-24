@@ -19,7 +19,7 @@ for pp in `find $I09876 -name pip3` ; do
   $pp install matplotlib 
   $pp install xkcd
   $pp install notebook
-  $pp install jupyter-lab
+  $pp install jupyterlab
   # pandas/scipy takes a long time to install
   $pp install pandas
   $pp install scipy
