@@ -1,0 +1,244 @@
+## Setup Notes From Thomas MacKell from LANL.
+
+### windows section (this can be done in linux as well using the rasberry pi imager from the snap store)
+- Download raspberry pi Ubuntu Server image from https://ubuntu.com/download/raspberry-pi/   (in this guide i used Ubuntu Server 20.04.3 LTS on all 3 Pis )
+
+- Download & Install Etcher
+  Https://www.balena.io/etcher/
+
+- use Etcher and MicroSD card to USB adapter to flash the unzipped OS image of Ubuntu
+- remove and reinsert the  adapter
+- create a blank file named "ssh" with no extension
+
+### Phyiscal setup
+- insert newly flashed MicroSD card into a Raspberry Pi
+- install the POE hat
+- install the Pi into rack or case
+- insert network cable into a POE capable switch
+- Pi should power on and join network
+
+### Network Setup
+- create a 192.168.#.# network (any RFC1918 address should be fine)
+- reserve DHCP ip addresses for each mac so that you can easily find them after rebooting or reimaging
+  - Note in my setup i used 192.168.5.0/24 for the dhcp service
+    - i reserved 192.168.5.200 for the Pi-Master
+    - i reserved 192.168.5.201 for the Pi-1
+    - i reserved 192.168.5.202 for the Pi-2
+
+### First login
+username:ubuntu
+password:ubuntu
+- it will have you change the password on first login
+
+### Set hostname
+sudo hostnamectl set-hostname <nodename>
+
+### Set default editor
+sudo update-alternatives --config editor #to vim.basic
+
+### Set sudoers file
+visudo
+ubuntu  ALL=(ALL) NOPASSWD:ALL
+
+### copy SSH keys out from workstation to all nodes (keys can be generated using ssh-keygen tools for what OS is being used)
+ssh-copy-id 192.168.5.200 && ssh-copy-id 192.168.5.201 && ssh-copy-id 192.168.5.202
+
+### Set up ~/.ssh/config to work with alias on your workstation(use RSA or ed25519 keys)
+```bash
+Host pi-master
+    User ubuntu
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    HostName 192.168.5.200
+
+Host pi1 pi-1
+    User ubuntu
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    HostName 192.168.5.201
+
+Host pi2 pi-2
+    User ubuntu
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    HostName 192.168.5.202
+```
+
+### System updates for every node
+sudo apt update && sudo apt full-upgrade
+reboot
+
+### install git,vim, and bash profile info(this can be skipped this is just how i set up my term)
+```bash
+cd ~
+mkdir git
+cd git
+git clone https://github.com/dintho/Setup.git
+cd Setup
+git reset --hard
+git pull
+sudo cp bash_aliases /root/.bash_aliases
+mv bash_aliases ~/.bash_aliases
+sudo cp bashrc /root/.bashrc
+mv bashrc ~/.bashrc
+sudo cp gitconfig /root/.gitconfig
+mv gitconfig ~/.gitconfig
+sudo cp .gitignore /root/.gitignore
+mv .gitignore ~/.gitignore
+sudo cp vimrc /root/.vimrc
+mv vimrc ~/.vimrc
+sudo mkdir -p /root/.vim/colors
+mkdir -p ~/.vim/colors
+curl https://raw.githubusercontent.com/tpope/vim-vividchalk/master/colors/vividchalk.vim -o ~/.vim/colors/vividchalk.vim
+sudo curl https://raw.githubusercontent.com/tpope/vim-vividchalk/master/colors/vividchalk.vim -o /root/.vim/colors/vividchalk.vim
+```
+
+
+
+### Setup XFCE on pi-master
+
+```
+sudo apt install xubuntu-desktop ## Select gdm3
+sudo apt install xrdp
+sudo adduser xrdp ssl-cert
+sudo systemctl restart xrdp
+sudo ufw allow 3389
+echo "xfce4-session" > ~/.xsession
+```
+
+### Download and set up Tims repo
+```
+mkdir ~/git && cd !$  #(optional)
+git clone https://github.com/timkphd/examples.git
+cp -r examples/tims_tools/piubuntu ~
+cd ~/piubuntu
+source runall  #Note this took about 6 or 8 hours
+```
+
+### setup ~/bin/nodelist
+```
+192.168.5.200
+192.168.5.200
+192.168.5.200
+192.168.5.200
+192.168.5.201
+192.168.5.201
+192.168.5.201
+192.168.5.201
+192.168.5.202
+192.168.5.202
+192.168.5.202
+192.168.5.202
+```
+
+### Create ~/.ssh/config on each node
+```
+Host pi-master
+hostname 192.168.5.200
+
+Host pi-1
+hostname 192.168.5.201
+
+Host pi-2
+hostname 192.168.5.202
+```
+### copy SSH keys out for each node (if keys dont exist in ~/.ssh then generate rsa keys ```ssh-kengen -t rsa```)
+
+```
+ssh-copy-id pi-master && ssh-copy-id pi-1 && ssh-copy-id pi-2
+```
+
+
+### set up slurm
+```
+sudo apt install slurm-wlm slurm-wlm-doc
+on pi-master
+cd /usr/share/doc/slurmctld/slurm-wlm
+python3 -m http.server
+
+
+###############from workstation
+rdesktop 192.168.5.200:3389 -u ubuntu -p password
+open up internet and navigate too http://127.0.0.1:8000/slurm-wlm-configurator.html
+
+control machine = pi-master
+compute machines  nodename = pi[1-2]
+
+
+```
+#### use the info given by local page to create slurm.conf in /etc/slurm/
+
+
+```
+grep -v ^# /etc/slurm/slurm.conf
+SlurmctldHost=pi-master
+MpiDefault=none
+ProctrackType=proctrack/pgid
+ReturnToService=1
+SlurmctldPidFile=/run/slurmctld.pid
+SlurmctldPort=6817
+SlurmdPidFile=/run/slurmd.pid
+SlurmdPort=6818
+SlurmdSpoolDir=/var/lib/slurm/slurmd
+SlurmUser=slurm
+StateSaveLocation=/var/lib/slurm/slurmctld
+SwitchType=switch/none
+TaskPlugin=task/affinity
+TaskPluginParam=Sched
+InactiveLimit=0
+KillWait=30
+MinJobAge=300
+SlurmctldTimeout=120
+SlurmdTimeout=300
+Waittime=0
+FastSchedule=0
+SchedulerType=sched/backfill
+SelectType=select/cons_res
+SelectTypeParameters=CR_Core
+AccountingStorageLoc=/var/log/slurm/slurm-accounting.log
+AccountingStorageType=accounting_storage/filetxt
+AccountingStoreJobComment=YES
+ClusterName=raspberrypi
+JobCompType=jobcomp/none
+JobAcctGatherFrequency=30
+JobAcctGatherType=jobacct_gather/linux
+SlurmctldDebug=info
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmdDebug=info
+SlurmdLogFile=/var/log/slurm/slurmd.log
+NodeName=pi-[1-2] Sockets=1 CoresPerSocket=4 RealMemory=7811 ThreadsPerCore=1 State=UNKNOWN
+PartitionName=Work Nodes=pi-[1-2] Default=YES MaxTime=INFINITE State=UP
+```
+
+### enable munge
+
+```
+create new munge key #if need
+sudo dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key
+
+copy over /etc/munge/munge.key from master to all nodes #note:i had to copy the file to my users home folder change permissions/ownership to scp it as i could not get root ssh to work with for scp directly
+
+sudo chown munge: /etc/munge/munge.key
+sudo chmod 400 /etc/munge/munge.key
+
+sudo systemctl enable munge
+sudo systemctl start munge
+test munge
+munge -n |unmunge
+munge -n |ssh 192.168.5.201 unmunge
+munge -n |ssh 192.168.5.202 unmunge
+```
+
+### Start slurm For pi-master node
+
+```
+sudo systemctl enable slurmctld
+sudo systemctl start slurmctld
+```
+
+### start Slurm For compute nodes
+
+```
+copy over /etc/slurm/slurm.conf to all nodes
+sudo systemctl enable slurmd
+sudo systemctl start slurmd

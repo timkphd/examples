@@ -81,3 +81,4 @@ sudo apt install -y curl
 
 sudo apt install -y net-tools
 
+sudo apt install -y slurm-wlm slurm-wlm-doc

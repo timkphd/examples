@@ -1,0 +1,25 @@
+Copy this directory to your home director:
+mkdir ~/piubuntu
+cp -r * ~/piubuntu
+
+Go there:
+cd ~/piubuntu
+
+source runall
+
+This will take about 6 hours
+
+
+See the notes that Thomas MacKell from LANL
+put together when doing an install.  Note
+that you no longer need to install Slurm.
+It is now installed by running the script.
+However  munge and slurm need to be configured 
+as he discusses.  With the example slurm.conf
+file you will need to use the -exclusive 
+flag to see all cores on the nodes.
+
+Thanks Tom.  I highly recommend installing 
+XFCE as he discusses below.  I can view the
+session using MicroSoft Remote Desktop on 
+my Mac.
