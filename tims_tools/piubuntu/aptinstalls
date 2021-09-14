@@ -12,6 +12,7 @@ STD=`pwd`
 sudo apt-get -y update 
 sudo apt-get -y upgrade 
  
+sudo apt-set -y hwloc
 sudo apt-get -y install gfortran 
  
 sudo apt-get -y install gedit 
