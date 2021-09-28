@@ -1,10 +1,30 @@
+#define _GNU_SOURCE
+#include <sched.h>
+#include <inttypes.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <assert.h>
 #include <sys/time.h>
 #include <string.h>
-#include <unistd.h>
-#include <mpi.h>
 #include <math.h>
+#include <mpi.h>
+
+//int sched_getcpu(void);
+int findcore()
+{
+  int cpu;
+
+#ifdef __APPLE__
+  cpu = -1;
+#else
+  cpu = sched_getcpu();
+#endif
+  return cpu;
+}
 
 /************************************************************
 This is a simple send/receive program in MPI. It loops over
@@ -80,8 +100,24 @@ long PAPI_get_real_cyc(void);
 #define TIMER MPI_Wtime()
 #endif
 
+void FORCECORE (int *core) { 
+	int bonk; 
+	cpu_set_t set; 
+	bonk=*core; 
+	bonk=abs(bonk) ;
+	CPU_ZERO(&set);        // clear cpu mask 
+	CPU_SET(bonk, &set);      // set cpu 0 
+        if (*core < 0 ){
+	 	sched_setaffinity(0, sizeof(cpu_set_t), &set);   
+        }else{
+	        sched_setaffinity(getpid(), sizeof(cpu_set_t), &set);   
+        }
+} 
+
+
 int main(int argc,char *argv[],char *env[])
 {
+  int core;
   int myid, numprocs;
   int i,vlan;
   int tag;
@@ -90,6 +126,9 @@ int main(int argc,char *argv[],char *env[])
   char *myname,*yours;
   MPI_Status status;
   double total[20],maxtime[20],mintime[20],st,et,dt;
+  int *cores;
+  int *todo;
+  int mapit;
   double t1,t2;
   double **times;
   char fname[256];
@@ -130,8 +169,32 @@ int main(int argc,char *argv[],char *env[])
   if(myid == 0){
     MPI_Get_library_version(version,&vlan);
    printf("MPI VERSION %s\n",version);
+   mapit=-1;
+   if ( argc > 1) {
+	   sscanf(argv[1],"%d",&mapit);
+   }
 }
+    todo=(int*)malloc(4*numprocs);
   if(myid == 0){
+    FILE * file;
+    file = fopen("todo", "r");
+    if (file) {
+	    printf("got file\n");
+    for (is=0 ;is < numprocs;is++) { todo[is]=0; }
+	    char *line = NULL;
+	    int gettodo;
+	    size_t len = 0;
+	    while(getline(&line, &len, file) != -1) {
+		    printf("%s\n",line);
+		sscanf(line,"%d",&gettodo);
+		todo[gettodo]=1;
+		printf("%d\n",gettodo);
+	}
+    }else {
+    for (is=0 ;is < numprocs;is++) todo[is]=1;
+    }
+
+    cores=(int*)malloc(4*numprocs);
     yours=(char*)malloc(MPI_MAX_PROCESSOR_NAME);
     printf("%d %s %e %e\n",myid,myname,MPI_Wtick(),et-st);
     for(ir=1;ir<numprocs;ir++) {
@@ -148,6 +211,10 @@ int main(int argc,char *argv[],char *env[])
 		MPI_Send(&t1,1,MPI_DOUBLE,0,456,MPI_COMM_WORLD);
 		MPI_Send(&t2,1,MPI_DOUBLE,0,789,MPI_COMM_WORLD);
     }
+    //printf("bcast %d",myid);
+  MPI_Bcast(todo,numprocs,MPI_INT,0,MPI_COMM_WORLD);
+  MPI_Bcast(&mapit,1,MPI_INT,0,MPI_COMM_WORLD);
+ // MPI_Abort(MPI_COMM_WORLD,0); exit(0);
   buffer=(char*)malloc((size_t)BUFSIZE);
   for(is=0;is<BUFSIZE;is++){
     buffer[is]=(char)0;
@@ -166,10 +233,18 @@ if(myid == -1){
 #ifdef DOSAVE
   times=matrix(0,BSIZE,1,RCOUNT);
 #endif
-  for (is=0; is < numprocs-1 ; is++) {
-    for (ir=is+1 ; ir < numprocs ; ir ++ ) {
+
+int mone;
+if(mapit > 0){
+	mone=myid % mapit;
+        mone=mone*(-1);
+        FORCECORE(&mone);
+}
+
+  for (is=0; is < numprocs-1 ; is++) if (todo[is] ==1) {
+    for (ir=is+1 ; ir < numprocs ; ir ++ ) if (todo[ir] ==1){
       MPI_Barrier(MPI_COMM_WORLD);
-      if (myid == is || myid == ir) {
+      if (myid == is || myid == ir ) {
 #ifdef DOSAVE
         if(myid == is){
           for (mysize=0;mysize <=BSIZE; mysize++)
@@ -213,7 +288,6 @@ if(myid == -1){
             if (buffer[0] == 'b') break;
           }
         }
-      }
       if (myid == is){
         for (mysize=0;mysize <=BSIZE; mysize++){
           isize=round(exp(logs*(double)mysize));
@@ -230,8 +304,17 @@ if(myid == -1){
         fclose(output);
 #endif        
       }
+      }
     }
   }
+  core=findcore();
+  MPI_Gather(&core,1,MPI_INT,cores,1,MPI_INT,0,MPI_COMM_WORLD);
+  if (myid == 0){
+    for (is=0; is < numprocs ; is++) {
+	printf("%4d core %4d\n",is,cores[is] % 64);
+    }
+}
+  MPI_Barrier(MPI_COMM_WORLD);
   MPI_Finalize();
 }
 

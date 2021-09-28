@@ -11,6 +11,9 @@
 // mpicc  -DSTUBS        phostone.c -o purempi
 //
 //
+#ifdef FORCEIT
+#define _GNU_SOURCE
+#endif
 #include <unistd.h>
 #include <string.h>
 #include <omp.h>
@@ -54,6 +57,7 @@ double MPI_Wtime() { return omp_get_wtime();}
 #define PID 0
 #endif
 
+void forceit(int new_id,int new_nodes) ;
 void dothreads(int full, char *myname, int myid, int mycolor, int new_id);
 
 char *trim(char *s);
@@ -299,6 +303,7 @@ int main(int argc, char **argv, char *envp[])
   MPI_Comm_size(node_comm, &new_nodes);
   tn = -1;
   nt = -1;
+  forceit(new_id,new_nodes);
   /* Here we print out the information with the format and
      verbosity determined by the value of full. We do this
      a task at a time to "hopefully" get a bit better formatting. */
@@ -551,6 +556,11 @@ int omp_get_num_threads(void)
 }
 #endif
 
+#ifndef FORCEIT
+void forceit(int new_id,int new_nodes) {}
+#endif
+
+
 void dothreads(int full, char *myname, int myid, int mycolor, int new_id)
 {
   int nt, tn;
@@ -587,3 +597,83 @@ void dothreads(int full, char *myname, int myid, int mycolor, int new_id)
     }
   }
 }
+#ifdef FORCEIT
+#include <pthread.h>
+#include <errno.h>
+
+#define handle_error_en(en, msg) \
+               do { errno = en; perror(msg); exit(EXIT_FAILURE); } while (0)
+
+void forceit(int new_id,int new_nodes) 
+{
+int FORCEPROC(int i);
+int FORCETHREAD(int i);
+	int nt,tn,pcore,tcore,i;
+#pragma omp parallel 
+	{
+	nt = omp_get_num_threads();
+	}
+	pcore=new_id*nt;
+	i=pcore;
+	// put process on pcore
+        FORCEPROC(i);
+	if (nt == 0) return;
+#pragma omp parallel 
+    {
+#pragma omp critical
+        { 
+	// put threads on cores starting with pcore;
+		tn = omp_get_thread_num();
+		tcore=tn+pcore;
+		FORCETHREAD(tcore);
+        }
+    }
+}
+int FORCETHREAD(int ijk)       {
+           int s,j;
+           cpu_set_t cpuset;
+           pthread_t thread;
+
+           thread = pthread_self();
+
+           /* Original set affinity mask to include CPUs 0 to 7. */
+
+           CPU_ZERO(&cpuset);
+	   printf("ijk=%d\n",ijk);
+	   j=ijk;
+           //for (int j = 0; j < 8; j++)
+               CPU_SET(j, &cpuset);
+
+           // Thread might be a structure not an int so 
+	   // printing it might not be useful.
+	   //printf("%d %d\n",ijk,thread);
+	   s = pthread_setaffinity_np(thread, sizeof(cpuset), &cpuset);
+           if (s != 0)
+               handle_error_en(s, "pthread_setaffinity_np");
+
+           /* Check the actual affinity mask assigned to the thread. */
+
+           s = pthread_getaffinity_np(thread, sizeof(cpuset), &cpuset);
+           if (s != 0)
+               handle_error_en(s, "pthread_getaffinity_np");
+
+           //printf("Set returned by pthread_getaffinity_np() contained:\n");
+           for (int j = 0; j < CPU_SETSIZE; j++)
+               if (CPU_ISSET(j, &cpuset)) {
+                   //printf("    CPU %d\n", j);
+	       }
+           return(EXIT_SUCCESS);
+       }
+
+int FORCEPROC (int core) {
+	int s,bonk;
+	cpu_set_t set;
+	bonk=core;
+	CPU_ZERO(&set);        // clear cpu mask
+	CPU_SET(bonk, &set);      // set cpu 0
+	printf("core=%d\n",bonk);
+ 	s=sched_setaffinity(0, sizeof(cpu_set_t), &set);
+	if (s != 0)  handle_error_en(s, "sched_setaffinity");
+           return(EXIT_SUCCESS);
+}
+#endif
