@@ -12,7 +12,7 @@
 #include <string.h>
 #include <math.h>
 #include <mpi.h>
-
+// test keys
 //int sched_getcpu(void);
 int findcore()
 {
