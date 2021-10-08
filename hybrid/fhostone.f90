@@ -60,6 +60,7 @@ contains
       interface
          !integer(c_long) function cfunc() BIND(C, NAME='pthread_self')
          integer(c_long) function cfunc() BIND(C, NAME='sched_getcpu')
+         !integer(c_long) function cfunc() BIND(C, NAME='get_cpu_id')
             USE ISO_C_BINDING, ONLY: c_long, c_char
          end function cfunc
       end interface
