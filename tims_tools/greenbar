@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import sys
 import os
+
 header="""
 <!DOCTYPE html>
 <html lang="en">
