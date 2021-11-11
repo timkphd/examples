@@ -148,7 +148,7 @@ program stommel
     implicit none
     character*(MPI_MAX_PROCESSOR_NAME) name
     integer on_proc,proc_index
-    real(b8) t1,t2
+    real(b8) t1,t2,tquit
     real(b8)diff,mydiff
     real(b8)dx2,dy2,bottom
     real(b8), allocatable:: psi(:,:)     ! our calculation grid
@@ -215,10 +215,10 @@ aline4="7500"
         read(*,*)lx,ly
         read(*,*)alpha,beta,gamma
         read(*,*)steps
-        write(*,*)nx,ny
-        write(*,*)lx,ly
-        write(*,*)alpha,beta,gamma
-        write(*,*)steps
+        !write(*,*)nx,ny
+        !write(*,*)lx,ly
+        !write(*,*)alpha,beta,gamma
+        !write(*,*)steps
     endif
 !write(*,*)"do bcast"
 !send the data to other processors
@@ -266,8 +266,8 @@ aline4="7500"
     write(*,'("myid= ",i4," myid_row= ",i4," myid_col= ",i4)')myid,myid_row,myid_col
     write(*,101)myid,myrow,mycol,i1,i2,j1,j2
 101 format("myid= ",i4," myrow= ",i4," mycol= ",i4,3x,&
-           " (",i3," <= i <= ",i3,") , ",            &
-           " (",i3," <= j <= ",i3,")")
+           " (",i6," <= i <= ",i6,") , ",            &
+           " (",i6," <= j <= ",i6,")")
 ! allocate the grid to (i1-1:i2+1,j1-1:j2+1) this includes boundary cells
     allocate(psi(i1-1:i2+1,j1-1:j2+1))
     allocate(new_psi(i1-1:i2+1,j1-1:j2+1))
@@ -290,8 +290,16 @@ aline4="7500"
 	call MPI_REDUCE(mydiff,diff,1,MPI_DOUBLE_PRECISION, &
 	                MPI_SUM,mpi_master,MPI_COMM_WORLD,mpi_err)
 	if(myid .eq. mpi_master .and. mod(i,iout) .eq. 0)write(*,'(i6,1x,g20.10)')i,diff
+       t2=mpi_Wtime()
+       tquit=t2-t1
+    call MPI_BCAST(tquit,1,MPI_DOUBLE_PRECISION,mpi_master,MPI_COMM_WORLD,mpi_err)
+       if(tquit .gt. 300.0)then
+               if(myid.eq.mpi_master )write(*,'("did not converge",i6,1x,g20.10)')i,diff
+               exit
+               t2=t1
+        endif
     enddo
-    t2=mpi_Wtime()
+    !t2=mpi_Wtime()
     if(myid .eq. mpi_master)write(*,*)"run time =",t2-t1,n_mpi,n_thread
 ! write out the final grid
 !    call write_grid(psi,i1,i2,j1,j2)
@@ -405,8 +413,8 @@ subroutine write_grid(psi,i1,i2,j1,j2)
     write(18,101)myid,istart,iend,jstart,jend
 
 101 format("myid= ",i3,3x,                 &
-           " (",i3," <= i <= ",i3,") , ", &
-           " (",i3," <= j <= ",i3,")")
+           " (",i6," <= i <= ",i6,") , ", &
+           " (",i6," <= j <= ",i6,")")
     do i=istart,iend
        do j=jstart,jend
            write(18,'(g14.7)',advance="no")psi(i,j)
