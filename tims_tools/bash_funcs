@@ -1,3 +1,5 @@
+alias git-home='git remote show origin'
+
 account() {
     if (( $# > 0 )) ; then
       sacctmgr show assoc user=$1 format=account
@@ -114,8 +116,22 @@ tunnel() {
 	fi   
 case $node in
   e*)
- 	# If we are running on a login node (starts with e) then use the 
+ 	# If we are running on an Eagle login node (starts with e) then use the 
 	# short form of the tunnel, no hop. 
+			echo "Running:"
+			echo ssh -t -L $lport:localhost:$port $node.hpc.nrel.gov
+				 ssh -t -L $lport:localhost:$port $node.hpc.nrel.gov
+    ;;
+  s*)
+ 	# If we are running on a swift login node (starts with s) then use the 
+	# short form of the tunnel, no hop. 
+			echo "Running:"
+			echo ssh -t -L $lport:localhost:$port $node.hpc.nrel.gov
+				 ssh -t -L $lport:localhost:$port $node.hpc.nrel.gov
+    ;;
+  vs-login*)
+ 	# If we are running on a vermilion login node (starts with vs-login) then use the 
+	# short form of the tunnel, no hop.
 			echo "Running:"
 			echo ssh -t -L $lport:localhost:$port $node.hpc.nrel.gov
 				 ssh -t -L $lport:localhost:$port $node.hpc.nrel.gov
@@ -128,13 +144,46 @@ case $node in
 				 ssh -t -L $lport:localhost:$port $node
     ;;
   r*)
-	# If we are running on a compute node (does not start with e) then use the 
+	# If we are running on an Eagle compute node (does not start with e) then use the 
 	# long form of the tunnel. We pick a random intermediate port for the tunnel.
  			echo "Running:"
  			addto=$(( $RANDOM % 1000 ))
  			p=$(( 8100 + $addto))
 			echo ssh -t -L $lport:localhost:$p eagle ssh -L $p:localhost:$port $node
 				 ssh -t -L $lport:localhost:$p eagle ssh -L $p:localhost:$port $node
+    ;;
+  c*)
+	# If we are running on a swift compute node then use the 
+	# long form of the tunnel. We pick a random intermediate port for the tunnel.
+ 			echo "Running:"
+ 			addto=$(( $RANDOM % 1000 ))
+ 			p=$(( 8100 + $addto))
+			echo ssh -t -L $lport:localhost:$p swift-login-1  ssh -L $p:localhost:$port $node
+				 ssh -t -L $lport:localhost:$p swift-login-1 ssh -L $p:localhost:$port $node
+    ;;
+  v*)
+	# If we are running on a vermilion compute node  then use the 
+	# long form of the tunnel. We pick a random intermediate port for the tunnel.
+ 			echo "Running:"
+ 			addto=$(( $RANDOM % 1000 ))
+ 			p=$(( 8100 + $addto))
+			echo ssh -t -L $lport:localhost:$p vs-login-1  ssh -L $p:localhost:$port $node
+				 ssh -t -L $lport:localhost:$p vs-login-1 ssh -L $p:localhost:$port $node
+    ;;
+   pie)
+	# Running on home cluster head node 
+            echo  "Running on home cluster head node" 
+ 			echo ssh -t -L $lport:localhost:$port $node
+				 ssh -t -L $lport:localhost:$port $node
+    ;;
+   pi0)
+	# Running on home cluster compute node
+	# long form of the tunnel. We pick a random intermediate port for the tunnel.
+ 			echo "Running on home cluster compute node:"
+ 			addto=$(( $RANDOM % 1000 ))
+ 			p=$(( 8100 + $addto))
+			echo ssh -t -L $lport:localhost:$p pie  ssh -L $p:localhost:$port $node
+				 ssh -t -L $lport:localhost:$p pie ssh -L $p:localhost:$port $node
     ;;
    *)
             echo  "unknow host node - trying no hop" 
