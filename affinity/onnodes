@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+import sys
+import os
+def getreal(line):
+    nums=line.rstrip()
+    nums=nums.split()
+    core=""
+    if len(nums) > 4:
+        if(nums[2].isdigit()):
+            core=int(nums[2])
+            core= core % 64
+            core=str(core)
+        else:
+            core=""
+    return(core)
+domem=False
+dops=False
+donuma=False
+me=sys.argv[0]
+if me.find("onnodes")> -1 : dops=True
+if me.find("numa")> -1 : donuma=True
+if me.find("mem")> -1 : domem=True
+if me.find("ps")> -1 : dops=True
+if len(sys.argv) > 1 :
+    job=sys.argv[1]
+else:
+    command="squeue -hu $USER"
+    f2=os.popen(command,"r")
+    job=f2.read()
+    if len(job) == 0:
+       print("no jobs found")
+       sys.exit()
+    job=job.split()
+    job=job[0]
+command='squeue -u $USER -j $1 -ho %N'
+command=command.replace("$1",job)
+f2=os.popen(command,"r")
+list=f2.read()
+f2.close()
+command="scontrol show hostnames $list"
+command=command.replace("$list",list)
+f2=os.popen(command,"r")
+long=f2.readlines()
+for l in long:
+    l=l.strip()
+    print(l)
+    if domem :
+        command="ssh $l cat /proc/meminfo | grep Mem"
+    # idea: cat /proc/1234/stat
+    # see  man proc for a description of what is in /proc
+        command=command.replace("$l",l)
+        f2=os.popen(command,"r")
+        lines=f2.readlines()
+        for x in lines:
+            print(x.strip())
+        f2.close()
+    if donuma :
+        command="ssh $l cat /proc/meminfo | grep Mem"
+        command="ssh $l numactl -H"
+    # idea: cat /proc/1234/stat
+    # see  man proc for a description of what is in /proc
+        command=command.replace("$l",l)
+        f2=os.popen(command,"r")
+        lines=f2.readlines()
+        for x in lines:
+            print(x.strip())
+        f2.close()
+    if not dops : 
+        continue
+    print("   PID    LWP PSR COMMAND         %CPU %mem core")
+    command="ssh XXXX ps -U $USER -L -o pid,lwp,psr,comm,pcpu,%mem | grep -v COMMAND | sort -k3n"
+    #print(command)
+    command=command.replace("XXXX",l)
+    #print(command)
+    f2=os.popen(command,"r")
+    while 1:
+        try:
+            line = f2.readline()
+        except KeyboardInterrupt:
+            break
+        if not line:
+            break
+        f=line.split()
+        if (len(f) > 1): 
+            same=False
+            if(str.isdigit(f[0])):
+                same=f[0] == f[1]
+#            if (same):print("\u001b[31m",end="")
+            print(line.strip(),getreal(line))
+#            if (same):print("\u001b[30m",end="")

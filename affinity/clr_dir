@@ -1,0 +1,10 @@
+for x in `find . -depth -type d -links 2` ; do  rm -f $x/st.in ; done
+cd hybrid
+for x in `find . -depth -type d -links 2` ; do  rm -f $x/*f90 ; done
+cd ..
+cd mpi
+for x in `find . -depth -type d -links 2` ; do  rm -f $x/*f90 ; done
+cd ..
+cd omp
+for x in `find . -depth -type d -links 2` ; do  rm -f $x/*f90 ; done
+cd ..

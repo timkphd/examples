@@ -1,0 +1,77 @@
+# after all  jobs run rm the output files that are empty
+# or contain the word defunct
+export PATH=`pwd`:$PATH
+dirs="./mpi/128/cores
+./mpi/128/rank
+./mpi/128/sockets
+./mpi/128/none
+./mpi/64/sockets
+./mpi/64/none
+./mpi/64/cores
+./mpi/64/rank
+./mpi/32/none
+./mpi/32/cores
+./mpi/32/sockets
+./mpi/32/rank
+./hybrid/spread/16o/cores
+./hybrid/spread/16o/rank
+./hybrid/spread/16o/sockets
+./hybrid/spread/16o/none
+./hybrid/spread/64o/none
+./hybrid/spread/64o/cores
+./hybrid/spread/64o/rank
+./hybrid/spread/64o/sockets
+./hybrid/spread/32/sockets
+./hybrid/spread/32/rank
+./hybrid/spread/32/none
+./hybrid/spread/32/cores
+./hybrid/spread/16/none
+./hybrid/spread/16/rank
+./hybrid/spread/16/sockets
+./hybrid/spread/16/cores
+./hybrid/spread/32o/cores
+./hybrid/spread/32o/none
+./hybrid/spread/32o/sockets
+./hybrid/spread/32o/rank
+./hybrid/close/32o/sockets
+./hybrid/close/32o/cores
+./hybrid/close/32o/rank
+./hybrid/close/32o/none
+./hybrid/close/16/rank
+./hybrid/close/16/none
+./hybrid/close/16/cores
+./hybrid/close/16/sockets
+./hybrid/close/16o/cores
+./hybrid/close/16o/sockets
+./hybrid/close/16o/none
+./hybrid/close/16o/rank
+./hybrid/close/32/cores
+./hybrid/close/32/rank
+./hybrid/close/32/sockets
+./hybrid/close/32/none
+./hybrid/close/64o/sockets
+./hybrid/close/64o/rank
+./hybrid/close/64o/cores
+./hybrid/close/64o/none
+./omp/128/128/spread
+./omp/128/128/none
+./omp/128/128/close
+./omp/64/64/spread
+./omp/64/64/none
+./omp/64/64/close
+./omp/64/128/none
+./omp/64/128/spread
+./omp/64/128/close
+./omp/32/32/close
+./omp/32/32/spread
+./omp/32/32/none"
+SDIR=`pwd`
+lj=62018
+for d in $dirs ; do
+cd $d
+ls two.sh
+lj=`sbatch --partition=debug --dependency=afterany:$lj two.sh | sed "s,Submitted batch job ,,"`
+pwd
+echo $lj
+cd $SDIR
+done
