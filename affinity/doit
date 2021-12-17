@@ -66,7 +66,7 @@ dirs="./mpi/128/cores
 ./omp/32/32/spread
 ./omp/32/32/none"
 SDIR=`pwd`
-lj=62018
+lj=97746
 for d in $dirs ; do
 cd $d
 ls two.sh
