@@ -18,6 +18,10 @@ def pdappend(df,line):
     return df.append(a_series, ignore_index=True)   
 
 
+def rreplace(s, old, new="",count=1):
+    return (s[::-1].replace(old[::-1], new [::-1], count))[::-1]
+
+
 #returns output from the magic command %%capture as a list
 def clist(cap):
 	'''Returns output from the magic command %%capture as a list'''

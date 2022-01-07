@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+while true ; do 
+ls  | grep waiting ; if [ $? -ne 0 ] ; then echo nope ;  break ;fi  
+	onnodes $1 | grep stf_ | grep -v "0.0  0.0" | sort -nk7,7 > `stamps` 
+	sleep 5 
+done 
+

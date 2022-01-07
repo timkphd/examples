@@ -1,0 +1,10 @@
+cd hybrid
+for x in `find . -depth -type d -links 2` ; do cp *f90 $x ; done
+cd ..
+cd mpi
+for x in `find . -depth -type d -links 2` ; do cp *f90 $x ; done
+cd ..
+cd omp
+for x in `find . -depth -type d -links 2` ; do cp *f90 $x ; done
+cd ..
+for x in `find . -depth -type d -links 2` ; do cp st.in $x ; done
