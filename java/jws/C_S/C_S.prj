@@ -1,0 +1,11 @@
+sun.jws.version.2
+sun.jws.classname=C_S
+sun.jws.useVisual=false
+sun.jws.type=standalone
+sun.jws.options=-g
+sun.jws.files=List
+C_S.java
+Client.java
+Connection.java
+Server.java
+EndOfList

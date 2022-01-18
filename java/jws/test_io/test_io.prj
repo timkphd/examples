@@ -1,0 +1,8 @@
+sun.jws.version.2
+sun.jws.classname=test_io
+sun.jws.useVisual=false
+sun.jws.type=standalone
+sun.jws.options=-g
+sun.jws.files=List
+test_io.java
+EndOfList

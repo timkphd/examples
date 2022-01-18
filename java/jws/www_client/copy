@@ -1,0 +1,8 @@
+cp Client.class ~/public_html
+cp Client.java ~/public_html
+cp Client_GUI.class ~/public_html
+cp Client_GUI.java ~/public_html
+cp www_client.class ~/public_html
+cp www_client.java ~/public_html
+cp www_client.map ~/public_html
+cp www_client.prj ~/public_html

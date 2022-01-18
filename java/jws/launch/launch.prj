@@ -1,0 +1,9 @@
+sun.jws.version.2
+sun.jws.classname=TrivialApplication
+sun.jws.useVisual=false
+sun.jws.type=standalone
+sun.jws.options=-g
+sun.jws.files=List
+B_Client.java
+TrivialApplication.java
+EndOfList

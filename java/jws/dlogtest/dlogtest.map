@@ -1,0 +1,4 @@
+VERSION: 1
+dlogtest.java,5,15,dlogtest
+dlogtest.java,17,32,AlertDialog
+dlogtest.java,34,49,ComponentUtil

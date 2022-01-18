@@ -1,0 +1,137 @@
+<html>
+  <head>
+  	<title>CSS Fisheye</title>
+    <style type="text/css">
+	span {font-size: x-small}
+    </style>
+
+    <script language="JavaScript" type="text/javascript">
+    <!-- 
+      function convertPreBlocks() {}
+
+var regular = "x-small";
+
+function bigger(thing){
+	thing.style.fontSize = "x-large";
+	thing.style.color="red";
+	siblingElement = thing.previousSibling;
+
+	while(siblingElement) {
+		if(siblingElement.tagName=="SPAN") {
+			siblingElement.style.fontSize = "medium";
+			break;
+		}
+		siblingElement = siblingElement.previousSibling;
+	}
+
+	siblingElement = thing.nextSibling;
+
+	while(siblingElement) {
+		if(siblingElement.tagName=="SPAN") {
+			siblingElement.style.fontSize = "medium";
+			break;
+		}
+
+		siblingElement = siblingElement.nextSibling;
+	}
+}
+
+function normal(thing){
+	thing.style.fontSize = regular;
+	thing.style.color="black";
+
+
+	siblingElement = thing.previousSibling;
+
+	while(siblingElement) {
+		if(siblingElement.tagName=="SPAN") {
+			siblingElement.style.fontSize = regular;
+			break;
+		}
+		siblingElement = siblingElement.previousSibling;
+	}
+
+	siblingElement = thing.nextSibling;
+
+	while(siblingElement) {
+		if(siblingElement.tagName=="SPAN") {
+			siblingElement.style.fontSize = regular;
+			break;
+		}
+
+		siblingElement = siblingElement.nextSibling;
+	}
+}
+    // -->
+    </script>
+
+</head>
+<body>
+<h1>CSS Fisheye</h1>
+<p>Run your mouse over the text below to see the effect. It's implemented using 
+  CSS and Javascript. I got the idea from this <a href="http://www.samuelwan.com/downloads/com.samuelwan.eidt/fisheyemenu/FisheyeMenuDemo.html">fisheye 
+  demo</a>, which uses the effect for menus, but is implemented using Flash. Laur 
+  at <a href="http://www.grapefruitdesign.com/">Grapefruit Designs</a> pointed 
+  to the same technique implemented as a Java applet at <a href="http://www.cs.umd.edu/hcil/fisheyemenu/fisheyemenu-demo.shtml">HCIL, 
+  Univ. of Maryland</a>, and suggested that the idea had probably been around 
+  since the 1960's. It also seems that Ted Nelson had described this and similar 
+  techniques (&quot;<a href="http://xanadu.com/zigzag/fw99/billowing.html">billowing 
+  and undulating text</a>&quot;) in relation to his Xanadu project back in 1999.</p>
+<p>My <a href="fisheye-old.html">earlier version</a> only worked on Internet Explorer, 
+  but the version here has been fixed for other browsers by <a href="http://www.seairth.com/blog">Seairth 
+  Jacobs</a>. Also the previous version used &lt;a href=...&gt; to mark the lines, 
+  the current version uses &lt;span&gt; <i>("for no particular reason")</i>. </p>
+<p>
+<span onmouseover="bigger(this)" onmouseout="normal(this)">Tiger, tiger, burning 
+  bright,</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">In the forest of 
+  the night,</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">What immortal hand 
+  or eye</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">Could frame thy fearful 
+  symmetry?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">In what distant deeps 
+  or skies</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">Burnt the fire of 
+  thine eyes?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">On what wings dare 
+  he aspire?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">What the hand dare 
+  seize the fire?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">And what shoulder, 
+  and what art,</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">Could twist the sinews 
+  of thy heart?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">When thy heart began 
+  to beat,</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">What dread hand forged 
+  thy dread feet?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">What the hammer? 
+  What the chain?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">In what furnace was 
+  thy brain?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">What the anvil? What 
+  dread grasp</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">Dared its deadly 
+  terrors clasp?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">When the stars threw 
+  down their spears</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">And watered heaven 
+  with their tears,</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">Did He smile his 
+  work to see?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">Did He who made the 
+  lamb make thee?</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">Tiger, tiger, on 
+  the mat,</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">You're nothing but 
+  a pussy cat,</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">But damn your eyes 
+  and rue the day!</span><br/>
+  <span onmouseover="bigger(this)" onmouseout="normal(this)">I have to clean your 
+  litter tray.</span> </p>
+<p><i>with apologies to William Blake</i> </p>
+<p><a href="http://66.70.191.189/cgi-bin/mt-comments.cgi?entry_id=1971">Comments 
+  appreciated</a></p>
+</body>
+</html>

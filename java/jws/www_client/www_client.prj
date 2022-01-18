@@ -1,0 +1,23 @@
+sun.jws.version.2
+sun.jws.altText=If you had a java-enabled browser, you would see an applet here.
+sun.jws.alignment=Top
+sun.jws.classname=www_client
+sun.jws.useVisual=false
+sun.jws.type=applet
+sun.jws.instance=www_client
+sun.jws.params=List
+tux_dir=/home/tuxedo/misc/test
+tux_machine=norns.gso.saic.com
+services=schedule LOG1 LOG2 LOG3
+EndOfList
+sun.jws.files=List
+Client.java
+Client_GUI.java
+ReallyQuitDialog.java
+YesNoDialog.java
+www_client.java
+EndOfList
+sun.jws.altHTML=List
+<hr>If your browser recognized the applet tag, 
+you would see an applet here.<hr>
+EndOfList

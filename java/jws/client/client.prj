@@ -1,0 +1,9 @@
+sun.jws.version.2
+sun.jws.classname=client
+sun.jws.useVisual=false
+sun.jws.type=standalone
+sun.jws.options=-g -deprecation 
+sun.jws.files=List
+A_Client.java
+client.java
+EndOfList

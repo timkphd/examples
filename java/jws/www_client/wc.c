@@ -1,0 +1,1 @@
+#include <stdio.h>main() {	int i,j,k;	i=(int)'A';	j=(int)'Z';	for(k=i;k<=j;k++)	printf("%d %c\n",k-i+1,k);	i=(int)'a';	j=(int)'z';	for(k=i;k<=j;k++)	printf("%d %c\n",k-i+1+26,k);}

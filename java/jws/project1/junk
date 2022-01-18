@@ -1,0 +1,14 @@
+<title>TrivialApplet</title>
+<hr>
+<applet codebase="Java Classes" code="TrivialApplet.class" width=200 height=200>
+</applet>
+<hr>
+<a href="TrivialApplet.java">The source.</a>
+<applet
+   name="untitled1"
+   code="untitled1" codebase="file:/home/od/tkaiser/jws/project1"
+   width="500"
+   height="600"
+   align="Top"
+   alt="If you had a java-enabled browser, you would see an applet here."
+></applet>

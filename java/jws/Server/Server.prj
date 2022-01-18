@@ -1,0 +1,9 @@
+sun.jws.version.2
+sun.jws.classname=my_server
+sun.jws.useVisual=false
+sun.jws.type=standalone
+sun.jws.options=-g
+sun.jws.files=List
+Server.java
+my_server.java
+EndOfList

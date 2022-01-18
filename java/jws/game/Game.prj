@@ -1,0 +1,15 @@
+sun.jws.version.2
+sun.jws.altText=If you had a java-enabled browser, you would see an applet here.
+sun.jws.demoURL=Game.html
+sun.jws.alignment=Top
+sun.jws.classname=Game
+sun.jws.useVisual=false
+sun.jws.type=applet
+sun.jws.instance=Game
+sun.jws.options=-g
+sun.jws.files=List
+Board.java
+Display.java
+Found_Solution.java
+Game.java
+EndOfList

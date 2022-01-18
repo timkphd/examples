@@ -1,0 +1,8 @@
+sun.jws.version.2
+sun.jws.classname=Client_GUI
+sun.jws.useVisual=false
+sun.jws.type=standalone
+sun.jws.options=-g -verbose -deprecation 
+sun.jws.files=List
+Client_GUI.java
+EndOfList

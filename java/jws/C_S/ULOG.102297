@@ -1,0 +1,3 @@
+141952.norns!?proc.4473: 102297: TUXEDO Version 6.3 SunOS  5.5.1 Generic sun4u sparc SUNW,Ultra-1.
+141952.norns!?proc.4473: NLS:4: Cannot open message catalog LIBTUX_CAT, set 1, num 602; check TUXDIR=NULL, LANG=C
+141952.norns!?proc.4473: NLS:4: Cannot open message catalog LIBTUX_CAT, set 1, num 588; check TUXDIR=NULL, LANG=C

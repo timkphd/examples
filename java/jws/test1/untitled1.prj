@@ -1,0 +1,15 @@
+sun.jws.version.2
+sun.jws.altText=If you had a java-enabled browser, you would see an applet here.
+sun.jws.alignment=Top
+sun.jws.classname=untitled1
+sun.jws.useVisual=false
+sun.jws.type=applet
+sun.jws.instance=untitled1
+sun.jws.options=-g
+sun.jws.files=List
+untitled1.java
+EndOfList
+sun.jws.altHTML=List
+<hr>If your browser recognized the applet tag, 
+you would see an applet here.<hr>
+EndOfList
