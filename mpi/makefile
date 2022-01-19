@@ -21,14 +21,16 @@ FEXES= f_ex00 f_ex01 f_ex02 f_ex03 f_ex04 f_ex05 f_ex06 \
 #gfortran
 #FFLAG= -ffree-form
 
-F90FLAG=
+F90FLAG=-g -O0
+FFLAG=-g -O0
+CFLAG=-g -O0
 
 cexam: $(CEXES)
 
 fexam: $(FEXES)
 
 mpi.o: mpi.f
-	$(PF90) -c mpi.f
+	$(PF90) $(FFLAG)  -c mpi.f
 	
 .f:
 	$(PF90) $(FFLAG) $< -o $@

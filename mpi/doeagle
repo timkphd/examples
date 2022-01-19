@@ -10,6 +10,9 @@
 module purge
 ml intel-mpi
 
-srun -n 4 ./c_ex00
+if [ -z ${EXE+x} ]; then export EXE=c_ex00 ; fi
+echo "running " $EXE 
+
+srun -n 4 ./$EXE
 
 
