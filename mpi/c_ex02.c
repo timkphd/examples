@@ -22,10 +22,10 @@ int main(int argc,char **argv)
     	ierr=MPI_Send(&j,icount,MPI_INT,1,mytag,MPI_COMM_WORLD);
     }
     if(myid == 1){
-    	ierr=MPI_Probe(0,mytag,MPI_COMM_WORLD,&status);
+    	ierr=MPI_Probe(MPI_ANY_SOURCE,mytag,MPI_COMM_WORLD,&status);
     	ierr=MPI_Get_count(&status,MPI_INT,&icount);
     	i=(int*)malloc(icount*sizeof(int));
-    	printf("getting %d\n",icount);
+    	printf("getting %d from %d\n",icount,status.MPI_SOURCE);
    	    ierr = MPI_Recv(i,icount,MPI_INT,0,mytag,MPI_COMM_WORLD,&status);
     	printf("i= ");
     	for(j=0;j<icount;j++)

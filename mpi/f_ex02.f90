@@ -21,9 +21,9 @@
            call MPI_SEND(j,icount,MPI_INTEGER,1,mytag,MPI_COMM_WORLD,ierr)
       endif
       if(myid .eq. 1)then
-      	call mpi_probe(0,mytag,MPI_COMM_WORLD,status,ierr)
+      	call mpi_probe(MPI_ANY_SOURCE,mytag,MPI_COMM_WORLD,status,ierr)
       	call mpi_get_count(status,MPI_INTEGER,icount,ierr)
-      	write(*,*)"getting ", icount
+      	write(*,*)"getting ", icount," from ",STATUS(MPI_SOURCE)
       	allocate(i(icount))
       	call mpi_recv(i,icount,MPI_INTEGER,0,mytag,MPI_COMM_WORLD,status,ierr)
       	write(*,*)"i=",i

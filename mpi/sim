@@ -10,6 +10,6 @@
 module purge
 ml intel-mpi
 
-srun -n 4 ./c_ex00
+srun -n 4 ./helloc
 
 
