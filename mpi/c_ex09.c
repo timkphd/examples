@@ -25,48 +25,50 @@ void init_it(int  *argc, char ***argv) {
 
 int main(int argc,char *argv[]){
 	int *sray,*rray;
-	int *sdisp,*scounts,*rdisp,*rcounts;
+	int *sdisp,*sc,*rdisp,*rc;
 	int ssize,rsize,i,k,j;
 	float z;
 
 	init_it(&argc,&argv);
-	scounts=(int*)malloc(sizeof(int)*numnodes);
-	rcounts=(int*)malloc(sizeof(int)*numnodes);
+	sc=(int*)malloc(sizeof(int)*numnodes);
+	rc=(int*)malloc(sizeof(int)*numnodes);
 	sdisp=(int*)malloc(sizeof(int)*numnodes);
 	rdisp=(int*)malloc(sizeof(int)*numnodes);
 /*
 ! seed the random number generator with a
 ! different number on each processor
 */
-	seed_random(myid);
+	seed_random(myid+99);
 /* find out how much data to send */
 	for(i=0;i<numnodes;i++){
 		random_number(&z);
-		scounts[i]=(int)(5.0*z)+1;
+		sc[i]=(int)(5.0*z)+1;
 	}
-	printf("myid= %d scounts=%d %d %d %d\n",myid,scounts[0],scounts[1],scounts[2],scounts[3]);
-for(i=0;i<numnodes;i++)
-		printf("%d ",scounts[i]);
+	printf("myid= %3.3d sc=",myid);
+        for(i=0;i<numnodes;i++)
+		printf("%3d ",sc[i]);
 	printf("\n");
 /* tell the other processors how much data is coming */
-	mpi_err = MPI_Alltoall(	scounts,1,MPI_INT,
-						    rcounts,1,MPI_INT,
+	mpi_err = MPI_Alltoall(	sc,1,MPI_INT,
+						    rc,1,MPI_INT,
 	                 	    MPI_COMM_WORLD);
-/*	write(*,*)"myid= ",myid," rcounts= ",rcounts */
-/* calculate displacements and the size of the arrays */
+	printf("myid= %3.3d rc=",myid);
+	for(i=0;i<numnodes;i++)
+		printf("%3d ",rc[i]);
+	printf("\n");
 	sdisp[0]=0;
 	for(i=1;i<numnodes;i++){
-		sdisp[i]=scounts[i-1]+sdisp[i-1];
+		sdisp[i]=sc[i-1]+sdisp[i-1];
 	}
 	rdisp[0]=0;
 	for(i=1;i<numnodes;i++){
-		rdisp[i]=rcounts[i-1]+rdisp[i-1];
+		rdisp[i]=rc[i-1]+rdisp[i-1];
 	}
 	ssize=0;
 	rsize=0;
 	for(i=0;i<numnodes;i++){
-		ssize=ssize+scounts[i];
-		rsize=rsize+rcounts[i];
+		ssize=ssize+sc[i];
+		rsize=rsize+rc[i];
 	}
 	
 /* allocate send and rec arrays */
@@ -75,8 +77,8 @@ for(i=0;i<numnodes;i++)
 	for(i=0;i<ssize;i++)
 		sray[i]=myid;
 /* send/rec different amounts of data to/from each processor */
-	mpi_err = MPI_Alltoallv(	sray,scounts,sdisp,MPI_INT,
-						        rray,rcounts,rdisp,MPI_INT,
+	mpi_err = MPI_Alltoallv(	sray,sc,sdisp,MPI_INT,
+						        rray,rc,rdisp,MPI_INT,
 	                 	        MPI_COMM_WORLD);
 	                
 	printf("myid= %d rray=",myid);
@@ -86,12 +88,12 @@ for(i=0;i<numnodes;i++)
     mpi_err = MPI_Finalize();
 }
 /*
-  0:myid= 0 scounts=1 7 4
-  0:myid= 0 scounts=0 1 1 1 1 1 1 2
-  1:myid= 1 scounts=6 2 4
-  1:myid= 1 scounts=0 0 0 0 0 0 0 1 1 2 2 2 2 2 2 2
-  2:myid= 2 scounts=1 7 4
-  2:myid= 2 scounts=0 0 0 0 1 1 1 1 2 2 2 2
+  0:myid= 0 sc=1 7 4
+  0:myid= 0 sc=0 1 1 1 1 1 1 2
+  1:myid= 1 sc=6 2 4
+  1:myid= 1 sc=0 0 0 0 0 0 0 1 1 2 2 2 2 2 2 2
+  2:myid= 2 sc=1 7 4
+  2:myid= 2 sc=0 0 0 0 1 1 1 1 2 2 2 2
 */
 
 void seed_random(int  id){

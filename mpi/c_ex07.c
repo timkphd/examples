@@ -23,36 +23,36 @@ void init_it(int  *argc, char ***argv) {
 
 int main(int argc,char *argv[]){
 	int *sray,*rray;
-	int *sdisp,*scounts,*rdisp,*rcounts;
+	int *sdisp,*sc,*rdisp,*rc;
 	int ssize,rsize,i,k,j;
 	float z;
 
 	init_it(&argc,&argv);
-	scounts=(int*)malloc(sizeof(int)*numnodes);
-	rcounts=(int*)malloc(sizeof(int)*numnodes);
+	sc=(int*)malloc(sizeof(int)*numnodes);
+	rc=(int*)malloc(sizeof(int)*numnodes);
 	sdisp=(int*)malloc(sizeof(int)*numnodes);
 	rdisp=(int*)malloc(sizeof(int)*numnodes);
 /*
 ! seed the random number generator with a
 ! different number on each processor
 */
-	seed_random(myid);
+	seed_random(myid+99);
 /* find  data to send */
 	for(i=0;i<numnodes;i++){
 		random_number(&z);
-		scounts[i]=(int)(10.0*z)+1;
+		sc[i]=(int)(10.0*z)+1;
 	}
-	printf("myid= %d scounts=",myid);
+	printf("myid= %3.3d sc=",myid);
 	for(i=0;i<numnodes;i++)
-		printf("%d ",scounts[i]);
+		printf("%3d ",sc[i]);
 	printf("\n");
 /* send the data */
-	mpi_err = MPI_Alltoall(	scounts,1,MPI_INT,
-						    rcounts,1,MPI_INT,
+	mpi_err = MPI_Alltoall(	sc,1,MPI_INT,
+						    rc,1,MPI_INT,
 	                 	    MPI_COMM_WORLD);
-	printf("myid= %d rcounts=",myid);
+	printf("myid= %3.3d rc=",myid);
 	for(i=0;i<numnodes;i++)
-		printf("%d ",rcounts[i]);
+		printf("%3d ",rc[i]);
 	printf("\n");
     mpi_err = MPI_Finalize();
 }
