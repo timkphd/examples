@@ -25,8 +25,8 @@ char *argv[];
 	Zero_one = -1;
 	if(new_id==0)Zero_one = color;
 	MPI_Bcast(&Zero_one,1,MPI_INT,0, NEW_COMM);
-	if(Zero_one==0)printf("part of even processor communicator \n");
-	if(Zero_one==1)printf("part of odd processor communicator \n");
+	if(Zero_one==0)printf("%d part of even processor communicator %d\n",myid,new_id);
+	if(Zero_one==1)printf("%d part of odd processor communicator %d\n",myid,new_id);
 	printf("old_id= %d new_id= %d\n", myid, new_id);
     MPI_Finalize();
 }
