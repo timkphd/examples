@@ -81,7 +81,7 @@ int main(int argc,char *argv[]){
 						        rray,rc,rdisp,MPI_INT,
 	                 	        MPI_COMM_WORLD);
 	                
-	printf("myid= %d rray=",myid);
+	printf("myid= %3.3d rray=",myid);
 	for(i=0;i<rsize;i++)
 		printf("%d ",rray[i]);
 	printf("\n");

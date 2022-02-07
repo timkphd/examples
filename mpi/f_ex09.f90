@@ -49,11 +49,11 @@ program test1
         sc(i)=nint(10.0*z)+1
     enddo
 ! tell the other processors how much data is coming
-    write(*,*)"myid= ",myid," sc= ",sc
+    write(*,"(a,i3,a,100i3)")"myid= ",myid," sc= ",sc
     call MPI_alltoall(    sc,1,MPI_INTEGER, &
                         rc,1,MPI_INTEGER, &
                          MPI_COMM_WORLD,mpi_err)
-    write(*,*)"myid= ",myid," rc= ",rc
+    write(*,"(a,i3,a,100i3)")"myid= ",myid," rc= ",rc
 ! calculate displacements and the size of the arrays
     sdisp(0)=0
     do i=1,numnodes-1
@@ -74,7 +74,7 @@ program test1
                         rray,rc,rdisp,MPI_INTEGER, &
                          MPI_COMM_WORLD,mpi_err)
                     
-    write(*,*)"myid= ",myid,"    rray= ",rray
+    write(*,"(a,i3,a,100i3)")"myid= ",myid,"    rray= ",rray
     call mpi_finalize(mpi_err)
 end program
 
