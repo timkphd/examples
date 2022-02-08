@@ -179,16 +179,16 @@ int main(int argc,char *argv[],char *env[])
     FILE * file;
     file = fopen("todo", "r");
     if (file) {
-	    printf("got file\n");
+	    printf("got file with ranks\n");
     for (is=0 ;is < numprocs;is++) { todo[is]=0; }
 	    char *line = NULL;
 	    int gettodo;
 	    size_t len = 0;
 	    while(getline(&line, &len, file) != -1) {
-		    printf("%s\n",line);
+		/* printf("%s\n",line); */
 		sscanf(line,"%d",&gettodo);
 		todo[gettodo]=1;
-		printf("%d\n",gettodo);
+		/* printf("%d\n",gettodo); */
 	}
     }else {
     for (is=0 ;is < numprocs;is++) todo[is]=1;
