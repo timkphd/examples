@@ -26,9 +26,11 @@ chmod 755 todo.py
 # Specific setting for vermilion
 #if echo $HOSTNAME | grep vs > /dev/null ; then
 if [[ $SLURM_CLUSTER_NAME == "vermilion" ]] ; then
-
   if [ -z "$UCX_TLS" ] ; then
     export UCX_TLS=tcp,self
+  fi
+  if [[ UCX_TLS == "none" ]] ; then
+    unset UCX_TLS
   fi
 fi
 
