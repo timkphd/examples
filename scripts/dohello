@@ -7,6 +7,9 @@
 #SBATCH --partition=debug
 #SBATCH --exclusive
 
+# Run command sub your account for hpcapps and specify the desired partition
+# sbatch --account=hpcapps --partition=debug dohello
+
 # General setup and saving our script
 mkdir $SLURM_JOB_ID
 cd $SLURM_JOB_ID
