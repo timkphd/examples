@@ -49,7 +49,7 @@ fi
 
 mpicc -fopenmp phostone.c -o phostone.ompi
 export EXE=phostone.ompi
-srun --mpi=pmi2 --tasks-per-node=$TPN   $EXE -F > out.ompi
+srun --mpi=pmi2 --tasks-per-node=$TPN   $EXE -t 10 -F > out.ompi
 
 
 # Build and run hello world for IntelMPI
