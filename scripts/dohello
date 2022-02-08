@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=b2_4
+#SBATCH --job-name=hello
 #SBATCH --nodes=2
 #SBATCH --time=00:10:00
 ##SBATCH --error=std.err
