@@ -25,7 +25,7 @@ wget https://raw.githubusercontent.com/timkphd/examples/master/hybrid/phostone.c
 #if echo $HOSTNAME | grep vs > /dev/null ; then
 if [[ $SLURM_CLUSTER_NAME == "vermilion" ]] ; then
   if [ -z "$UCX_TLS" ] ; then
-    export UCX_TLS=tcp,self
+    export UCX_TLS=sm,tcp
   fi
   if [[ UCX_TLS == "none" ]] ; then
     unset UCX_TLS

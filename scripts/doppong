@@ -27,7 +27,7 @@ chmod 755 todo.py
 #if echo $HOSTNAME | grep vs > /dev/null ; then
 if [[ $SLURM_CLUSTER_NAME == "vermilion" ]] ; then
   if [ -z "$UCX_TLS" ] ; then
-    export UCX_TLS=tcp,self
+    export UCX_TLS=sm,tcp
   fi
   if [[ UCX_TLS == "none" ]] ; then
     unset UCX_TLS
@@ -56,7 +56,7 @@ if [[ $SLURM_CLUSTER_NAME == "swift" ]] ; then
   ml gcc/9.4.0-v7mri5d
 fi
 
-mpicc -fopenmp -lm ppong.c -o ppong.ompi
+mpicc   ppong.c -lm -o ppong.ompi
 export EXE=ppong.ompi
 srun --mpi=pmi2 --tasks-per-node=$TPN   $EXE -F > out.ompi
 
@@ -85,7 +85,7 @@ if [[ $SLURM_CLUSTER_NAME == "swift" ]] ; then
 fi
 
 
-mpiicc -fopenmp -lm ppong.c -o ppong.intel
+mpiicc  ppong.c -lm -o ppong.intel
 export EXE=ppong.intel
 srun --mpi=pmi2 --tasks-per-node=$TPN   $EXE -F > out.intel
 
