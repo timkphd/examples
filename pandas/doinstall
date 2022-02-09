@@ -1,0 +1,57 @@
+tymer times starting
+strdir=`pwd`
+export MYDIR=/lustre/eaglefs/scratch/$USER/py3101
+rm -rf $MYDIR
+rm -rf myspack
+mkdir -p myspack/level00 
+cd  myspack/level00 
+git clone -c feature.manyFiles=true https://github.com/spack/spack.git 
+export SPACK_USER_CONFIG_PATH=`pwd`/.myspack 
+alias dospack="source `pwd`/spack/share/spack/setup-env.sh" 
+
+dospack 
+
+ml gcc 
+spack compiler find 
+
+
+backup=`date +"%y%m%d%H%M%S"`
+sed -i$backup "s.root: \$spack/opt/spack.root: $MYDIR/install."            spack/etc/spack/defaults/config.yaml 
+sed -i$backup "s.#  lmod:   \$spack/share/spack/lmod.  lmod: $MYDIR/lmod." spack/etc/spack/defaults/modules.yaml
+sed -i "s.#  tcl:    \$spack/share/spack/modules.  tcl: $MYDIR/modules."   spack/etc/spack/defaults/modules.yaml
+sed -i "s/- tcl/- lmod/"                                                   spack/etc/spack/defaults/modules.yaml
+sed -i "s/# roots:/roots:/"                                                spack/etc/spack/defaults/modules.yaml
+
+tymer times spack setup
+
+spack install python@3.10.1
+ 
+tymer times python done
+
+module use module use $MYDIR/lmod/*/*/*
+ml python
+python -m pip install --upgrade pip
+pip install reframe-hpc  
+RC=`which reframe`
+sed -i "s,#\!.*,#\!/usr/bin/env python," $RF
+pip install jupyterlab  
+pip install scipy  
+pip install matplotlib  
+
+tymer times modules done
+
+which python
+which reframe
+
+
+cd $strdir
+export PYPATH=`which python`
+export PYPATH=`echo $PYPATH | sed "s,/bin/python,,"`
+export PYVER=3.10
+git clone  https://github.com/timkphd/examples
+cd examples/pandas
+make -f c_makefile
+./ccallpy
+
+tymer times done
+
