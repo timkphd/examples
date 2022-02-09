@@ -1,10 +1,10 @@
-tymer times starting
 strdir=`pwd`
 export MYDIR=/lustre/eaglefs/scratch/$USER/py3101
 rm -rf $MYDIR
 rm -rf myspack
 mkdir -p myspack/level00 
 cd  myspack/level00 
+#tymer times starting
 git clone -c feature.manyFiles=true https://github.com/spack/spack.git 
 export SPACK_USER_CONFIG_PATH=`pwd`/.myspack 
 alias dospack="source `pwd`/spack/share/spack/setup-env.sh" 
@@ -22,11 +22,11 @@ sed -i "s.#  tcl:    \$spack/share/spack/modules.  tcl: $MYDIR/modules."   spack
 sed -i "s/- tcl/- lmod/"                                                   spack/etc/spack/defaults/modules.yaml
 sed -i "s/# roots:/roots:/"                                                spack/etc/spack/defaults/modules.yaml
 
-tymer times spack setup
+#tymer times spack setup
 
 spack install python@3.10.1
  
-tymer times python done
+#tymer times python done
 
 module use module use $MYDIR/lmod/*/*/*
 ml python
@@ -38,7 +38,7 @@ pip install jupyterlab
 pip install scipy  
 pip install matplotlib  
 
-tymer times modules done
+#tymer times modules done
 
 which python
 which reframe
@@ -55,5 +55,5 @@ wget https://raw.githubusercontent.com/timkphd/examples/master/pandas/ccallpy.c
 make -f c_makefile
 ./ccallpy
 
-tymer times done
+#tymer times done
 
