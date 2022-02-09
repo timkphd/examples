@@ -48,8 +48,10 @@ cd $strdir
 export PYPATH=`which python`
 export PYPATH=`echo $PYPATH | sed "s,/bin/python,,"`
 export PYVER=3.10
-git clone  https://github.com/timkphd/examples
-cd examples/pandas
+#git clone  https://github.com/timkphd/examples
+#cd examples/pandas
+wget https://raw.githubusercontent.com/timkphd/examples/master/pandas/c_makefile
+wget https://raw.githubusercontent.com/timkphd/examples/master/pandas/ccallpy.c
 make -f c_makefile
 ./ccallpy
 
