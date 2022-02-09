@@ -1,7 +1,7 @@
 all:ccallpy
 
-PYPATH=/nopt/nrel/apps/210929a/level00/gcc-9.4.0/python-3.10.0
-PYVER=3.10
+#PYPATH=/nopt/nrel/apps/210929a/level00/gcc-9.4.0/python-3.10.0
+#PYVER=3.10
 
 ccallpy:ccallpy.c
 	gcc -I$(PYPATH)/include/python$(PYVER) ccallpy.c -L$(PYPATH)/lib -lpython$(PYVER) -o ccallpy
