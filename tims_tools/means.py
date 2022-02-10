@@ -99,12 +99,16 @@ Ex=0.0
 Ex2=0.0
 max1=-1e37
 min1=1e37
+k=0
 for d in dat:
-	d=float(d)
-	if testit(d): 
-	    if d < min1: min1=d
-	    if d > max1: max1=d
-	    add_variable(d)
+	k=k+1
+	if len(d) > 0:
+		#print(k,d)
+		d=float(d)
+		if testit(d): 
+			if d < min1: min1=d
+			if d > max1: max1=d
+			add_variable(d)
 m1=get_meanvalue()
 s1=get_variance()**(0.5)	
 n1=n
@@ -120,11 +124,12 @@ Ex2=0.0
 max2=-1e37
 min2=1e37
 for d in dat:
-	d=float(d)
-	if testit(d) :
-	    if d < min2: min2=d
-	    if d > max2: max2=d
-	    add_variable(d)
+	if len(d) > 0:
+		d=float(d)
+		if testit(d) :
+		    if d < min2: min2=d
+		    if d > max2: max2=d
+		    add_variable(d)
 m2=get_meanvalue()
 s2=get_variance()**(0.5)	
 n2=n
