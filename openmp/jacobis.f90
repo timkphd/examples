@@ -10,18 +10,14 @@ module times
     double precision t1,t2,t3,t4
     ! run on nt threads
     integer, parameter :: nt=8
-    integer, parameter :: onek=3000
+    integer, parameter :: onek=6000
     integer, parameter :: tfz=onek/nt
     integer, parameter :: tfo=tfz+1
     integer, parameter :: nnn=onek-1
-    integer, parameter :: iter=2000
+    integer, parameter :: iter=1000
     integer, parameter :: b8=selected_real_kind(14)
-    !real(b8) A(onek,onek) 
-    !real(b8) B(onek,onek)
-    real(b8),allocatable :: A(:,:) 
-    real(b8),allocatable :: B(:,:)
+    real(b8),allocatable :: A(:,:),B(:,:)
     real(b8),allocatable :: Aloc(:,:),Bloc(:,:)
-    !real(b8) Aloc(onek,0:tfo),Bloc(onek,0:tfo)
 !$omp threadprivate(Aloc,Bloc)
 
 end module
@@ -58,6 +54,9 @@ end subroutine
     
 subroutine mods
     use times
+    implicit  none
+    integer omp_get_thread_num
+    integer i,j,k,start_y,end_y,id
     double precision  omp_get_wtime
 !    real(b8) Aloc(onek,0:tfo),Bloc(onek,0:tfo)
 !    real(b8),allocatable :: Aloc(:,:),Bloc(:,:)
@@ -75,7 +74,7 @@ subroutine mods
     c=1
     t1=omp_get_wtime()
 !$omp 
-!$omp parallel default(shared) , private(istart_y,iend_y,i,j,k,id) 
+!$omp parallel default(shared) , private(start_y,end_y,i,j,k,id) 
     id = omp_get_thread_num()
     do k = 1, iter
         buf_upper(1:onek, id)=Bloc(1:onek,tfz)
@@ -83,9 +82,11 @@ subroutine mods
 !$omp barrier
         Bloc(1:onek,0)=buf_upper(1:onek,id -1) 
         Bloc(1:onek,tfo)=buf_lower(1:onek,id+1)
-        istart_y=id*tfz+1
-        iend_y=(id+1)*tfz
-        do j=istart_y, iend_y
+        start_y=id*tfz+1
+        end_y=(id+1)*tfz
+        start_y=1
+        end_y=tfo-1
+        do j=start_y, end_y
             do i=2, nnn
                 Aloc(i,j) = (Bloc(i-1,j) + Bloc(i+1,j)+ Bloc(i,j-1) + Bloc(i,j+1)) * c
             enddo 

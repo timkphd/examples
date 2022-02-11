@@ -27,6 +27,10 @@
 cat $0 > ~/ddt.$SLURM_JOB_ID
 
 module purge
-ml intel-mpi
+#ml intel-mpi
+ml intel-oneapi-mpi
+ml intel-oneapi-compilers
+ml gcc
+
 
 AUTO_LAUNCH_TAG
