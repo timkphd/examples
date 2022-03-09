@@ -29,6 +29,7 @@ def setpin():
 setpin()
 for board in boards:
     print(board)
+print()
 
 Window_Width=600
 
@@ -88,8 +89,22 @@ def create_animation_canvas(Window):
   canvas.configure(bg="Blue")
   canvas.pack(fill="both", expand=True)
   return canvas
- 
 
+def diffs(a,b):
+    thelen=len(a)
+    gone=[]
+    for s1,s2,peg in zip(a,b,range(0,thelen)) :
+        if (s1 != s2): 
+           if(s1 == 1): dest=peg
+           if(s1 == 0): gone.append(peg)
+    if dest > gone[1] :
+        source=gone[0]
+        removed=gone[1]
+    else:
+        source=gone[1]
+        removed=gone[0]
+    print("source=",source," dest=",dest, "removed=",removed)    
+        
 def animate_ball(Window, canvas,xinc,yinc):
   dodat(Window_Width/3,Window_Width,Window_Height)
   balls=[]
@@ -112,7 +127,7 @@ def animate_ball(Window, canvas,xinc,yinc):
   while True:
     canvas.move(ball,xinc,yinc)
     Window.update()
-    time.sleep(Refresh_Sec)
+    time.sleep(Refresh_Sec*5)
     ball_pos = canvas.coords(ball)
     # unpack array to variables
     al,bl,ar,br = ball_pos
@@ -121,6 +136,8 @@ def animate_ball(Window, canvas,xinc,yinc):
     if bl < abs(yinc) or br > Window_Height-abs(yinc):
       yinc = -yinc
       state=boards[ib]
+      if(ib > 0): 
+          diffs(state,boards[ib-1])
       ib=ib+1
       if(ib > 13): ib=0
       peg=0
@@ -128,7 +145,7 @@ def animate_ball(Window, canvas,xinc,yinc):
           if(io == 0 ):
               canvas.itemconfig(balls[peg],fill="white")
           else:
-              canvas.itemconfig(balls[ib],fill="green")
+              canvas.itemconfig(balls[peg],fill="green")
           peg=peg+1     
  
 
