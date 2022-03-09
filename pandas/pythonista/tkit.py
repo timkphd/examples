@@ -103,7 +103,18 @@ def diffs(a,b):
     else:
         source=gone[1]
         removed=gone[0]
-    print("source=",source," dest=",dest, "removed=",removed)    
+    print("source=",source," dest=",dest, "removed=",removed)  
+    return(source,dest)  
+
+def path(x0,x1,y0,y1,t0,t1,t) :
+	mx=(x0-x1)/(t0-t1)
+	bx=x0-mx*t0
+	my=(y0-y1)/(t0-t1)
+	by=y0-my*t0
+	x=mx*t+bx
+	y=my*t+by
+	return [x,y]
+
         
 def animate_ball(Window, canvas,xinc,yinc):
   dodat(Window_Width/3,Window_Width,Window_Height)
@@ -124,10 +135,14 @@ def animate_ball(Window, canvas,xinc,yinc):
             fill="Red", outline="Black", width=4)
   ib=0
   togreen=True
-  while True:
+  doing=True
+  tstart=time.time()
+  ic=0
+
+  while doing:
     canvas.move(ball,xinc,yinc)
     Window.update()
-    time.sleep(Refresh_Sec*5)
+    time.sleep(Refresh_Sec)
     ball_pos = canvas.coords(ball)
     # unpack array to variables
     al,bl,ar,br = ball_pos
@@ -139,7 +154,9 @@ def animate_ball(Window, canvas,xinc,yinc):
       if(ib > 0): 
           diffs(state,boards[ib-1])
       ib=ib+1
-      if(ib > 13): ib=0
+      if(ib > 13): 
+          ib=0
+          ic=ic+1
       peg=0
       for io in state:
           if(io == 0 ):
@@ -147,8 +164,11 @@ def animate_ball(Window, canvas,xinc,yinc):
           else:
               canvas.itemconfig(balls[peg],fill="green")
           peg=peg+1     
- 
+    if ic == 2 and ib == 1 : 
+        doing = False
+        time.sleep(5)
+
 
 Animation_Window = create_animation_window()
 Animation_canvas = create_animation_canvas(Animation_Window)
-animate_ball(Animation_Window,Animation_canvas, Ball_min_movement, Ball_min_movement)
+animate_ball(Animation_Window,Animation_canvas, Ball_min_movement/.95, Ball_min_movement)
