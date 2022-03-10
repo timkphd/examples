@@ -4,10 +4,10 @@ import time
 import importlib
 from board import *
 
-#increase these valude to slow it down
-nstep=10
-stall=0
-
+#increase these values to slow it down
+nstep=20
+stall=1
+hold=5
 #print solution and steps
 info=False
 
@@ -224,7 +224,7 @@ def dogolf() :
             
         if ic == 1 and ib == 1 : 
             doing = False
-            time.sleep(5)
+            time.sleep(hold)
 
 
     Animation_Window = create_animation_window()
