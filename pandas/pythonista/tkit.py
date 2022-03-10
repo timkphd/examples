@@ -7,7 +7,7 @@ window.mainloop()
 import tkinter
 import time
 
-hole=7
+hole=1
 
 global boards
 global did_boards
@@ -78,7 +78,7 @@ def dodat(scale,xoff,yoff):
 
 def create_animation_window():
   Window = tkinter.Tk()
-  Window.title("Python Guides")
+  Window.title("Golf Tee")
 
   Window.geometry(f'{Window_Width}x{Window_Height}')
   return Window
@@ -86,7 +86,7 @@ def create_animation_window():
 
 def create_animation_canvas(Window):
   canvas = tkinter.Canvas(Window)
-  canvas.configure(bg="Blue")
+  canvas.configure(bg="khaki")
   canvas.pack(fill="both", expand=True)
   return canvas
 
@@ -115,6 +115,18 @@ def path(x0,x1,y0,y1,t0,t1,t) :
 	y=my*t+by
 	return [x,y]
 
+
+global t1 
+t1=time.time()
+
+def go(x):
+    global t1
+    t2=time.time()
+    if t2 - t1 > x:
+        t1=t2
+        return True
+    else:
+        return False
         
 def animate_ball(Window, canvas,xinc,yinc):
   dodat(Window_Width/3,Window_Width,Window_Height)
@@ -128,11 +140,6 @@ def animate_ball(Window, canvas,xinc,yinc):
             yc[ib]+Ball_Radius,
             fill="green", outline="Black", width=4))
   
-  ball = canvas.create_oval(Ball_Start_XPosition-Ball_Radius,
-            Ball_Start_YPosition-Ball_Radius,
-            Ball_Start_XPosition+Ball_Radius,
-            Ball_Start_YPosition+Ball_Radius,
-            fill="Red", outline="Black", width=4)
   ib=0
   togreen=True
   doing=True
@@ -140,30 +147,48 @@ def animate_ball(Window, canvas,xinc,yinc):
   ic=0
 
   while doing:
-    canvas.move(ball,xinc,yinc)
     Window.update()
-    time.sleep(Refresh_Sec)
-    ball_pos = canvas.coords(ball)
-    # unpack array to variables
-    al,bl,ar,br = ball_pos
-    if al < abs(xinc) or ar > Window_Width-abs(xinc):
-      xinc = -xinc
-    if bl < abs(yinc) or br > Window_Height-abs(yinc):
-      yinc = -yinc
-      state=boards[ib]
-      if(ib > 0): 
-          diffs(state,boards[ib-1])
-      ib=ib+1
-      if(ib > 13): 
-          ib=0
-          ic=ic+1
-      peg=0
-      for io in state:
-          if(io == 0 ):
-              canvas.itemconfig(balls[peg],fill="white")
-          else:
-              canvas.itemconfig(balls[peg],fill="green")
-          peg=peg+1     
+    #time.sleep(Refresh_Sec)
+    if go(2) :
+        state=boards[ib]
+        if(ib > 0): 
+            (s,t)=diffs(state,boards[ib-1])
+            canvas.itemconfig(balls[s],fill="white")
+            canvas.itemconfig(balls[t],fill="Yellow")
+            ball=canvas.create_oval(xc[s]-Ball_Radius,
+            yc[s]-Ball_Radius,
+            xc[s]+Ball_Radius,
+            yc[s]+Ball_Radius,
+            fill="LightGreen", outline="Black", width=4)
+            dx=xc[s]-xc[t]
+            dy=yc[s]-yc[t]
+            dx=-dx/50
+            dy=-dy/50
+            for it in range(0,50) :
+                canvas.move(ball,dx,dy)
+                Window.update()
+                time.sleep(0.01)
+            time.sleep(0.1)
+            canvas.itemconfig(balls[s],fill="white")
+            canvas.delete(ball)
+            Window.update()
+
+            nope="""
+            """
+
+        ib=ib+1
+        if(ib > 13): 
+              ib=0
+              ic=ic+1
+        peg=0
+        for io in state:
+            if(io == 0 ):
+                canvas.itemconfig(balls[peg],fill="white")
+            else:
+                canvas.itemconfig(balls[peg],fill="green")
+            peg=peg+1
+        
+            
     if ic == 2 and ib == 1 : 
         doing = False
         time.sleep(5)
