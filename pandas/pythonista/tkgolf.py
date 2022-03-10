@@ -1,13 +1,35 @@
+#!/usr/bin/env python3
 from board import *
 from tkinter import *
-window = Tk()
-window.title("my stuff")
-window.mainloop()
-
-import tkinter
+#import tkinter
 import time
 
 hole=1
+
+info=False
+
+global master
+def show_values():
+    global hole
+    global master
+    if info : print (w1.get())
+    hole=int(w1.get())
+    master.destroy()
+
+def bye():
+    quit()
+
+master = Tk()
+master.title('Select Open Hole 1-15')
+master.geometry('300x100')
+w1 = Scale(master, from_=1, to=15,orient = HORIZONTAL)
+w1.pack()
+b1=Button(master, text='Go', command=show_values,fg = "green").pack()
+b2=Button(master, text='Exit', command=bye,bg = "purple", fg = "Red").pack()
+b2
+
+mainloop()
+
 
 global boards
 global did_boards
@@ -27,9 +49,10 @@ def setpin():
 	tnow=time.time()
 
 setpin()
-for board in boards:
-    print(board)
-print()
+if info :
+    for board in boards:
+        print(board)
+    print()
 
 Window_Width=600
 
@@ -77,7 +100,7 @@ def dodat(scale,xoff,yoff):
  
 
 def create_animation_window():
-  Window = tkinter.Tk()
+  Window = Tk()
   Window.title("Golf Tee")
 
   Window.geometry(f'{Window_Width}x{Window_Height}')
@@ -85,7 +108,7 @@ def create_animation_window():
  
 
 def create_animation_canvas(Window):
-  canvas = tkinter.Canvas(Window)
+  canvas = Canvas(Window)
   canvas.configure(bg="khaki")
   canvas.pack(fill="both", expand=True)
   return canvas
@@ -103,7 +126,7 @@ def diffs(a,b):
     else:
         source=gone[1]
         removed=gone[0]
-    print("source=",source," dest=",dest, "removed=",removed)  
+    if info : print("source=",source," dest=",dest, "removed=",removed)  
     return(source,dest)  
 
 def path(x0,x1,y0,y1,t0,t1,t) :
@@ -197,3 +220,7 @@ def animate_ball(Window, canvas,xinc,yinc):
 Animation_Window = create_animation_window()
 Animation_canvas = create_animation_canvas(Animation_Window)
 animate_ball(Animation_Window,Animation_canvas, Ball_min_movement/.95, Ball_min_movement)
+
+
+
+
