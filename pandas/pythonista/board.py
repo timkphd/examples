@@ -177,13 +177,13 @@ def printit(sol):
 		print("  %1d %1d %1d %1d"%(s[6],s[7],s[8],s[9]))
 		print(" %1d %1d %1d %1d %1d"%(s[10],s[11],s[12],s[13],s[14]))
 
-def doit(fill):
+def doit(fill,report=False):
 	global ncall,solution,nocall
 	ncall=0
 	solution=[]
 	tries={}
 	dig(fill)
-	print("boards evaluated:",ncall,"      repeats skipped:",nocall)
+	if report : print("boards evaluated:",ncall,"      repeats skipped:",nocall)
 #	print "solution is:"
 #	printit(solution)
 	return solution
