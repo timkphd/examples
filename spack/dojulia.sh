@@ -14,9 +14,18 @@ echo $STARTDIR
 # Select an install directory.
 # WARNING: this directory will be cleaned out before
 # the install.
-export MYDIR=/projects/hpcapps/julia/0316
-#rm -rf $MYDIR
-#mkdir -p $MYDIR
+if [ -z "$MYDIR" ]  ;     then 
+#    export MYDIR=/projects/hpcapps/julia/0316
+    if [ -n "$BASE" ] ; then
+    	export MYDIR=$BASE/julia/$(date +%g%m%d)
+    else
+# Putting this in home will most likely fill it up
+	export MYDIR=$HOME/julia/$(date +%g%m%d)
+	echo WARNING: putting julia in $HOME
+    fi
+fi
+rm -rf $MYDIR
+mkdir -p $MYDIR
 
 export TMPDIR=$MYDIR/tmp
 mkdir -p $TMPDIR
@@ -46,8 +55,8 @@ mkdir -p myspack/level00
 cd myspack/level00
 
 # Clean out an old spack
-#rm -rf spack
-#git clone -c feature.manyFiles=true https://github.com/spack/spack.git  
+rm -rf spack
+git clone -c feature.manyFiles=true https://github.com/spack/spack.git  
 export SPACK_USER_CONFIG_PATH=`pwd`/.myspack  
 alias dospack="source `pwd`/spack/share/spack/setup-env.sh"  
 
@@ -60,22 +69,21 @@ source `pwd`/spack/share/spack/setup-env.sh
 
 ml gcc
 
-#spack compiler find
+spack compiler find
 
 # Modify the config files to point to the install directory and to make lmod modules
 backup=`date +"%y%m%d%H%M%S"`
-#sed -i$backup "s.root: \$spack/opt/spack.root: $MYDIR/install."             spack/etc/spack/defaults/config.yaml 
-#sed -i$backup "s.#  lmod:   \$spack/share/spack/lmod.  lmod: $MYDIR/lmod."  spack/etc/spack/defaults/modules.yaml
-#sed -ia "s.#  tcl:    \$spack/share/spack/modules.  tcl: $MYDIR/modules."   spack/etc/spack/defaults/modules.yaml
-#sed -ib "s/- tcl/- lmod/"                                                   spack/etc/spack/defaults/modules.yaml
-#sed -ic "s/# roots:/roots:/"                                                spack/etc/spack/defaults/modules.yaml
+sed -i$backup "s.root: \$spack/opt/spack.root: $MYDIR/install."             spack/etc/spack/defaults/config.yaml 
+sed -i$backup "s.#  lmod:   \$spack/share/spack/lmod.  lmod: $MYDIR/lmod."  spack/etc/spack/defaults/modules.yaml
+sed -ia "s.#  tcl:    \$spack/share/spack/modules.  tcl: $MYDIR/modules."   spack/etc/spack/defaults/modules.yaml
+sed -ib "s/- tcl/- lmod/"                                                   spack/etc/spack/defaults/modules.yaml
+sed -ic "s/# roots:/roots:/"                                                spack/etc/spack/defaults/modules.yaml
 
 echo Time to setup spack: $(mytime $now)
 
 # We install python because the julia install will do it anyway.
 # Also, we'll want jupyterlab for julia also.
 now=`mytime`
-spack install texinfo
 spack install python@3.10.2
 echo Time to install python: $(mytime $now)
 
