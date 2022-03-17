@@ -8,7 +8,10 @@ from board import *
 hole=7
 kb=0
 forward=False
-console.clear()
+try:
+    console.clear()
+except:
+    pass
 global boards
 global did_boards
 global tnow
