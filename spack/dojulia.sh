@@ -33,6 +33,7 @@ mkdir -p $TMPDIR
 cat $STARTDIR/dojulia.sh > $MYDIR/build_script
 
 module purge
+if [[ $(which git 2>/dev/null) ]] ; then echo found git ; else module load conda ; fi
 # A simple delta timer (seconds)
 mytime () 
 {
