@@ -1,0 +1,8 @@
+savenow () 
+{ 
+    td=`date +"%g%m%d%H%M"`;
+    history -n;
+    if [ ! -f ~/histhist/$td ]; then
+        history > ~/histhist/$td;
+    fi
+}

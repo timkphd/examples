@@ -1,0 +1,8 @@
+scr () 
+{ 
+    if [ $# -lt 1 ]; then
+        cd /scratch/$USER;
+    else
+        cd /scratch/$USER/$1;
+    fi
+}

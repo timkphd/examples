@@ -1,0 +1,4 @@
+down () {
+ for x in $(sinfo | grep down | awk '{print $6}') ; do scontrol show hostnames $x ; done | sort  -u
+ }
+
