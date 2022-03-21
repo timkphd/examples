@@ -1,0 +1,16 @@
+#!/bin/bash 
+#SBATCH --job-name="onpie"
+#SBATCH --nodes=3
+#SBATCH --tasks-per-node=2
+#SBATCH --export=ALL
+#SBATCH --time=00:10:00
+
+if [ -z ${EXE+x} ]; then export EXE=hellof ; fi
+echo "running " $EXE 
+
+
+#printenv 
+
+
+srun  --tasks-per-node=2 ./$EXE
+
