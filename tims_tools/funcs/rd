@@ -1,0 +1,4 @@
+rd () 
+{ 
+    cd `realpath -P .`
+}

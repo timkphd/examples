@@ -1,0 +1,9 @@
+running () 
+{ 
+    nl=`sq | wc -l`;
+    if [ "$nl" -gt "1" ]; then
+        return 0;
+    else
+        return 1;
+    fi
+}

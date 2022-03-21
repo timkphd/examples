@@ -1,0 +1,4 @@
+lfind () 
+{ 
+    find . -name $1 -exec ls -l {} \;
+}

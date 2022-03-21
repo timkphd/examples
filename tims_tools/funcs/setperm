@@ -1,0 +1,6 @@
+setperm () 
+{ 
+    echo setting permissions for $1;
+    find $1 -perm -u=x -exec chmod go+x {} \;;
+    find $1 -perm -u=r -exec chmod go+r {} \;
+}

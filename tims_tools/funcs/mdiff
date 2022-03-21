@@ -1,0 +1,10 @@
+mdiff () 
+{ 
+    d1=$1;
+    while test $# -gt 0; do
+        ls --color=auto -lt $1;
+        diff $d1 $1;
+        echo ++++++++++++++++++++++++++++++;
+        shift;
+    done
+}

@@ -1,0 +1,4 @@
+ml () 
+{ 
+    eval $($LMOD_DIR/ml_cmd "$@")
+}

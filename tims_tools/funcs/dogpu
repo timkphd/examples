@@ -1,0 +1,9 @@
+dogpu () 
+{ 
+    until squeue -u tkaiser2 --format='%18A%15l%15L%6D%20S%15P%15r%20V%N' | grep --color=auto $1 > /dev/null;
+    (($?)); do
+        date;
+        gpus;
+        sleep 5;
+    done
+}

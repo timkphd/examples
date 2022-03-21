@@ -1,0 +1,9 @@
+dorunning () 
+{ 
+    running;
+    while [ $? -eq "0" ]; do
+        echo "running";
+        sleep 10;
+        running;
+    done
+}
