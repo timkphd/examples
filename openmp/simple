@@ -1,0 +1,22 @@
+#!/bin/bash 
+#SBATCH --job-name="sample"
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:10:00
+#SBATCH --out=%J.out
+#SBATCH --error=%J.err
+
+
+export OMP_NUM_THREADS=4
+#export OMP_PROC_BIND=spread
+#export OMP_DISPLAY_AFFINITY=TRUE
+
+printenv OMP_NUM_THREADS
+srun -n 1 ./a.out
+
+export OMP_NUM_THREADS=2
+
+printenv OMP_NUM_THREADS
+srun -n 1 ./a.out
+

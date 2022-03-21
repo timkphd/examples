@@ -2,7 +2,6 @@
 from scene import *
 #from math import sin,pi
 import time
-import console
 from board import *
 import sys
 hole=7
@@ -10,8 +9,12 @@ kb=0
 forward=False
 if len(sys.argv) > 1:
     hole=int(sys.argv[1])
-console.clear()
-hole=console.input_alert("Golf Tee Game","Enter an open hole (1-15)","1")
+try:
+    import console
+    console.clear()
+    hole=console.input_alert("Golf Tee Game","Enter an open hole (1-15)","1")
+except:
+    pass
 hole=int(hole)-1
 filled=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 filled[hole]=0
