@@ -24,13 +24,14 @@ if [ -z "$MYDIR" ]  ;     then
 	echo WARNING: putting julia in $HOME
     fi
 fi
-rm -rf $MYDIR
+#rm -rf $MYDIR
 mkdir -p $MYDIR
 
 export TMPDIR=$MYDIR/tmp
 mkdir -p $TMPDIR
 
 cat $STARTDIR/dojulia.sh > $MYDIR/build_script
+cp julia.py  $MYDIR
 
 module purge
 module load python 
@@ -118,7 +119,7 @@ which julia
 now=`mytime`
 
 module load gcc
-spack install python@3.10.2
+spack install python@3.10.2 +tkinter
 
 echo Time to install python: $(mytime $now)
 
