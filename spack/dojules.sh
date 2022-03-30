@@ -7,7 +7,7 @@
 #SBATCH --output=julia_build
 #SBATCH --error=julia_build
 
-
+export MYDIR=/nopt/nrel/apps/210929a/level03
 STARTDIR=`pwd`
 echo $STARTDIR
 
