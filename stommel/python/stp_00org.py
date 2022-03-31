@@ -81,7 +81,7 @@ def do_jacobi(iw,i1,i2,j1,j2):
  				psi[i,j]=cons.a1*new_psi[i+1,j] + cons.a2*new_psi[i-1,j] + \
  				cons.a3*new_psi[i,j+1] + cons.a4*new_psi[i,j-1] - \
  				cons.a5*forf[i,j]
-				diff=diff+abs(new_psi[i,j]-psi[i,j])
+ 				diff=diff+abs(new_psi[i,j]-psi[i,j])
 #			new_psi[i,j]=a1*psi[i+1,j] + a2*psi[i-1,j] + \
 #			a3*psi[i,j+1] + a4*psi[i,j-1] - \
 #			a5*forf[i,j]
@@ -123,9 +123,9 @@ for i in range(0,vals.steps):
 	iw=iw+1
 	iw = iw % 2
 	if ((i+1) % iout) == 0 :
-		print i+1,diff
+		print(i+1,diff)
 t2=walltime()
-print t2-t1
+print(t2-t1)
 
 
 		
