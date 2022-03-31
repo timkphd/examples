@@ -7,7 +7,7 @@
 #SBATCH --output=julia_build
 #SBATCH --error=julia_build
 
-
+export MYDIR=/nopt/nrel/apps/210929a/level03
 STARTDIR=`pwd`
 echo $STARTDIR
 
@@ -24,16 +24,17 @@ if [ -z "$MYDIR" ]  ;     then
 	echo WARNING: putting julia in $HOME
     fi
 fi
-rm -rf $MYDIR
+#rm -rf $MYDIR
 mkdir -p $MYDIR
 
 export TMPDIR=$MYDIR/tmp
 mkdir -p $TMPDIR
 
 cat $STARTDIR/dojulia.sh > $MYDIR/build_script
+cp julia.py  $MYDIR
 
 module purge
-if [[ $(which git 2>/dev/null) ]] ; then echo found git ; else module load conda ; fi
+module load python 
 # A simple delta timer (seconds)
 mytime () 
 {
@@ -82,15 +83,15 @@ sed -ic "s/# roots:/roots:/"                                                spac
 
 echo Time to setup spack: $(mytime $now)
 
-# We install python because the julia install will do it anyway.
-# Also, we'll want jupyterlab for julia also.
-now=`mytime`
-spack install python@3.10.2
-echo Time to install python: $(mytime $now)
 
 
-# Finally here. This should go quickly because most of the work was done in the
-# python install.  
+if [[ ! -d myrepo ]];then
+  spack repo create myrepo
+  #spack repo add $NOWDIR/myrepo
+  spack repo add myrepo
+fi
+mkdir -p myrepo/packages/julia
+cp $STARTDIR/julia.py  myrepo/packages/julia/package.py
 
 now=`mytime`
 spack install julia
@@ -110,15 +111,20 @@ module unload gcc
 module load julia
 which julia
 
-module load python
-which python
+# to not also build python and Jupyter uncomment the next line
+#exit
 
 # Install some python stuff, ending in jupyterlab
 # Install pip3
 now=`mytime`
 
+module load gcc
+spack install python@3.10.2 +tkinter
 
+echo Time to install python: $(mytime $now)
 
+module load python
+which python
 
 python -m pip install update
 which pip3

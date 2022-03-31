@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 # get the number of cores on a node
 # multiprocessing.cpu_count() and os.cpu_count()
 # might return the wrong number if hyperthreading
@@ -72,7 +72,7 @@ try :
 # to the directory containing the library.
 
 
-	cores=36
+	cores=4
 # cat /proc/cpuinfo | grep2 processor | wc -l
 # sysctl -n hw.physicalcpu
 	cores=get_cores()

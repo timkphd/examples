@@ -1,0 +1,17 @@
+wackit () 
+{ 
+    str=`printenv $1`;
+    IFS=':';
+    read -ra ADDR <<< "$str";
+    SUB=$2;
+    export NP="";
+    for i in "${ADDR[@]}";
+    do
+        if grep --color=auto -q "$SUB" <<< "$i"; then
+            :;
+        else
+            NP=`echo ${NP}" "${i}`;
+        fi;
+    done;
+    echo $NP | sed "s, ,:,g" | sed "s,^:,,"
+}

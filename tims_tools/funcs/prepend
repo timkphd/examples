@@ -1,0 +1,15 @@
+prepend () 
+{ 
+    if [ $1 == "-h" ]; then
+        echo "prepend P_VAR new_item";
+        echo "prepends new_item to the path P_VAR";
+        return 0;
+    else
+        END=`printenv $1`;
+        if [ -z "$END" ]; then
+            export $1=$2;
+        else
+            export $1=$2:$END;
+        fi;
+    fi
+}

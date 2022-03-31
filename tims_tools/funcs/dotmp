@@ -1,0 +1,8 @@
+dotmp () 
+{ 
+    if [ $# -lt 1 ]; then
+        export TMPDIR=/scratch/tkaiser2/tmp;
+    else
+        export TMPDIR=/scratch/tkaiser2/$1;
+    fi
+}

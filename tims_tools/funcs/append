@@ -1,0 +1,14 @@
+append () 
+{ 
+    if [ $1 == "-h" ]; then
+        echo "append P_VAR new_item";
+        echo "appends new_item to the path P_VAR";
+    else
+        END=`printenv $1`;
+        if [ -z "$END" ]; then
+            export $1=$2;
+        else
+            export $1=$END:$2;
+        fi;
+    fi
+}
