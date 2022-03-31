@@ -30,49 +30,41 @@ end;
 
 
 
-function do_jacobi(psi,new_psi,fors,i1,i2,j1,j2,a1,a2,a3,a4,a5)
+function do_jacobi(psi,new_psi,i1,i2,j1,j2)
 # does a single Jacobi iteration step
 # input is the grid and the indices for the interior cells
-# new_psi is temp storage for the updated grid
+# new_psi is temp storage for the the updated grid
 # output is the updated grid in psi and diff which is
 # the sum of the differences between the old and new grids
     ldiff=0.0
-    for j=j1:j2
-      for i=i1:i2
+    for i=i1:i2
+        for j=j1:j2
+#            y=j*dy
             new_psi[i,j]=a1*psi[i+1,j] + a2*psi[i-1,j] + a3*psi[i,j+1] + a4*psi[i,j-1] - a5*fors[i,j]
+#                         a5*force[y]
             ldiff=ldiff+abs(new_psi[i,j]-psi[i,j])
          end
      end
-    #ldiff=sum(broadcast(abs,(new_psi-psi)))
-    #ldiff=sum(abs.(new_psi-psi))
-    psi[i1:i2,j1:j2]=new_psi[i1:i2,j1:j2]
+    for i=i1:i2
+        for j=j1:j2
+           psi[i,j]=new_psi[i,j]
+        end
+    end
     return ldiff
 end;
 
 
 
-# get the input.  typical values:
-#200 200
-#2000000 2000000
-#1.0e-9 2.25e-11 3.0e-6
-#75000
+# get the input.  see above for typical values
 
-
-z=split(readline())
-nx=parse(Int64,z[1])
-ny=parse(Int64,z[2])
-
-z=split(readline())
-lx=parse(Float64,z[1])
-ly=parse(Float64,z[2])
-
-z=split(readline())
-alpha=parse(Float64,z[1])
-beta=parse(Float64,z[2])
-gamma=parse(Float64,z[3])
-
-z=split(readline())
-steps=parse(Int64,z[1])
+nx=200
+ny=200
+lx=2000000.0
+ly=2000000.0
+alpha=1.0e-9
+beta=2.25e-11
+gamma=3.0e-6
+steps=75000
 
 # allocate the grid to size nx * ny plus the boundary cells
 psi=OffsetArray{Float64}(undef, 0:nx+1,0:ny+1)
@@ -104,16 +96,13 @@ j2=ny
 
 
 # set boundary conditions
-@time bc(psi,i1,i2,j1,j2)
-@time do_force(fors,i1,i2,j1,j2)
+bc(psi,i1,i2,j1,j2)
+do_force(fors,i1,i2,j1,j2)
+#print(fors)
 
-function doit(psi,new_psi,fors,a1,a2,a3,a4,a5)
 for istep=1:steps
- mydiff=do_jacobi(psi,new_psi,fors,i1,i2,j1,j2,a1,a2,a3,a4,a5)
+ mydiff=do_jacobi(psi,new_psi,i1,i2,j1,j2)
  if mod(istep,steps/100) == 0 
      print(istep, " ", mydiff,"\n")
  end
 end
-end;
-
-@time doit(psi,new_psi,fors,a1,a2,a3,a4,a5)

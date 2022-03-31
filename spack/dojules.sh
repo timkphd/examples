@@ -8,6 +8,9 @@
 #SBATCH --error=julia_build
 
 export MYDIR=/nopt/nrel/apps/210929a/level03
+# NOTE: because we use a "," in our sed command 
+#       we can't have one in the directory path.
+export MYDIR=/lustre/eaglefs/projects/hpcapps/julia/1.7.2
 STARTDIR=`pwd`
 echo $STARTDIR
 
@@ -34,7 +37,9 @@ cat $STARTDIR/dojulia.sh > $MYDIR/build_script
 cp julia.py  $MYDIR
 
 module purge
-module load python 
+module load python  > /dev/null 2>&1 || echo "python module not found"
+git --version > /dev/null 2>&1 || ml conda
+
 # A simple delta timer (seconds)
 mytime () 
 {
@@ -59,6 +64,8 @@ cd myspack/level00
 # Clean out an old spack
 rm -rf spack
 git clone -c feature.manyFiles=true https://github.com/spack/spack.git  
+module unload conda /dev/null 2>&1 || echo "conda not loaded"
+
 export SPACK_USER_CONFIG_PATH=`pwd`/.myspack  
 alias dospack="source `pwd`/spack/share/spack/setup-env.sh"  
 
@@ -75,9 +82,9 @@ spack compiler find
 
 # Modify the config files to point to the install directory and to make lmod modules
 backup=`date +"%y%m%d%H%M%S"`
-sed -i$backup "s.root: \$spack/opt/spack.root: $MYDIR/install."             spack/etc/spack/defaults/config.yaml 
-sed -i$backup "s.#  lmod:   \$spack/share/spack/lmod.  lmod: $MYDIR/lmod."  spack/etc/spack/defaults/modules.yaml
-sed -ia "s.#  tcl:    \$spack/share/spack/modules.  tcl: $MYDIR/modules."   spack/etc/spack/defaults/modules.yaml
+sed -i$backup "s,root: \$spack/opt/spack,root: $MYDIR/install,"             spack/etc/spack/defaults/config.yaml 
+sed -i$backup "s,#  lmod:   \$spack/share/spack/lmod,  lmod: $MYDIR/lmod,"  spack/etc/spack/defaults/modules.yaml
+sed -ia "s,#  tcl:    \$spack/share/spack/modules,  tcl: $MYDIR/modules,"   spack/etc/spack/defaults/modules.yaml
 sed -ib "s/- tcl/- lmod/"                                                   spack/etc/spack/defaults/modules.yaml
 sed -ic "s/# roots:/roots:/"                                                spack/etc/spack/defaults/modules.yaml
 
