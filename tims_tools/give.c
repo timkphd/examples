@@ -20,8 +20,15 @@ or implied, or assumes any liability or responsibility for the use of
 this information.
 */
 
-
+/*
+gcc give.c -o give 
+sudo cp give /usr/local/bin
+sudo chown root:root /usr/local/bin/give
+sudo chmod 4775  /usr/local/bin/give
+*/
 #include        <stdio.h>
+#include        <stdlib.h>
+#include        <string.h>
 #include        <sys/types.h>
 #include        <sys/stat.h>
 #include        <errno.h>
@@ -32,11 +39,15 @@ this information.
 #include        <sys/param.h> 
 #include        <sys/file.h>
 #include        <fcntl.h>
+
+
+#include <unistd.h>
+
 /*
 #include        <sys/unistd.h>
 #include        <sys/secparm.h>
 */
-long trunc (int fildes);
+// long trunc (int fildes);
 #define BSIZE 4096
 #define OUTBLKSZ  BSIZE*20
 int NOBODY;
@@ -55,11 +66,10 @@ int NOBODY;
 #define OWN_ONLY 00600
 #define READMODE 04
 #define TRUE 1
-#define TARGETDIR "/usr/tmp/give"
+#define TARGETDIR "/media/lustre/give"
 #define _UNICOS 9
 
-char    *malloc();
-char    *dname();
+// char    *malloc();
 char    *strrchr();
 char    *touser, *tusr;
 char    *buf = (char *)NULL;
@@ -71,14 +81,21 @@ extern  int optind, opterr;
 struct  passwd  *udb;
 struct  stat ns1, ns2;
 /* struct  usrv vals; */
-int     getuid(), getgid(), geteuid();
+//int     getuid(), getgid(), geteuid();
 int     duid, dgid, ouid, ogid, oeuid;
 int     compart;
 
 char    *name;
 
-main(argc, argv)
-register char *argv[];
+void getspace(int fd,long size);
+int move(char *src, char *tusr);
+char * dname(char *name);
+
+
+
+
+int main(int argc, char*argv[])
+//register char *argv[];
 {
         register int c, i, r, len, err;
         
@@ -202,10 +219,9 @@ NOBODY=udb->pw_gid;
 
 char     fbuf[BLKSIZE];
 
-move(src, tusr)
-char *src, *tusr;
+int move(char *src, char  *tusr)
 {
-        register last, c, i;
+        register int last, c, i;
         char    *pt, *pc;
         char    *target;
         int from, to, ct, len, err;
@@ -220,11 +236,11 @@ char *src, *tusr;
 
         while (((last = strlen(src)) > 1)
             &&  (src[last-1] == DELIM))
-                 src[last-1]=NULL;
+                 src[last-1]=(char)'\0';
         
         while (((last = strlen(tusr)) > 1)
             &&  (tusr[last-1] == DELIM))
-                 tusr[last-1]=NULL;
+                 tusr[last-1]=(char)'\0';
         
         /*
          * Make sure src file exists and giver has access to it.
@@ -380,9 +396,7 @@ perror("give");
 }
 
 
-char *
-dname(name)
-register char *name;
+char * dname(char *name)
 {
         register char *p;
 
@@ -409,8 +423,7 @@ register char *name;
  * Pre-allocate space for output file
  */
 
-getspace(fd,size)
-long size;
+void getspace(int fd,long size)
 {
 /*      
   if (ialloc(fd,size,IA_CONT,0) < 0) {
