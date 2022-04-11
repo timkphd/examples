@@ -24,7 +24,7 @@ this information.
 gcc give.c -o give 
 sudo cp give /usr/local/bin
 sudo chown root:root /usr/local/bin/give
-sudo chmod 4775  /usr/local/bin/give
+sudo chmod 4555  /usr/local/bin/give
 */
 #include        <stdio.h>
 #include        <stdlib.h>
