@@ -9,6 +9,14 @@ main() {
 	int bx,by,bz;
 	int size;
 	int numthreads,j;
+    int driver_version = 0, runtime_version = 0;
+
+    cudaDriverGetVersion(&driver_version);
+    cudaRuntimeGetVersion(&runtime_version);
+
+    printf("Driver Version: %d\n"
+           "Runtime Version: %d\n",
+           driver_version, runtime_version);
 	
 	printf(" %s\n","Enter grid dimensions: gx gy");
 	scanf("%d %d",&gx,&gy);
