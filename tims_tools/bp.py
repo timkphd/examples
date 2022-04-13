@@ -15,7 +15,7 @@ sys.version_info
 
 # In[11]:
 
-
+"""
 def bonk(x):
     match x:
         case (1) :
@@ -30,7 +30,7 @@ def bonk(x):
 
 
 bonk("1")
-
+"""
 
 # In[16]:
 
@@ -89,6 +89,10 @@ for tl in ax.get_yticklabels():
     tl.set_color('b')
 ax2.set_ylabel('diastolic', color='r')
 ax.set_ylabel('systolic', color='b')
+#ax2.set_ylim(50,140)
+#ax.set_ylim(50,140)
+
+
 ax.set_xlabel('Date')
 ax.set_title('Blood Pressure')
 
