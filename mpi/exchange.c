@@ -73,7 +73,7 @@ for (iter=0 ;iter< iterations;iter++) {
 
   res=recvl+recvr+iter;
   MPI_Allreduce(&res, &gres, 1,MPI_INT, MPI_SUM, MPI_COMM_WORLD);
-  printf("%d %d\n",myid,gres);
+  printf("%d %d %d\n",myid,iter,gres);
 }
 /*  Stop MPI */  
   int ierr=MPI_Finalize();
