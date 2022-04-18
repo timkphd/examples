@@ -7,9 +7,9 @@ int main(int argc,char *argv[])
   int left,right;
 
 /* Variables we are going to pass around */
-  float value,newval;
-  float sendl,sendr,recvl,recvr;
-  float dv,gres;
+  double value,newval;
+  double sendl,sendr,recvl,recvr;
+  double dv,gres;
   
   int iterations,iter;
 
@@ -44,33 +44,32 @@ recvr=-1000;
 value=10000;
 /* Zeroth processor broadcasts # iterations to all the rest */
     int root=0;
-    if (myid == root) iterations=5
-    ;
+    if (myid == root) iterations=5;
     MPI_Bcast(&iterations,   1,MPI_INT,   root,MPI_COMM_WORLD);
-    printf("proc %d got %6d %6d with bcast value %6d\n",myid,recvl,recvr,value); 
+    printf("proc %d got %6d with bcast value %6d\n",myid,iterations); 
 
 for (iter=0 ;iter< iterations;iter++) {
   sendl=value;
   sendr=value;
   if((myid % 2) == 0){
 /* send to left */
-      MPI_Send(&sendl,1,MPI_FLOAT,left,10, MPI_COMM_WORLD);
+      MPI_Send(&sendl,1,MPI_DOUBLE,left,10, MPI_COMM_WORLD);
 /* rec from left */
-      MPI_Recv(&recvl,1,MPI_FLOAT,left,10,MPI_COMM_WORLD,&status);
+      MPI_Recv(&recvl,1,MPI_DOUBLE,left,10,MPI_COMM_WORLD,&status);
 /* rec from right */
-      MPI_Recv(&recvr,1,MPI_FLOAT,right,10,MPI_COMM_WORLD,&status);
+      MPI_Recv(&recvr,1,MPI_DOUBLE,right,10,MPI_COMM_WORLD,&status);
 /* send to right */
-      MPI_Send(&sendr,1,MPI_FLOAT,right,10, MPI_COMM_WORLD);
+      MPI_Send(&sendr,1,MPI_DOUBLE,right,10, MPI_COMM_WORLD);
     }
   else{
 /* rec from right */
-      MPI_Recv(&recvr,1,MPI_FLOAT,right,10,MPI_COMM_WORLD,&status);
+      MPI_Recv(&recvr,1,MPI_DOUBLE,right,10,MPI_COMM_WORLD,&status);
 /* send to right */
-      MPI_Send(&sendr,1,MPI_FLOAT,right,10,MPI_COMM_WORLD);
+      MPI_Send(&sendr,1,MPI_DOUBLE,right,10,MPI_COMM_WORLD);
 /* send to left */
-      MPI_Send(&sendl,1,MPI_FLOAT,left,10,MPI_COMM_WORLD);
+      MPI_Send(&sendl,1,MPI_DOUBLE,left,10,MPI_COMM_WORLD);
 /* rec from left */
-      MPI_Recv(&recvl,1,MPI_FLOAT,left,10,MPI_COMM_WORLD,&status);
+      MPI_Recv(&recvl,1,MPI_DOUBLE,left,10,MPI_COMM_WORLD,&status);
     }
 
 /* do some calculation */
@@ -78,7 +77,7 @@ for (iter=0 ;iter< iterations;iter++) {
   dv=value-newval;
   value=newval;  
 /* and a reduction to see what's happening */
-  MPI_Allreduce(&dv, &gres, 1,MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(&dv, &gres, 1,MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
   printf("%d %d %g %g\n",myid,iter,gres,value);
 }
 /*  Stop MPI */  
