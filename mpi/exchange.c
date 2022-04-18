@@ -39,9 +39,9 @@ int main(int argc,char *argv[])
     }
     
 
-recvl=-1000;
-recvr=-1000;
-value=1000;
+recvl=0;
+recvr=0;
+value=myid;
 /* Zeroth processor broadcasts # iterations to all the rest */
     int root=0;
     if (myid == root) iterations=5;
