@@ -43,6 +43,7 @@ sendl= 100+myid;
 sendr= 200+myid; 
 recvl=-1000;
 recvr=-1000;
+value=0;
 /* Zeroth processor broadcasts # iterations to all the rest */
     int root=0;
     if (myid == root) iterations=3;
