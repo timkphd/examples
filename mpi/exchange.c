@@ -75,7 +75,7 @@ for (iter=0 ;iter< iterations;iter++) {
     }
 /* do some calculation */
   newval=value+sendl+sendr;
-  dv=oldval-newval;
+  dv=value-newval;
   value=newval;
   
 /* and a reduction to see what's happening */
