@@ -7,11 +7,11 @@ int main(int argc,char *argv[])
   int left,right;
 
 /* Variables we are going to pass around */
-  int value,dv,newval;
+  int value,newval;
   int sendl,sendr,recvl,recvr;
-  int iterations,iter;
-  int res,gres;
+  int dv,gres;
   
+  int iterations,iter;
 
   
 /* Some variables required by MPI */
@@ -46,7 +46,8 @@ recvr=-1000;
 value=10000;
 /* Zeroth processor broadcasts # iterations to all the rest */
     int root=0;
-    if (myid == root) iterations=20;
+    if (myid == root) iterations=5
+    ;
     MPI_Bcast(&iterations,   1,MPI_INT,   root,MPI_COMM_WORLD);
     printf("proc %d got %6d %6d with bcast value %6d\n",myid,recvl,recvr,value); 
 
@@ -73,11 +74,11 @@ for (iter=0 ;iter< iterations;iter++) {
 /* rec from left */
       MPI_Recv(&recvl,1,MPI_INT,left,10,MPI_COMM_WORLD,&status);
     }
+
 /* do some calculation */
   newval=value-(recvl+recvr)/2;
   dv=value-newval;
-  value=newval;
-  
+  value=newval;  
 /* and a reduction to see what's happening */
   MPI_Allreduce(&dv, &gres, 1,MPI_INT, MPI_SUM, MPI_COMM_WORLD);
   printf("%d %d %d %d\n",myid,iter,gres,value);
