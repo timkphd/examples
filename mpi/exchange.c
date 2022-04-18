@@ -44,7 +44,7 @@ recvr=-1;
 value=1000;
 /* Zeroth processor broadcasts # iterations to all the rest */
     int root=0;
-    if (myid == root) iterations=100;
+    if (myid == root) iterations=1000;
     MPI_Bcast(&iterations,   1,MPI_INT,   root,MPI_COMM_WORLD);
     printf("proc %d got %6d\n",myid,iterations); 
 
