@@ -78,7 +78,7 @@ for (iter=0 ;iter< iterations;iter++) {
   value=newval;  
 /* and a reduction to see what's happening */
   MPI_Allreduce(&dv, &gres, 1,MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-  printf("%d %d %g %g\n",myid,iter,gres,value);
+  printf("%d %d %g %g\n",iter,myid,gres,value);
 }
 /*  Stop MPI */  
   int ierr=MPI_Finalize();
