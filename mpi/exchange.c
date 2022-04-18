@@ -7,7 +7,7 @@ int main(int argc,char *argv[])
   int left,right;
 
 /* Variables we are going to pass around */
-  int value;
+  int value,dv,newval;
   int sendl,sendr,recvl,recvr;
   int iterations,iter;
   int res,gres;
@@ -43,14 +43,16 @@ sendl= 100+myid;
 sendr= 200+myid; 
 recvl=-1000;
 recvr=-1000;
-value=0;
+value=10000;
 /* Zeroth processor broadcasts # iterations to all the rest */
     int root=0;
-    if (myid == root) iterations=3;
+    if (myid == root) iterations=10;
     MPI_Bcast(&iterations,   1,MPI_INT,   root,MPI_COMM_WORLD);
     printf("proc %d got %6d %6d with bcast value %6d\n",myid,recvl,recvr,value); 
 
 for (iter=0 ;iter< iterations;iter++) {
+  sendl=value;
+  sendr=value;
   if((myid % 2) == 0){
 /* send to left */
       MPI_Send(&sendl,1,MPI_INT,left,10, MPI_COMM_WORLD);
@@ -72,13 +74,12 @@ for (iter=0 ;iter< iterations;iter++) {
       MPI_Recv(&recvl,1,MPI_INT,left,10,MPI_COMM_WORLD,&status);
     }
 /* do some calculation */
-  res=recvl+recvr+iter;
-  sendl=sendl+recvr;
-  sendr=sendr+recvl;
-  value=value+sendl+sendr;
+  newval=value+sendl+sendr;
+  dv=oldval-newval;
+  value=newval;
   
 /* and a reduction to see what's happening */
-  MPI_Allreduce(&res, &gres, 1,MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(&dv, &gres, 1,MPI_INT, MPI_SUM, MPI_COMM_WORLD);
   printf("%d %d %d %d\n",myid,iter,gres,value);
 }
 /*  Stop MPI */  
