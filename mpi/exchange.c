@@ -72,7 +72,7 @@ for (iter=0 ;iter< iterations;iter++) {
     }
 /* do some calculation */
   res=recvl+recvr+iter;
-  sendl=sendl+revcr;
+  sendl=sendl+recvr;
   sendr=sendr+recvl;
   value=sendl+sendr;
   
