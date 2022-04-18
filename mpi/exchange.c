@@ -40,7 +40,7 @@ int main(int argc,char *argv[])
     
 
 recvl=-1;
-recvr=-1;
+recvr=1;
 value=1000;
 /* Zeroth processor broadcasts # iterations to all the rest */
     int root=0;
