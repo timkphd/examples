@@ -74,7 +74,7 @@ for (iter=0 ;iter< iterations;iter++) {
       MPI_Recv(&recvl,1,MPI_INT,left,10,MPI_COMM_WORLD,&status);
     }
 /* do some calculation */
-  newval=value+sendl+sendr;
+  newval=value+recvl+recvr;
   dv=value-newval;
   value=newval;
   
