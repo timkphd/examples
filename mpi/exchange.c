@@ -74,7 +74,7 @@ for (iter=0 ;iter< iterations;iter++) {
   res=recvl+recvr+iter;
   sendl=sendl+recvr;
   sendr=sendr+recvl;
-  value=sendl+sendr;
+  value=value+sendl+sendr;
   
 /* and a reduction to see what's happening */
   MPI_Allreduce(&res, &gres, 1,MPI_INT, MPI_SUM, MPI_COMM_WORLD);
