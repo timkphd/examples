@@ -12,7 +12,7 @@ int main(int argc,char *argv[])
   int iterations,iter;
   int res,gres;
   
-/
+
   
 /* Some variables required by MPI */
   MPI_Status status; 
@@ -71,8 +71,8 @@ for (iter=0 ;iter< iterations;iter++) {
       MPI_Recv(&recvl,1,MPI_INT,left,10,MPI_COMM_WORLD,&status);
     }
 
-  res=recvl+recvr;
-  MPI_Allreduce(&res, &gres, 1,MPI_INT MPI_SUM, MPI_COMM_WORLD);
+  res=recvl+recvr+iter;
+  MPI_Allreduce(&res, &gres, 1,MPI_INT, MPI_SUM, MPI_COMM_WORLD);
   printf("%d %d\n",myid,gres);
 }
 /*  Stop MPI */  
