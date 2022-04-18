@@ -46,7 +46,7 @@ value=10000;
     int root=0;
     if (myid == root) iterations=5;
     MPI_Bcast(&iterations,   1,MPI_INT,   root,MPI_COMM_WORLD);
-    printf("proc %d got %6d with bcast value %6d\n",myid,iterations); 
+    printf("proc %d got %6d\n",myid,iterations); 
 
 for (iter=0 ;iter< iterations;iter++) {
   sendl=value;
