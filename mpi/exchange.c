@@ -70,8 +70,12 @@ for (iter=0 ;iter< iterations;iter++) {
 /* rec from left */
       MPI_Recv(&recvl,1,MPI_INT,left,10,MPI_COMM_WORLD,&status);
     }
-
+/* do some calculation */
   res=recvl+recvr+iter;
+  sendl=sendl+recvr;
+  sendr=sendr+recvl;
+  
+/* and a reduction to see what's happening */
   MPI_Allreduce(&res, &gres, 1,MPI_INT, MPI_SUM, MPI_COMM_WORLD);
   printf("%d %d %d\n",myid,iter,gres);
 }
