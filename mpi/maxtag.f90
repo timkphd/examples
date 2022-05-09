@@ -6,6 +6,15 @@
 !  Processor 0 sends an integer to processor 1,
 !  while processor 1 receives the integer from proc. 0
 !****************************************************************
+
+!*****
+!  PMPI_Send(97).: Invalid tag, value is 1196597
+!  In: PMI_Abort(537515524, Fatal error in PMPI_Send: Invalid tag, error
+!  stack:
+!  PMPI_Send(159): MPI_Send(buf=0x63ec7e0, count=60, MPI_INTEGER, dest=597,
+!  tag=1196597, MPI_COMM_WORLD) failed
+!  PMPI_Send(97).: Invalid tag, value is 1196597)
+!*****
       program hello
       use fmpi
 !     include "mpif.h"
@@ -30,7 +39,7 @@
       write(*,*)val, flag, ierr
       maxtag=VAL
       tag=14227094
-      tag=maxtag-1
+!      tag=maxtag-1
       if(tag .gt. maxtag) then
         write(*,*)"warning maxtag is ",maxtag," tag is ",tag
       endif
