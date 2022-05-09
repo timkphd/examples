@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+import os
+import sys
+command="squeue -j JOB --format='%all'"
+try:
+    job=sys.argv[1]
+    command=command.replace("JOB",job)
+    i=os.popen(command,"r")
+    dat=i.readlines()
+    head=dat[0].split("|")
+    info=dat[1].split("|")
+    for h,i in zip(head,info) :
+        print("%17s  %s" % (h,i))
+except:
+    print("USAGE:")
+    print(sys.argv[0]," JOBID")
+
+

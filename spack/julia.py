@@ -30,7 +30,7 @@ class Julia(Package):
     maintainers = ['timkphd'] 
  
     version('1.7.2', sha256='c1b4f1f75aac34c40e81805cba2d87f1e72f9ce1405a525273c3688eee12366f') 
-    version('1.8.0', sha256='5afbdd99bbec4c6dd0227cdd5432ae6bf0b39fff428f09282d6e38485918397c')
+    #version('1.8.0', sha256='5afbdd99bbec4c6dd0227cdd5432ae6bf0b39fff428f09282d6e38485918397c')
  
     # depends_on nothing 
  
