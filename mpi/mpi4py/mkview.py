@@ -54,8 +54,8 @@ methods = ['nearest', 'bilinear']
 methods = [ 'bicubic']
 text=True
 skipone=True
-def plotit(f,fname,nxin=64,nyin=64) :
-	print(fname)
+def plotit(f,fnumber=-100,nxin=64,nyin=64) :
+	print(fnumber)
 	try:
 		dolog=os.environ['LOG']
 		if (dolog.find("t") > -1  or dolog.find("T") > -1) :
@@ -100,7 +100,7 @@ def plotit(f,fname,nxin=64,nyin=64) :
 	try:
 		atitle=os.environ['TITLE']
 	except:
-		atitle="frame%3.3d" % (fname)
+		atitle="frame%3.3d" % (fnumber)
 	try:
 		cm=os.environ['CMAP']
 	except:
@@ -131,7 +131,7 @@ def plotit(f,fname,nxin=64,nyin=64) :
 
 
 if __name__ == '__main__':
-	fname=0
+	fnumber=0
 	try:
 		mysize=os.environ['SIZE']
 	except:
@@ -140,5 +140,5 @@ if __name__ == '__main__':
 	nx=int(mysize[0])
 	ny=int(mysize[1])
 	for f in sys.argv[1:] :
-		fname=fname+1
-		plotit(f,fname,nx,ny)
+		fnumber=fnumber+1
+		plotit(f,fnumber,nx,ny)
