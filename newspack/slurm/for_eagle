@@ -1,0 +1,18 @@
+diff --git a/slurm/slurm.sh b/slurm/slurm.sh
+index 6cc3357..4608004 100755
+--- a/slurm/slurm.sh
++++ b/slurm/slurm.sh
+@@ -26,11 +26,11 @@ cat > packages.tmp << HERE
+   python:
+     externals:
+     - spec: "python@3.9.12"
+-      prefix: /nopt/nrel/apps/220511a/install/opt/spack/linux-centos7-skylake_avx512/gcc-12.1.0/python-3.9.12-4ooquj3flunsytk35vfst5mkqvvkyfnd
++      prefix: /nopt/nrel/apps/210928a/level00/gcc-9.4.0/python-3.9.6
+   cmake:
+     externals:
+     - spec: "cmake@3.23.1"
+-      prefix: /nopt/nrel/apps/220511a/install/opt/spack/linux-centos7-skylake_avx512/gcc-12.1.0/cmake-3.23.1-jbxmfp32acs25qidxcxzkuzjmsduzjhl
++      prefix: /usr
+   openssl:
+     externals:
+     - spec: "openssl@1.1.1o"
