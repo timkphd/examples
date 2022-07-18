@@ -1,0 +1,119 @@
+#1
+(define sigma (lambda (x y) 
+                (if (= x y
+                       ) 
+                    x 
+                    (+ x (sigma (+ x 1) y
+                                )
+                       )
+                    )
+                )
+  )
+#2a
+(define exp (lambda (m n)
+              (if (= n 0)
+                  1
+                  (* m (exp m (- n 1)))
+                  )))
+#2b
+(define f1 (lambda (z m n)
+             (if (> z n) 
+                 0
+                 (+ 1 (f1 (* z m) m n)))))
+(define mlog (lambda (m n) (- 
+                             (f1 1 m n) 
+                             1 
+                             )
+               )
+  )
+
+#3
+(define choose (lambda (n k)
+                 (if (= 0 k) 
+                     1
+                     (if (= n k) 
+                         1
+                         (+ (choose (- n 1) k)
+                            (choose (- n 1 ) (- k 1)))))))
+
+(define fact (lambda (n)
+               (if (= n 0)
+                   1
+                   (* n (fact (- n 1))))))
+(define choose2 (lambda (n k)
+                   (/ (fact n) (* (fact k) 
+                                  (fact (- n k))))))
+                       
+
+#4
+(define fib (lambda (m)
+              (if (= 0 m) 
+                  0
+                  (if (= 1 m)
+                      1
+                      (+ (fib (- m 1)) 
+                         (fib (- m 2))
+                         )
+                      )
+                  )
+              )
+  )
+
+  
+#5a
+(define ip (lambda (x y)
+             (if (= y 1) #f
+                 (if (= x y) #f
+                 (or 
+                   (ip (+ 1 x) y)
+                   (= 0 (modulo y x))
+                   )
+                 )
+             ))
+  )
+(define prime (lambda (x) (not (ip 2 x))))
+#5b
+(define nextprime (lambda (n)
+                    (if (prime (+ n 1))
+                        (+ n 1)
+                        (nextprime (+ n 1)))))
+(define mthprime (lambda (k n)
+                   (if (= 1 n) 
+                       k
+                       (mthprime (nextprime k) (- n 1)))))
+(define nthprime (lambda (n) (mthprime 1 n)))
+#5c
+(define sprimes (lambda (k n)
+                  (if (= n 1)
+                      k
+                      (+ (sprimes (nextprime k) 
+                                  (- n 1))
+                         k))))
+(define sumprimes (lambda (n)
+                    (sprimes 1  n)))
+
+(define rprime (lambda (n m j)
+                 (if (or (= j n) (= j m)) 
+                     #f
+                     (or
+                       (rprime n m (+ j 1))
+                       (and
+                         (= 0 (modulo n j))
+                         (= 0 (modulo m j)))))))
+(define relprime (lambda (n m)
+                   (not (rprime n m 2))))
+                   
+                   
+#6
+(define div (lambda (n m) (floor (/ n m))))
+
+(define b2 (lambda (n m)
+                 (if (= 0 n)
+                     0
+                     (+ (b2 (div n 2) (* 10 m))
+                        (if (= (modulo n 2) 0)
+                            0
+                            m)))))
+(define binary (lambda (n) (b2 n 1)))
+
+

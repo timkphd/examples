@@ -1,0 +1,38 @@
+(append 'a '(1 2 3))
+(append '(1 2 3) '(a) )
+(cons '(1 2 3) '(a))
+(define list1 (lambda (l)
+
+(define rev (lambda (l)
+              (if (null? l) l
+                  (append (rev (cdr l)) (list (car l))))))
+
+(rev '(a b c))
+(rev '(a b (1 (l m n) 3) d))
+                
+                
+                
+(define twist (lambda (l)
+                (if (null? l) l
+                    (append (twist (cdr l)) (if (list? (car l))
+                                                       (list (twist (car l)))
+                                                       (list (car l)))))))
+(twist '(a b (1 (l m n) 3) d))
+                
+(define flatten (lambda (l)
+                  (if (null? l) l
+                      (append (if (list? (car l))
+                                  (flatten (car l))
+                                  (list (car l)))
+                               (if (list? (cdr l))
+                                  (flatten (cdr l))
+                                  (list (cdr l)))))))
+                
+(flatten '(a b (1 (l m n) 3) d))
+ 
+                
+                
+                
+                                                       
+             
+                

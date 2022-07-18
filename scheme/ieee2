@@ -1,0 +1,111 @@
+(define ln2 (lambda (x) (/ (log x) (log 2))))
+
+(define fraction (lambda (x) (- x (truncate x))))
+
+(define f2 (lambda (x a)
+             (if (> x 1.0)
+                 (if (>= x 2.0)
+                     (list (+ 1 (* -1 a)) (- x 1))
+                     (list (* -1 a) x)
+                     )
+                 (f2 (* x 2) (+ a 1)))))
+
+
+(define f1 (lambda (x) (f2 x 0)))
+
+
+
+(define f3 (lambda (x) (list (inexact->exact (truncate (ln2 x))) (expt 2 (fraction (ln2 x))))))
+
+             
+(define f (lambda (x)
+            (if (< x 2)
+                (f1 x)
+                (f3 x)
+                )))
+
+
+(define frac (lambda (x i k l)
+               (if (= i 24) 
+                   l
+                   (if (< (- x (/ k 2)) 0)
+                       (frac x (+ i 1) (/ k 2) (append l '(0)))
+                       (frac (- x (/ k 2)) (+ i 1) (/ k 2) (append l '(1)))))))
+
+
+
+
+(define newbase (lambda (x b l)
+                  (if (= 0 x)
+                      l
+                      (append (newbase (quotient x b) b l) (list (remainder x b))))))
+
+(define base2 (lambda (x) (newbase x 2 '())))
+
+
+(define expand8 (lambda (x)
+                  (if (= 8 (length x))
+                      x
+                      (expand8 (append '(0) x)))))
+
+(expand8 (base2 (+ 127 (first (f 32.4)))))
+
+(frac (- (car (cdr (f 5))) 0.9999999999999999) 1 1 '())
+
+
+(define ieeea (lambda (x) (append
+                           (expand8 (base2 (+ 127 (first (f x)))))
+                           (frac (- (car (cdr (f x))) 0.9999999999999999) 1 1 '()))))
+
+(define ieee (lambda (x) (if (< x 0)
+                             (cons '1 (ieeea (abs x)))
+                             (cons '0 (ieeea x)))))
+
+
+
+
+
+
+
+
+
+(define shiftright (lambda (x) 
+                     (if (<= (length x) 1) '()
+                            (reverse (rest (reverse x))))))
+(define last (lambda (x) (first (reverse x))))
+
+
+
+(define base10 (lambda (l x z)
+                 (if (= 0 (length l)) 
+                     0
+                     (+ 
+                       (* x (last l)) 
+                       (base10 (shiftright l)  (* 2 x) z)))))
+
+
+
+
+(define baseX (lambda (l x z)
+                 (if (= 0 (length l)) 
+                     0
+                     (+ 
+                       (* x (first l)) 
+                       (baseX (rest l)  (* 0.5 x) z)))))
+(define part (lambda (x f l z)
+               (if (> f l) z
+                   (cons (nth f x) (part x (+ 1 f) l z)))))
+
+
+(define p1 (lambda (x)
+             (expt 2 (-  (base10 (part x 2 9 '()) 1 0) 127))))
+(define p2 (lambda (x)
+             (basex (cons '1 (list-tail x 9)) 1 0)))
+
+(define thesign (lambda (x)
+                  (if (= 1 (first x)) -1 1)))
+
+
+
+(define toreal (lambda (x)
+                 (* (thesign x) (* (p1 x) (p2 x)))))

@@ -1,0 +1,134 @@
+(define strip (lambda (n gamma)
+                (* 2 
+                   (/ 1.0 (* n (sqrt gamma)))
+                   (- n 1.0)
+                   (+ n gamma))))
+
+(define arc (lambda (n)
+              (* 2 
+                 (+ 
+                   (/ (* (- n 1) 2) 
+                      (sqrt pi)) 
+                   (/ (* (sqrt pi) (- n 1)) 
+                      n)))))
+
+(define nx_ny (lambda (nx ny)
+                (* 2 
+                   (+ (* 
+                        (- ny 1) 
+                        (sqrt (/ nx ny)))
+                      (* (- nx 1) 
+                         (sqrt (/ ny nx)))))))
+
+(arc 4)
+(arc 9)
+(arc 16)
+
+(nx_ny 2 2)
+(nx_ny 4 1)
+(nx_ny 3 3)
+(nx_ny 9 1)
+(nx_ny 4 4)
+(nx_ny 8 2)
+
+(define myrs '(
+                (  0.790955341067054174E-01   0.121659464862479971)
+                (  0.617632355501636574E-01   0.141598195003061395)
+                (  0.471993983343537982E-01   0.163223300123251397)
+                (  0.336028330743852605E-01   0.183967372489322128)
+                (  0.165728151840597061E-01   0.202598476248280313)
+                (  0.552427172801990291E-02   0.220763611733512360)
+                (  0.221039911731173572       0.239080371064052444)
+                (  0.238569241946913591       0.255374361385643012)
+                (  0.255613252327857587       0.270914701318745343)
+                (  0.270689314672975245       0.285824345780104960)
+                (  0.286464251832798500       0.300400530152037160)
+                (  0.300197282138138288       0.312939144568277039)
+                (  0.313328978596179308       0.326119241636590673)
+                (  0.325932031953174273       0.337704292914859150)
+                (  0.337704292914859150       0.349952912569141239)
+                (  0.350301558147583736       0.361111632778736424)
+                (  0.361618337844784921       0.372427701142282130)
+                (  0.371607374813289981       0.383250705825344817)
+                (  0.383409929224746371       0.393931319858709661)
+                (  0.393776350804774689       0.405234608456169487)))
+
+
+
+
+(define dogamma (lambda (rmin rmax)
+                  (/ (* 0.5 pi rmax) (- rmax rmin))))
+
+
+
+(define catmma (lambda (x)
+                 (dogamma (first x) (first (rest x)))))
+
+
+
+
+
+(define mapcar (lambda (f l) (if (null? l) 
+                                 '()
+                                 (cons (f (car l)) (mapcar f (cdr l))))))
+
+
+(mapcar catmma myrs)
+
+
+
+(define strip4 (lambda (gamma)
+                 (strip 4 gamma)))
+
+(define strip9 (lambda (gamma)
+                 (strip 9 gamma)))
+
+
+(define answer (mapcar strip4 (mapcar catmma myrs)))
+(define answer (mapcar strip9 (mapcar catmma myrs)))
+
+
+
+
+(define plist (lambda (l)
+                (if (null? l) (newline)
+                    (begin
+                      (newline)
+                      (write (first l))
+                      (plist (rest l))))))
+
+
+(plist answer)
+
+
+
+(define mymerge (lambda (l1 l2)
+                  (if (null? l1) (list l2)
+                      (cons (first l1) (mymerge (rest l1) l2)))))
+
+
+(define mymerge2 (lambda (l1 l2)
+                   (if (null? l1) '()
+                       (cons (mymerge 
+                               (first l1)
+                               (first l2))
+                             (mymerge2 
+                               (rest l1)
+                               (rest l2))))))
+
+
+(plist (cons '((rmin rmax cost)) (mymerge2  myrs answer)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,212 @@
+
+
+
+(define sum (lambda (x)
+              (if (null? x)
+                  0
+                  (+ (first x) (sum (rest x))))))
+
+
+(define ave (lambda (x)
+              (/ (* 1.0 (sum x)) (length x))))
+
+
+
+(define sqrlist (lambda (x)
+                  (if (null? x)
+                      '()
+                      (cons (* (first x) (first x)) (sqrlist (rest x))))))
+
+                  
+                  
+(define sqr (lambda (x)
+              (* x x)))
+
+
+(define std (lambda (x)
+              (/ (- (* (length x) (sum (sqrlist x))) (sqr (sum x)))
+                 (* (length x) (- (length x) 1.0)))))
+
+
+
+
+
+(define ta05 '(6.314 2.920 2.353 2.132 2.015
+               1.943 1.895 1.860 1.833 1.812
+               1.796 1.782 1.771 1.761 1.753
+               1.746 1.740 1.734 1.729 1.725
+               1.721 1.717 1.714 1.711 1.708
+               1.706 1.703 1.701 1.699 1.645))
+
+(define mth (lambda (n x)
+              (if (< n (length x))
+                      (nth n x)
+                      (last x))))
+
+                  
+(define top (lambda (x)
+              (+ (ave x) (/ (* (mth (+ (length x) 1) ta05) 
+                               (sqrt (std x)))
+                            (sqrt (length x))))))
+
+(define bottom (lambda (x)
+              (- (ave x) (/ (* (mth (+ (length x) 1) ta05) 
+                               (sqrt (std x)))
+                            (sqrt (length x))))))
+
+
+(define 90_pre_con (lambda (x)
+                     (list '90% 'confidence 'interval 'for 'average (bottom x) (ave x) (top x))))
+
+
+                              
+
+
+(define data1 '(120 116 96  100  102  100  112  100  120  80))
+
+(define data2 '(90 104 108 114 130 116 102 108 100 100))
+
+
+(define data3 '(104 110 132 114 146 114 108 132 80 106))
+
+
+                
+
+                  
+(define mod1_time '(run time 40.831))
+(define mod1 '( 104 100 106 98 112 110 104 92 108 100 96 100 84 104 118 104 106 102 86 80))
+
+(define mod2_time '(run time 25.249))
+(define mod2 '(102 102 80 104 110 118 120 138 134 100 102 112 102 106 108 106 130 118 100 96 ))
+ 
+ 
+ 
+(define mod3_time '(run time 20.492))
+(define mod3 '(106 92 132 144 132 128 122 124 94 134 108 106 102 86 98 136 98 118 102 110))
+
+
+data1
+(90_pre_con data1)
+(list 'sigma '= (sqrt (std data1)))
+
+data2
+(90_pre_con data2)
+(list 'sigma '= (sqrt (std data2)))
+
+data3
+(90_pre_con data3)
+(list 'sigma '= (sqrt (std data3)))
+
+mod1
+mod1_time
+(90_pre_con mod1)
+(list 'sigma '= (sqrt (std mod1)))
+mod2
+mod2_time
+(90_pre_con mod2)
+(list 'sigma '= (sqrt (std mod2)))
+mod3
+mod3_time
+(90_pre_con mod3)
+(list 'sigma '= (sqrt (std mod3)))
+
+
+(define mod-1 '(230 220 228 228 236 246 230 244 220 216 246 256 228 234 196 218 252 270 208 200 232 238 220 240 234 236 256 218 244 244 226 256 196 212 250 230 236 256 
+248 262))
+
+(90_pre_con  mod-1 )
+(list 'sigma '= (sqrt (std  mod-1 )))
+
+
+
+
+(define mymax_help (lambda (x  themax)
+                     (if (null? x) 
+                         themax
+                         (if (> (first x) themax)
+                             (mymax_help (rest x) (first x))
+                             (mymax_help (rest x) themax)))))
+(define mymax (lambda (x)
+                (mymax_help x (first x))))
+
+                         
+(define mymin_help (lambda (x  themax)
+                     (if (null? x) 
+                         themax
+                         (if (< (first x) themax)
+                             (mymin_help (rest x) (first x))
+                             (mymin_help (rest x) themax)))))
+(define mymin (lambda (x)
+                (mymin_help x (first x))))
+
+
+(define thedif (lambda (x y)
+                 (if (null? x)
+                     '()
+                     (cons (if (list? x)
+                               (- (first x) y)
+                               (- x y))
+                           (thedif (rest x) y)))))
+
+(define theabsdif (lambda (x y)
+                 (if (null? x)
+                     '()
+                     (cons (if (list? x)
+                               (abs (- (first x) y))
+                               (abs (- x y)))
+                           (theabsdif (rest x) y)))))
+
+  
+(define maxdif (lambda (x y)
+                 (mymax (thedif (x y)))))
+
+
+(define imbalance (lambda (times)
+                    (/ (mymax (theabsdif times (ave times))) (length times))))
+
+                    
+(define ave_bal (lambda (l) (cons (ave l) (list (imbalance l)))))
+
+                    
+
+
+(define times1 '(      683.5   644.8   662.9   691.3))
+(define times2 '(      702.5   657.2   652.2   684.7))
+(define times3 '(      689.6   654.0   658.6   689.1))
+(define times4 '(      688.0   649.8   668.4   683.3))
+(define times5 '(      685.6   657.6   665.4   675.3))
+(define times6 '(      685.4   666.2   657.7   680.9))
+(define times7 '(      694.4   648.7   665.6   684.8))
+(define times8 '(      692.5   647.1   668.8   680.2))
+(define times9 '(      688.7   661.5   662.6   678.1))
+
+(ave_bal times1)
+(ave_bal times2)
+(ave_bal times3)
+(ave_bal times4)
+(ave_bal times5)
+(ave_bal times6)
+(ave_bal times7)
+(ave_bal times8)
+(ave_bal times9)
+
+(define times1 '(585.2 615.2 611.9 611.7 609.4 611.6 603.2 610.5 611.0))
+(define times2 '(571.8 613.7 614.3 613.7 613.3 613.9 611.3 615.1 613.9))
+(define times3 '(575.0 610.3 614.5 611.5 609.7 605.8 612.6 612.9 617.9))
+(define times4 '(568.8 617.0 612.4 615.1 614.6 604.9 612.6 616.3 617.0))
+(define times5 '(575.6 614.5 615.3 612.8 611.6 596.1 612.6 614.3 614.8))
+(define times6 '(570.5 611.9 615.5 614.6 609.4 613.9 613.6 616.4 611.3))
+(define times7 '(589.7 616.6 613.5 612.5 609.5 606.2 602.3 614.3 609.6))
+(define times8 '(591.2 612.5 609.7 611.9 608.0 611.1 616.9 611.9 604.0))
+(define times9 '(582.0 613.9 612.1 611.7 612.7 613.5 613.3 611.4 608.4))
+(ave_bal times1)
+(ave_bal times2)
+(ave_bal times3)
+(ave_bal times4)
+(ave_bal times5)
+(ave_bal times6)
+(ave_bal times7)
+(ave_bal times8)
+(ave_bal times9)
+
+

@@ -1,0 +1,29 @@
+(define poly (lambda (n)
+              (+ (* 2 (* n n)) (+ (* 3 n) -1))))
+
+
+(define poly (lambda (n)
+              (sum '( (eval (* 2 (* n n)))  (eval (* 3 n)) -1))))
+
+(define f (lambda (n a)
+            (if (= n 1 )
+                a
+                (+ (f (- n 1) a)
+                   (poly n)))))
+(f 2 1)
+
+
+(sum '( (* 2 (* 2 2))  (* 3 2) -1))
+
+
+
+(define x (car '( (* 2 (* 2 2))  (* 3 2) -1)))
+
+
+(define sum (lambda (l)
+              (if (null? l) 
+                  0
+                  (+ (if (list? (car l))
+                         (eval (car l))
+                         (car l)) 
+                     (sum (cdr l))))))

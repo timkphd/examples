@@ -1,0 +1,80 @@
+;(a b c) (!a b c) (!a !b c)
+; note 0 -> in the clause, 1 -> not in the clause
+; a     100011  box1 (100011 344655)  c2=2s-s(i)
+;!a     100100  box2 (100100 344566)
+; b     010001  box3 ( 10001 434665)
+;!b     010110  box4 ( 10110 434556)
+; c     001010  box5 (  1010 443656)
+;!c     001101  box6 (  1101 443565)
+;s      222333
+;x        -111
+;sp     222222
+;goal1  111222 = (1/2)sp
+;goal2 1222776 = 2nS -(1/2)sp
+;(sumbox (list box1 box4 box6))  (111222 1222776)  -> (a=t b=f c=f)
+
+(define n 3)
+(define  !a 100011)
+(define   a 100100)
+(define  !b 010001)
+(define   b 010110)
+(define  !c 001010)
+(define   c 001101)
+(define x -111)
+(define s (+ a !a b !b c !c))
+(define sp (+ s x))
+
+
+(define box1 (list  a (- (* 2 s)  a)))
+(define box2 (list !a (- (* 2 s) !a)))
+(define box3 (list  b (- (* 2 s)  b)))
+(define box4 (list !b (- (* 2 s) !b)))
+(define box5 (list  c (- (* 2 s)  c)))
+(define box6 (list !c (- (* 2 s) !c)))
+
+
+(define goal1 (* 1/2 sp))
+(define goal2 (- (* n (* 2 s)) (* 1/2 sp)))
+
+(define sum1 (lambda (l)
+               (if (null? l ) 0
+                   (+ (first (first l)) (sum1 (rest l))))))
+
+
+(define sum2 (lambda (l)
+               (if (null? l ) 0
+                   (+ (cadr (first l)) (sum2 (rest l))))))
+
+
+(define sumbox (lambda (l)
+                 (list (sum1 l) (sum2 l))))
+(define test (lambda (goal1 goal2 l)
+               (and (>= (sum1 l) goal1) (>= (sum2 l) goal2))))
+
+
+(sumbox (list box1 box3 box5))
+(sumbox (list box1 box3 box6))
+(sumbox (list box1 box4 box5))
+(sumbox (list box1 box4 box6)) ;correct t f f
+(sumbox (list box2 box3 box5))
+(sumbox (list box2 box3 box6))
+(sumbox (list box2 box4 box5))
+(sumbox (list box2 box4 box6))
+
+
+(test goal1 goal2 (list box1 box3 box5))
+(test goal1 goal2 (list box1 box3 box6))
+(test goal1 goal2 (list box1 box4 box5))
+(test goal1 goal2 (list box1 box4 box6)) ;correct t f f
+(test goal1 goal2 (list box2 box3 box5))
+(test goal1 goal2 (list box2 box3 box6))
+(test goal1 goal2 (list box2 box4 box5))
+(test goal1 goal2 (list box2 box4 box6))
+()
+
+
+
+
+
+
+ 
