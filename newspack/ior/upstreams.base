@@ -1,0 +1,10 @@
+upstreams:
+  spack-level01:
+    install_tree: /nopt/nrel/apps/220525b/level01/install/opt/spack
+    modules:
+            lmod: /nopt/nrel/apps/220525b/level01/modules/lmod/linux-rocky8-x86_64/gcc
+  spack-level02:
+    install_tree: /nopt/nrel/apps/220525b/level02/install/opt/spack
+    modules:
+            lmod: /nopt/nrel/apps/220525b/level02/modules/lmod/linux-rocky8-x86_64/intel-oneapi-mpi/2021.6.0-ghyk7n2/gcc
+            lmod: /nopt/nrel/apps/220525b/level02/modules/lmod/linux-rocky8-x86_64/openmpi/4.1.3-lq7u2m7/gcc

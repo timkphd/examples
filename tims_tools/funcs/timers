@@ -1,0 +1,17 @@
+stamp () { date +"%y%m%d%H%M%S"; }
+
+# A simple delta timer (seconds)
+# now=`mytime`
+# delta=`mytime $now`
+mytime () 
+{
+    now=`date +"%s"`
+    if (( $# > 0 )); then
+        rtn=`python -c "print($now - $1)"`
+    else
+       rtn=$now
+    fi
+    echo $rtn
+}
+
+
