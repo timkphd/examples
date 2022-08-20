@@ -1,0 +1,32 @@
+(define heap '(3 5 13 8 10 27 14 33 31 12 28))
+(define count 0)
+(define k 0)
+(define x 0.0)
+(define increment (lambda () (set! count (+ 1 count))))
+
+(define explore (lambda (i)
+                  (if (and (< count k) 
+                           (<= i (length heap)) 
+                           (< (nth i heap) x))
+                      (begin
+                          (write i ) (write '_) (write (nth i heap)) (newline)
+                        (increment)
+                        (explore (* 2 i))
+                        (explore (+ 1 (* 2 i)))
+                        ))))
+
+(define doit (lambda (n y)
+               (begin
+                 (set! k n)
+                 (set! x y)
+                 (set! count 0)
+                 (explore 1)
+                 (< count k))))
+
+(doit 9 30)
+(doit 9 26)
+(doit 11 50)
+(doit 4 50)
+(doit 4 9.5)
+
+

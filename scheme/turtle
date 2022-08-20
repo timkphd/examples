@@ -1,0 +1,92 @@
+(define make-turtle
+  (lambda (pos heading)
+    (let ([pos-at-creation pos]
+          [hdg-at-creation heading])
+      (lambda (msg)
+        (let ([oldpos (turtle-position)]
+              [oldhdg (turtle-heading)])
+          (let ([restore (lambda ()
+                           (begin
+                             (pen-up)(turtle-set-position oldpos)
+                             (turtle-set-heading oldhdg) (pen-down)
+                             'done))])
+          (cond
+            [(eq? msg 'reset)
+             (begin
+               (set! pos pos-at-creation)
+               (set! heading hdg-at-creation)
+               (restore))]
+            [(eq? msg 'turn)
+             (lambda (angle)
+                     (begin
+                       (set! heading (+ heading angle))
+                       (restore)))]
+            [(eq? msg 'ahead)
+             (lambda (steps)
+             (begin
+               (pen-up) (turtle-set-position pos)
+               (turtle-set-heading heading) (pen-down)
+               (forward steps) (set! pos (turtle-position))
+               (restore)))]
+            )))))))
+  (define turtle-reset
+    (lambda (turtle)
+      (turtle 'reset)))
+  (define turtle-right
+    (lambda (turtle angle)
+      ((turtle 'turn) angle)))
+  (define turtle-forward
+    (lambda (turtle steps)
+      ((turtle 'ahead) steps)))
+  (define G (make-graphics-window '(300 300)))
+  (define t1 (make-turtle '(0 0) 0))
+  (define t2 (make-turtle '(0 0) 60))
+  (define t3 (make-turtle '(0 0) 120))
+  (define t4 (make-turtle '(0 0) 180))
+  (define t5 (make-turtle '(0 0) 240))
+  (define t6 (make-turtle '(0 0) 300))
+  (define rspiral
+    (lambda (n turtle)
+      (begin
+        (turtle-forward
+          turtle
+          (* 10 (+ 1 n)))
+        (turtle-right turtle 60)
+        'done)))
+ (define lspiral
+    (lambda (n turtle)
+      (begin
+        (turtle-forward
+          turtle
+          (* 10 (+ 1 n)))
+        (turtle-right turtle -60)
+        'done)))
+  (define manager
+    (lambda args
+      (let ([f (first args)] [n (list-ref args 1)]
+            [t-list (rest (rest args))] [p-state (pen-state)]
+            [show-state (turtle-show)])
+        (letrec ([time-slice
+                   (lambda (ctr)
+                     (if (= ctr n)
+                         'done
+                         (begin
+                           (map (lambda (turtle) (f ctr turtle))
+                                t-list)
+                           (time-slice (+ 1 ctr)))))])
+                 (begin
+                   (turtle-hide) (time-slice 0)
+                   (if show-state (turtle-show))
+                   (pen-set-state p-state)
+                   'done)))))
+
+(manager rspiral 6 t1 t2 t3 t4 t5 t6)
+(manager (lambda (n turtle) (turtle-reset turtle))
+           1 t1 t2 t3 t4 t5 t6)
+(manager lspiral 6 t1 t2 t3 t4 t5 t6)
+
+  
+  
+  
+                       
+                     

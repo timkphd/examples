@@ -1,0 +1,10 @@
+(define nways (lambda (coins x total)
+               (if (> x coins)
+                   (list coins total)
+                   (cond
+                     ((= 0 (modulo x 50)) (nways coins (+ 1 x) (+ 4 total)))
+                     ((= 0 (modulo x 25)) (nways coins (+ 1 x) (+ 2 total)))
+                     ((and (> x 10) (= 0 (modulo x 10))) (nways coins (+ 1 x) (+ 4 total)))
+                     ((= 0 (modulo x 10)) (nways coins (+ 1 x) (+ 2 total)))
+                     ((= 0 (modulo x  5)) (nways coins (+ 1 x) (+ 1 total)))
+                     (else (nways coins (+ 1 x) total))))))

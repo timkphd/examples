@@ -1,0 +1,16 @@
+(define minchange (lambda (cents coins)
+                    (if (null? coins)
+                        '()
+                        (cons (intdiv cents (car coins))
+                              (minchange 
+                                (modulo cents (car coins)) 
+                                (cdr coins))))))
+
+(define min_each (lambda (cents coins)
+                   (if (null? coins) 
+                       '()
+                       (if (>= cents (car coins))
+                           (cons (minchange cents coins) 
+                                 (min_each cents (cdr coins)))
+                           (min_each cents (cdr coins))))))
+

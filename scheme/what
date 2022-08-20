@@ -1,0 +1,23 @@
+(define list1 (lambda (x) (cons x '())))
+(define list2 (lambda (x y) (cons x (cons y '()))))
+(define f1 (lambda (x) (list2 (+ x 0) (+ x 1))))
+
+(define makeb (lambda (f1 l1) (if (null? l1) '() (cons (f1 (car l1)) (makeb f1 (cdr l1))))))
+
+(define l1 '(1 2 3 4 5))
+
+(define pair_x_and_list (lambda (x list)
+	(if (null? list) '()
+		(cons (cons x (list1 (car list))) (pair_x_and_list x (cdr list))))))
+
+
+(define pair_2_lists (lambda (l1 l2)
+	(if (null? l1) '()
+		(append (pair_x_and_list (car l1)  (car l2)) (pair_2_lists (cdr l1) (cdr l2))))))
+
+(define mkpairs (lambda (l1 f1) (pair_2_lists l1 (makeb f1 l1))))
+
+(define junk (mkpairs l1 f1))
+
+junk
+

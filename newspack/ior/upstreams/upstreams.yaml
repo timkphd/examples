@@ -1,0 +1,5 @@
+upstreams:
+  spack-level01:
+    install_tree: /nopt/nrel/apps/220525b/level01/install/opt/spack
+    modules:
+            lmod: /nopt/nrel/apps/220525b/level01/modules/lmod/linux-rocky8-x86_64/gcc

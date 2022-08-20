@@ -1,0 +1,82 @@
+
+(define first-n (lambda (n l)
+   (if (null? l) '()
+     (if (= n 0) '()
+       (cons (head l) (first-n (- n 1) (tail l)))))))
+
+(define mpd (lambda (x y) (delay (+ x y))))
+(define z (mpd 3 4))
+(z)
+
+(define p2 (lambda (x) (delay  (cons (+ 2 x) (p2 (+ 2 x))))))
+(define evens (p2 0))
+(first-n 10 (evens))
+
+
+(define p2  (lambda (x) (cons-stream (+ 2 x)  (p2 (+ 2 x)))))
+(define evens (p2 0))
+evens
+
+
+(define even10 (first-n 10 evens))
+even10
+
+;mapcar does not work on infinite lists
+(define mapcar (lambda (func list)
+                 (if (null? list) '()
+                     (cons (func (car list)) (mapcar func (cdr list))))))
+
+
+(define p1  (lambda (x) (cons-stream (+ 1 x)  (p1 (+ 1 x)))))
+
+(define ints (p1 0))
+
+(define mapstream (lambda (func list)
+                 (if (null? list) '()
+                     (cons-stream (func (head list)) (mapstream func (tail list))))))
+
+(define mapsin (mapstream sin ints))
+
+(first-n 20 mapsin)
+
+(define mapints (mapstream p1 ints))
+
+(first-n 5 mapints)
+(first  (first-n 1 mapints))
+(rest (first  (first-n 1 mapints)))
+(first-n 5  (first  (first-n 1 mapints)))
+
+(last (first-n 17 mapints))
+
+(define get-n (lambda (n thestream)
+                (last (first-n n thestream))))
+
+(get-n 17 mapints)
+
+(define get-n-m (lambda (m n thestream)
+                  (get-n m (get-n n thestream))))
+
+(get-n-m 15 16 mapints)
+
+
+
+
+(define ones (cons  1 (lambda () ones)))
+(first-n 20 ones)
+
+
+(define i-list (lambda (x)
+               (cons  x (lambda () (i-list (+ 1 x))))))
+(define ints (i-list 1))
+(define two (cdr ints))
+(two)
+(car (two))
+
+(first-n 20 ints)
+
+
+
+
+
+
+

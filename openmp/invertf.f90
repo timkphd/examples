@@ -38,9 +38,9 @@ subroutine invert (matrix,size)
     implicit none
     real(b8) matrix(:,:)
     integer size
-    integer switch,k, jj, kp1, i, j, l, krow, irow,nmax
+    integer sw,k, jj, kp1, i, j, l, krow, irow,nmax
     parameter (nmax=1000)
-    dimension switch(nmax,2)
+    dimension sw(nmax,2)
     real(b8) pivot,temp
     do  k = 1,size
         jj = k
@@ -55,8 +55,8 @@ subroutine invert (matrix,size)
                 endif
             enddo
         endif
-        switch(k, 1) = k
-        switch(k, 2) = jj
+        sw(k, 1) = k
+        sw(k, 2) = jj
         if (jj .ne. k) then
             do  j = 1 ,size 
                 temp = matrix(jj, j)
@@ -81,8 +81,8 @@ subroutine invert (matrix,size)
     enddo 
     do  l = 1,size
         k = size - l + 1
-        krow = switch(k, 1)
-        irow = switch(k, 2)
+        krow = sw(k, 1)
+        irow = sw(k, 2)
         if (krow .ne. irow) then
             do  i = 1,size
                 temp = matrix(i, krow)

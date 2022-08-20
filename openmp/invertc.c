@@ -118,7 +118,7 @@ void over(FLT ** mat,int size)
 {
         int k, jj, kp1, i, j, l, krow, irow;
         FLT pivot, temp;
-        FLT sw[2000][2];
+        int sw[2000][2];
         for (k = 1 ;k<= size ; k++)
         {
                 jj = k;
@@ -142,7 +142,7 @@ void over(FLT ** mat,int size)
                         for (j = 1 ;j<= size; j++)
                         {
                                 temp = mat[jj][j];
-                                mat[jj][j] = mat[k][ j];
+                                mat[jj][j] = mat[k][j];
                                 mat[k][j] = temp;
                         }
                 for (j = 1 ;j<= size; j++)

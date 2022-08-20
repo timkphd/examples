@@ -1,0 +1,30 @@
+(define fib (lambda (x)
+              (define fib1 (lambda (prev next)
+                             (define fib2 (lambda (newnext)
+                                            (fib1 next newnext)))
+                             (if (= x 2) next
+                                 (begin
+                                   (set! x (- x 1))
+                                   (fib2 (+ prev next))))))
+              (if ( < x 2) x (fib1 1 1))))
+
+(fib 5)
+(fib 200)
+
+(define x 100)
+
+(define z1 (lambda () (begin (write x) (+ 100 x))))
+
+(define z2  (begin (write x) (+ 100 x)))
+
+
+(define z3 (lambda () (begin (set! x 0) (+ 100 x))))
+
+
+(define id (lambda (x) x))
+(define fac (lambda (x)
+              (define fac1 (lambda (x f)
+                              (define fac2 (lambda (y) (f (* x y))))
+                              (if (<= x 1) (f 1) (fac1 (- x 1) fac2))))
+                (fac1 x id)))
+(fac 5)

@@ -1,0 +1,32 @@
+
+(define remove-first
+        (lambda (s los)
+          (if (null? los)
+              '()
+              (if (eq? (car los) s)
+                  (cdr los)
+                  (cons (car los) (remove-first s (cdr los)))))))
+
+
+(define remove
+  (lambda (s los)
+    (if (null? los)
+        '()
+        (if (eq? (car los) s)
+            (remove s (cdr los))            
+            (cons (car los) (remove s (cdr los)))))))
+  
+(define sub1 (lambda (new old)
+               (lambda (x)
+                 (if (list? x)
+                     (if (null? x)
+                         x
+                         (if (eq? old (car x))
+                             (cons new (subst new old (cdr x)))
+                             (cons old (subst new old (cdr x))))))
+                 (if (eq? x old) new old))))
+  
+(define subst 
+  (lambda (new old str)
+    (map (sub1 new old) str)))
+                

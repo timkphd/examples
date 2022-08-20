@@ -1,0 +1,82 @@
+;(a b c) (!a b c) (!a !b c) 1in3sat
+;1 -> in the clause and 0 -> not in the clause
+; a     100011  box1 (100100 344566)  c2=2s-s(i)
+;!a     100100  box2 (100011 344655)
+; b     010001  box3 ( 10110 434556)
+;!b     010110  box4 ( 10001 434665)
+; c     001010  box5 (  1101 443565)
+;!c     001101  box6 (  1010 443656)
+;s      222333
+;x         111
+;sp     222444
+;goal1  111222 = (1/2)sp
+;goal2 1222776 = 2nS -(1/2)sp
+;(sumbox (list box2 box3 box5)) ;(f t t)(111222 1222776) correct
+;solution to 1in3sat is the complement of (f t t) or (t f f)
+
+(define n 3)
+(define a 100100)
+(define !a 100011)
+(define b 010110)
+(define !b 010001)
+(define c 001101)
+(define !c 001010)
+(define x 111)
+(define s (+ a !a b !b c !c))
+(define sp (+ s x))
+
+
+(define box1 (list  a (- (* 2 s)  a)))
+(define box2 (list !a (- (* 2 s) !a)))
+(define box3 (list  b (- (* 2 s)  b)))
+(define box4 (list !b (- (* 2 s) !b)))
+(define box5 (list  c (- (* 2 s)  c)))
+(define box6 (list !c (- (* 2 s) !c)))
+
+
+(define goal1 (* 1/2 sp))
+(define goal2 (- (* n (* 2 s)) (* 1/2 sp)))
+
+(define sum1 (lambda (l)
+               (if (null? l ) 0
+                   (+ (first (first l)) (sum1 (rest l))))))
+
+
+(define sum2 (lambda (l)
+               (if (null? l ) 0
+                   (+ (cadr (first l)) (sum2 (rest l))))))
+
+
+(define sumbox (lambda (l)
+                 (list (sum1 l) (sum2 l))))
+(define test (lambda (goal1 goal2 l)
+               (if (and (>= (sum1 l) goal1) (>= (sum2 l) goal2)) l #f)))
+
+
+(sumbox (list box1 box3 box5)) ;(t t t)(111311 1222687)
+(sumbox (list box1 box3 box6)) ;(t t f)(111220 1222778)
+(sumbox (list box1 box4 box5)) ;(t f t)(111202 1222796)
+(sumbox (list box1 box4 box6)) ;(t f f)(111111 1222887) 
+(sumbox (list box2 box3 box5)) ;(f t t)(111222 1222776) correct
+(sumbox (list box2 box3 box6)) ;(f t f)(111131 1222867)
+(sumbox (list box2 box4 box5)) ;(f f t)(111113 1222885)
+(sumbox (list box2 box4 box6)) ;(f f f)(111022 1222976)
+
+
+(test goal1 goal2 (list box1 box3 box5)) ;#f
+(test goal1 goal2 (list box1 box3 box6)) ;#f
+(test goal1 goal2 (list box1 box4 box5)) ;#f
+(test goal1 goal2 (list box1 box4 box6)) ;#f
+(test goal1 goal2 (list box2 box3 box5)) ;((100011 344655) (10110 434556) (1101 443565))
+(test goal1 goal2 (list box2 box3 box6)) ;#f
+(test goal1 goal2 (list box2 box4 box5)) ;#f
+(test goal1 goal2 (list box2 box4 box6)) ;#f
+()
+
+
+
+
+
+
+
+ 

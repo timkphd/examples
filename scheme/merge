@@ -1,0 +1,48 @@
+(define count 0)
+(define mlist (lambda (a b c)
+                (if (null? a)
+                    (append b c)
+                    (if (null? b)
+                        (append a c)
+                        (begin
+                          (set! count (+ 1 count))
+                          (if (> (car a) (car b)) 
+                            (mlist (cdr a) b (cons (car a) c))
+                            (mlist a (cdr b) (cons (car b) c))))))))
+(mlist '(9 7 6 -10) '(12 10 9 -7) '())
+(merge '(14 12 11 -5) '(13 11 10 -6) '())
+(define count 0)
+(mlist (reverse (mlist '(9 7 6 -10) '(12 10 9 -7) '())) 
+       (reverse (mlist '(14 12 11 -5) '(13 11 10 -6) '())) '())
+
+
+(define merge (lambda (a b)
+                (cond 
+                  ((null? a) b)
+                  ((null? b) a)
+                  ((< (car a) (car b))
+                     (begin
+                       (set! count (+ 1 count))
+                       (cons (car a) (merge (cdr a) b))))
+                  (else 
+                    (begin
+                      (set! count (+ 1 count))
+                      (cons (car b) (merge a (cdr b))))))))
+
+(define count 0)
+(merge '(-7 9 10 12) (merge '(-10 6 7 9) (merge '(-5 11 12 14) '(-6 10 11 13))))
+count
+
+(define count 0)
+(merge '(-10 6 7 9) (merge  '(-7 9 10 12) (merge '(-6 10 11 13) '(-5 11 12 14) )))
+count
+(define count 0)
+(merge (merge '(-10 6 7 9) '(-7 9 10 12)) (merge '(-6 10 11 13) '(-5 11 12 14)))
+count
+(define count 0)
+(merge (merge  '(13 14 15 16) '(5 6 7 8 ) ) (merge  '(9 10 11 12 )  '(1 2 3 4) ))
+count
+
+
+
+                

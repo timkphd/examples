@@ -1,0 +1,14 @@
+(define do_op (lambda (opt alist)
+                (if (null? (rest alist)) (car alist)
+                    (opt (first alist) 
+                         (do_op opt (rest alist))))))
+
+(do_op  + '(133  678 2280  234  805  219  149  550 ))
+
+(do_op  * '(133  678 2280  234  805  219  149  550 ))
+
+(do_op  / '(133.0  678 2280  234  805  219  149  550 ))
+
+(do_op  - '(133  678 2280  234  805  219  149  550 ))
+
+                       

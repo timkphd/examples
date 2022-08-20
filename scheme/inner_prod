@@ -1,0 +1,37 @@
+(define i (sqrt -1))
+(define xmax (* pi 2))
+
+(define make_xn (lambda (n i xmax)
+                  (if (= n i) '()
+                      (cons (/ (* i xmax) n) (make_xn n (+ 1 i) xmax)))))
+
+(define sumfx (lambda (f x)
+                (if (null? x) 0
+                    (+ (f (first x)) (sumfx f (rest x))))))
+
+(define func (lambda (x) (exp (* (* (sqrt -1) x) (- j k)))))
+
+(define xn (make_xn 64 0 xmax))
+(define k 133)
+(define j 5)
+
+(/ (sumfx func xn) (length xn))
+
+(define doit (lambda (x n)
+               (/ 
+                 (/ (- 1 (power (exp (* (* (sqrt -1) (/ x n)) (- j k))) n))
+                    (- 1        (exp (* (* (sqrt -1) (/ x n)) (- j k)))   ) )
+               n)))
+
+(doit xmax 128)
+
+
+(define doit2 (lambda (x n)
+               (/ 
+                 (/ (- 1  (exp (* (* (sqrt -1) x) (- j k))))
+                    (- 1        (exp (* (* (sqrt -1) (/ x n)) (- j k)))   ) )
+               n)))
+
+(doit2 xmax 64)
+
+
