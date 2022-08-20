@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import sys
+defaults=sys.argv[1]
+idir=sys.argv[2]
+
+f2=defaults+"/modules.yaml"
+x=open(f2,"r")
+lines=x.readlines()
+x.close()
+x=open(f2,"w")
+for l in lines:
+	if l.find("$spack/share/spack/lmod") > -1 :
+		l=l.replace("$spack/share/spack/lmod",idir+"/lmod")
+	if l.find("- tcl") > -1 :
+		l=l.replace("- tcl","- lmod")
+	#print(l.strip())
+	x.write(l)
+x.close()
+
+f2=defaults+"/config.yaml"
+x=open(f2,"r")
+lines=x.readlines()
+x.close()
+x=open(f2,"w")
+for l in lines:
+	if l.find("$spack/opt/spack") > -1 :
+		l=l.replace("$spack/opt/spack",idir+"/opt")
+	#print(l.strip())
+	x.write(l)
+x.close()
+
+
