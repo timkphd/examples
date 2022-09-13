@@ -1,0 +1,26 @@
+recent ()
+{ 
+    if (($# == 2)); then
+        echo sacct -S `date --date="$1 days ago" +"%Y-%m-%d"`  -E `date --date="$2 days ago" +"%Y-%m-%d"`  -u $USER  --format=JobID,start,nodelist%25,WorkDir%125 
+        sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` \
+              -E `date --date="$2 days ago" +"%Y-%m-%d"` \
+              -u $USER \
+              --format=JobID,start,nodelist%25,WorkDir%125 \
+              | sed "s/ \+ /\t/g" | egrep  -v ^"[0-9]{6,}\." 
+    fi;
+    if (($# == 1)); then
+        echo sacct -S `date --date="$1 days ago" +"%Y-%m-%d"`  -u $USER  --format=JobID,start,nodelist%25,WorkDir%125 
+        sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` \
+              -u $USER \
+              --format=JobID,start,nodelist%25,WorkDir%125 \
+              | sed "s/ \+ /\t/g" | egrep  -v ^"[0-9]{6,}\." 
+    fi;
+    if (($# == 0)); then
+        echo sacct -S `date --date="14 days ago" +"%Y-%m-%d"` -u $USER --format=JobID,start,nodelist%25,WorkDir%125 
+        sacct -S `date --date="14 days ago" +"%Y-%m-%d"` \
+              -u $USER \
+              --format=JobID,start,nodelist%25,WorkDir%125 \
+              | sed "s/ \+ /\t/g" | egrep  -v ^"[0-9]{6,}\." 
+    fi
+}
+
