@@ -13,7 +13,7 @@ from collections import Counter
 global st
 st=time.time()
 
-def test(i,j=10):
+def test(i=1,j=10):
 # get pid, start time, host  and sleep for j seconds
    pid=os.getpid()
    when=time.time()-st
