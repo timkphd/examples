@@ -1,0 +1,21 @@
+(define init-rand (lambda (seed)
+                    (lambda () 
+                      (set! seed (modulo (+ (* seed 9) 5) 1024)))))
+
+(define rand (init-rand 1))
+
+(define init-fart (lambda (seed guy)
+                    (lambda () 
+                      (begin
+                        (set! guy (+ 1 guy))
+                        (set! seed (modulo (+ (* seed 9) 5) 1024))
+                        (list guy seed)
+                        ))))
+
+(define doit (init-fart 1 0))
+(doit)
+
+(define init-count (lambda (int)
+                     (lambda ()
+                       (set! int (+ 1 int)))))
+(define count (init-count 1))

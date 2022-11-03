@@ -1,0 +1,9 @@
+(define init-rand (lambda (seed)
+                    (lambda () 
+                      (set! seed (modulo (+ (* seed 9) 5) 1024)))))
+
+(define rand (init-rand 1))
+
+(rand)
+(rand)
+

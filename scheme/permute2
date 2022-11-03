@@ -1,0 +1,33 @@
+(define replace (lambda (z n c)
+                  (if (null? z)
+                      '()
+                      (if (= 1 c) (cons n (cdr z))
+                          (cons (car z) (replace (cdr z) n (- c 1)))))))
+(define exchange (lambda (z n m)
+                   (replace (replace z (nth n z) m) (nth m z) n)))
+
+(define perm (lambda (z n m)
+                (if (> m (length z))
+                    '()
+                    (cons (exchange z n m) (perm z n (+ 1 m))))))
+
+(define mapit (lambda (f z) (if (null? z) 
+                                 '()
+                                 (append (f (car z)) (mapit f (cdr z))))))
+(define mute2 (lambda (m z)
+                (if (= 1 m) 
+                    (perm z 1 1)
+                    (mapit (lambda (x) (perm x m m)) (mute2 (- m 1) z)))))
+
+(define permute2 (lambda (z) (mute2 (- (length z) 1) z)))
+
+
+
+(define plist (lambda (z)
+                    (if (null? z) (newline)
+                        (begin
+                          (newline)
+                          (write (first z))
+                          (plist (rest z))))))
+
+(plist (permute2 '(a b c d)))

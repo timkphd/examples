@@ -1,0 +1,65 @@
+(define fpart (lambda (z n m)
+                (if (= n m) '()
+                    (if (>= z (power 0.5 n))
+                        (cons '1 (fpart (- z (power 0.5 n)) (+ 1 n) m))
+                        (cons '0 (fpart z (+ 1 n) m))))))
+(fpart 1.625 0 23)
+
+
+
+(define split (lambda (a)
+                (list (inexact->exact (truncate a)) (- a (truncate a)))))
+
+(define p2 (lambda (n)
+             (if (= n 0) '()
+                 (append (p2 (inexact->exact (truncate (/ n 2))))
+                         (list (modulo n 2))))))
+(p2 64)
+
+(define setlen (lambda (bits len)
+                 (if (= len (length bits)) 
+                     bits
+                     (setlen (cons '0 bits) len))))
+(setlen (p2 5) 8)
+
+(define junk (lambda (num) (let ((two 2              ) (three 3)) (+ two three))))
+
+(define fixup (lambda (num)
+                (if (< 0 (first num))
+                    num
+                    (list (- (first num) 1) (+ 1  (car (cdr num)))))))
+
+
+(define end (lambda (x)
+              (rest (fpart x 0 23))))
+
+
+(define junk (lambda (both)  
+                             (cons
+                               (setlen (p2 (+ 127 (car both))) 8)
+                               (list (end (power 2 (car (cdr both)))))
+                               )))
+(define ieee (lambda (num)
+               (cons (if (< 0 num) '(0) '(1))
+                     (junk (fixup (split (log (abs num) 2)))))))
+
+(ieee 1.56481808e-34)
+(ieee 17.5)
+
+(define back10 (lambda (num  p)
+               (if (null? num)
+                   0
+                   (+  (* (car num) p) (back10 (cdr num) (* 2 p))))))
+(define to10 (lambda (num) (back10 (reverse num) 1)))
+
+(to10 '(0 0 0 1 1 1 0))
+(define findp (lambda (bits)
+                (- (to10 bits) 127)))
+
+
+
+
+
+
+
+

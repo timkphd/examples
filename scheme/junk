@@ -1,0 +1,7 @@
+(define shares '(28 112 100 307 515 540 267 135))
+(define addl (lambda (l)
+  (if (null? l) 0
+      (+ (car l) (addl (cdr l)))))
+(addl shares)
+(* 12.01 (addl shares))
+(define makedf (lambda (f df) (lambda (x) (/ ( - (f (+ x (/ df 2.0))) (f (- x (/ df 2.0)))) df))))

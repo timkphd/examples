@@ -10,7 +10,8 @@
 export MYDIR=/nopt/nrel/apps/210929a/level03
 # NOTE: because we use a "," in our sed command 
 #       we can't have one in the directory path.
-export MYDIR=/lustre/eaglefs/projects/hpcapps/julia/1.7.2
+export MYDIR=/lustre/eaglefs/projects/hpcapps/tkaiser2/0410/build
+
 STARTDIR=`pwd`
 echo "STARTDIR=" $STARTDIR
 
@@ -72,7 +73,9 @@ alias dospack="source `pwd`/spack/share/spack/setup-env.sh"
 echo To restart spack to add more packages add these two lines to ~/.bashrc or source them
 alias | grep dospack
 echo "export SPACK_USER_CONFIG_PATH=$SPACK_USER_CONFIG_PATH"
-
+echo Settings:
+echo MYDIR=$MYDIR
+echo TMPDIR=$TMPDIR
 # Start spack
 source `pwd`/spack/share/spack/setup-env.sh  
 

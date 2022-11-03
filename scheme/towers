@@ -1,0 +1,9 @@
+(define towers (lambda (n b a e m)
+                 (if (= n 1) 
+                     (cons (list b 'to e) m)
+                     (append (append
+                               (towers (- n 1) b e a m) 
+                               (list (list b 'to e)))
+                             (towers (- n 1) a b e m)))))
+
+(towers 6 'A 'B 'C '())

@@ -1,0 +1,36 @@
+(define pow (lambda (m n) (exp (* n (log m)))))
+
+(define ak (lambda (m n)
+             (if (= 1 m)
+                 (pow 2 n)
+                 (if (= n 1)
+                     (ak (- m 1) 2)
+                     (ak (- m 1) (ak m (- n 1)))))))
+
+
+(define pow (lambda (m n)
+              (if (= n 0) 1
+                  (* m (pow m (- n 1))))))
+
+
+(define ln2 (lambda (x)
+              (/ (log x) (log 2))))
+
+(define f (lambda (n)
+            (if (= n 1)
+                1
+                (+ (/ n 2) (* 2 (f (/ n 2)))))))
+
+
+(define g (lambda (n)
+            (+ n (* (* 0.5 n) (ln2 n)))))
+
+(define f2 (lambda (n)
+             (if (= n 1)
+                 1
+                 (* 2 (+ (f2 (/ n 2)) (ln2 (/ n 2)))))))
+
+
+(define g2 (lambda (n)
+                 (- (- (* 3 n) (* 2 (ln2 n))) 2)))
+

@@ -4,6 +4,7 @@ import numpy
 global numnodes,myid,mpi_err
 global mpi_root
 import sys
+from time import sleep
 mpi_root=0
 # This is a bag-of-tasks program.  We define a manager task
 # that distributes work to workers.  Actually, the workers
@@ -60,6 +61,7 @@ def worker(THE_COMM_WORLD,managerid):
 		print(THE_COMM_WORLD.Get_rank(),fname,x)
 		ic=ic+1
 		mkview.plotit(fname,x)
+		#mkview.plotit(fname,MPI.COMM_WORLD.Get_rank())
 #
 def manager(num_used,TODO):
 	global numnodes,myid,mpi_err
@@ -109,6 +111,9 @@ if __name__ == '__main__':
 	myid=comm.Get_rank()
 	numnodes=comm.Get_size()
 	name = MPI.Get_processor_name()
+# redirect output from each process to its own file
+	me="%s_%3.3d" % (name,myid)
+	sys.stdout = open(me, 'w')
 	print("hello from %d of %d on %s" % (myid,numnodes,name))
 # num_used is the # of processors that are part of the new communicator #
 # for this case hardwire to not include 1 processor #

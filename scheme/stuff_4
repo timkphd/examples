@@ -1,0 +1,235 @@
+
+
+;The functions interval, atlist, and plist were used for testing.
+;Intdive is used by nways.
+(define intdiv (lambda (x y) (/ (- x (modulo x y)) y)))
+
+(define interval (lambda (xmin xmax delta)
+                   (if (> (+ xmin delta) xmax)
+                       (list xmax)
+                       (cons xmin (interval (+ xmin delta) xmax delta)))))
+(define atlist (lambda (f l) (if (null? l) 
+                                 '()
+                                 (cons (list (car l) (f (car l))) (atlist f (cdr l))))))
+(define plist (lambda (l)
+                    (if (null? l) (newline)
+                        (begin
+                          (newline)
+                          (write (first l))
+                          (plist (rest l))))))
+
+;The program to calculate the number of ways to make change is given below.
+;There is a serious bug in this program.  It over counts.  At this point I am going
+;to press on with the rest of the question.  If I get time I will come back and try
+;to fix it.  As this point I am too fried to get it correct but not too fried to
+;realize it is not right.  Note that assuming this function worked corretly the
+;memorization routines defined below work correctly.
+                
+(define nways (lambda (coins)
+                (cond
+                  ((> coins 50) (* (power (nways 50) (intdiv coins 50)) (nways (modulo coins 50))))
+                  ((= coins 50) (+ 2 (* (nways 25) (nways 25))))
+                  ((> coins 25) (+ (nways 25) (nways (- coins 25))))
+                  ((= coins 25) (+ 2 (nways 20)))
+                  ((> coins 10) (* (nways 10) (nways (- coins 10))))
+                  ((= coins 10) 3)
+                  ((>= coins 5) 2)
+                  (else 1)
+                  )
+                )
+  )
+
+(plist (atlist nways (interval 1 50 1)))
+
+;I mentioned two weeks ago to Dr. Shapiro my concern about "blocking" on a problem.
+;He suggested that if I did so I should I sould discuss a related problem of interest
+;which I was able to do.  Over the last few weeks in prepairing for the test I was
+;doing some Scheme.  I looked at ways to solve the minimum test set problem,
+;SAT problem, and X3C.  Along the way I developed a set of functions which return
+;the permutations of a set of objects in a list.  Following this problem is a 
+;discussion of the permutation problem.
+
+;There are two ways to do the Memoization.  The first uses a global list and the 
+;second uses "own" variables.  For part b I will use a global list and part c I
+;will use "own" variables.  The global list has the advantage that it can be accessed
+;outside of the routine and the own variable method has the advantage that the values
+;are protected.
+
+(define mem_list '())
+(define on_list (lambda (x thelist)
+                  (if (null? thelist)
+                      '()
+                      (if (= x (car (car thelist)))
+                          (cdr (car thelist))
+                          (on_list x (cdr thelist))))))
+  
+(define mem_list '())
+(define mem_ways (lambda (coins)
+                   (let ((a (on_list coins mem_list)))
+                   (if (not (null? a))
+                       (cons coins a)
+                       (let ((b (nways coins)))
+                         (begin
+                           (set! mem_list (cons (list coins b) mem_list))
+                           (car mem_list)
+                           ))))))
+
+(mem_ways 12)
+(mem_ways 13)
+(mem_ways 12)
+
+
+(define addtolist (lambda (func x ownlist)
+                    (if (not (null? (on_list x ownlist)))
+                             ownlist
+                             (cons (list x (func x)) ownlist))))
+
+(define remember (lambda (func ownlist)
+                   (lambda (x)
+                     (begin
+                       (set! ownlist (addtolist func x ownlist))
+                       (on_list x ownlist)))))
+                        
+
+(define the_way (remember nways '()))
+
+;I ran "the_way" using the input given below.  I turned the trace option
+;on to print out the value of ownlist after each function invocation
+;the data contained in ownlist is shown. The final trace is shown below. 
+
+
+(the_way 10)  ; ownlist contains ((10 3))
+(the_way 11)  ; ownlist contains ((11 3) (10 3))
+(the_way 10)  ; ownlist contains ((11 3) (10 3))
+(the_way 25)  ; ownlist contains ((25 1) (11 3) (10 3))
+
+
+
+;>>> Entering addtolist from the_way
+;	 input 1: <derived procedure (coins) (cond ((> coins 50) (* (power 
+;(nways 50) (intdiv coins 50)) (nways (modulo coins 50)))) ((= coins 
+;50) (+ 2 (* (nways 25) (nways 25)))) ((> coins 25) (+ (nways 25) (nways 
+;(- coins 25)))) ((= coins 25) (+ 2 (nways 20))) ((> coins 10) (* (nways 
+;10) (nways (- coins 10)))) ((= coins 10) 3) ((>= coins 5) 2) (else 
+;1)) ()>
+;	 input 2: 25
+;	 input 3: ((25 11) (11 3) (10 3))
+;>>> Entering on_list from addtolist
+;	 input 1: 25
+;	 input 2: ((25 11) (11 3) (10 3))
+;<<< Leaving on_list, returning to addtolist with value: (11)
+;	 input 1: 25
+;	 input 2: ((25 11) (11 3) (10 3))
+;<<< Leaving addtolist, returning to the_way with value: ((25 11) (11 
+;3) (10 3))
+;	 input 1: <derived procedure (coins) (cond ((> coins 50) (* (power 
+;(nways 50) (intdiv coins 50)) (nways (modulo coins 50)))) ((= coins 
+;50) (+ 2 (* (nways 25) (nways 25)))) ((> coins 25) (+ (nways 25) (nways 
+;(- coins 25)))) ((= coins 25) (+ 2 (nways 20))) ((> coins 10) (* (nways 10)
+;(nways (- coins 10)))) ((= coins 10) 3) ((>= coins 5) 2) (else 
+;1)) ()>
+;	 input 2: 25
+;	 input 3: ((25 11) (11 3) (10 3))
+;>>> Entering on_list from on_list
+;	 input 1: 25
+;	 input 2: ((25 11) (11 3) (10 3))
+;<<< Leaving on_list, returning to on_list with value: (11)
+;	 input 1: 25
+;	 input 2: ((25 11) (11 3) (10 3))
+
+                     
+;Permutations
+;The functions remove_n, remove_n_help, and replace are used
+;by the routine exchange.  Exchange takes a list and exchanges
+;two elements.
+(define remove_n_help (lambda (l n m)
+                   (if (null? l) 
+                       '()
+                           (if (= n m)
+                               (cdr l)
+                               (cons  (car l) (remove_n_help (cdr l) n (+ 1 m)))))))
+
+(define remove_n (lambda (l n) (remove_n_help l n 1)))
+
+(define replace (lambda (l n c)
+                  (if (null? l)
+                      '()
+                      (if (= 1 c) (cons n (cdr l))
+                          (cons (car l) (replace (cdr l) n (- c 1)))))))
+(define exchange (lambda (l n m)
+                   (replace (replace l (nth n l) m) (nth m l) n)))
+
+;Mapit is similar to Kamin's mapcar.
+(define mapit (lambda (f l) (if (null? l) 
+                                 '()
+                                 (append (f (car l)) (mapit f (cdr l))))))
+
+;Perm is the first function of real interest.  Given a list l and two integer
+;n and m it returns the list of lists in which, for each sublist element n and m
+;are exchanged.  M goes from the initial value upto the size of the list.
+(define perm (lambda (l n m)
+                (if (> m (length l))
+                    '()
+                    (cons (exchange l n m) (perm l n (+ 1 m))))))
+
+
+;The permutation of a list of two elements is (perm '(a b) 1 1)
+;For three elements the permutation is the permutations of the list
+;(perm '(a b c) 1 1) = ((a b c) (b a c) (c b a))
+;generated by exchanging elements two and three.  This new list is
+;generated by the function: 
+
+(mapit (lambda (x) (perm x 2 2)) ((lambda (x) (perm x 1 1))  '(a b c)))
+
+;We have or recursive definition for permutations.  From this point we can
+;define the arbitary permutation function as permute2 given below.  
+
+(define mute2 (lambda (m l)
+                (if (= 1 m) 
+                    (perm l 1 1)
+                    (mapit (lambda (x) (perm x m m)) (mute2 (- m 1) l)))))
+
+(define permute2 (lambda (l) (mute2 (- (length l) 1) l)))
+
+
+
+;There is another way to procede.  I wanted to test the Scheme ability to create
+;a list which is actually the representation of a function and then evaluate that
+;list as a function.  The following version of permute does this.  It creates a
+;list which is a function then uses eval to evaluate that function.  Given a list
+;of length 3 "func" becomes the a general version of the function given above.
+
+;(mapit (lambda (x) (perm x 2 2)) ((lambda (x) (perm x 1 1))  l))
+
+(define pose (lambda (j)
+               (cons 'mapit (list (append '(lambda) '((x)) (list (append '(perm) '(x) (list j) (list j))))))))
+(define mute (lambda (n l func)
+               (if (= n (length l))
+                   (eval func)
+                   (if (= 1 n)
+                       (mute (+ 1 n) l '((lambda (x) (perm x 1 1))  l))
+                       (let ((z n))
+                         (mute (+ 1 n) l (append 
+                                           (pose n) 
+                                           (list func) )))))))
+(define permute (lambda (l) (mute 1 l '())))
+
+
+(define test_coins (lambda (target coins)
+                     (= target (+ 
+                                 (* 50 (car coins)) 
+                                 (* 25 (cadr coins))
+                                 (* 10 (caddr coins))
+                                 (*  5 (nth 4 coins))
+                                 (nth 5 coins)))))
+
+
+
+
+
+
+
+                            
+                
+                
+                     
