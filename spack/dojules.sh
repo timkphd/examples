@@ -12,7 +12,7 @@ export MYDIR=/nopt/nrel/apps/210929a/level03
 #       we can't have one in the directory path.
 export MYDIR=/lustre/eaglefs/projects/hpcapps/julia/1.7.2
 STARTDIR=`pwd`
-echo $STARTDIR
+echo "STARTDIR=" $STARTDIR
 
 # Select an install directory.
 # WARNING: this directory will be cleaned out before
@@ -29,7 +29,7 @@ if [ -z "$MYDIR" ]  ;     then
 fi
 #rm -rf $MYDIR
 mkdir -p $MYDIR
-
+echo "MYDIR=" $MYDIR
 export TMPDIR=$MYDIR/tmp
 mkdir -p $TMPDIR
 

@@ -3,6 +3,27 @@ import sys
 import os
 domem=False
 dops=False
+
+def doshow(n):
+# parse scontrol show and return a dictionary
+    c1="scontrol show -o node XXXX" 
+    c1=c1.replace("XXXX",n)
+    f2=os.popen(c1,"r")
+    line1 = f2.readline()
+    bonk={}
+    line1=line1.split()
+    #print(line1)
+    for l2 in line1:
+        #print(l2)
+        if l2.find("=") > -1 :
+            l2=l2.split("=")
+            key=l2[0]
+            text=l2[1]
+            bonk[key]=text
+        else:
+            bonk[key]=bonk[key]+" "+ l2
+    return(bonk)
+
 me=sys.argv[0]
 if me.find("onnodes")> -1 : dops=True
 if me.find("mem")> -1 : domem=True
@@ -42,11 +63,15 @@ for l in long:
         f2.close()
     if not dops : 
         continue
+    bonk=doshow(l)
+    for x in ['CPUAlloc','CPUTot','CPULoad','RealMemory','FreeMem'] :
+        print(x,"=",bonk[x],end =" ")
+    print()
+    command="ssh XXXX 'ps -U $USER -L -o pid,lwp,psr,comm,pcpu,%mem | grep -v COMMAND | sort -k3n'"
+    print(command)
     print("   PID    LWP PSR COMMAND         %CPU %mem")
-    command="ssh XXXX ps -U $USER -L -o pid,lwp,psr,comm,pcpu,%mem | grep -v COMMAND | sort -k3n"
     #print(command)
     command=command.replace("XXXX",l)
-    #print(command)
     f2=os.popen(command,"r")
     while 1:
         try:
@@ -63,3 +88,9 @@ for l in long:
             if (same):print("\u001b[31m",end="")
             print(line.strip())
             if (same):print("\u001b[30m",end="")
+    #command="ssh XXXX nvidia-smi"
+    #command=command.replace("XXXX",l)
+    #f2=os.popen(command,"r")
+    #gpulines=f2.readlines()
+    #print(gpulines)
+    

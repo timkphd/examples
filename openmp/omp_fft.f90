@@ -65,7 +65,7 @@ program two_d_fft
         use ccm_numz
         implicit none
 !       integer size
-        integer,parameter:: size=1024
+        integer,parameter:: size=8192
 !        integer omp_get_max_threads
         integer i,j,k,ijk,isign,iseed
         real(b8),allocatable:: x(:)
