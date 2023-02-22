@@ -20,7 +20,7 @@ mytag=1234
 mysource=0
 
 # Process 1 is going to get the data
-mydestination=1
+mydestination=3
 
 # Sending a single value each time
 count=1

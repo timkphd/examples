@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from mpi4py import MPI
 from numpy import *
 from sys import argv
@@ -7,13 +8,11 @@ rank = comm.Get_rank()
 name = MPI.Get_processor_name()
 numprocs=comm.Get_size()
 
-#send here instead of 1
-too=-1
 second=True
 data=None
 
 
-
+too=-1
 if rank == 0:
     lib=MPI.Get_library_version()
     version=str(MPI.Get_version())
@@ -24,7 +23,8 @@ if rank == 0:
         print(argv)
         too = int(argv[1])
     else:
-        too = 1
+        too = numprocs-1
+    print("sending our data from 0 to ",too)
 too=comm.bcast(too, root=0)
 
 for ucase in [True,False] : 
@@ -43,6 +43,7 @@ for ucase in [True,False] :
     print(ucase,rank,name,data)
 
 # from https://mpi4py.readthedocs.io/en/stable/tutorial.html
+# This fails for Cray mpi4py with multiple nodes
 if second :
     if rank == 0:
         data = {'a': 7, 'b': 3.14}
