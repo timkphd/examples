@@ -127,14 +127,31 @@ function mcheck(m,  n,  in)
 end function
 end module ccm_numz
 
+module my_space
+  use ccm_numz
+  real(b8),pointer :: ma(:,:)
+  save ma
+!$omp   threadprivate(ma)
+end module my_space
+
+subroutine set1(n)
+      use my_space
+      integer omp_get_thread_num
+!$omp   parallel
+        allocate(ma(n,n))
+        call mset(ma,n,(omp_get_thread_num()+1)*10)
+!$omp   end parallel
+end subroutine set1
 
 program tover
     use ccm_numz
+    use my_space
     !real(b8),allocatable :: m1(:,:),m2(:,:),m3(:,:),m4(:,:)
     real(b8),pointer :: m1(:,:),m2(:,:),m3(:,:),m4(:,:)
-    real(b8),pointer :: ma(:,:)
+    !real(b8),pointer :: ma(:,:)
     !real(b8),allocatable :: ma(:,:)
-    integer omp_get_thread_num
+    integer omp_get_thread_num,it,omp_get_max_threads
+    logical callsub
 
     real(b8),allocatable ,target:: mn(:,:,:)
     integer n
@@ -148,7 +165,10 @@ program tover
 
     n=750
     nblock=4
-    allocate(mn(n,n,nblock))
+    nblock=omp_get_max_threads()
+    callsub=.false.
+    if(nblock .gt. 4)callsub=.true.
+    allocate(mn(n,n,4))
     !allocate(m1(n,n))
     !allocate(m2(n,n))
     !allocate(m3(n,n))
@@ -209,26 +229,25 @@ program tover
  write(*,1)4,t4_start,t4_end,e4
  1 format("section ",i4," start time= ",g15.5," end time= ",g15.5," error=",g15.5)
 
-
  allocate(eray(nblock))
  t3_start=ccm_time()
- 
-!$OMP PARALLEL private(ma)
-!$OMP DO
- do i=1,nblock
-   ma=>mn(:,:,i)
-   call mset(ma,n,i*10)
- enddo
- !$omp end parallel
-  t3_end=ccm_time()
+ if (callsub) then
+ write(*,*)"doing new allocation for arrays"
+ call set1(n)
+ else
+ write(*,*)"pointing to section of 3d array"
+!$omp   parallel
+        ma=>mn(:,:,omp_get_thread_num())
+        call mset(ma,n,(omp_get_thread_num()+1)*10)
+!$omp   end parallel
+ endif
+ t3_end=ccm_time()
 
 
  t4_start=ccm_time()
-!$OMP PARALLEL private(ma)
+!$OMP PARALLEL
 !$OMP DO
  do i=1,nblock
-    ma=>mn(:,:,i)
-    !call mset(ma,n,i*10)
     call invert(ma,n)
     call invert(ma,n)
     eray(i)=mcheck(ma,n,i*10)
