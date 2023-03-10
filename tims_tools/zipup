@@ -22,9 +22,9 @@ GetOptions("verbose!"=>\$verboseornoverbose,
 
 my $whoami=getlogin();
 ######################
-my $command="gzip -q ";
+my $command="zip -q ";
 if( ! $silent) {
-$command="gzip  ";
+$command="zip  ";
 }
 
 $command=$command." -r ";

@@ -28,7 +28,9 @@ cumu=[]
 when=[]
 x=[]
 ####
-f=open("2016.bike","r")
+f=open("2022.bike","r")
+#f=open("2016.bike","r")
+
 lines=f.readlines()
 for l in lines:
 	l=l.split("\t")
@@ -42,8 +44,12 @@ for n in nodes[1:]:
 
 
 for d in when:
-	d=d.split("-")
-	x.append(date.toordinal(date(int(d[0]),int(d[1]),int(d[2]))))
+	#Fri, Sep 23, 2022	16
+	xd=datetime.datetime.strptime(d,"%a, %b %d, %Y")
+	x.append(date.toordinal(xd))
+	#2016-01-03	15
+	#d=d.split("-")
+	#x.append(date.toordinal(date(int(d[0]),int(d[1]),int(d[2]))))
 #print x,cumu
 fig = figure()
 ax = fig.add_subplot(111)
@@ -64,7 +70,9 @@ for tl in ax.get_yticklabels():
 ax2.set_ylabel('Cumulative', color='r')
 ax.set_ylabel('Daily', color='b')
 ax.set_xlabel('Date')
-ax.set_title('2016 Cycling History')
+ax.set_title('2022 Cycling History 5900/113.46/16.16 miles ')
+#ax.set_title('2016 Cycling History')
+
 
 
 
