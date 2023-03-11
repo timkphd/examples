@@ -151,7 +151,7 @@ program tover
     !real(b8),pointer :: ma(:,:)
     !real(b8),allocatable :: ma(:,:)
     integer omp_get_thread_num,it,omp_get_max_threads
-    logical callsub
+    logical callsub,getit
 
     real(b8),allocatable ,target:: mn(:,:,:)
     integer n
@@ -163,10 +163,17 @@ program tover
     real(b8) t4_start,t4_end,e4;
     real(b8),allocatable :: eray(:),dt(:)
 
-    n=750
+    n=525
     nblock=4
     nblock=omp_get_max_threads()
     callsub=.true.
+    inquire( file="input", exist=getit )
+    if(getit)then
+       open(23,file="input")
+       read(23,*)n,callsub
+       close(23)
+       write(*,*)callsub
+    endif
     if(nblock .gt. 4)callsub=.true.
     allocate(mn(n,n,4))
     !allocate(m1(n,n))
@@ -231,13 +238,14 @@ program tover
 
  allocate(eray(nblock))
  allocate(dt(nblock))
+ nullify(m1,m2,m3,m4)
  t3_start=ccm_time()
  if (callsub) then
  write(*,*)"doing new allocation for arrays"
  call set1(n)
  else
  write(*,*)"pointing to section of 3d array"
-!$omp   parallel
+!$omp   parallel firstprivate(n)
         ma=>mn(:,:,omp_get_thread_num())
         call mset(ma,n,(omp_get_thread_num()+1)*10)
 !$omp   end parallel
