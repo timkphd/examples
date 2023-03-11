@@ -246,7 +246,8 @@ program tover
  else
  write(*,*)"pointing to section of 3d array"
 !$omp   parallel firstprivate(n)
-        ma=>mn(:,:,omp_get_thread_num())
+        write(*,*)omp_get_thread_num()
+        ma=>mn(:,:,omp_get_thread_num()+1)
         call mset(ma,n,(omp_get_thread_num()+1)*10)
 !$omp   end parallel
  endif
