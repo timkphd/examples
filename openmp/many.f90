@@ -161,12 +161,12 @@ program tover
     real(b8) t2_start,t2_end,e2;
     real(b8) t3_start,t3_end,e3;
     real(b8) t4_start,t4_end,e4;
-    real(b8),allocatable :: eray(:)
+    real(b8),allocatable :: eray(:),dt(:)
 
     n=750
     nblock=4
     nblock=omp_get_max_threads()
-    callsub=.false.
+    callsub=.true.
     if(nblock .gt. 4)callsub=.true.
     allocate(mn(n,n,4))
     !allocate(m1(n,n))
@@ -230,6 +230,7 @@ program tover
  1 format("section ",i4," start time= ",g15.5," end time= ",g15.5," error=",g15.5)
 
  allocate(eray(nblock))
+ allocate(dt(nblock))
  t3_start=ccm_time()
  if (callsub) then
  write(*,*)"doing new allocation for arrays"
@@ -245,18 +246,26 @@ program tover
 
 
  t4_start=ccm_time()
-!$OMP PARALLEL
+!$OMP PARALLEL private(t1_start,t1_end)
 !$OMP DO
  do i=1,nblock
+t1_start=ccm_time()
     call invert(ma,n)
     call invert(ma,n)
     eray(i)=mcheck(ma,n,i*10)
+ t1_end=ccm_time()
+ dt(i)= t1_end-t1_start
  enddo
+
  !$omp end parallel
  t4_end=ccm_time()
  2 format("sections: ",i4," set time: ",g15.5," invert time: ",g15.5)
+ 3 format(" ",i4," run time= ",g15.5," error=",g15.5)
+
  write(*,2)nblock,t3_end-t3_start,t4_end-t4_start
- write(*,"(g15.5)")eray
+ do i=1,nblock 
+   write(*,3)i,dt(i),eray(i)
+ enddo
   
  
  end program
