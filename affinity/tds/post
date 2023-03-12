@@ -1,0 +1,21 @@
+for test in `ls -rt *out_*` ; do
+req=`cat $test | egrep "X9|     R|    C|  VS"  | wc -l`
+got=`cat $test | egrep "X9|     R|    C|  VS"  | awk '{print $3 $6}' | sort -u | wc -l`
+echo $test $req $got
+done
+
+:<<SPLIT
+
+# Functions to tell which is good/bad
+worked () {   if [ "$2" -eq "$3" ]; then echo $1 $2 $3; fi }
+nope () {   if [ "$2" -ne "$3" ]; then echo $1 $2 $3; fi }
+
+# pass in the file to process and the function to call
+# getstate postit nope
+# getstate postit worked
+getstate () {
+while read line; do $2 $line; done < $1
+}
+
+SPLIT
+

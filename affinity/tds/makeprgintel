@@ -1,0 +1,41 @@
+SHELL:=/usr/bin/bash
+
+recurse:
+	source /nopt/nrel/apps/env.sh     ; \
+	module purge                      ; \
+	module load craype-x86-spr        ; \
+	module load intel                 ; \
+	module load PrgEnv-intel          ; \
+	$(MAKE) -f $(firstword $(MAKEFILE_LIST)) both
+
+both: f.intel c.intel pp.intel
+
+#defines USEFAST
+include makefile.include
+
+ifeq ($(USEFAST),yes)
+OPS=-DUSEFAST
+EXTRA=getcore.o
+endif
+
+F90=ftn
+CC=cc
+
+f.intel: fhostone.F90 $(EXTRA) 
+	$(F90) $(OPS) $(EXTRA) -fopenmp fhostone.F90 -O3 -o f.intel
+	rm -f getcore.o 
+
+c.intel: phostone.c
+	$(CC) $(OPS) -fopenmp phostone.c -O3 -o c.intel
+
+pp.intel: ppong.c
+	$(CC) $(OPS) $(WES) ppong.c -O3 -o pp.intel
+
+clean:
+	rm -rf *o *mod* f.intel c.intel pp.intel
+
+
+
+
+
+

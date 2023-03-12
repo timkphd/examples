@@ -1,0 +1,108 @@
+#!/usr/bin/bash
+#SBATCH --job-name="start_vasp"
+#SBATCH --nodes=2
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=04:00:00
+#SBATCH --partition=standard
+##SBATCH --tasks-per-node=$ntpn $CPUS_TASK
+###########SBATCH --account=hpcapps
+
+BASE=/sfs/projects/hpcapps/examples/all
+BASE=`pwd`
+
+#Make a new directory
+STDIR=`pwd`
+mkdir $SLURM_JOB_ID
+cd $SLURM_JOB_ID
+
+#Copy everything 
+printenv > env
+cat $0 > script
+cp $BASE/make* .
+cp $BASE/Makefile .
+cp $BASE/fhostone.F90 .
+cp $BASE/phostone.c .
+cp $BASE/cases .
+cp $BASE/post .
+cp $BASE/ppong.c .
+cp $BASE/getcore.c .
+cp $BASE/maskgenerator.py .
+
+#Build our programs
+make all
+
+export OMP_NUM_THREADS=2
+CLA="-F -E -t 7"
+
+export BIND=v,cores
+export CRAY_OMP_CHECK_AFFINITY=TRUE
+#export OMP_PROC_BIND=spread
+export nc=`cat cases | wc -l`
+#for bindit in none rank rank_ldom threads ldoms ; do
+for il in `seq $nc` ; do
+  aline=`cat cases | head -$il | tail -1`
+  ntpn=`echo $aline | awk {'print $1'}`
+  nthrd=`echo $aline | awk {'print $2'}`
+  export OMP_NUM_THREADS=$nthrd
+#for bindit in MASK ; do
+for bindit in NONE MASK ; do
+  export KMP_AFFINITY=scatter
+  export OMP_PROC_BIND=spread
+  export BIND=--cpu-bind=v,${bindit}
+  unset CPUS_TASK
+  #export CPUS_TASK="--cpus-per-task=$nthrd"
+  if [ $bindit == MASK ] ; then
+	  cores=`expr $ntpn \* $nthrd`
+	  MASK=`./maskgenerator.py $cores $ntpn`
+	  BIND="--cpu-bind=v,mask_cpu:$MASK"
+	  
+  fi
+  if [ $bindit == NONE ] ; then
+	  BIND="--cpu-bind=v"
+          export CPUS_TASK="--cpus-per-task=$nthrd"
+  fi
+  echo $ntpn $nthrd >> srunsettings
+  echo $BIND $CPUS_TASK >> srunsettings
+  printenv | egrep "OMP_|KMP_" >> srunsettings
+  echo --mpi=pmi2 $BIND  --tasks-per-node=$ntpn $CPUS_TASK >> srunsettings
+#Run each version
+module purge
+module load craype-x86-spr
+module load PrgEnv-cray
+srun --mpi=pmi2 $BIND  --tasks-per-node=$ntpn $CPUS_TASK  ./f.cray $CLA > f.cray.out_${ntpn}_${nthrd}_${bindit} 2> f.cray.err_${ntpn}_${nthrd}_${bindit}
+srun --mpi=pmi2 $BIND  --tasks-per-node=$ntpn $CPUS_TASK  ./c.cray $CLA > c.cray.out_${ntpn}_${nthrd}_${bindit} 2> c.cray.err_${ntpn}_${nthrd}_${bindit}
+
+
+module purge
+module load craype-x86-spr
+module load PrgEnv-gnu
+module load gcc
+
+srun --mpi=pmi2 $BIND  --tasks-per-node=$ntpn $CPUS_TASK  ./f.gnu $CLA > f.gnu.out_${ntpn}_${nthrd}_${bindit} 2> f.gnu.err_${ntpn}_${nthrd}_${bindit}
+srun --mpi=pmi2 $BIND  --tasks-per-node=$ntpn $CPUS_TASK  ./c.gnu $CLA > c.gnu.out_${ntpn}_${nthrd}_${bindit} 2> c.gnu.err_${ntpn}_${nthrd}_${bindit}
+
+
+module purge
+#Enable Walid's modules
+source /nopt/nrel/apps/env.sh
+module load intel
+module load PrgEnv-intel
+
+srun --mpi=pmi2 $BIND  --tasks-per-node=$ntpn $CPUS_TASK  ./f.intel $CLA > f.intel.out_${ntpn}_${nthrd}_${bindit} 2> f.intel.err_${ntpn}_${nthrd}_${bindit}
+srun --mpi=pmi2 $BIND  --tasks-per-node=$ntpn $CPUS_TASK  ./c.intel $CLA > c.intel.out_${ntpn}_${nthrd}_${bindit} 2> c.intel.err_${ntpn}_${nthrd}_${bindit}
+
+
+module purge
+module load intel-oneapi
+module load libfabric
+#NOTE: We don't load intel-oneapi-mpi
+#If you get runtime like errors talk to tkaiser2
+#module load intel-oneapi-mpi
+srun --mpi=pmi2 $BIND  --tasks-per-node=$ntpn $CPUS_TASK  ./f.impi $CLA > f.impi.out_${ntpn}_${nthrd}_${bindit} 2> f.impi.err_${ntpn}_${nthrd}_${bindit}
+srun --mpi=pmi2 $BIND  --tasks-per-node=$ntpn $CPUS_TASK  ./c.impi $CLA > c.impi.out_${ntpn}_${nthrd}_${bindit} 2> c.impi.err_${ntpn}_${nthrd}_${bindit}
+done
+done
+
+. ./post | sort -n
+mv $STDIR/slurm-$SLURM_JOB_ID.out .

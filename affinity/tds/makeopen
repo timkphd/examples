@@ -1,0 +1,40 @@
+SHELL:=/usr/bin/bash
+# For Eagle
+
+recurse:
+	module purge                       ; \
+	module load openmpi/4.1.2/intel 2> /dev/null || module load openmpi/4.1.1-6vr2flz 2> /dev/null; \
+	module load gcc                    ; \
+	$(MAKE) -f $(firstword $(MAKEFILE_LIST)) both
+
+both: f.open c.open pp.open
+
+#defines USEFAST
+include makefile.include
+
+ifeq ($(USEFAST),yes)
+#OPS=-DUSEFAST
+#EXTRA=getcore.o
+endif
+
+F90=mpif90 
+CC=mpicc -lm
+
+f.open: fhostone.F90 $(EXTRA)
+	$(F90) $(OPS) $(EXTRA) -fopenmp fhostone.F90 -O3 -o f.open
+	rm -f getcore.o
+
+c.open: phostone.c
+	$(CC) $(OPS) -fopenmp phostone.c -O3 -o c.open
+
+pp.open: ppong.c
+	$(CC) $(OPS) $(WES) ppong.c -O3 -o pp.open
+
+clean:
+	rm -rf *o *mod* f.open c.open pp.open
+
+
+
+
+
+

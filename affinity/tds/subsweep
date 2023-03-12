@@ -1,0 +1,30 @@
+CLA="-F -E -t 5"
+export nc=`cat cases | wc -l`
+bindit=MASK
+rm -rf times
+for il in `seq $nc` ; do 
+  aline=`cat cases | head -$il | tail -1`
+  ntpn=`echo $aline | awk {'print $1'}`
+  nthrd=`echo $aline | awk {'print $2'}`
+  export OMP_NUM_THREADS=$nthrd
+  cores=`expr $ntpn \* $nthrd`
+  echo $ntpn $nthrd $cores
+  MASK=`./maskgenerator.py $cores $ntpn`
+  echo $MASK
+  export KMP_AFFINITY=scatter
+  export OMP_PROC_BIND=spread
+  ./tymer times
+  #srun --mpi=pmi2 --cpu-bind=v,mask_cpu:$MASK   --tasks-per-node=$ntpn  ./f.gnu $CLA > f.gnu.out_${ntpn}_${nthrd}_${bindit} 2> f.gnu.err_${ntpn}_${nthrd}_${bindit}
+  #srun --mpi=pmi2 --cpu-bind=v,mask_cpu:$MASK   --tasks-per-node=$ntpn  ./c.gnu $CLA > c.gnu.out_${ntpn}_${nthrd}_${bindit} 2> c.gnu.err_${ntpn}_${nthrd}_${bindit}
+  #srun --mpi=pmi2 --cpu-bind=v,mask_cpu:$MASK   --tasks-per-node=$ntpn  ./f.intel $CLA > f.intel.out_${ntpn}_${nthrd}_${bindit} 2> f.intel.err_${ntpn}_${nthrd}_${bindit}
+  #srun --mpi=pmi2 --cpu-bind=v,mask_cpu:$MASK   --tasks-per-node=$ntpn  ./c.intel $CLA > c.intel.out_${ntpn}_${nthrd}_${bindit} 2> c.intel.err_${ntpn}_${nthrd}_${bindit}
+  #srun --mpi=pmi2 --cpu-bind=v,mask_cpu:$MASK   --tasks-per-node=$ntpn  ./f.impi $CLA > f.impi.out_${ntpn}_${nthrd}_${bindit} 2> f.impi.err_${ntpn}_${nthrd}_${bindit}
+  #srun --mpi=pmi2 --cpu-bind=v,mask_cpu:$MASK   --tasks-per-node=$ntpn  ./c.impi $CLA > c.impi.out_${ntpn}_${nthrd}_${bindit} 2> c.impi.err_${ntpn}_${nthrd}_${bindit}
+  #srun --mpi=pmi2 --cpu-bind=v,mask_cpu:$MASK   --tasks-per-node=$ntpn  ./f.cray $CLA > f.cray.out_${ntpn}_${nthrd}_${bindit} 2> f.cray.err_${ntpn}_${nthrd}_${bindit}
+  srun --mpi=pmi2 --cpu-bind=v,mask_cpu:$MASK   --tasks-per-node=$ntpn  ./c.cray $CLA > c.cray.out_${ntpn}_${nthrd}_${bindit} 2> c.cray.err_${ntpn}_${nthrd}_${bindit}
+  unset KMP_AFFINITY
+  unset KOMP_PROC_BIND
+done
+  ./tymer times
+  . post > postit
+  cat postit

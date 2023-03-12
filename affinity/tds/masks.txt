@@ -1,0 +1,2000 @@
+# of 1s in the binary number gives the number of cores to be used (threads)
+spacing is given by the bitmap starting at the right most 1 right 
+     0 to the left of the first 1 implies a core is skipped
+# of 0s, counting from the right before the first 1 gives the offset from 0
+
+
+0b101011
+   5 - 3 - 1 0
+0b 1 0 1 0 1 1
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466934]: mask 0x2b set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b101011
+   5 - 3 - 1 0 +2 for the two zeros in right columns
+0b 1 0 1 0 1 1  00
+
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473838]: mask 0xac set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+
+0b11,0b110000000000000
+
+
+
+Four tasks, each with 7 cores each task starting at a bolck boundary
+[tkaiser2@x9000c3s2b0n1 18918]$ python3 -c "print(hex(0b1111111))"
+0x7f
+[tkaiser2@x9000c3s2b0n1 18918]$ python3 -c "print(hex(0b11111110000000000000))"
+0xfe000
+[tkaiser2@x9000c3s2b0n1 18918]$ python3 -c "print(hex(0b111111100000000000000000000000000))"
+0x1fc000000
+[tkaiser2@x9000c3s2b0n1 18918]$ python3 -c "print(hex(0b1111111000000000000000000000000000000000000000))"
+0x3f8000000000
+
+
+4 tasks, 7 threads each task starting at chip sub boundaries
+[tkaiser2@x9000c3s2b0n1 18918]$ srun --mpi=pmi2 -n 4 --cpu-bind=v,mask_cpu:0x7f,0xfe000,0x1fc000000,0x3f8000000000  ./c.cray -F -E -t 5 | grep X | sort
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3509131]: mask 0x7f set
+cpu-bind=MASK - x9000c3s2b0n1, task  1  1 [3509132]: mask 0xfe000 set
+cpu-bind=MASK - x9000c3s2b0n1, task  2  2 [3509133]: mask 0x1fc000000 set
+cpu-bind=MASK - x9000c3s2b0n1, task  3  3 [3509134]: mask 0x3f8000000000 set
+0000      0000         X9000C3S2B0N1        0000         0000  0000
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+0000      0006         X9000C3S2B0N1        0000         0000  0006
+0001      0000         X9000C3S2B0N1        0000         0001  0013
+0001      0001         X9000C3S2B0N1        0000         0001  0014
+0001      0002         X9000C3S2B0N1        0000         0001  0015
+0001      0003         X9000C3S2B0N1        0000         0001  0016
+0001      0004         X9000C3S2B0N1        0000         0001  0017
+0001      0005         X9000C3S2B0N1        0000         0001  0018
+0001      0006         X9000C3S2B0N1        0000         0001  0019
+0002      0000         X9000C3S2B0N1        0000         0002  0026
+0002      0001         X9000C3S2B0N1        0000         0002  0027
+0002      0002         X9000C3S2B0N1        0000         0002  0028
+0002      0003         X9000C3S2B0N1        0000         0002  0029
+0002      0004         X9000C3S2B0N1        0000         0002  0030
+0002      0005         X9000C3S2B0N1        0000         0002  0031
+0002      0006         X9000C3S2B0N1        0000         0002  0032
+0003      0000         X9000C3S2B0N1        0000         0003  0039
+0003      0001         X9000C3S2B0N1        0000         0003  0040
+0003      0002         X9000C3S2B0N1        0000         0003  0041
+0003      0003         X9000C3S2B0N1        0000         0003  0042
+0003      0004         X9000C3S2B0N1        0000         0003  0043
+0003      0005         X9000C3S2B0N1        0000         0003  0044
+0003      0006         X9000C3S2B0N1        0000         0003  0045
+[tkaiser2@x9000c3s2b0n1 18918]$ 
+
+spakcing out threads. Note that OMP_NUM_THREADS is ignored
+
+[tkaiser2@x9000c3s2b0n1 18918]$ python3 -c "print(hex(0b101))"
+0x5
+[tkaiser2@x9000c3s2b0n1 18918]$ python3 -c "print(hex(0b10100000))"
+0xa0
+[tkaiser2@x9000c3s2b0n1 18918]$ srun --mpi=pmi2 -n 2 --cpu-bind=v,mask_cpu:0x5,0xa0  ./c.cray -F -E -t 5 | grep X | sort
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3511094]: mask 0x5 set
+cpu-bind=MASK - x9000c3s2b0n1, task  1  1 [3511095]: mask 0xa0 set
+0000      0000         X9000C3S2B0N1        0000         0000  0000
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0001      0000         X9000C3S2B0N1        0000         0001  0005
+0001      0001         X9000C3S2B0N1        0000         0001  0007
+[tkaiser2@x9000c3s2b0n1 18918]$ OMP_NUM_THREADS=2
+[tkaiser2@x9000c3s2b0n1 18918]$ srun --mpi=pmi2 -n 2 --cpu-bind=v,mask_cpu:0x5,0xa0  ./c.cray -F -E -t 5 | grep X | sort
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3511273]: mask 0x5 set
+cpu-bind=MASK - x9000c3s2b0n1, task  1  1 [3511274]: mask 0xa0 set
+0000      0000         X9000C3S2B0N1        0000         0000  0000
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0001      0000         X9000C3S2B0N1        0000         0001  0005
+0001      0001         X9000C3S2B0N1        0000         0001  0007
+[tkaiser2@x9000c3s2b0n1 18918]$ 
+
+
+Using masks to set OMP_NUM_THREADS on a per task basis
+  996  03-08-23_08:01:28 history | grep srun
+[tkaiser2@x9000c1s2b1n0 18918]$ srun --mpi=pmi2 -n 2 --cpu-bind=v,mask_cpu:0x5,0xa0  ./c.cray -F -E -t 5 | grep X | sort
+cpu-bind=MASK - x9000c1s2b1n0, task  0  0 [3196461]: mask 0x5 set
+cpu-bind=MASK - x9000c1s2b1n0, task  1  1 [3196462]: mask 0xa0 set
+0000      0000         X9000C1S2B1N0        0000         0000  0000
+0000      0001         X9000C1S2B1N0        0000         0000  0002
+0001      0000         X9000C1S2B1N0        0000         0001  0005
+0001      0001         X9000C1S2B1N0        0000         0001  0007
+[tkaiser2@x9000c1s2b1n0 18918]$ srun --mpi=pmi2 -n 2 --cpu-bind=v,mask_cpu:0x7,0xa0  ./c.cray -F -E -t 5 | grep X | sort
+cpu-bind=MASK - x9000c1s2b1n0, task  0  0 [3196644]: mask 0x7 set
+cpu-bind=MASK - x9000c1s2b1n0, task  1  1 [3196645]: mask 0xa0 set
+0000      0000         X9000C1S2B1N0        0000         0000  0000
+0000      0001         X9000C1S2B1N0        0000         0000  0001
+0000      0002         X9000C1S2B1N0        0000         0000  0002
+0001      0000         X9000C1S2B1N0        0000         0001  0005
+0001      0001         X9000C1S2B1N0        0000         0001  0007
+[tkaiser2@x9000c1s2b1n0 18918]$
+
+
+[tkaiser2@x9000c1s2b1n0 18918]$ srun --mpi=pmi2 -n 2 --cpu-bind=v,mask_cpu:0xff0,0x1  ./c.cray -F -E -t 5 | grep X | sort
+cpu-bind=MASK - x9000c1s2b1n0, task  0  0 [3200851]: mask 0xff0 set
+cpu-bind=MASK - x9000c1s2b1n0, task  1  1 [3200852]: mask 0x1 set
+0000      0000         X9000C1S2B1N0        0000         0000  0004
+0000      0001         X9000C1S2B1N0        0000         0000  0005
+0000      0002         X9000C1S2B1N0        0000         0000  0006
+0000      0003         X9000C1S2B1N0        0000         0000  0007
+0000      0004         X9000C1S2B1N0        0000         0000  0008
+0000      0005         X9000C1S2B1N0        0000         0000  0009
+0000      0006         X9000C1S2B1N0        0000         0000  0010
+0000      0007         X9000C1S2B1N0        0000         0000  0011
+0001      0000         X9000C1S2B1N0        0000         0001  0000
+[tkaiser2@x9000c1s2b1n0 18918]$ 
+
+
+
+
+
+[tkaiser2@x9000c3s2b0n0 18918]$ zeros=0b1
+[tkaiser2@x9000c3s2b0n0 18918]$ mask=`python3 -c "print(hex($zeros))" `
+[tkaiser2@x9000c3s2b0n0 18918]$ srun --mpi=pmi2 -n 1 --cpu-bind=v,mask_cpu:$mask ./c.cray -F -E -t 5
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [520415]: mask 0x1 set
+MPI VERSION MPI VERSION    : CRAY MPICH version 8.1.20.8 (ANL base 3.4a2)
+MPI BUILD INFO : Mon Sep 19 11:26 2022 (git hash 10c7776)
+
+task    thread             node name  first task    # on node  core
+total time      5.010
+0000      0000         X9000C3S2B0N0        0000         0000  0000
+[tkaiser2@x9000c3s2b0n0 18918]$ for x in `seq 1 5` ; do zeros=${zeros}0 ; echo $zeros ; mask=`python3 -c "print(hex($zeros))" `; srun --mpi=pmi2 -n 1 --cpu-bind=v,mask_cpu:$mask ./c.cray -F -E -t 5 | grep X | sort; done
+0b10
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [520451]: mask 0x2 set
+0000      0000         X9000C3S2B0N0        0000         0000  0001
+0b100
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [520487]: mask 0x4 set
+0000      0000         X9000C3S2B0N0        0000         0000  0002
+0b1000
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [520654]: mask 0x8 set
+0000      0000         X9000C3S2B0N0        0000         0000  0003
+0b10000
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [520690]: mask 0x10 set
+0000      0000         X9000C3S2B0N0        0000         0000  0004
+0b100000
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [520725]: mask 0x20 set
+0000      0000         X9000C3S2B0N0        0000         0000  0005
+[tkaiser2@x9000c3s2b0n0 18918]$ 
+
+
+[tkaiser2@x9000c3s2b0n0 18918]$ zeros=0b101
+[tkaiser2@x9000c3s2b0n0 18918]$ mask=`python3 -c "print(hex($zeros))" `
+[tkaiser2@x9000c3s2b0n0 18918]$ srun --mpi=pmi2 -n 1 --cpu-bind=v,mask_cpu:$mask ./c.cray -F -E -t 5
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [522220]: mask 0x5 set
+MPI VERSION MPI VERSION    : CRAY MPICH version 8.1.20.8 (ANL base 3.4a2)
+MPI BUILD INFO : Mon Sep 19 11:26 2022 (git hash 10c7776)
+
+task    thread             node name  first task    # on node  core
+total time      5.001
+0000      0000         X9000C3S2B0N0        0000         0000  0000
+0000      0001         X9000C3S2B0N0        0000         0000  0002
+[tkaiser2@x9000c3s2b0n0 18918]$ for x in `seq 1 5` ; do zeros=${zeros}0 ; echo $zeros ; mask=`python3 -c "print(hex($zeros))" `; srun --mpi=pmi2 -n 1 --cpu-bind=v,mask_cpu:$mask ./c.cray -F -E -t 5 | grep X | sort; done
+0b1010
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [522258]: mask 0xa set
+0000      0000         X9000C3S2B0N0        0000         0000  0001
+0000      0001         X9000C3S2B0N0        0000         0000  0003
+0b10100
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [522294]: mask 0x14 set
+0000      0000         X9000C3S2B0N0        0000         0000  0002
+0000      0001         X9000C3S2B0N0        0000         0000  0004
+0b101000
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [522463]: mask 0x28 set
+0000      0000         X9000C3S2B0N0        0000         0000  0003
+0000      0001         X9000C3S2B0N0        0000         0000  0005
+0b1010000
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [522501]: mask 0x50 set
+0000      0000         X9000C3S2B0N0        0000         0000  0004
+0000      0001         X9000C3S2B0N0        0000         0000  0006
+0b10100000
+cpu-bind=MASK - x9000c3s2b0n0, task  0  0 [522540]: mask 0xa0 set
+0000      0000         X9000C3S2B0N0        0000         0000  0005
+0000      0001         X9000C3S2B0N0        0000         0000  0007
+[tkaiser2@x9000c3s2b0n0 18918]$ 
+
+
+
+
+[tkaiser2@x9000c3s2b0n1 18918]$ for x in `seq 1 256` ; do  m=` python3 -c "print(hex($x))"` ; python3 -c "print(bin($x))" ;srun --mpi=pmi2 -n 1 --cpu-bind=v,mask_cpu:$m ./c.impi -F -E -t 2 | grep X | sort; echo ;done
+0b1
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3464802]: mask 0x1 set
+0000      0000         X9000C3S2B0N1        0000         0000  0000
+
+0b10
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3464839]: mask 0x2 set
+0000      0000         X9000C3S2B0N1        0000         0000  0001
+
+0b11
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3464875]: mask 0x3 set
+0000      0000         X9000C3S2B0N1        0000         0000  0001
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+
+0b100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3464916]: mask 0x4 set
+0000      0000         X9000C3S2B0N1        0000         0000  0002
+
+0b101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3464952]: mask 0x5 set
+0000      0000         X9000C3S2B0N1        0000         0000  0002
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+
+0b110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3464989]: mask 0x6 set
+0000      0000         X9000C3S2B0N1        0000         0000  0002
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+
+0b111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465027]: mask 0x7 set
+0000      0000         X9000C3S2B0N1        0000         0000  0002
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+
+0b1000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465197]: mask 0x8 set
+0000      0000         X9000C3S2B0N1        0000         0000  0003
+
+0b1001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465233]: mask 0x9 set
+0000      0000         X9000C3S2B0N1        0000         0000  0003
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+
+0b1010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465270]: mask 0xa set
+0000      0000         X9000C3S2B0N1        0000         0000  0003
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+
+0b1011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465309]: mask 0xb set
+0000      0000         X9000C3S2B0N1        0000         0000  0003
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+
+0b1100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465347]: mask 0xc set
+0000      0000         X9000C3S2B0N1        0000         0000  0003
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+
+0b1101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465390]: mask 0xd set
+0000      0000         X9000C3S2B0N1        0000         0000  0003
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+
+0b1110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465429]: mask 0xe set
+0000      0000         X9000C3S2B0N1        0000         0000  0003
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+
+0b1111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465470]: mask 0xf set
+0000      0000         X9000C3S2B0N1        0000         0000  0003
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b10000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465510]: mask 0x10 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+
+0b10001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465546]: mask 0x11 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+
+0b10010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465713]: mask 0x12 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+
+0b10011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465750]: mask 0x13 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+
+0b10100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465789]: mask 0x14 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+
+0b10101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465826]: mask 0x15 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+
+0b10110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465864]: mask 0x16 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+
+0b10111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465903]: mask 0x17 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b11000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465942]: mask 0x18 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+
+0b11001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3465980]: mask 0x19 set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+
+0b11010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466018]: mask 0x1a set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b11011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466186]: mask 0x1b set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+
+0b11100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466225]: mask 0x1c set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b11101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466263]: mask 0x1d set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b11110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466302]: mask 0x1e set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b11111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466341]: mask 0x1f set
+0000      0000         X9000C3S2B0N1        0000         0000  0004
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b100000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466381]: mask 0x20 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+
+0b100001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466417]: mask 0x21 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+
+0b100010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466454]: mask 0x22 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+
+0b100011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466491]: mask 0x23 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+
+0b100100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466529]: mask 0x24 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+
+0b100101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466703]: mask 0x25 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+
+0b100110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466741]: mask 0x26 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+
+0b100111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466781]: mask 0x27 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b101000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466821]: mask 0x28 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+
+0b101001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466858]: mask 0x29 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b101010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466896]: mask 0x2a set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+
+0b101011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466934]: mask 0x2b set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b101100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3466973]: mask 0x2c set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b101101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467012]: mask 0x2d set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b101110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467079]: mask 0x2e set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b101111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467220]: mask 0x2f set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b110000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467260]: mask 0x30 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+
+0b110001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467297]: mask 0x31 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b110010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467335]: mask 0x32 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b110011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467374]: mask 0x33 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+
+0b110100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467413]: mask 0x34 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b110101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467451]: mask 0x35 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b110110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467490]: mask 0x36 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b110111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467529]: mask 0x37 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b111000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467699]: mask 0x38 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b111001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467737]: mask 0x39 set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b111010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467776]: mask 0x3a set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b111011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467816]: mask 0x3b set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b111100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467856]: mask 0x3c set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b111101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467901]: mask 0x3d set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b111110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467941]: mask 0x3e set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b111111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3467984]: mask 0x3f set
+0000      0000         X9000C3S2B0N1        0000         0000  0005
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0003
+
+0b1000000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468026]: mask 0x40 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+
+0b1000001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468193]: mask 0x41 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+
+0b1000010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468230]: mask 0x42 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+
+0b1000011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468267]: mask 0x43 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+
+0b1000100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468305]: mask 0x44 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+
+0b1000101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468342]: mask 0x45 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+
+0b1000110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468380]: mask 0x46 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+
+0b1000111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468419]: mask 0x47 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0000
+
+0b1001000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468458]: mask 0x48 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+
+0b1001001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468495]: mask 0x49 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b1001010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468664]: mask 0x4a set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b1001011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468703]: mask 0x4b set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b1001100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468742]: mask 0x4c set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b1001101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468780]: mask 0x4d set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b1001110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468819]: mask 0x4e set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b1001111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468858]: mask 0x4f set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b1010000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468898]: mask 0x50 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+
+0b1010001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468935]: mask 0x51 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b1010010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3468973]: mask 0x52 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b1010011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469011]: mask 0x53 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b1010100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469186]: mask 0x54 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b1010101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469224]: mask 0x55 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b1010110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469263]: mask 0x56 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b1010111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469305]: mask 0x57 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b1011000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469346]: mask 0x58 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b1011001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469385]: mask 0x59 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b1011010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469424]: mask 0x5a set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b1011011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469463]: mask 0x5b set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b1011100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469503]: mask 0x5c set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b1011101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469544]: mask 0x5d set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0000
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b1011110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469712]: mask 0x5e set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b1011111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469752]: mask 0x5f set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+0000      0005         X9000C3S2B0N1        0000         0000  0004
+
+0b1100000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469794]: mask 0x60 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0005
+
+0b1100001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469831]: mask 0x61 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+
+0b1100010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469869]: mask 0x62 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+
+0b1100011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469908]: mask 0x63 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b1100100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469947]: mask 0x64 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+
+0b1100101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3469985]: mask 0x65 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b1100110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470024]: mask 0x66 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b1100111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470193]: mask 0x67 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b1101000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470233]: mask 0x68 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+
+0b1101001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470271]: mask 0x69 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b1101010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470310]: mask 0x6a set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b1101011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470349]: mask 0x6b set
+0000      0000         X9000C3S2B0N1        0000         0000  0001
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b1101100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470395]: mask 0x6c set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b1101101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470434]: mask 0x6d set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b1101110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470474]: mask 0x6e set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b1101111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470516]: mask 0x6f set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b1110000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470557]: mask 0x70 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+
+0b1110001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470726]: mask 0x71 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b1110010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470765]: mask 0x72 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b1110011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470804]: mask 0x73 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b1110100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470844]: mask 0x74 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b1110101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470883]: mask 0x75 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b1110110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470923]: mask 0x76 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0001
+
+0b1110111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3470963]: mask 0x77 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b1111000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471004]: mask 0x78 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b1111001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471043]: mask 0x79 set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b1111010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471214]: mask 0x7a set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b1111011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471258]: mask 0x7b set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b1111100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471299]: mask 0x7c set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b1111101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471339]: mask 0x7d set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+0000      0005         X9000C3S2B0N1        0000         0000  0004
+
+0b1111110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471380]: mask 0x7e set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b1111111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471421]: mask 0x7f set
+0000      0000         X9000C3S2B0N1        0000         0000  0006
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0001
+0000      0005         X9000C3S2B0N1        0000         0000  0004
+0000      0006         X9000C3S2B0N1        0000         0000  0002
+
+0b10000000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471463]: mask 0x80 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+
+0b10000001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471500]: mask 0x81 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+
+0b10000010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471537]: mask 0x82 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+
+0b10000011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471574]: mask 0x83 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+
+0b10000100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471749]: mask 0x84 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+
+0b10000101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471786]: mask 0x85 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+
+0b10000110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471826]: mask 0x86 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+
+0b10000111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471864]: mask 0x87 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b10001000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471903]: mask 0x88 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+
+0b10001001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471941]: mask 0x89 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b10001010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3471979]: mask 0x8a set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b10001011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472017]: mask 0x8b set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b10001100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472057]: mask 0x8c set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b10001101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472225]: mask 0x8d set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b10001110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472265]: mask 0x8e set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b10001111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472304]: mask 0x8f set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b10010000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472345]: mask 0x90 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+
+0b10010001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472383]: mask 0x91 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b10010010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472421]: mask 0x92 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b10010011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472459]: mask 0x93 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+
+0b10010100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472498]: mask 0x94 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+
+0b10010101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472537]: mask 0x95 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b10010110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472576]: mask 0x96 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b10010111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472746]: mask 0x97 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b10011000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472786]: mask 0x98 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+
+0b10011001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472825]: mask 0x99 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b10011010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472864]: mask 0x9a set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b10011011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472903]: mask 0x9b set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0000
+0000      0004         X9000C3S2B0N1        0000         0000  0001
+
+0b10011100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472949]: mask 0x9c set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b10011101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3472988]: mask 0x9d set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b10011110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473030]: mask 0x9e set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b10011111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473070]: mask 0x9f set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0000
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+0000      0005         X9000C3S2B0N1        0000         0000  0004
+
+0b10100000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473113]: mask 0xa0 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0005
+
+0b10100001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473279]: mask 0xa1 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0005
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+
+0b10100010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473318]: mask 0xa2 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+
+0b10100011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473356]: mask 0xa3 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0005
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+
+0b10100100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473395]: mask 0xa4 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+
+0b10100101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473433]: mask 0xa5 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b10100110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473472]: mask 0xa6 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b10100111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473511]: mask 0xa7 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0005
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b10101000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473551]: mask 0xa8 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+
+0b10101001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473589]: mask 0xa9 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b10101010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473759]: mask 0xaa set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b10101011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473798]: mask 0xab set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0000
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b10101100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473838]: mask 0xac set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b10101101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473877]: mask 0xad set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b10101110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473917]: mask 0xae set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b10101111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473957]: mask 0xaf set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+0000      0005         X9000C3S2B0N1        0000         0000  0002
+
+0b10110000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3473998]: mask 0xb0 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+
+0b10110001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474036]: mask 0xb1 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b10110010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474075]: mask 0xb2 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b10110011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474115]: mask 0xb3 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b10110100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474293]: mask 0xb4 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b10110101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474332]: mask 0xb5 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b10110110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474374]: mask 0xb6 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b10110111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474415]: mask 0xb7 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0005
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0002
+
+0b10111000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474457]: mask 0xb8 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+
+0b10111001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474497]: mask 0xb9 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b10111010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474538]: mask 0xba set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b10111011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474578]: mask 0xbb set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b10111100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474620]: mask 0xbc set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b10111101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474790]: mask 0xbd set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b10111110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474831]: mask 0xbe set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+0000      0005         X9000C3S2B0N1        0000         0000  0003
+
+0b10111111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474873]: mask 0xbf set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0002
+0000      0006         X9000C3S2B0N1        0000         0000  0005
+
+0b11000000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474915]: mask 0xc0 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0006
+
+0b11000001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474953]: mask 0xc1 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+
+0b11000010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3474991]: mask 0xc2 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+
+0b11000011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475029]: mask 0xc3 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+
+0b11000100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475068]: mask 0xc4 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+
+0b11000101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475106]: mask 0xc5 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+
+0b11000110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475145]: mask 0xc6 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+
+0b11000111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475314]: mask 0xc7 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b11001000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475354]: mask 0xc8 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+
+0b11001001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475392]: mask 0xc9 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0006
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0000
+
+0b11001010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475432]: mask 0xca set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+
+0b11001011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475477]: mask 0xcb set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b11001100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475517]: mask 0xcc set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+
+0b11001101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475556]: mask 0xcd set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+
+0b11001110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475598]: mask 0xce set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+
+0b11001111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475638]: mask 0xcf set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+0000      0005         X9000C3S2B0N1        0000         0000  0006
+
+0b11010000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475811]: mask 0xd0 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+
+0b11010001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475849]: mask 0xd1 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+
+0b11010010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475889]: mask 0xd2 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+
+0b11010011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475930]: mask 0xd3 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+
+0b11010100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3475970]: mask 0xd4 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b11010101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476010]: mask 0xd5 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b11010110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476050]: mask 0xd6 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+
+0b11010111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476090]: mask 0xd7 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+0000      0005         X9000C3S2B0N1        0000         0000  0006
+
+0b11011000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476131]: mask 0xd8 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+
+0b11011001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476300]: mask 0xd9 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0006
+0000      0002         X9000C3S2B0N1        0000         0000  0000
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b11011010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476340]: mask 0xda set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b11011011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476382]: mask 0xdb set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0006
+
+0b11011100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476423]: mask 0xdc set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b11011101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476464]: mask 0xdd set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0006
+
+0b11011110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476506]: mask 0xde set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0003
+
+0b11011111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476547]: mask 0xdf set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+0000      0005         X9000C3S2B0N1        0000         0000  0006
+0000      0006         X9000C3S2B0N1        0000         0000  0003
+
+0b11100000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476589]: mask 0xe0 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0005
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+
+0b11100001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476627]: mask 0xe1 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+
+0b11100010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476666]: mask 0xe2 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+
+0b11100011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476841]: mask 0xe3 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b11100100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476881]: mask 0xe4 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+
+0b11100101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476920]: mask 0xe5 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0002
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+
+0b11100110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3476962]: mask 0xe6 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0001
+
+0b11100111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477002]: mask 0xe7 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0001
+0000      0005         X9000C3S2B0N1        0000         0000  0002
+
+0b11101000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477043]: mask 0xe8 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+
+0b11101001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477082]: mask 0xe9 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+
+0b11101010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477122]: mask 0xea set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0005
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0003
+
+0b11101011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477163]: mask 0xeb set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b11101100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477335]: mask 0xec set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+
+0b11101101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477375]: mask 0xed set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b11101110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477416]: mask 0xee set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0002
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+0000      0005         X9000C3S2B0N1        0000         0000  0003
+
+0b11101111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477457]: mask 0xef set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0001
+0000      0005         X9000C3S2B0N1        0000         0000  0003
+0000      0006         X9000C3S2B0N1        0000         0000  0002
+
+0b11110000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477499]: mask 0xf0 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0004
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+
+0b11110001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477542]: mask 0xf1 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+
+0b11110010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477582]: mask 0xf2 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b11110011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477622]: mask 0xf3 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0005
+0000      0002         X9000C3S2B0N1        0000         0000  0006
+0000      0003         X9000C3S2B0N1        0000         0000  0000
+0000      0004         X9000C3S2B0N1        0000         0000  0001
+0000      0005         X9000C3S2B0N1        0000         0000  0004
+
+0b11110100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477663]: mask 0xf4 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+
+0b11110101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477703]: mask 0xf5 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0000
+0000      0004         X9000C3S2B0N1        0000         0000  0005
+0000      0005         X9000C3S2B0N1        0000         0000  0006
+
+0b11110110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477874]: mask 0xf6 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b11110111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477915]: mask 0xf7 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0004
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+0000      0005         X9000C3S2B0N1        0000         0000  0002
+0000      0006         X9000C3S2B0N1        0000         0000  0000
+
+0b11111000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477958]: mask 0xf8 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0003
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+
+0b11111001
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3477998]: mask 0xf9 set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b11111010
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3478039]: mask 0xfa set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0005
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+0000      0005         X9000C3S2B0N1        0000         0000  0004
+
+0b11111011
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3478086]: mask 0xfb set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0001
+0000      0003         X9000C3S2B0N1        0000         0000  0003
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+0000      0006         X9000C3S2B0N1        0000         0000  0006
+
+0b11111100
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3478128]: mask 0xfc set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0002
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0006
+0000      0004         X9000C3S2B0N1        0000         0000  0004
+0000      0005         X9000C3S2B0N1        0000         0000  0005
+
+0b11111101
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3478171]: mask 0xfd set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0003
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+0000      0005         X9000C3S2B0N1        0000         0000  0002
+0000      0006         X9000C3S2B0N1        0000         0000  0004
+
+0b11111110
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3478213]: mask 0xfe set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0001
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0005
+0000      0004         X9000C3S2B0N1        0000         0000  0006
+0000      0005         X9000C3S2B0N1        0000         0000  0002
+0000      0006         X9000C3S2B0N1        0000         0000  0003
+
+0b11111111
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3478385]: mask 0xff set
+0000      0000         X9000C3S2B0N1        0000         0000  0007
+0000      0001         X9000C3S2B0N1        0000         0000  0000
+0000      0002         X9000C3S2B0N1        0000         0000  0004
+0000      0003         X9000C3S2B0N1        0000         0000  0001
+0000      0004         X9000C3S2B0N1        0000         0000  0002
+0000      0005         X9000C3S2B0N1        0000         0000  0003
+0000      0006         X9000C3S2B0N1        0000         0000  0006
+0000      0007         X9000C3S2B0N1        0000         0000  0005
+
+0b100000000
+cpu-bind=MASK - x9000c3s2b0n1, task  0  0 [3478428]: mask 0x100 set
+0000      0000         X9000C3S2B0N1        0000         0000  0008
+
+[tkaiser2@x9000c3s2b0n1 18918]$ 

@@ -1,0 +1,85 @@
+#!/usr/bin/bash
+#SBATCH --job-name="start_vasp"
+#SBATCH --nodes=2
+#SBATCH --tasks-per-node=8
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:10:00
+#SBATCH --partition=standard
+#SBATCH 
+###########SBATCH --account=hpcapps
+
+BASE=/sfs/projects/hpcapps/examples/all
+BASE=`pwd`
+
+#Make a new directory
+STDIR=`pwd`
+mkdir $SLURM_JOB_ID
+cd $SLURM_JOB_ID
+
+
+if [ -z "$CLA" ]; then
+ echo "CLA is not set. MPI_Send and MPI_Recv will be used"
+ echo "To use MPI_Sendrecv 'export CLA=SR' before running sbatch."
+else
+ echo CLA= $CLA
+fi
+
+#Copy everything 
+printenv > env
+cat $0 > script
+cp $BASE/make* .
+cp $BASE/Makefile .
+cp $BASE/fhostone.F90 .
+cp $BASE/phostone.c .
+cp $BASE/ppong.c .
+cp $BASE/todo.py .
+cp $BASE/getcore.c .
+
+#Build our programs
+make 
+chmod 755 todo.py
+./todo.py
+
+export OMP_NUM_THREADS=1
+
+#only use Cray's environment
+module purge
+module unuse /nopt/nrel/apps/modules/default/compilers_mpi
+
+
+
+#Run each version
+module purge
+module load craype-x86-spr
+module load PrgEnv-cray
+
+srun --mpi=pmi2  ./pp.cray $CLA > c.cray.out
+
+
+module purge
+module load craype-x86-spr
+module load PrgEnv-gnu
+module load gcc
+
+srun --mpi=pmi2  ./pp.gnu $CLA > c.gnu.out
+
+
+module purge
+#Enable Walid's modules
+source /nopt/nrel/apps/env.sh
+module load intel
+module load PrgEnv-intel
+
+srun --mpi=pmi2  ./pp.intel $CLA > c.intel.out
+
+
+module purge
+module load intel-oneapi
+module load libfabric
+#NOTE: We don't load intel-oneapi-mpi
+#If you get runtime like errors talk to tkaiser2
+#module load intel-oneapi-mpi
+srun --mpi=pmi2  ./pp.impi $CLA > c.impi.out
+mv $STDIR/slurm-$SLURM_JOB_ID.out .
+

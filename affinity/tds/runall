@@ -1,0 +1,77 @@
+#!/usr/bin/bash
+#SBATCH --job-name="start_vasp"
+#SBATCH --nodes=2
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:10:00
+#SBATCH --partition=standard
+#SBATCH --tasks-per-node=2
+###########SBATCH --account=hpcapps
+
+BASE=/sfs/projects/hpcapps/examples/all
+BASE=`pwd`
+
+#Make a new directory
+STDIR=`pwd`
+mkdir $SLURM_JOB_ID
+cd $SLURM_JOB_ID
+
+#Copy everything 
+printenv > env
+cat $0 > script
+cp $BASE/make* .
+cp $BASE/Makefile .
+cp $BASE/fhostone.F90 .
+cp $BASE/phostone.c .
+cp $BASE/post .
+cp $BASE/ppong.c .
+cp $BASE/getcore.c .
+
+#Build our programs
+make all
+
+#only use Cray's environment
+module purge
+module unuse /nopt/nrel/apps/modules/default/compilers_mpi
+
+
+export OMP_NUM_THREADS=2
+
+#Run each version
+module purge
+module load craype-x86-spr
+module load PrgEnv-cray
+
+srun --mpi=pmi2 --tasks-per-node=2 -n 4 ./f.cray -F -t 5 > f.cray.out
+srun --mpi=pmi2 --tasks-per-node=2 -n 4 ./c.cray -F -t 5 > c.cray.out
+
+
+module purge
+module load craype-x86-spr
+module load PrgEnv-gnu
+module load gcc
+
+srun --mpi=pmi2 --tasks-per-node=2 -n 4 ./f.gnu -F -t 5 > f.gnu.out
+srun --mpi=pmi2 --tasks-per-node=2 -n 4 ./c.gnu -F -t 5 > c.gnu.out
+
+
+module purge
+#Enable Walid's modules
+source /nopt/nrel/apps/env.sh
+module load intel
+module load PrgEnv-intel
+
+srun --mpi=pmi2 --tasks-per-node=2 -n 4 ./f.intel -F -t 5 > f.intel.out
+srun --mpi=pmi2 --tasks-per-node=2 -n 4 ./c.intel -F -t 5 > c.intel.out
+
+
+module purge
+module load intel-oneapi
+module load libfabric
+#NOTE: We don't load intel-oneapi-mpi
+#If you get runtime like errors talk to tkaiser2
+#module load intel-oneapi-mpi
+srun --mpi=pmi2 --tasks-per-node=2 -n 4 ./f.impi -F -t 5 > f.impi.out
+srun --mpi=pmi2 --tasks-per-node=2 -n 4 ./c.impi -F -t 5 > c.impi.out
+
+mv $STDIR/slurm-$SLURM_JOB_ID.out .

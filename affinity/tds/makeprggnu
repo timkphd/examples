@@ -1,0 +1,43 @@
+SHELL:=/usr/bin/bash
+
+recurse:
+	module purge                 ; \
+	module unuse /nopt/nrel/apps/modules/default/compilers_mpi ;\
+	module load craype-x86-spr   ; \
+	module load PrgEnv-gnu       ; \
+	module load gcc
+	$(MAKE) -f $(firstword $(MAKEFILE_LIST)) both
+
+both: f.gnu c.gnu pp.gnu
+
+#defines USEFAST
+include makefile.include
+
+ifeq ($(USEFAST),yes)
+OPS=-DUSEFAST
+EXTRA=getcore.o
+endif
+
+F90=ftn
+CC=cc
+
+
+f.gnu: fhostone.F90 $(EXTRA)
+	$(F90) $(OPS) $(EXTRA) -fopenmp  fhostone.F90 -O3 -o f.gnu
+#	$(F90) $(OPS) $(EXTRA) -fopenmp -fallow-argument-mismatch  fhostone.F90 -O3 -o f.gnu
+	rm -f getcore.o
+
+c.gnu: phostone.c
+	$(CC) $(OPS) -fopenmp phostone.c -O3 -o c.gnu
+
+pp.gnu: ppong.c
+	$(CC) $(OPS) $(WES) ppong.c -O3 -o pp.gnu
+
+clean:
+	rm -rf *o *mod* f.gnu c.gnu pp.gnu
+
+
+
+
+
+

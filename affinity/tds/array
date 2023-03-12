@@ -1,0 +1,41 @@
+#!/bin/bash
+#SBATCH --job-name="rfm_Array_Basic_job"
+#SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --output=rfm_Array_Basic_job.out_%a
+#SBATCH --error=rfm_Array_Basic_job.err_%a
+#SBATCH -p standard
+#SBATCH -A hpcapps
+#SBATCH --time=00:05:00
+#SBATCH --export=ALL
+#SBATCH --array=1-128
+#SBATCH --exclusive=user
+#SBATCH --mem=20G
+##SBATCH -x x9000c1s2b1n[0-1],x9000c3s2b0n[0-1]
+##SBATCH -x x9000c1s2b1n[0-1],x9000c3s2b1n[0-1]
+##SBATCH -x x9000c3s2b0n[0-1],x9000c3s2b1n[0-1]
+##SBATCH -x x9000c1s2b1n[1],x9000c3s2b0n[0-1],x9000c3s2b1n[0-1]
+
+
+# make a directory for the job and subjob
+#x=1
+OUTFILE=${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}_info
+
+:<<COMMENT
+mkdir -p $SLURM_ARRAY_JOB_ID/$SLURM_ARRAY_TASK_ID
+
+while [ $? -ne 0 ]; do
+  (( x=x+1 ))
+  if [ $x == 10 ] ; then  break; fi;
+  sleep 1
+  mkdir --p $SLURM_ARRAY_JOB_ID/$SLURM_ARRAY_TASK_ID
+done
+
+cd $SLURM_ARRAY_JOB_ID/$SLURM_ARRAY_TASK_ID
+$OURFILE=info
+COMMENT
+
+hostname   > $OUTFILE
+date      >> $OUTFILE
+
+#echo x=$x >> info 

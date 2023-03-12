@@ -1,0 +1,41 @@
+SHELL:=/usr/bin/bash
+# For Eagle
+
+recurse:
+	module purge                       ; \
+	module load intel-oneapi-compilers ; \
+	module load intel-oneapi-mpi       ; \
+	module load gcc                    ; \
+	$(MAKE) -f $(firstword $(MAKEFILE_LIST)) both
+
+both: f.impi c.impi pp.impi
+
+#defines USEFAST
+include makefile.include
+
+ifeq ($(USEFAST),yes)
+#OPS=-DUSEFAST
+#EXTRA=getcore.o
+endif
+
+F90=mpiifort
+CC=mpiicc
+
+f.impi: fhostone.F90 $(EXTRA)
+	$(F90) $(OPS) $(EXTRA) -fopenmp fhostone.F90 -O3 -o f.impi
+	rm -f getcore.o
+
+c.impi: phostone.c
+	$(CC) $(OPS) -fopenmp phostone.c -O3 -o c.impi
+
+pp.impi: ppong.c
+	$(CC) $(OPS) $(WES) ppong.c -O3 -o pp.impi
+
+clean:
+	rm -rf *o *mod* f.impi c.impi pp.impi
+
+
+
+
+
+

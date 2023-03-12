@@ -1,0 +1,41 @@
+SHELL:=/usr/bin/bash
+
+recurse:
+	module purge                      ; \
+	module load craype-x86-spr        ; \
+	module load PrgEnv-cray           ; \
+	$(MAKE) -f $(firstword $(MAKEFILE_LIST)) both
+
+both: f.cray c.cray pp.cray
+
+#defines USEFAST
+include makefile.include
+
+ifeq ($(USEFAST),yes)
+OPS=-DUSEFAST
+EXTRA=getcore.o
+endif
+
+F90=ftn
+CC=cc
+
+
+f.cray: fhostone.F90 $(EXTRA)
+	$(F90) $(OPS) $(EXTRA) -fopenmp fhostone.F90 -O3 -o f.cray
+	rm -f getcore.o
+
+c.cray: phostone.c
+	$(CC) $(OPS) -fopenmp phostone.c -O3 -o c.cray
+
+pp.cray: ppong.c
+	$(CC) $(OPS) $(WES) ppong.c -O3 -o pp.cray
+
+
+clean:
+	rm -rf *o *mod* f.cray c.cray pp.cray
+
+
+
+
+
+
