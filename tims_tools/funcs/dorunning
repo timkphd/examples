@@ -1,6 +1,6 @@
 dorunning () 
 { 
-    running;
+    isrunning;
     while [ $? -eq "0" ]; do
         echo "running";
         sleep 10;

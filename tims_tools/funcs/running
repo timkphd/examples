@@ -1,4 +1,14 @@
-running () 
+#do something every 5 seconds while
+#you have a job in the queue
+running () {
+  : ; while [ $? -eq 0 ] ; do 
+    eval $1 
+    sleep 5; 
+  squeue | grep $USER >> /dev/null
+  done
+}
+
+isrunning () 
 { 
     nl=`sq | wc -l`;
     if [ "$nl" -gt "1" ]; then
