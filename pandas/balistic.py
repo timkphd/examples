@@ -102,7 +102,7 @@ tab['m/sec'] = tab.apply(lambda x: mps(float(x['cm/sec'])), axis=1)
 tab['sec/mile'] = tab.apply(lambda x: secpmile(float(x['FPS'])), axis=1)
 tab['ergs'] = tab.apply(lambda x: ergs(float(x['cm/sec']),float(x['Grams'])), axis=1)
 tab['Joules'] = tab.apply(lambda x: joules(float(x['ergs'])), axis=1)
-tab['Ft/lbs'] = tab.apply(lambda x: ftlb(float(x['Joules'])), axis=1)
+tab['Ft-lbs'] = tab.apply(lambda x: ftlb(float(x['Joules'])), axis=1)
 tab['mile drop (ft)'] = tab.apply(lambda x: dm(float(x['FPS'])), axis=1)
 tab['50 yd drop (in)'] = tab.apply(lambda x: d50(float(x['FPS'])), axis=1)
 tab['area'] = tab.apply(lambda x: pir2(float(x['width'])), axis=1)
@@ -242,7 +242,7 @@ from plsub import myplot
 
 
 toplot=[[xrange223[0:,1],drop223[0:,1],"223"],[xrange22[0:,1],drop22[0:,1],"22"],[xrange380[0:,1],drop380[0:,1],"380"],[xrange9[0:,1],drop9[0:,1],"9"]]
-myplot(sets=toplot,xr="0,50",yr="-0.16,0",bl="Range (m)",sl="Drop (m)",topl="Ballistics dt=0.005",width=2,do_sym="y")
+myplot(sets=toplot,xr="0,50",yr="-0.16,0",bl="Range (m)",sl="Drop (m)",topl="Common Round Ballistics dt=0.005",width=2,do_sym="y",subgrid="2,2")
 
 
 # In[ ]:
@@ -292,7 +292,7 @@ drop9=zt(tmax=tt,dt=delta)
 
 
 toplot=[[xrange223[0:,1],drop223[0:,1],"223"],[xrange22[0:,1],drop22[0:,1],"22"],[xrange380[0:,1],drop380[0:,1],"380"],[xrange9[0:,1],drop9[0:,1],"9"]]
-myplot(sets=toplot,xr="0,50",yr="-0.16,0",bl="Range (m)",sl="Drop (m)",topl="Ballistics (No drag) dt=0.005",width=2,do_sym="y")
+myplot(sets=toplot,xr="0,50",yr="-0.16,0",bl="Range (m)",sl="Drop (m)",topl="Common Round Ballistics (No drag) dt=0.005",width=2,do_sym="y",subgrid="2,2")
 
 
 # In[ ]:
@@ -313,13 +313,18 @@ myplot(sets=toplot,xr="0,50",yr="-0.16,0",bl="Range (m)",sl="Drop (m)",topl="Bal
 
 
 pd.set_option('display.float_format', lambda x: [f'{x:.4g}' if (x >1e6) else f'{x:10.5g}' ])
-tab.style.format({
+tabformated=tab.style.format({
   'Grams': lambda val: f'{val:,.2f}',
   'area': lambda val: f'{val:,.4g}',
   'cm/sec': lambda val: f'{val:,.0f}',
   'm/sec': lambda val: f'{val:,.2f}',
   'sec/mile': lambda val: f'{val:,.2f}',
-  'ergs': lambda val: f'{val:,.4g}'
+  'ergs': lambda val: f'{val:,.4g}',
+  'Joules': lambda val: f'{val:,.2f}',
+  'mile drop (ft)': lambda val: f'{val:,.2f}',    
+  '50 yd drop (in)': lambda val: f'{val:,.2f}',
+  'Ft-lbs': lambda val: f'{val:,.2f}',
+
 })
 
 
@@ -330,4 +335,16 @@ pd.set_option('display.float_format', lambda x: [f'{x:g}' if (x >1e5) \
                                                  else (f'{x:,.2f}' if (x >10 )\
                                                                         else  f'{x:10.5g}') ])
 tab
+
+
+# In[ ]:
+
+
+tabformated
+
+
+# In[ ]:
+
+
+
 

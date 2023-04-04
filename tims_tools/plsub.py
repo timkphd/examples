@@ -2,10 +2,31 @@
 import sys
 from pylab import *
 from matplotlib.pyplot import gcf
+from matplotlib.ticker import AutoMinorLocator
+
 import math
 import warnings
 import time
 import os
+
+
+def asaig(saveit=False) :
+	import matplotlib.pyplot as plt
+	import numpy as np
+
+	# Data for plotting
+	t = np.arange(0.0, 2.0, 0.01)
+	s = 1 + np.sin(2 * np.pi * t)
+
+	fig, ax = plt.subplots()
+	ax.plot(t, s)
+
+	ax.set(xlabel='time (s)', ylabel='voltage (mV)',
+		   title='About as simple as it gets, folks')
+	ax.grid()
+
+	if saveit : fig.savefig("test.png")
+	plt.show()
 
 htext="""
 ####################
@@ -55,8 +76,9 @@ myplot(sets=sets,topl="hello",doxkcd=True)
 
 """
 
-def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="title",do_log="none",xr="auto",yr="auto",do_sym="n",width="1",doxkcd=False,sets=None,outname=None,showit=True):
+def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="title",do_log="none",xr="auto",yr="auto",do_sym="n",width="1",doxkcd=False,sets=None,outname=None,showit=True,subgrid="-1,-1"):
 #sets=[[[1,2,3,4],[1,4,9,16],"square"],[[1,2,3],[1,16,27],"qube"]]
+
     if len(sys.argv) > 1:
         if (sys.argv[1] == "--help" or sys.argv[1] == "-help" or sys.argv[1] == "-h"):
             htext=htext.replace("CMD",sys.argv[0])
@@ -114,6 +136,7 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
         xrange=AskString("X-range",xrange)
         yrange=AskString("Y-range",yrange)
         dosym=AskString("Do Symbols","n")
+        subgrid=AskString("subgrid","-1,-1")
         dosym=(dosym == "y")
         lw=1
         lw=AskString("lw","1")
@@ -133,11 +156,26 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
     xray={}
     yray={}
     i=0
+    subgrid=subgrid.split(",")
+    if len(subgrid) > 1:
+        try:
+          subx=int(subgrid[0])
+          suby=int(subgrid[1])
+        except:
+          subx=-1
+          suby=-1
+    else:
+        subx=-1
+        suby=-1
+           
     dosmall=False
-    try:
-        xkcd(False)
-    except:
-        pass
+    # even just calling xkcd breaks grid lins.  
+    # however there is something else surpressing  them
+    if doxkcd :
+        try:
+            xkcd(False)
+        except:
+            pass
     if(sys.argv[0].find("xkcd")> 0 or ((ismain == False ) and doxkcd==True)):
         try:
             # If the name of the program contains xkcd, that is we do a link
@@ -209,7 +247,12 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
         leg=[]
         ip=len(sets)
         for s in sets:
-            leg.append(s[2])
+            try:
+               leg.append(s[2])
+            except:
+                pass
+    #asaig()
+    #return()
     if doxl == False and doyl == False :
         fig,ax=subplots()    
     for myplot in range(0,ip) :
@@ -222,6 +265,8 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
             else :
                 plot(xray[myplot], yray[myplot], linewidth=lw)
             isym=isym+1
+    #asaig()
+    #return()
         
     if(len(leg) > 0):
         legend(leg,loc=0)
@@ -239,8 +284,8 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
             xmin=float(xrange[0])
             xmax=float(xrange[1])
             xlim(xmin,xmax)
-            if doxl == False and doyl == False :
-                ax.xaxis.set_ticks(xticks)
+            #if doxl == False and doyl == False :
+            #    ax.xaxis.set_ticks(xticks)
 
     if(yrange != "auto"):
         if type(yrange)==type("str") :
@@ -256,8 +301,8 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
             ymin=float(yrange[0])
             ymax=float(yrange[1])
             ylim(ymin,ymax)
-            if doxl == False and doyl == False :
-                ax.yaxis.set_ticks(yticks)        
+            #if doxl == False and doyl == False :
+            #    ax.yaxis.set_ticks(yticks)        
     
     if dosmall:
         xlabel(bottom,fontsize='x-small')
@@ -271,11 +316,23 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
         params = {
              'xtick.labelsize':'10',
              'ytick.labelsize':'10'}
-        rcParams.update(params)
+        #rcParams.update(params)
         xlabel(bottom)
         ylabel(side)
     title(top)
-    grid(True)
+    #ax.xaxis.set_minor_locator(MultipleLocator(5))
+    myax="none"
+    if subx > 0 :
+        ax.xaxis.set_minor_locator(AutoMinorLocator(subx))
+        myax="x"
+        
+    if suby > 0 :
+        ax.yaxis.set_minor_locator(AutoMinorLocator(suby))
+        myax="y"
+    if subx > 0 and suby > 0 :
+        myax="both"       
+    if myax != "none" : grid(visible=True, which='both', axis=myax)
+
     x=time.localtime()
     stime=("%2.2d%2.2d%2.2d%2.2d%2.2d%2.2d" % (x[0]-2000,x[1],x[2],x[3],x[4],x[5]))
     if myout != None :
