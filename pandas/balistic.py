@@ -351,9 +351,11 @@ html=greenbar(html)
 html=tabformated.to_html(index=False)
 html=greenbar(html)
 #need to cut out <table id=" line for green bar to work
-#f=open("wtf.html","w")
-#f.write(html)
-#f.close()
+f=open("formatted.html","w")
+for l in html.split("\n") :
+  if l.find("<table id=") < 0 :
+    f.write(l+"\n")
+f.close()
 
 
 # In[ ]:
