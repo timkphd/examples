@@ -137,6 +137,40 @@ def xt(area=4.8e-5,c=0.295,mass=0.016,v0=400,tmax=1,dt=0.01):
     return(arr)
 
 
+def xvt(area=4.8e-5,c=0.295,mass=0.016,v0=400,tmax=1,dt=0.01):
+    import numpy as np
+    from scipy.integrate import odeint
+    def drag(v):
+        p=1.2
+        f=-(c*p*area*v*v)/2.0
+        #f=-(c*p*a*400*400)/2.0
+        return(f)
+    def dvdt(y,t):
+        acc=drag(y[1])/mass
+        return(y[1],acc)
+    y0=np.array([0,v0])
+    #print(y0)
+    a=0
+    b=tmax+dt
+    t=np.arange(a,b,dt)
+    y = odeint(dvdt, y0, t)
+    #print(y)
+    arr = np.empty((0,2), float)
+    #print(arr)
+    for item in zip(t,y):
+        #print(item[0],item[1][0])
+        #print(item[0],item[1][0])
+        arr = np.append(arr, np.array([[item[0],item[1][0]]]), axis=0)
+        #arr = np.append(arr,z, axis=0)
+    v = np.empty((0,2), float)
+    #print(arr)
+    for item in zip(t,y):
+        #print(item[0],item[1][0])
+        #print(item[0],item[1][0])
+        v = np.append(v, np.array([[item[0],item[1][1]]]), axis=0)
+        #arr = np.append(arr,z, axis=0)
+    return(arr,v)
+
 
 def zt(tmax=1,dt=0.01):
     import numpy as np
@@ -174,7 +208,7 @@ v=float(case['m/sec'])
 area=float(case['area'])
 mass=float(case['Grams']/1000.0)
 print(bull,v,area,mass)
-xrange22=xt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
+(xrange22,v22)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
 drop22=zt(tmax=tt,dt=delta)
 
 bull="223"
@@ -183,7 +217,7 @@ v=float(case['m/sec'])
 area=float(case['area'])
 mass=float(case['Grams']/1000.0)
 print(bull,v,area,mass)
-xrange223=xt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
+(xrange223,v223)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
 drop223=zt(tmax=tt,dt=delta)
 
 bull="380"
@@ -192,7 +226,7 @@ v=float(case['m/sec'])
 area=float(case['area'])
 mass=float(case['Grams']/1000.0)
 print(bull,v,area,mass)
-xrange380=xt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
+(xrange380,v380)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
 drop380=zt(tmax=tt,dt=delta)
 
 bull="9"
@@ -201,7 +235,7 @@ v=float(case['m/sec'])
 area=float(case['area'])
 mass=float(case['Grams']/1000.0)
 print(bull,v,area,mass)
-xrange9=xt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
+(xrange9,v9)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
 drop9=zt(tmax=tt,dt=delta)
 
 
@@ -221,7 +255,7 @@ v=float(case['m/sec'])
 area=float(case['area'])
 mass=float(case['Grams']/1000.0)
 print(bull,v,area,mass)
-xrange22=xt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
+(xrange22n,v22n)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
 drop22=zt(tmax=tt,dt=delta)
 
 bull="223"
@@ -230,7 +264,7 @@ v=float(case['m/sec'])
 area=float(case['area'])
 mass=float(case['Grams']/1000.0)
 print(bull,v,area,mass)
-xrange223=xt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
+(xrange223n,v223n)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
 drop223=zt(tmax=tt,dt=delta)
 
 bull="380"
@@ -239,7 +273,7 @@ v=float(case['m/sec'])
 area=float(case['area'])
 mass=float(case['Grams']/1000.0)
 print(bull,v,area,mass)
-xrange380=xt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
+(xrange380n,v380n)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
 drop380=zt(tmax=tt,dt=delta)
 
 bull="9"
@@ -248,13 +282,13 @@ v=float(case['m/sec'])
 area=float(case['area'])
 mass=float(case['Grams']/1000.0)
 print(bull,v,area,mass)
-xrange9=xt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
+(xrange9n,v9n)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
 drop9=zt(tmax=tt,dt=delta)
 
 
 
 
-toplot=[[xrange223[0:,1],drop223[0:,1],"223"],[xrange22[0:,1],drop22[0:,1],"22"],[xrange380[0:,1],drop380[0:,1],"380"],[xrange9[0:,1],drop9[0:,1],"9"]]
+toplot=[[xrange223n[0:,1],drop223[0:,1],"223"],[xrange22n[0:,1],drop22[0:,1],"22"],[xrange380n[0:,1],drop380[0:,1],"380"],[xrange9n[0:,1],drop9[0:,1],"9"]]
 myplot(sets=toplot,xr="0,50",yr="-0.16,0",bl="Range (m)",sl="Drop (m)",topl="Common Round Ballistics (No drag) dt=0.005",width=2,do_sym="y",subgrid="2,2")
 
 
@@ -326,6 +360,54 @@ html=greenbar(html)
 
 
 tymer("-i")
+
+
+# In[ ]:
+
+
+e22=v22[:,1]**2
+
+
+# In[ ]:
+
+
+bull="22"
+case=tab.loc[tab['Round']==bull]
+mass=float(case['Grams']/1000.0)
+e22=0.5*mass*v22[:,1]**2
+bull="223"
+case=tab.loc[tab['Round']==bull]
+mass=float(case['Grams']/1000.0)
+e223=0.5*mass*v223[:,1]**2
+bull="9"
+case=tab.loc[tab['Round']==bull]
+mass=float(case['Grams']/1000.0)
+e9=0.5*mass*v9[:,1]**2
+bull="380"
+case=tab.loc[tab['Round']==bull]
+mass=float(case['Grams']/1000.0)
+e380=0.5*mass*v380[:,1]**2
+
+
+# In[ ]:
+
+
+time=v223[:,0]
+
+
+# In[ ]:
+
+
+toplot=[[xrange223[0:,1],e223,"223"],[xrange22[0:,1],e22,"22"],[xrange380[0:,1],e380,"380"],[xrange9[0:,1],e9,"9"]]
+myplot(sets=toplot,xr="0,50",bl="Range (m)",sl="Energy (J)",topl="Common Round Ballistics dt=0.005",width=2,do_sym="y",do_log="y",subgrid="1,1")
+
+
+# In[ ]:
+
+
+eb=e380
+toplot=[[xrange223[0:,1],e223/eb,"223"],[xrange22[0:,1],e22/eb,"22"],[xrange380[0:,1],e380/eb,"380"],[xrange9[0:,1],e9/eb,"9"]]
+myplot(sets=toplot,xr="0,50",bl="Range (m)",sl="Energy Ratio",topl="Common Round Ballistics dt=0.005",width=2,do_sym="y",subgrid="2,2")
 
 
 # In[ ]:
