@@ -229,7 +229,7 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
         doyl=True
 
     leg=[]
-    sym=['+','o','*','x','#','X','0']
+    sym=['+','o','*','x','X','+','O']
     leggs=False
     if(ismain):leggs=AskFileForOpen("Legend file:")
     if(leggs):
@@ -254,13 +254,15 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
     #asaig()
     #return()
     if doxl == False and doyl == False :
-        fig,ax=subplots()    
+        fig,ax=subplots()
+
     for myplot in range(0,ip) :
             if(dosym):
                 if (lw == 0):
                     plot(xray[myplot], yray[myplot], sym[isym],linewidth=lw)
                 else:
                     sym[isym]=sym[isym]+"-"
+                    #print(sym[isym])
                     plot(xray[myplot], yray[myplot], sym[isym],linewidth=lw)
             else :
                 plot(xray[myplot], yray[myplot], linewidth=lw)
@@ -323,11 +325,17 @@ def myplot(ismain=False,files=["dummy_file_name"],bl="x axis",sl="y axis",topl="
     #ax.xaxis.set_minor_locator(MultipleLocator(5))
     myax="none"
     if subx > 0 :
-        ax.xaxis.set_minor_locator(AutoMinorLocator(subx))
+        try:
+            ax.xaxis.set_minor_locator(AutoMinorLocator(subx))
+        except:
+             pass
         myax="x"
         
     if suby > 0 :
-        ax.yaxis.set_minor_locator(AutoMinorLocator(suby))
+        try:
+            ax.yaxis.set_minor_locator(AutoMinorLocator(suby))
+        except:
+            pass
         myax="y"
     if subx > 0 and suby > 0 :
         myax="both"       

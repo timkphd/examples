@@ -21,7 +21,9 @@ tymer("-i")
 dat="""Round	Grains	FPS	width
 22	36	1260	5.588
 223	55	3240	5.6642
+243	100	3110	6.172
 380	95	951	9.017
+308	150	2820	9.82
 9	124	1150	9.000"""
 dat=dat.split("\n")
 header=dat[0].split()
@@ -238,8 +240,27 @@ print(bull,v,area,mass)
 (xrange9,v9)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
 drop9=zt(tmax=tt,dt=delta)
 
+bull="243"
+case=tab.loc[tab['Round']==bull]
+v=float(case['m/sec'])
+area=float(case['area'])
+mass=float(case['Grams']/1000.0)
+print(bull,v,area,mass)
+(xrange243,v243)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
+drop243=zt(tmax=tt,dt=delta)
 
-toplot=[[xrange223[0:,1],drop223[0:,1],"223"],[xrange22[0:,1],drop22[0:,1],"22"],[xrange380[0:,1],drop380[0:,1],"380"],[xrange9[0:,1],drop9[0:,1],"9"]]
+bull="308"
+case=tab.loc[tab['Round']==bull]
+v=float(case['m/sec'])
+area=float(case['area'])
+mass=float(case['Grams']/1000.0)
+print(bull,v,area,mass)
+(xrange308,v308)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta)
+drop308=zt(tmax=tt,dt=delta)
+
+
+
+toplot=[[xrange223[0:,1],drop223[0:,1],"223"],[xrange22[0:,1],drop22[0:,1],"22"],[xrange380[0:,1],drop380[0:,1],"380"],[xrange9[0:,1],drop9[0:,1],"9"],[xrange308[0:,1],drop308[0:,1],"308"],[xrange243[0:,1],drop243[0:,1],"243"]]
 myplot(sets=toplot,xr="0,50",yr="-0.16,0",bl="Range (m)",sl="Drop (m)",topl="Common Round Ballistics dt=0.005",width=2,do_sym="y",subgrid="2,2")
 
 
@@ -285,10 +306,28 @@ print(bull,v,area,mass)
 (xrange9n,v9n)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
 drop9=zt(tmax=tt,dt=delta)
 
+bull="243"
+case=tab.loc[tab['Round']==bull]
+v=float(case['m/sec'])
+area=float(case['area'])
+mass=float(case['Grams']/1000.0)
+print(bull,v,area,mass)
+(xrange243n,v243n)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
+drop243=zt(tmax=tt,dt=delta)
+
+bull="308"
+case=tab.loc[tab['Round']==bull]
+v=float(case['m/sec'])
+area=float(case['area'])
+mass=float(case['Grams']/1000.0)
+print(bull,v,area,mass)
+(xrange308n,v308n)=xvt(area=area,mass=mass,v0=v,tmax=tt,dt=delta,c=0)
+drop308=zt(tmax=tt,dt=delta)
 
 
 
-toplot=[[xrange223n[0:,1],drop223[0:,1],"223"],[xrange22n[0:,1],drop22[0:,1],"22"],[xrange380n[0:,1],drop380[0:,1],"380"],[xrange9n[0:,1],drop9[0:,1],"9"]]
+
+toplot=[[xrange223n[0:,1],drop223[0:,1],"223"],[xrange22n[0:,1],drop22[0:,1],"22"],[xrange380n[0:,1],drop380[0:,1],"380"],[xrange9n[0:,1],drop9[0:,1],"9"],[xrange308n[0:,1],drop308[0:,1],"308"],[xrange243n[0:,1],drop243[0:,1],"243"]]
 myplot(sets=toplot,xr="0,50",yr="-0.16,0",bl="Range (m)",sl="Drop (m)",topl="Common Round Ballistics (No drag) dt=0.005",width=2,do_sym="y",subgrid="2,2")
 
 
@@ -350,7 +389,6 @@ html=greenbar(html)
 #f.close()
 html=tabformated.to_html(index=False)
 html=greenbar(html)
-#need to cut out <table id=" line for green bar to work
 f=open("formatted.html","w")
 for l in html.split("\n") :
   if l.find("<table id=") < 0 :
@@ -377,18 +415,31 @@ bull="22"
 case=tab.loc[tab['Round']==bull]
 mass=float(case['Grams']/1000.0)
 e22=0.5*mass*v22[:,1]**2
+
 bull="223"
 case=tab.loc[tab['Round']==bull]
 mass=float(case['Grams']/1000.0)
 e223=0.5*mass*v223[:,1]**2
-bull="9"
-case=tab.loc[tab['Round']==bull]
-mass=float(case['Grams']/1000.0)
-e9=0.5*mass*v9[:,1]**2
+
 bull="380"
 case=tab.loc[tab['Round']==bull]
 mass=float(case['Grams']/1000.0)
 e380=0.5*mass*v380[:,1]**2
+
+bull="9"
+case=tab.loc[tab['Round']==bull]
+mass=float(case['Grams']/1000.0)
+e9=0.5*mass*v9[:,1]**2
+
+bull="308"
+case=tab.loc[tab['Round']==bull]
+mass=float(case['Grams']/1000.0)
+e308=0.5*mass*v308[:,1]**2
+
+bull="243"
+case=tab.loc[tab['Round']==bull]
+mass=float(case['Grams']/1000.0)
+e243=0.5*mass*v243[:,1]**2
 
 
 # In[ ]:
@@ -400,20 +451,29 @@ time=v223[:,0]
 # In[ ]:
 
 
-toplot=[[xrange223[0:,1],e223,"223"],[xrange22[0:,1],e22,"22"],[xrange380[0:,1],e380,"380"],[xrange9[0:,1],e9,"9"]]
+toplot=[[xrange223[0:,1],e223,"223"],[xrange22[0:,1],e22,"22"],[xrange380[0:,1],e380,"380"],[xrange9[0:,1],e9,"9"],[xrange308[0:,1],e308,"308"],[xrange243[0:,1],e243,"243"]]
 myplot(sets=toplot,xr="0,50",bl="Range (m)",sl="Energy (J)",topl="Common Round Ballistics dt=0.005",width=2,do_sym="y",do_log="y",subgrid="1,1")
 
 
 # In[ ]:
 
 
-eb=e380
-toplot=[[xrange223[0:,1],e223/eb,"223"],[xrange22[0:,1],e22/eb,"22"],[xrange380[0:,1],e380/eb,"380"],[xrange9[0:,1],e9/eb,"9"]]
+eb=e22
+toplot=[[xrange223[0:,1],e223/eb,"223"],[xrange22[0:,1],e22/eb,"22"],[xrange380[0:,1],e380/eb,"380"],[xrange9[0:,1],e9/eb,"9"],[xrange308[0:,1],e308/eb,"308"],[xrange243[0:,1],e243/eb,"243"]]
 myplot(sets=toplot,xr="0,50",bl="Range (m)",sl="Energy Ratio",topl="Common Round Ballistics dt=0.005",width=2,do_sym="y",subgrid="2,2")
 
 
 # In[ ]:
 
 
+eb=e223
+toplot=[[xrange223[0:,1],e223/eb,"223"],[xrange308[0:,1],e308/eb,"308"],[xrange243[0:,1],e243/eb,"243"]]
+myplot(sets=toplot,xr="0,50",yr=".9,2.2",bl="Range (m)",sl="Energy Ratio",topl="Common Round Ballistics dt=0.005",width=2,do_sym="y",subgrid="2,2")
 
+
+# In[ ]:
+
+
+toplot=[[xrange223[0:,1],v223[:,1],"223"],[xrange22[0:,1],v22[:,1],"22"],[xrange380[0:,1],v380[:,1],"380"],[xrange9[0:,1],v9[:,1],"9"],[xrange308[0:,1],v308[:,1],"308"],[xrange243[0:,1],v243[:,1],"243"]]
+myplot(sets=toplot,xr="0,50",bl="Range (m)",sl="Velocity (M/Sec)",topl="Common Round Ballistics dt=0.005",width=2,do_sym="y",subgrid="2,2")
 
