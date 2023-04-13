@@ -9,7 +9,7 @@ def acquire(lock_file):
     pid = os.getpid()
     lock_file_fd = None
     
-    timeout = 5.0
+    timeout = 100.0
     start_time = current_time = time.time()
     while current_time < start_time + timeout:
         try:
@@ -38,8 +38,11 @@ def release(lock_file_fd):
     #
     #   https://github.com/benediktschmitt/py-filelock/issues/31
     #   https://stackoverflow.com/questions/17708885/flock-removing-locked-file-without-race-condition
-    fcntl.flock(lock_file_fd, fcntl.LOCK_UN)
-    os.close(lock_file_fd)
+    try:
+        fcntl.flock(lock_file_fd, fcntl.LOCK_UN)
+        os.close(lock_file_fd)
+    except:
+        print("release failed",lock_file_fd)
     return None
 
 import os
@@ -116,6 +119,7 @@ if REPORT :
     import fcntl
     pid = os.getpid()
     print(f'{taskid} is waiting for lock')
+    fd=None
     fd = acquire(wd+'/myfile.lock')
     if fd is None:
         print(f'ERROR: {taskid} lock NOT acquired')
@@ -124,6 +128,7 @@ if REPORT :
     aline=f"{jobid} {taskid} {hostname} {wd}"
     file1.write(aline+"\n")
     file1.close()
-    time.sleep(0.10)
+    time.sleep(0.20)
     release(fd)
-    print(f"{taskid} lock released")  
+#got=f"{id:4d} lock released.*"
+    print(f"{int(taskid):4d} lock released")  

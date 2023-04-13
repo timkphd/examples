@@ -310,3 +310,18 @@
 !
 !
 
+      subroutine dummy(x)
+        character TRANS
+integer M
+integer N
+integer NRHS
+double precision A
+integer LDA
+double precision B
+integer LDB
+double precision WORK
+integer LWORK
+integer INFO 
+    call dgels(TRANS, M, N, NRHS,A,LDA,B,LDB,WORK,LWORK, INFO )
+end subroutine
+

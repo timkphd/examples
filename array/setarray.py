@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import os
 import sys
 import random
@@ -14,7 +14,7 @@ for x in range(0,size):
 	l.write("%d %d %d %d %d\n" % (n1,n2,n3,n4,n5))
 l.close()
 l=open("dir_list","w")
-os.mkdir("inputs",0755)
+os.mkdir("inputs",mode=0o755)
 os.chdir("inputs")
 for x in range(0,size):
 	x=x+1
@@ -25,7 +25,7 @@ for x in range(0,size):
 	n5=200
 	newdir="set"+str("%3.3d" % x)
 	l.write(newdir+"\n")
-	os.mkdir(newdir,0755)
+	os.mkdir(newdir,0o755)
 	os.chdir(newdir)
 	f=open("myinput","w")
 	f.write("%d %d %d %d %d\n" % (n1,n2,n3,n4,n5))

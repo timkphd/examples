@@ -1,7 +1,7 @@
 !mpif90 -fopenmp -fallow-argument-mismatch -w -lm fhostone.f90 
 !See mympi.f90 on how to compile this program without MPI - pure openmp
 module mympi
-   include "mpif.h"
+!   include "mpif.h"
 end module
 
 
@@ -266,6 +266,8 @@ subroutine node_color(mycol)
    integer xchng, i, n2, myid, numprocs
    integer ierr, nlen
    integer ib, ie
+   integer xor
+   !intrinsic xor
    character(len=MPI_MAX_PROCESSOR_NAME + 1):: name
    character(len=MPI_MAX_PROCESSOR_NAME + 1)::nlist
    real(b8) t1, t2

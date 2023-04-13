@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# NOTE: if using with srun then you should select "SLURM (MPMD)" as the MPI
+#       implementation on the System Settings page of the Options window.
+#
+# WARNING: If you install a new version of Arm Forge to the same
+#          directory as this installation, then this file will be overwritten.
+#          If you customize this script at all, please rename it.
+#
+# Name: SLURM
+#
+# submit: sbatch
+# display: squeue
+# job regexp: (\d+)
+# cancel: scancel JOB_ID_TAG
+#
+# WALL_CLOCK_LIMIT_TAG: {type=text,label="Wall Clock Limit",default="00:30:00",mask="09:09:09"}
+# QUEUE_TAG: {type=text,label="Queue",default=normal}
+
+#SBATCH --nodes=NUM_NODES_TAG
+#SBATCH --time=WALL_CLOCK_LIMIT_TAG
+#SBATCH --job-name="ddt"
+#SBATCH --output=allinea.stdout
+#SBATCH --error=allinea.stdout
+#SBATCH --partition=QUEUE_TAG
+#SBATCH --exclusive
+
+cat $0 > allinea.script
+
+#module use /sfs/projects/hpcapps/tkaiser2/021023_b/tcl/linux-rhel8-icelake
+#source /nopt/nrel/apps/env.sh
+#module purge
+#module load python-3.10.0-gcc-12.1.0-mx2oald
+#module load gcc
+#module load openmpi/4.1.4-gcc
+#export LD_LIBRARY_PATH=/home/tkaiser2/examples/mpi/mpi4py:$LD_LIBRARY_PATH
+
+module purge
+module load craype-x86-spr
+module load PrgEnv-cray/8.3.3
+module load cray-python
+
+#module use /sfs/projects/hpcapps/tkaiser2/dosing/022323_b/tcl/linux-rhel8-icelake/
+#module load python-3.9.15-gcc-12.1.0-6tebyer
+#module load mpich/4.0.2-gcc
+#module load openmpi/4.1.4-gcc
+
+
+
+#module load python-3.11.0-gcc-12.1.0-v6lvolq
+#module load cray-python/3.9.13.1
+#module load python-3.10.0-gcc-12.1.0-mx2oald 
+#module load intel-oneapi-mpi/2021.8.0-intel
+
+
+AUTO_LAUNCH_TAG

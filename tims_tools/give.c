@@ -66,7 +66,7 @@ int NOBODY;
 #define OWN_ONLY 00600
 #define READMODE 04
 #define TRUE 1
-#define TARGETDIR "/media/lustre/give"
+#define TARGETDIR "/projects/give"
 #define _UNICOS 9
 
 // char    *malloc();

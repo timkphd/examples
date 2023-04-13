@@ -42,5 +42,5 @@ tar:
              cases eagle ecases fhostone.F90 getcore.c make1api Makefile makefile.include \
              makeimpi makeopen makeprgcray makeprggnu makeprgintel maskgenerator.py masks.txt \
              phostone.c post ppong.c readme.md runall runpp subsweep sweep todo.py tymer \
-	     scases array
+	     scases array mapping.py
 
