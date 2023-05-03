@@ -10,6 +10,8 @@
 // gcc:
 // mpicc  -DSTUBS        phostone.c -o purempi
 //
+// Stream Triad compile - do steam triad when the option -t sec is used:
+// add the flag -DTRIAD to the compile line
 //
 #include <ctype.h>
 #include <math.h>
@@ -21,27 +23,22 @@
 #include <strings.h>
 #include <time.h>
 #include <utmpx.h>
-
+#include <sys/time.h>
 // which processor on a node will
 // print env if requested
 #ifndef PID
 #define PID 0
 #endif
 
+int ic=0;
 void dothreads(int full, char *myname, int myid, int mycolor, int new_id);
 
 char *trim(char *s);
 void slowit(int nints, int val);
+void triad(int nints, int val);
+
 int node_color();
-#ifdef USEFAST
-extern inline __attribute__((always_inline)) int get_core_number() {
-   unsigned long a, d, c;
-   __asm__ volatile("rdtscp" : "=a" (a), "=d" (d), "=c" (c));
-   return ( c & 0xFFFUL );
-}
-#else
 int sched_getcpu();
-#endif
 
 void ptime()
 {
@@ -62,11 +59,7 @@ int findcore()
 #ifdef __APPLE__
   cpu = -1;
 #else
-#ifdef USEFAST
-  cpu = get_core_number();
-#else
   cpu = sched_getcpu();
-#endif
 #endif
   return cpu;
 }
@@ -353,14 +346,24 @@ int main(int argc, char **argv, char *envp[])
       nints = 100000;
       t1 = MPI_Wtime();
       t2 = t1;
+#ifdef TRIAD
       while (dt > t2 - t1)
         {
-          for (i = 1; i <= 1000; i++)
+              triad(10, 10);
+              t2 = MPI_Wtime();
+        }
+        triad(10, -1);
+#else
+      while (dt > t2 - t1)
+        {
+           for (i = 1; i <= 1000; i++)
             {
               slowit(nints, i);
             }
           t2 = MPI_Wtime();
         }
+#endif
+      t2 = MPI_Wtime();
       if (myid == 0)
         printf("total time %10.3f\n", t2 - t1);
       nints = 0;
@@ -399,7 +402,7 @@ int main(int argc, char **argv, char *envp[])
           MPI_Barrier(MPI_COMM_WORLD);
           if (i != myid)
             continue;
-          if (when == 3 || when == 2)
+          if (when == 3)
             str_upr(myname);
           dothreads(full, myname, myid, mycolor, new_id);
         }
@@ -499,6 +502,103 @@ int node_color()
     }
   return mycol;
 }
+double mysecond()
+{
+        struct timeval tp;
+        struct timezone tzp;
+        int i;
+
+        i = gettimeofday(&tp,&tzp);
+        return ( (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6 );
+}
+
+void triad(int NTIMES, int val) {
+#include <float.h>
+
+static double	avgtime, maxtime,mintime;
+size_t bytes;
+int myid;
+size_t j,k;
+# ifndef MIN
+# define MIN(x,y) ((x)<(y)?(x):(y))
+# endif
+# ifndef MAX
+# define MAX(x,y) ((x)>(y)?(x):(y))
+# endif
+
+
+#ifndef STREAM_ARRAY_SIZE
+#   define STREAM_ARRAY_SIZE	10000000
+#endif
+#ifndef OFFSET
+#   define OFFSET	0
+#endif
+#ifndef STREAM_TYPE
+#define STREAM_TYPE double
+#endif
+
+STREAM_TYPE atot;
+STREAM_TYPE scalar;
+if (val >= 0)
+    scalar=(STREAM_TYPE)val;
+else
+    scalar=3.0;
+
+double		t,*times;
+times=(double*)malloc(NTIMES*sizeof(double));
+
+static STREAM_TYPE	a[STREAM_ARRAY_SIZE+OFFSET],
+			b[STREAM_ARRAY_SIZE+OFFSET],
+			c[STREAM_ARRAY_SIZE+OFFSET];
+
+avgtime= 0; 
+maxtime = 0;
+mintime= FLT_MAX;
+#pragma omp parallel for
+    for (j=0; j<STREAM_ARRAY_SIZE; j++) {
+	    a[j] = 1.0;
+	    b[j] = 2.0;
+	    c[j] = 0.0;
+	}
+
+    for (k=0; k<NTIMES; k++)
+	{
+	times[k] = mysecond();
+#pragma omp parallel for
+	for (j=0; j<STREAM_ARRAY_SIZE; j++)
+	    a[j] = b[j]+scalar*c[j];
+	times[k] = mysecond() - times[k];
+	}
+    atot=0;
+    for (j=0; j<STREAM_ARRAY_SIZE; j++) atot=atot+a[j];
+    if (atot < 0)printf("%g\n",(double)atot);
+
+    for (k=1; k<NTIMES; k++) /* note -- skip first iteration */
+	{
+	    avgtime= avgtime + times[k];
+	    mintime= MIN(mintime, times[k]);
+	    maxtime= MAX(maxtime, times[k]);
+	}
+        avgtime=avgtime;
+	mintime=mintime;
+	maxtime=maxtime;
+	avgtime = avgtime/(double)(NTIMES-1);
+	MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+	bytes=3 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE;
+	ic++;
+	
+	if (val == -1){
+	if (myid == 0 )fprintf(stderr,"TASK   Function    Best Rate MB/s  Avg time     Min time     Max time  Called\n");
+	fprintf(stderr,"%6d %s  %12.1f      %11.6f  %11.6f  %11.6f  %6d\n", myid,"triad",
+	       1.0E-06 * bytes/mintime,
+	       avgtime,
+	       mintime,
+	       maxtime,
+	       ic);
+	}
+	free(times);
+
+}
 
 void slowit(int nints, int val)
 {
@@ -575,3 +675,4 @@ void dothreads(int full, char *myname, int myid, int mycolor, int new_id)
     }
   }
 }
+

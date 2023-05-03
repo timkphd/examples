@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+#### copy this file to ~/bin
+#### ln -s tymer myutils.py
 import sys
 import time
 import os.path
