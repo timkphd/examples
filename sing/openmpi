@@ -37,5 +37,6 @@ from: ubuntu:latest
     echo "Compiling the MPI application..."
     cd /opt && git clone https://github.com/timkphd/examples.git
     cd /opt/examples/affinity/tds && mpicc -fopenmp phostone.c -o phostone
-    cd /opt/examples/affinity/tds && mpicc ppong.c -lm -o ppong
+
+
 
