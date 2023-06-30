@@ -1,0 +1,15 @@
+#Restart an instance of spack that was created with
+#build_script and install a simple package.
+#MYD is the build directory not the install directory.
+export MDY=041223_b
+cd $MDY
+cd spack
+export SPACK_ROOT=`pwd`
+export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/.spack
+export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/.cache
+export TMPDIR=$SPACK_ROOT/tmp
+
+source share/spack/setup-env.sh
+module load gcc
+module load PrgEnv-cray/8.3.3
+spack install aspell

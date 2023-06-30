@@ -1,0 +1,16 @@
+rm -rf get-pip.py
+wget  https://bootstrap.pypa.io/get-pip.py
+which python
+python get-pip.py
+pip install --upgrade  --no-cache-dir pip
+pip3 install  --no-cache-dir matplotlib
+pip3 install  --no-cache-dir pandas
+pip3 install  --no-cache-dir scipy
+pip3 install  --no-cache-dir jupyterlab
+pip3 install  --no-cache-dir reframe-hpc
+
+
+#before we run this we need to have the 
+#proper mpi module loaded
+#pip3 install  --no-cache-dir mpi4py
+
