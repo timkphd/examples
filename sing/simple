@@ -4,25 +4,41 @@
 #SBATCH --ntasks-per-node=2
 #SBATCH --exclusive
 #SBATCH --export=ALL
-#SBATCH --time=01:00:00
+#SBATCH --time=02:00:00
 #SBATCH --partition=standard
 #SBATCH --mem=0
 
-# Go to the directoy from which our job was launched
 
+cat $0 >       $SLURM_JOB_ID.script
+printenv >     $SLURM_JOB_ID.env
 
 module use /nopt/nrel/apps/timstests/042723_a/tcl/linux-rhel8-icelake
 module load apptainer-1.1.8-gcc-12.1.0-tbna3nr
+
+module list >  $SLURM_JOB_ID.mods  2>&1
+
+which apptainer >> $SLURM_JOB_ID.mods
+
+#FI_PROVIDER set for mpich_ch4 to work
+export FI_PROVIDER=tcp
+export MPIR_CVAR_DEBUG_SUMMARY=1
 export OMP_NUM_THREADS=1
 
-srun -n2 --mpi=pmix   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  openmpi.sif   /opt/examples/affinity/tds/phostone -F > hello.openmpi
-srun -n2 --mpi=pmi2   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  mpich_ch3.sif /opt/examples/affinity/tds/phostone -F > hello.mpich
+                      apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  openmpi.sif    ompi_info --all > hello.openmpi
+srun -n4 --mpi=pmix   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  openmpi.sif    /opt/examples/affinity/tds/phostone -F >> hello.openmpi
+srun -n4 --mpi=pmi2   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  mpich_ch4.sif  /opt/examples/affinity/tds/phostone -F >  hello.mpich_ch4 
+srun -n4 --mpi=pmi2   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  mpich_ch4b.sif /opt/examples/affinity/tds/phostone -F >  hello.mpich_ch4b 
+srun -n4 --mpi=pmi2   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  mpich_ch3.sif  /opt/examples/affinity/tds/phostone -F >  hello.mpich_ch3 
 
-srun -n4 --mpi=pmix   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  openmpi.sif   /opt/examples/affinity/tds/ppong  > ppong.openmpi
+unset MPIR_CVAR_DEBUG_SUMMARY
+srun -n4 --mpi=pmix   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  openmpi.sif    /opt/examples/affinity/tds/ppong  > ppong.openmpi
+srun -n4 --mpi=pmi2   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  mpich_ch4.sif  /opt/examples/affinity/tds/ppong  > ppong.mpich_ch4
+srun -n4 --mpi=pmi2   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  mpich_ch4b.sif /opt/examples/affinity/tds/ppong  > ppong.mpich_ch4b
 #this is very slow
-srun -n4 --mpi=pmi2   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  mpich_ch3.sif /opt/examples/affinity/tds/ppong  > ppong.mpich
+srun -n4 --mpi=pmi2   apptainer  exec --bind /var/spool/slurmd --bind /usr/bin --bind /nopt/slurm/current/lib --bind /nopt/xalt/xalt/lib64 --bind /nopt/slurm/current/bin  mpich_ch3.sif  /opt/examples/affinity/tds/ppong  > ppong.mpich_ch3
 
-:<< RECIPIES
+
+:<< OPENMPI_X
 Bootstrap: docker
 from: ubuntu:latest
 
@@ -63,6 +79,9 @@ from: ubuntu:latest
     cd /opt && git clone https://github.com/timkphd/examples.git
     cd /opt/examples/affinity/tds && mpicc -fopenmp phostone.c -o phostone
 
+OPENMPI_X
+
+:<< MPICH_X
 Bootstrap: docker
 from: ubuntu:latest
 %environment
@@ -94,6 +113,8 @@ from: ubuntu:latest
     cd /opt/build && wget -O mpich-$MPICH_VERSION.tar.gz $MPICH_URL && tar xzf mpich-$MPICH_VERSION.tar.gz
     # Compile and install
     cd /opt/build/mpich-$MPICH_VERSION && ./configure --prefix=/opt/mpich --with-device=ch3:nemesis && make install
+    #cd /opt/build/mpich-$MPICH_VERSION && ./configure --prefix=/opt/mpich --with-ch4-shmmods=auto --with-device=ch4 && make install
+    #cd /opt/build/mpich-$MPICH_VERSION && ./configure --prefix=/opt/mpich  --with-device=ch4 && make install
 
     # Set env variables so we can compile our application
     export PATH=/opt/mpich/bin:$PATH
@@ -103,5 +124,5 @@ from: ubuntu:latest
     cd /opt && git clone https://github.com/timkphd/examples.git
     cd /opt/examples/affinity/tds && mpicc -fopenmp phostone.c -o phostone
 
-RECIPIES
+MPICH_X
 

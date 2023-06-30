@@ -29,6 +29,8 @@ from: ubuntu:latest
     cd /opt/build && wget -O mpich-$MPICH_VERSION.tar.gz $MPICH_URL && tar xzf mpich-$MPICH_VERSION.tar.gz
     # Compile and install
     cd /opt/build/mpich-$MPICH_VERSION && ./configure --prefix=/opt/mpich --with-device=ch3:nemesis && make install
+    #cd /opt/build/mpich-$MPICH_VERSION && ./configure --prefix=/opt/mpich --with-ch4-shmmods=auto --with-device=ch4 && make install
+    #cd /opt/build/mpich-$MPICH_VERSION && ./configure --prefix=/opt/mpich  --with-device=ch4 && make install
 
     # Set env variables so we can compile our application
     export PATH=/opt/mpich/bin:$PATH
@@ -37,5 +39,4 @@ from: ubuntu:latest
     echo "Compiling the MPI application..."
     cd /opt && git clone https://github.com/timkphd/examples.git
     cd /opt/examples/affinity/tds && mpicc -fopenmp phostone.c -o phostone
-
 

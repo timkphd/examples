@@ -38,5 +38,3 @@ from: ubuntu:latest
     cd /opt && git clone https://github.com/timkphd/examples.git
     cd /opt/examples/affinity/tds && mpicc -fopenmp phostone.c -o phostone
 
-
-
