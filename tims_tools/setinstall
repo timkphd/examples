@@ -9,12 +9,25 @@ lines=x.readlines()
 x.close()
 x=open(f2,"w")
 for l in lines:
+	if l.find("enable: []") > -1 :
+			x.write("    enable:\n");
+			x.write("      - tcl\n")
+			x.write("      - lmod\n")
+			continue
 	if l.find("$spack/share/spack/lmod") > -1 :
 		l=l.replace("$spack/share/spack/lmod",idir+"/lmod")
+	if l.find("$spack/share/spack/modules") > -1 :
+		l=l.replace("$spack/share/spack/modules",idir+"/tcl")
 	if l.find("- tcl") > -1 :
+		x.write(l)
 		l=l.replace("- tcl","- lmod")
 	#print(l.strip())
 	x.write(l)
+	if l.find("prefix_inspections:") > -1:
+		x.write("    ./lib:\n")
+		x.write("      - LD_LIBRARY_PATH\n")
+		x.write("    ./lib64:\n")
+		x.write("      - LD_LIBRARY_PATH\n")
 x.close()
 
 f2=defaults+"/config.yaml"
