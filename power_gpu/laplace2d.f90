@@ -17,7 +17,8 @@
 program laplace
   implicit none
   integer, parameter :: fp_kind=kind(1.0d0)
-  integer, parameter :: n=4096, m=4096, iter_max=1000
+  !integer, parameter :: n=4096, m=4096, iter_max=1000
+  integer, parameter :: n=1024, m=1024, iter_max=1000
   integer :: i, j, iter
   real(fp_kind), dimension (:,:), allocatable :: A, Anew
   real(fp_kind) :: tol=1.0e-6_fp_kind, error=1.0_fp_kind

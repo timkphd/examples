@@ -1,7 +1,6 @@
 module mytests
 contains
-attributes(global)  &
-subroutine test1( a )
+attributes(global)   subroutine test1( a )
 integer, device :: a(*)
 integer,device :: myblock,blocksize,subthread,thread,index,gridsize
 integer thx,thy,thz,bkx,bky

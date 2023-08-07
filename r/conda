@@ -1,0 +1,31 @@
+# A simple delta timer (seconds)
+mytime () 
+{
+    now=`date +"%s"`
+    if (( $# > 0 )); then
+        rtn=`python -c "print($now - $1)"`
+    else
+       rtn=$now
+    fi
+    echo $rtn
+}
+
+st=`mytime`
+now=$st
+
+
+export BASEDIR=/lustre/eaglefs/scratch/tkaiser2/conda/aug07
+
+module load conda
+conda create -y -p $BASEDIR python=3.11
+conda activate $BASEDIR
+conda install -y mamba -c conda-forge
+which mamba
+mamba create -y -p $BASEDIR/test_r r-essentials
+conda deactivate
+mamba activate $BASEDIR/test_r
+
+which R
+
+
+echo Time to setup R: $(mytime $now)

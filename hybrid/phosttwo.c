@@ -180,7 +180,7 @@ int valid(void *p)
 {
   extern char _etext;
 
-  return (p != NULL) && ((char *)p > &_etext);
+  //return (p != NULL) && ((char *)p > &_etext);
 }
 char f1234[128], f1235[128], f1236[128];
 

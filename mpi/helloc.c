@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <mpi.h>
+#include <math.h>
  
 /************************************************************
 This is a simple hello world program. Each processor prints
