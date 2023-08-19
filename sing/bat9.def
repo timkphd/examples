@@ -1,0 +1,20 @@
+Bootstrap: localimage
+from: oldtf.sif
+
+%post
+. /etc/profile.d/modules.sh
+ml python
+
+#    pip uninstall tensorflow==1.13.2 <<HERE
+#y
+#HERE
+    pip install numpy numba scipy 
+    #pip install scikit-learn pandas  matplotlib 
+#    pip install scikit-learn pandas  tqdm matplotlib==3.0
+    pip install scikit-learn pandas  tqdm 
+    #pip install scikit-learn pandas  matplotlib tqdm
+    #pip install scikit-learn pandas matplotlib tqdm
+#    pip install progressbar
+#    pip install tensorflow==1.13.2
+
+

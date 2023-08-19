@@ -1,0 +1,14 @@
+#!/bin/bash
+userinfo ()
+{
+    u=`id -nu $1`;
+    echo $u;
+    id $u 2> /dev/null && echo "  +++++++++++ ";
+    getent passwd $u 2> /dev/null && echo "  +++++++++++ ";
+    finger $u 2> /dev/null && echo "  +++++++++++ ";
+    last $u 2> /dev/null && echo "  +++++++++++ ";
+    lslogins $u 2> /dev/null && echo "  +++++++++++ ";
+    sacctmgr show associations user=$u format=account%15 2> /dev/null && echo "  +++++++++++ ";
+    w $u 2> /dev/null && echo "  +++++++++++ "
+}
+userinfo
