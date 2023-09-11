@@ -399,9 +399,10 @@ if(packed == 1) {
   MPI_Barrier(MPI_COMM_WORLD);
   st=TIMER;
   et=st+1.0;
-  ibar=0.0;
+  ibar=0;
 #define BC 1000
-  while (TIMER < et) {
+//while (TIMER < et) {
+  while (ibar < 100) {
 	  for (repeat=1;repeat<=BC;repeat++) {
 		  MPI_Barrier(MPI_COMM_WORLD);
 	  }
@@ -412,6 +413,7 @@ if(packed == 1) {
 	 printf("Barriers/Second %g\n",(float)ibar/dt);
  }
   MPI_Finalize();
+  fflush(stdout);
 }
 
 #ifdef DOSAVE

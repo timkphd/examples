@@ -12,8 +12,21 @@
 #include <string.h>
 #include <math.h>
 #include <mpi.h>
+#include <ctype.h>
+
 // test keys
 //int sched_getcpu(void);
+#ifdef USEFAST
+extern inline __attribute__((always_inline)) int get_core_number() {
+   unsigned long a, d, c;
+   __asm__ volatile("rdtscp" : "=a" (a), "=d" (d), "=c" (c));
+   return ( c & 0xFFFUL );
+}
+#else
+int sched_getcpu();
+#endif
+
+
 int findcore()
 {
   int cpu;
@@ -21,7 +34,11 @@ int findcore()
 #ifdef __APPLE__
   cpu = -1;
 #else
+#ifdef USEFAST
+  cpu = get_core_number();
+#else
   cpu = sched_getcpu();
+#endif
 #endif
   return cpu;
 }
@@ -121,19 +138,22 @@ int main(int argc,char *argv[],char *env[])
   int myid, numprocs;
   int i,vlan;
   int tag;
-  char *buffer;
+  char *buffer,*get;
+  int iv;
   char *astr;
   char *myname,*yours;
   MPI_Status status;
   double total[20],maxtime[20],mintime[20],st,et,dt;
+  float ibar;
   int *cores;
   int *todo;
-  int mapit;
+  int mapit,packed,iarg;
   double t1,t2;
   double **times;
   char fname[256];
   int count[20];
   int is,ir,mysize,isize,resultlen,repeat;
+  int rc_calls;
   double logs;
   int step;
   int BSIZE;
@@ -144,11 +164,13 @@ int main(int argc,char *argv[],char *env[])
   logs=log((double)step);
 
     char version[MPI_MAX_LIBRARY_VERSION_STRING] ;
+    buffer=NULL;
+    get=NULL;
   MPI_Init(&argc,&argv);
   MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
   MPI_Comm_rank(MPI_COMM_WORLD,&myid);
   BSIZE=15;
-  if (file=fopen("BSIZE","r")){
+  if ((file=fopen("BSIZE","r"))){
       fscanf(file,"%d",&BSIZE);
       fclose(file);
  }
@@ -167,28 +189,40 @@ int main(int argc,char *argv[],char *env[])
   *****/
   
   if(myid == 0){
-    MPI_Get_library_version(version,&vlan);
-   printf("MPI VERSION %s\n",version);
-   mapit=-1;
-   if ( argc > 1) {
-	   sscanf(argv[1],"%d",&mapit);
-   }
+	MPI_Get_library_version(version,&vlan);
+	printf("MPI VERSION %s\n",version);
+	mapit=-1;
+	packed=-1;
+	if ( argc > 1) {
+		for (iarg=1;iarg< argc;iarg++) {
+			printf("%s\n",argv[iarg]);
+			if( isdigit(argv[iarg][0]) == 0) mapit=atoi(argv[iarg]);
+			if( strncmp(argv[iarg] ,"SR",2) == 0 ) packed=1;
+		}
+	}
+	if(packed == 1) {
+		printf("calling MPI_Sendrecv\n");
+	}
+	else {
+		printf("calling MPI_Send - MPI_Recv\n");
+	}
+
 }
     todo=(int*)malloc(4*numprocs);
   if(myid == 0){
     FILE * file;
     file = fopen("todo", "r");
     if (file) {
-	    printf("got file with ranks\n");
+	    printf("got file\n");
     for (is=0 ;is < numprocs;is++) { todo[is]=0; }
 	    char *line = NULL;
 	    int gettodo;
 	    size_t len = 0;
 	    while(getline(&line, &len, file) != -1) {
-		/* printf("%s\n",line); */
 		sscanf(line,"%d",&gettodo);
+		if (gettodo >= numprocs) gettodo=numprocs-1;
 		todo[gettodo]=1;
-		/* printf("%d\n",gettodo); */
+		printf("%d\n",gettodo);
 	}
     }else {
     for (is=0 ;is < numprocs;is++) todo[is]=1;
@@ -196,7 +230,6 @@ int main(int argc,char *argv[],char *env[])
 
     cores=(int*)malloc(4*numprocs);
     yours=(char*)malloc(MPI_MAX_PROCESSOR_NAME);
-    printf("%d %s %e %e\n",myid,myname,MPI_Wtick(),et-st);
     for(ir=1;ir<numprocs;ir++) {
 		MPI_Recv(yours,MPI_MAX_PROCESSOR_NAME,MPI_CHAR,ir,345,MPI_COMM_WORLD,&status);
 		MPI_Recv(&t1,1,MPI_DOUBLE,ir,456,MPI_COMM_WORLD,&status);
@@ -214,11 +247,16 @@ int main(int argc,char *argv[],char *env[])
     //printf("bcast %d",myid);
   MPI_Bcast(todo,numprocs,MPI_INT,0,MPI_COMM_WORLD);
   MPI_Bcast(&mapit,1,MPI_INT,0,MPI_COMM_WORLD);
+  MPI_Bcast(&packed,1,MPI_INT,0,MPI_COMM_WORLD);
+
  // MPI_Abort(MPI_COMM_WORLD,0); exit(0);
-  buffer=(char*)malloc((size_t)BUFSIZE);
-  for(is=0;is<BUFSIZE;is++){
-    buffer[is]=(char)0;
-  }
+//
+//  buffer=(char*)malloc((size_t)BUFSIZE);
+//  get=(char*)malloc((size_t)BUFSIZE);
+//  for(is=0;is<BUFSIZE;is++){
+//    buffer[is]=(char)0;
+//  }
+//
 // edit next line to print your environment
 if(myid == -1){
 	i=0;
@@ -240,6 +278,9 @@ if(mapit > 0){
         mone=mone*(-1);
         FORCECORE(&mone);
 }
+buffer=(char*)malloc((size_t)64);
+get=(char*)malloc((size_t)64);
+rc_calls=0;
 
   for (is=0; is < numprocs-1 ; is++) if (todo[is] ==1) {
     for (ir=is+1 ; ir < numprocs ; ir ++ ) if (todo[ir] ==1){
@@ -252,6 +293,20 @@ if(mapit > 0){
               times[mysize][repeat]=-1.0;              
         }
 #endif
+  free((char*)buffer);
+  // printf("%d %d %d\n",myid,is,ir);
+  buffer=(char*)malloc((size_t)BUFSIZE);
+  for(iv=0;iv<BUFSIZE;iv++){
+    buffer[iv]=(char)0;
+  }
+  //printf("%d allocated buffer\n",myid);
+if(packed == 1) {
+  free(get);
+  get=(char*)malloc((size_t)BUFSIZE);
+  //printf("%d allocated get\n",myid);
+}
+                int irep;
+        
         for (mysize=0;mysize <=BSIZE; mysize++){
           isize=round(exp(logs*(double)mysize));
           buffer[0]=(char)0;
@@ -262,12 +317,22 @@ if(mapit > 0){
           count[mysize]=0;
           for (repeat=1;repeat<=RCOUNT;repeat++) {
             if(myid == is){
-            	if (total[mysize] > TMAX) buffer[0]='b';
+            	if (total[mysize] > TMAX) { buffer[0]='b'; }
 				count[mysize]=count[mysize]+1;
                 st=TIMER;
-                for(int irep=0; irep<REPCOUNT;irep++ ){
+                for(irep=0; irep<REPCOUNT;irep++ ){
+if(packed == 1) {
+
+                  MPI_Sendrecv(buffer,isize,MPI_CHAR,ir,tag,
+                                  get,isize,MPI_CHAR,ir,tag,
+                                  MPI_COMM_WORLD,&status);
+                                  rc_calls=rc_calls-1;
+
+}else{
                   MPI_Send(buffer,isize,MPI_CHAR,ir,tag,MPI_COMM_WORLD);
                   MPI_Recv(buffer,isize,MPI_CHAR,ir,tag,MPI_COMM_WORLD,&status);
+                  rc_calls=rc_calls+1;
+}
                 }
                 et=TIMER;
                 dt=et-st;
@@ -280,9 +345,19 @@ if(mapit > 0){
                 if(dt < mintime[mysize])mintime[mysize]=dt;
               }
             if(myid == ir){
-                for(int irep=0; irep<REPCOUNT;irep++ ){
+                for(irep=0; irep<REPCOUNT;irep++ ){
+if(packed == 1) {
+
+                  MPI_Sendrecv(   get,isize,MPI_CHAR,is,tag,
+                               buffer,isize,MPI_CHAR,is,tag,
+                                  MPI_COMM_WORLD,&status);
+                                  rc_calls=rc_calls-1;
+
+}else{
                   MPI_Recv(buffer,isize,MPI_CHAR,is,tag,MPI_COMM_WORLD,&status);
                   MPI_Send(buffer,isize,MPI_CHAR,is,tag,MPI_COMM_WORLD);
+                  rc_calls=rc_calls+1;
+}
                 }
             }
             if (buffer[0] == 'b') break;
@@ -314,8 +389,31 @@ if(mapit > 0){
 	printf("%4d core %4d\n",is,cores[is] % 64);
     }
 }
+  MPI_Gather(&rc_calls,1,MPI_INT,cores,1,MPI_INT,0,MPI_COMM_WORLD);
+  if (myid == 0){
+    for (is=0; is < numprocs ; is++) {
+	if (cores[is] > 0 )printf("%4d calls to MPI_Send / MPI_Recv %10d\n",is,cores[is] );
+	if (cores[is] < 0 )printf("%4d calls to MPI_Sendrecv %10d\n",is,-cores[is] );
+    }
+}
   MPI_Barrier(MPI_COMM_WORLD);
+  st=TIMER;
+  et=st+1.0;
+  ibar=0;
+#define BC 1000
+//while (TIMER < et) {
+  while (ibar < 100) {
+	  for (repeat=1;repeat<=BC;repeat++) {
+		  MPI_Barrier(MPI_COMM_WORLD);
+	  }
+	  ibar=ibar+BC;
+  }
+ dt=TIMER-st;
+ if (myid == 0){
+	 printf("Barriers/Second %g\n",(float)ibar/dt);
+ }
   MPI_Finalize();
+  fflush(stdout);
 }
 
 #ifdef DOSAVE
