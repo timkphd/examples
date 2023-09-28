@@ -31,8 +31,8 @@ int main(int argc,char *argv[]){
 		displacements=(int*)malloc(numnodes*sizeof(int));
 	}
 /* we gather the counts to the root */
-	mpi_err = MPI_Gather((void*)mysize,1,MPI_INT, 
-					     (void*)counts,  1,MPI_INT, 
+	mpi_err = MPI_Gather(&mysize,1,MPI_INT, 
+					     counts,  1,MPI_INT, 
 					     mpi_root,MPI_COMM_WORLD);
 /* calculate displacements and the size of the recv array */
 	if(myid == mpi_root){
