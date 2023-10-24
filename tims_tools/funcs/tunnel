@@ -39,6 +39,11 @@ tunnel ()
         lport=$3;
     fi;
     case $node in 
+        k*)
+            echo "Running:";
+            echo ssh -t -L $lport:localhost:$port $node.hpc.nrel.gov;
+            ssh -t -L $lport:localhost:$port $node.hpc.nrel.gov
+        ;;
         e*)
             echo "Running:";
             echo ssh -t -L $lport:localhost:$port $node.hpc.nrel.gov;
@@ -65,6 +70,13 @@ tunnel ()
             p=$(( 8100 + $addto));
             echo ssh -t -L $lport:localhost:$p eagle ssh -L $p:localhost:$port $node;
             ssh -t -L $lport:localhost:$p eagle ssh -L $p:localhost:$port $node
+        ;;
+        x*)
+            echo "Running:";
+            addto=$(( $RANDOM % 1000 ));
+            p=$(( 8100 + $addto));
+            echo ssh -t -L $lport:localhost:$p kestrel ssh -L $p:localhost:$port $node;
+            ssh -t -L $lport:localhost:$p kestrel ssh -L $p:localhost:$port $node
         ;;
         c*)
             echo "Running:";

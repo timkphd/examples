@@ -1,0 +1,54 @@
+#!/usr/bin/bash
+tmaphost() {
+echo $1 | grep eyas  > /dev/null ; if [ $? -eq 0 ] ; then echo eyas-gw.hpc.nrel.gov       ; fi
+echo $1 | grep kl1   > /dev/null ; if [ $? -eq 0 ] ; then echo kl1.hpc.nrel.gov           ; fi
+echo $1 | grep kl2   > /dev/null ; if [ $? -eq 0 ] ; then echo kl2.hpc.nrel.gov           ; fi
+echo $1 | grep el1   > /dev/null ; if [ $? -eq 0 ] ; then echo el1.hpc.nrel.gov           ; fi
+echo $1 | grep el2   > /dev/null ; if [ $? -eq 0 ] ; then echo el2.hpc.nrel.gov           ; fi
+echo $1 | grep el3   > /dev/null ; if [ $? -eq 0 ] ; then echo el3.hpc.nrel.gov           ; fi
+echo $1 | grep swift > /dev/null ; if [ $? -eq 0 ] ; then echo swift-login-1.hpc.nrel.gov ; fi
+echo $1 | grep vs1   > /dev/null ; if [ $? -eq 0 ] ; then echo vs-login-1.hpc.nrel.gov    ; fi
+echo $1 | grep vs2   > /dev/null ; if [ $? -eq 0 ] ; then echo vs-login-2.hpc.nrel.gov    ; fi
+
+}
+
+tunnel () { 
+	eights=8888
+     if [ $# -eq 1 ] ; then 
+       echo $1 | grep '^[1-9][0-9][0-9][0-9]'  > /dev/null
+       if [ $? -ne 0 ] ; then
+echo -e "\u001b[31m"
+             echo "This function shows you how to tunnel to a jupyter session on a login or compute node."
+             echo 
+             echo "Start jupyter or jupyter-lab on a login or compute node using the --no-browser option."
+             echo "Note the port number from your jupyter command '... http://localhost:####', usually it is 8888"
+             echo 
+             echo If it is not 8888 then on your desktop machine do the following export 
+             echo replacing '####' with the port number...
+             echo
+             echo export JUPY=####
+             echo 
+             echo "Then run the following command on you desktop.  (Note: it will be different on a compute node than login node.)"
+             echo " *** To just see the command and not this help message run this command without options. ***"
+             echo 
+echo -e "\u001b[30m"
+         else
+            : 
+	    eights=$1
+         fi
+    fi
+         addto=$(( $RANDOM % 1000 ))
+         p=$(( 8100 + $addto))
+echo -e "\u001b[34m"
+         if [ -z ${SLURM_SUBMIT_HOST+x} ] ; then
+                echo  "if [ -z \${JUPY+x} ] ; then export JUPY=$eights ; fi ; ssh -t -L \$JUPY:localhost:\$JUPY $(tmaphost `hostname`) "
+         else
+                echo  "if [ -z \${JUPY+x} ] ; then export JUPY=$eights ; fi ; ssh -t -L \$JUPY:localhost:$p $(tmaphost $SLURM_SUBMIT_HOST) ssh -L  $p:localhost:\$JUPY $SLURMD_NODENAME "
+         fi
+echo -e "\u001b[30m"
+}
+
+#shopt -q login_shell && echo 'Login shell' || echo 'Not login shell'
+shopt -q login_shell && echo '' > /dev/null || tunnel
+
+
