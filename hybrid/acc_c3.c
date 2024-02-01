@@ -192,6 +192,13 @@ main( int argc, char* argv[] )
     MPI_Bcast(&m,           1,MYINT,   0,MPI_COMM_WORLD);
     MPI_Bcast(&iters,       1,MYINT,   0,MPI_COMM_WORLD);
     MPI_Bcast(&thedevice,   1,MPI_INT, 0,MPI_COMM_WORLD);
+    if (myid == 0 ) {
+	MPI_Get_library_version(version, &vlan);
+	printf("%s\n",version);
+	ld=(long)n *(long)m * (long)2 * (long)4;
+	ld=ld/(long)1048576;
+	printf( "matrix %d x %d, %d iterations with memory/task %ld MB\n", n, m, iters, ld);
+    }
     if(thedevice == 3){
         acc_set_device_type( acc_device_host );
     }
@@ -240,7 +247,6 @@ main( int argc, char* argv[] )
     if (myid == 0){
         ld=(long)n *(long)m * (long)2 * (long)4;
         ld=ld/(long)1048576;
-		printf( "matrix %d x %d, %d iterations   memory %ld MB\n", n, m, iters, ld);
 		
 		printf( "%13ld microseconds optimized (max)\n", gcgpu );
 		printf( "%13ld microseconds on host   (max)\n", gchost );
