@@ -1,0 +1,11 @@
+#!/bin/bash -e
+#SBATCH --job-name="hogb"
+#SBATCH --nodes=1
+#SBATCH --time=00:10:00
+#SBATCH --account=hpcapps
+#SBATCH --tasks-per-node=104 
+#SBATCH --exclusive
+cat $0
+printenv | grep SLURM
+gcc hog.c -o hog
+srun -u -n 1 ./hog 256 
