@@ -43,8 +43,9 @@
  
 /*
  * To target cores:
- * mpicc  -acc -Minfo=accel -fast -target=multicore acc_c3.c -o jacobi_i
- * export ACC_NUM_CORES=10
+ *   mpicc  -acc -Minfo=accel -fast -target=multicore acc_c3.c -o jacobi_c
+ *   export ACC_NUM_CORES=10
+ *   mpirun -N 4 ./jacobi_c 46000 46000 5 default
  */
 
 /*
@@ -149,10 +150,6 @@ main( int argc, char* argv[] )
     MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
     MPI_Get_processor_name(myname,&resultlen); 
-    if (myid == 0 ) {
-	    MPI_Get_library_version(version, &vlan);
-	    printf("%s\n",version);
-    }
     printf("Hello from %s running task %d of %d with pid %d\n",myname,myid,numprocs,getpid());
 
     
