@@ -11,7 +11,7 @@ module global
     integer, parameter :: my_root=0
 end module
 subroutine init
-    use fmpi
+    use fmpi, only : MPI_COMM_WORLD
     use global
     implicit none
 ! do the mpi init stuff
@@ -27,8 +27,24 @@ program test1
     integer, allocatable :: sray(:),rray(:)
     integer, allocatable :: sdisp(:),sc(:),rdisp(:),rc(:)
     integer ssize,rsize,i,k,j
+    character(len=128), dimension(:), allocatable :: args
+    integer num_args,ix,nlength
+    character (len=MPI_MAX_PROCESSOR_NAME+1):: myname
+    integer slash,index
+
     real z
     call init    
+    num_args = command_argument_count()
+    if (num_args > 0)then
+    allocate(args(0:num_args))
+    call MPI_Get_processor_name(myname,nlength,mpi_err)
+    call get_command_argument(0, args(0))
+    slash=index(args(0),"/",back=.true.)+1
+    do ix = 1, num_args
+         call get_command_argument(ix,args(ix))
+         write(*,"(i4,1x,a16,3x,a16,a32)")myid,trim(myname),trim(args(0)(slash:)),trim(args(ix))
+     end do
+    end if
 ! counts and displacement arrays
     allocate(sc(0:numnodes-1))
     allocate(rc(0:numnodes-1))
@@ -43,12 +59,12 @@ program test1
         call random_number(z)
         sc(i)=nint(10.0*z)+1
     enddo
-    write(*,"(a,i3.3,a,20i3)")"myid= ",myid," sc= ",sc
+    write(*,"(a,i3.3,a,20(i3,1x))")"myid= ",myid," sc=",sc
 ! send the data
     call MPI_alltoall(    sc,1,MPI_INTEGER, &
                         rc,1,MPI_INTEGER, &
                          MPI_COMM_WORLD,mpi_err)
-    write(*,"(a,i3.3,a,20i3)")"myid= ",myid," rc= ",rc
+    write(*,"(a,i3.3,a,20(i3,1x))")"myid= ",myid," rc=",rc
     call mpi_finalize(mpi_err)
 end program
 

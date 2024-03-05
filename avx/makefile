@@ -1,10 +1,9 @@
 SHELL:=/usr/bin/bash
 
 recurse:
-	. /nopt/nrel/apps/csso/env.sh               ; \
 	module purge                                ; \
-	ml intel-oneapi-compilers/2022.1.0          ; \
-	ml intel-oneapi-mpi/2021.8.0-intel          ; \
+	ml intel-oneapi-compilers          ; \
+	ml intel-oneapi-mpi          ; \
 	$(MAKE) -f $(firstword $(MAKEFILE_LIST)) both
 
 both: ser_man par_man

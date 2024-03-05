@@ -15,7 +15,7 @@ void mysleep(float t);
 #endif
 
 int main(int argc,char *argv[]) {
-#define MGB 1024
+#define MGB 2048
     char *rays[MGB];
     long bsize;
     double t0_start;

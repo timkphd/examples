@@ -30,6 +30,9 @@
 #define PID 0
 #endif
 
+#ifndef STREAM_ARRAY_SIZE
+#   define STREAM_ARRAY_SIZE	10000000
+#endif
 int ic=0;
 void dothreads(int full, char *myname, int myid, int mycolor, int new_id);
 
@@ -212,6 +215,7 @@ int main(int argc, char **argv, char *envp[])
       help = 0;
       dotime = 0;
       when = 1;
+      printf("%ld\n",STREAM_ARRAY_SIZE);
       if (argc > 1)
         {
           for (iarg = 1; iarg < argc; iarg++)
@@ -527,9 +531,6 @@ size_t j,k;
 # endif
 
 
-#ifndef STREAM_ARRAY_SIZE
-#   define STREAM_ARRAY_SIZE	10000000
-#endif
 #ifndef OFFSET
 #   define OFFSET	0
 #endif

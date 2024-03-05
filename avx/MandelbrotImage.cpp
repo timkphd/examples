@@ -32,12 +32,26 @@ icpx    -O3 -xCore-AVX512 -qopt-zmm-usage=high         MandelbrotImage.cpp -o se
 mpiicpc -O3 -xCore-AVX512 -qopt-zmm-usage=high -DDOMPI MandelbrotImage.cpp -o par_man
 */
  
+double WTIME();
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #ifdef DOMPI
 #include <mpi.h>
 #endif
+#include <sys/time.h>
+
+double WTIME()
+{
+        int isec, nsec;
+        struct timeval tb;
+        struct timezone tz;
+        int iret;
+        iret=gettimeofday(&tb,&tz); 
+        isec=tb.tv_sec;
+        nsec=tb.tv_usec * 1000;
+	return(double(isec)+double(nsec)/1e9);
+}
 
 //#include <cstdlib>
 //#include <algorithm>
@@ -47,7 +61,7 @@ mpiicpc -O3 -xCore-AVX512 -qopt-zmm-usage=high -DDOMPI MandelbrotImage.cpp -o pa
 //#include <Windows.h>
 #define rdtsc __rdtsc
 
-#define testIterations 1000
+#define testIterations 4000
 static int preventOptimize = 0;
 #define _aligned_free free
 
@@ -164,6 +178,7 @@ int main(int argc, char *argv[]) {
             MPI_Comm_rank(MPI_COMM_WORLD,&myid);
 #endif
     int maxIterations = 256;
+    if(myid == 0)printf("%15.4f\n",WTIME());
 
     // Init image buff
     //int *bufx8 = (int *)_aligned_malloc(width * height * sizeof(int), 64);
@@ -193,6 +208,7 @@ int main(int argc, char *argv[]) {
     end = rdtsc();
     dtAvx = end - start;
 	
+    if(myid == 0)printf("%15.4f\n",WTIME());
     if (myid == 0)printf("512\n");
     // AVX512
     start = rdtsc();
@@ -201,6 +217,7 @@ int main(int argc, char *argv[]) {
     }
     end = rdtsc();
     dtAvx512 = end - start;
+    if(myid == 0)printf("%15.4f\n",WTIME());
 
     printf("%d AVX2/AVX512 = %f\n", myid, dtAvx / dtAvx512);
     _aligned_free(bufx8);

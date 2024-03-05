@@ -1,0 +1,148 @@
+#!/bin/bash
+#SBATCH --job-name="buildstuff"
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=04:00:00
+
+export STARTDIR=`pwd`
+echo $STARTDIR
+
+# Set a date stamp.  If you don't define LETTER
+# it defaults to a.  Note you can export LETTER=x
+# before sbatching this file.
+#LETTER=c
+if [ -z "$LETTER" ]  ; then export LETTER=a ;fi
+export MDY=`date +%m%d%y_$LETTER`
+
+# This is where things will be installed.
+# It's a base directory with a "time stamp"
+export MYDIR=/projects/hpcapps/cpt2k/${MDY}
+echo $MYDIR
+rm -rf $MYDIR
+rm -rf $MDY
+mkdir -p $MYDIR
+
+# Copy our scripts to our install directroy
+# These should be sufficient to recreate this build
+printenv > $MYDIR/env
+cat $0 > $MYDIR/build_script
+#cp setinstall $MYDIR
+
+
+# A simple delta timer (seconds)
+mytime () 
+{
+    now=`date +"%s"`
+    if (( $# > 0 )); then
+        rtn=`python3 -c "print($now - $1)"`
+    else
+       rtn=$now
+    fi
+    echo $rtn
+}
+    
+date
+st=`mytime`
+now=$st
+
+# Give us a newer version of gcc
+module purge
+ml craype-x86-spr
+ml gcc-native
+ml git
+
+# Clean out an old spack and redo spack git
+# If the build fails it could be because "today's" version of spack
+# is broken.  You might need to switch to an earler version.
+#rm -rf spack
+rm -rf $MDY
+mkdir $MDY
+cd $MDY
+wget https://raw.githubusercontent.com/timkphd/examples/master/tims_tools/setinstall
+chmod 755 setinstall
+git clone                           https://github.com/spack/spack.git  
+cd spack
+export SPACK_ROOT=`pwd`
+export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/.spack
+export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/.cache
+export TMPDIR=$SPACK_ROOT/tmp
+mkdir -p $TMPDIR
+
+# Modify the config files to point to the install directory and to make lmod modules
+../setinstall `realpath -P etc/spack/defaults` `realpath $MYDIR`
+source share/spack/setup-env.sh
+
+# Do the install
+
+for pack in intel-oneapi-mkl intel-oneapi-compilers intel-oneapi-mpi  ; do
+#for pack in nvhpc cuda@12.2.0 python@3.12.0 ; do
+  echo $pack
+  spack spec $pack
+done
+for pack in intel-oneapi-mkl intel-oneapi-compilers intel-oneapi-mpi  ; do
+#for pack in nvhpc cuda@12.2.0 python@3.12.0 ; do
+  echo $pack
+  now=`mytime`
+  #spack install --no-check-signature --no-checksum $pack arch=skylake_avx512
+  spack install --no-check-signature --no-checksum $pack 
+  echo Time to install $pack: $(mytime $now)
+done
+echo \$STARTDIR=$STARTDIR
+echo \$SPACK_ROOT=$SPACK_ROOT
+echo Install directory \$MYDIR=$MYDIR
+echo export SPACK_ROOT=$SPACK_ROOT
+echo export SPACK_USER_CONFIG_PATH=$SPACK_ROOT/.spack
+echo export SPACK_USER_CACHE_PATH=$SPACK_ROOT/.cache
+echo export TMPDIR=$SPACK_ROOT/tmp
+echo source $SPACK_ROOT/share/spack/setup-env.sh
+
+cd $STARTDIR
+echo "modules in:"
+BASE=$MYDIR
+for KIND in lmod  ; do
+for x in `find $BASE/$KIND -type f` ; do dirname `dirname $x` ; done | sort -u | grep $KIND
+done
+for KIND in  tcl ; do
+for x in `find $BASE/$KIND -type f` ; do dirname $x ; done | sort -u | grep $KIND
+done
+
+
+#Now we install cp2k
+
+export BASE=$MYDIR
+
+
+unset spack
+module purge
+module use $BASE/lmod/linux-rhel8-x86_64/gcc/*
+ml intel-oneapi-compilers
+ml intel-oneapi-mkl
+ml intel-oneapi-mpi
+ml git
+export PATH=/opt/rh/gcc-toolset-12/root/usr/bin:$PATH
+
+#We put our install in the same place as our compilers.
+#This is not required.
+export IPATH=$BASE
+mkdir -p $IPATH
+cd $IPATH
+
+git clone https://github.com/cp2k/cp2k.git
+
+cd cp2k/tools/toolchain
+
+./install_cp2k_toolchain.sh --with-mkl --with-scalapack --with-cosma=no --with-intelmpi --enable-cray=no   --with-intel --with-fftw
+
+cp $IPATH/cp2k/tools/toolchain/install/arch/* $IPATH/cp2k/arch
+source $IPATH/cp2k/tools/toolchain/install/setup
+cd $IPATH/cp2k
+git submodule update --init --recursive
+make -j 26  ARCH=local VERSION="ssmp sdbg psmp pdbg"
+
+
+echo Install Directory $IPATH/cp2k
+echo Module path for Intel compilers: `echo $MODULEPATH | awk -F: '{print $1}'`
+echo loaded modules:
+module list
+

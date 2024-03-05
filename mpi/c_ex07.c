@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mpi.h>
 
 /*
@@ -26,8 +27,15 @@ int main(int argc,char *argv[]){
 	int *sdisp,*sc,*rdisp,*rc;
 	int ssize,rsize,i,k,j;
 	float z;
+	char myname[MPI_MAX_PROCESSOR_NAME] ;
+	int resultlen;
+        char *slash;
+        int ch='/';
 
 	init_it(&argc,&argv);
+	MPI_Get_processor_name(myname,&resultlen);
+        slash=strrchr(argv[0],ch)+1;
+	if(argc > 1) printf("%4d %16s %16s %32s\n",myid,myname,slash,argv[1]);
 	sc=(int*)malloc(sizeof(int)*numnodes);
 	rc=(int*)malloc(sizeof(int)*numnodes);
 	sdisp=(int*)malloc(sizeof(int)*numnodes);
@@ -63,5 +71,5 @@ void seed_random(int  id){
 void random_number(float *z){
 	int i;
 	i=rand();
-	*z=(float)i/RAND_MAX;
+	*z=(float)i/(float)RAND_MAX;
 }
