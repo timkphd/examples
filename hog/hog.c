@@ -38,7 +38,7 @@ int main(int argc,char *argv[]) {
        }
        memset(rays[m],'.',bsize);
        system_clock(&t1_start);
-       printf("%d ::  %g %g\n",m+1,t1_start-t0_start,t1_start-t2_start);
+       printf("%6d ::  %15.7f %15.7f %10.3f\n",m+1,t1_start-t0_start,t1_start-t2_start,(bsize/(t1_start-t2_start))*1e-9);
        t2_start=t1_start;
        if((dt > 0.0) && (m < (n-1))){
 	       printf("sleeping %8.2f\n",dt);
