@@ -9,6 +9,17 @@ unsigned long NUM_POINTS;
 #define REAL 0
 #define IMAG 1
 
+#define D3
+
+#ifdef ONED
+#undef D3
+#endif
+
+#ifdef TWOD
+#undef D3
+#endif
+
+
 /* fftw_complex *an_array;
 an_array = (fftw_complex*) fftw_malloc(5*12*27 * sizeof(fftw_complex));
 Accessing the array elements, however, is more tricky—you can’t simply use 
@@ -37,11 +48,19 @@ void printit(fftw_complex* result) {
     }
 }
 
+
 void fillit(fftw_complex* signal) {
     int i;
     for (i = 0; i < NUM_POINTS; ++i) {
+#ifdef TRIG
+        double theta;
+	theta = (double)i / (double)NUM_POINTS * M_PI;
+        signal[i][REAL] = 1.0 * cos(4.0 * theta) + 0.5 * cos( 8.0 * theta);
+        signal[i][IMAG] = 1.0 * sin(2.0 * theta) + 0.5 * sin(16.0 * theta);
+#else
         signal[i][REAL] = rrand();
         signal[i][IMAG] = rrand();
+#endif
     }
 }
 
@@ -52,14 +71,14 @@ int main(int argc, char **argv){
 #ifdef ONED
      NUM_POINTS=N;
      printf("vector size %d elements %ld\n",N,NUM_POINTS);
-#else
+#endif
 #ifdef TWOD
      NUM_POINTS=N*N;
      printf("grid size %d elements %ld\n",N,NUM_POINTS);
-#else
+#endif
+#ifdef D3
      NUM_POINTS=N*N*N;
      printf("cube size %d elements %ld\n",N,NUM_POINTS);
-#endif
 #endif
      fftw_complex *signal;
      fftw_complex *result;
@@ -84,12 +103,12 @@ FFTW_MEASURE is the default planning option.
     c1=mysecond();
 #ifdef ONED
     p = fftw_plan_dft_1d(N,     signal,result,FFTW_FORWARD,FFTW_ESTIMATE);
-#else
+#endif
 #ifdef TWOD
     p = fftw_plan_dft_2d(N,N,   signal,result,FFTW_FORWARD,FFTW_ESTIMATE);
-#else
-    p = fftw_plan_dft_3d(N,N,N, signal,result,FFTW_FORWARD,FFTW_ESTIMATE);
 #endif
+#ifdef D3
+    p = fftw_plan_dft_3d(N,N,N, signal,result,FFTW_FORWARD,FFTW_ESTIMATE);
 #endif
     c2=mysecond();
     printf(" stuff in data\n");
@@ -105,12 +124,12 @@ FFTW_MEASURE is the default planning option.
     fftw_destroy_plan(p);  
 #ifdef ONED    
     printf("create 1d plan %15.6f\n",c2-c1);
-#else
-#ifdef TWOD
-    printf("create2d plan %15.6f\n",c2-c1);
-#else
-    printf("   create plan %15.6f\n",c2-c1);
 #endif
+#ifdef TWOD
+    printf("create 2d plan %15.6f\n",c2-c1);
+#endif
+#ifdef D3
+    printf("create 3d plan %15.6f\n",c2-c1);
 #endif
     printf(" stuff in data %15.6f\n",s2-s1);
     printf("        do fft %15.6f\n",d2-d1);
