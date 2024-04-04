@@ -48,7 +48,6 @@ void printit(fftw_complex* result) {
     }
 }
 
-
 void fillit(fftw_complex* signal) {
     int i;
     for (i = 0; i < NUM_POINTS; ++i) {
