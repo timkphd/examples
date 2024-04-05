@@ -17,6 +17,9 @@
 #undef THREED
 #endif
 
+#ifdef PMAX
+#define PMAX=512
+#endif
 
 /* fftw_complex *an_array;
 an_array = (fftw_complex*) fftw_malloc(5*12*27 * sizeof(fftw_complex));
@@ -68,7 +71,9 @@ void trig(fftw_complex* signal, int N){
 		n=i0;
 		signal[n][REAL]=rp0;
 		signal[n][IMAG]=0.0;
-		// printf("+ %4d %4d %10.6f %10.6f\n",i0,n,t0,signal[n][REAL]);	
+#ifdef PRINT
+		printf("+ %4d %4d %10.6f %10.6f\n",i0,n,t0,signal[n][REAL]);	
+#endif
 		}
 #endif
 #ifdef TWOD
@@ -81,7 +86,9 @@ void trig(fftw_complex* signal, int N){
 	  		n=(i1 + i1max * i0);
 	  		signal[n][REAL]=rp0*rp1;
 	  		signal[n][IMAG]=0.0;
-	  		// printf("+ %4d %4d %4d %10.6f %10.6f %10.6f\n",i0,i1,n,t0,t1,signal[n][REAL]);	  		
+#ifdef PRINT
+			printf("+ %4d %4d %4d %10.6f %10.6f %10.6f\n",i0,i1,n,t0,t1,signal[n][REAL]);	  		
+#endif
 	  	}
 	  }
 #endif
@@ -98,8 +105,10 @@ void trig(fftw_complex* signal, int N){
 	  			n=i2 + i2max * (i1 + i1max * i0);
 	  			signal[n][REAL]=rp0*rp1*rp2;
 	  			signal[n][IMAG]=0.0;
-	  			// printf("+ %4d %4d %4d %4d %10.6f %10.6f %10.6f %10.6f\n",i0,i1,i2,n,t0,t1,t2,signal[n][REAL]);		
+#ifdef PRINT
+	  		 	printf("+ %4d %4d %4d %4d %10.6f %10.6f %10.6f %10.6f\n",i0,i1,i2,n,t0,t1,t2,signal[n][REAL]);		
 	  		}  		
+#endif
 	  	}
 	  }
 #endif
@@ -169,7 +178,7 @@ FFTW_MEASURE is the default planning option.
     randomv(signal,NUM_POINTS);
 #endif
     s2=mysecond();
-    if (NUM_POINTS < 513 ){
+    if (NUM_POINTS <= PMAX ){
 	    printf("signal\n");
         printit(signal,NUM_POINTS,'>');
     }
@@ -177,7 +186,7 @@ FFTW_MEASURE is the default planning option.
     d1=mysecond();
     fftw_execute(p);
     d2=mysecond();
-    if (NUM_POINTS < 513 ) {
+    if (NUM_POINTS <= PMAX ) {
     	printf("result\n");
     	printit(result,NUM_POINTS,'<');
     }
