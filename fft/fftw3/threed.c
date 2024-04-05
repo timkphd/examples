@@ -4,19 +4,17 @@
 #include <string.h>
 #include <math.h>
 #include <sys/time.h>
-#define rrand() (float)rand()/(float)(RAND_MAX); 
-unsigned long NUM_POINTS;
 #define REAL 0
 #define IMAG 1
 
-#define D3
+#define THREED
 
 #ifdef ONED
-#undef D3
+#undef THREED
 #endif
 
 #ifdef TWOD
-#undef D3
+#undef THREED
 #endif
 
 
@@ -28,6 +26,7 @@ arrays. Instead, you have to explicitly compute the offset into the array
 using the formula given earlier for row-major arrays. For example, to 
 reference the (i,j,k)-th element of the array allocated above, you would 
 use the expression an_array[k + 27 * (j + 12 * i)].
+See also https://www.fftw.org/fftw3_doc/Row_002dmajor-Format.html
 */
 
 double mysecond()
@@ -38,32 +37,85 @@ double mysecond()
     return ( (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6 );
 }
 
-void printit(fftw_complex* result) {
+void printit(fftw_complex* result,int N,char x) {
     int i;
-    printf("results\n");
-    for (i = 0; i < NUM_POINTS; ++i) {
+    for (i = 0; i < N; ++i) {
         double mag = sqrt(result[i][REAL] * result[i][REAL] +
                           result[i][IMAG] * result[i][IMAG]);
-        printf("%23.12f %10.5f %10.5f\n", mag,result[i][REAL] ,result[i][IMAG]);
+        printf("%c %23.12f %10.5f %10.5f\n", x,mag,result[i][REAL] ,result[i][IMAG]);
     }
 }
 
-void fillit(fftw_complex* signal) {
+void trig(fftw_complex* signal, int N){
+//n=i^d-1 + n^d-1 * (i^d-2 + n^d-2 * (... + n^1 * i^0))
+//n=i2 + n2 * (i1 + n1 * i0)
+//n=i2 + i2max * (i1 + i1max * i0);
+
+	double t0,t1,t2;
+	double rp0,rp1,rp2;
+	double pi2;
+	int i0,i1,i2,n;
+	int i0max,i1max,i2max;
+	i0max=N;
+	i1max=N;
+	i2max=N;
+	pi2=2.0*M_PI;
+	printf("N=%d\n",N);
+#ifdef ONED
+	  for (i0=0;i0<i0max;i0++){
+	  	t0 = (double)i0 / (double)i0max * pi2;
+		rp0=1.00*cos(1.00*t0)*sin(1.00*t0);
+		n=i0;
+		signal[n][REAL]=rp0;
+		signal[n][IMAG]=0.0;
+		// printf("+ %4d %4d %10.6f %10.6f\n",i0,n,t0,signal[n][REAL]);	
+		}
+#endif
+#ifdef TWOD
+	  for (i0=0;i0<i0max;i0++){
+	  	t0 = (double)i0 / (double)i0max * pi2;
+	  	rp0=1.00*cos(1.00*t0)*sin(1.00*t0);
+	  	for(i1=0;i1<i1max;i1++){
+	  		t1 = (double)i1 / (double)i1max * pi2;
+	  		rp1=sin(1.00*t1);
+	  		n=(i1 + i1max * i0);
+	  		signal[n][REAL]=rp0*rp1;
+	  		signal[n][IMAG]=0.0;
+	  		// printf("+ %4d %4d %4d %10.6f %10.6f %10.6f\n",i0,i1,n,t0,t1,signal[n][REAL]);	  		
+	  	}
+	  }
+#endif
+#ifdef THREED
+	  for (i0=0;i0<i0max;i0++){
+	  	t0 = (double)i0 / (double)i0max * pi2;
+	  	rp0=1.00*cos(1.00*t0)*sin(1.00*t0);
+	  	for(i1=0;i1<i1max;i1++){
+	  		t1 = (double)i1 / (double)i1max * pi2;
+	  		rp1=sin(1.00*t1);
+			for(i2=0;i2<i2max;i2++){
+				t2 = (double)i2 / (double)i2max * pi2;
+				rp2=cos(1.00*t2);
+	  			n=i2 + i2max * (i1 + i1max * i0);
+	  			signal[n][REAL]=rp0*rp1*rp2;
+	  			signal[n][IMAG]=0.0;
+	  			// printf("+ %4d %4d %4d %4d %10.6f %10.6f %10.6f %10.6f\n",i0,i1,i2,n,t0,t1,t2,signal[n][REAL]);		
+	  		}  		
+	  	}
+	  }
+#endif
+}
+
+#define rrand() (float)rand()/(float)(RAND_MAX); 
+void randomv(fftw_complex* signal,int N) {
     int i;
-    for (i = 0; i < NUM_POINTS; ++i) {
-#ifdef TRIG
-        double theta;
-	theta = (double)i / (double)NUM_POINTS * M_PI;
-        signal[i][REAL] = 1.0 * cos(4.0 * theta) + 0.5 * cos( 8.0 * theta);
-        signal[i][IMAG] = 1.0 * sin(2.0 * theta) + 0.5 * sin(16.0 * theta);
-#else
+    for (i = 0; i < N; ++i) {
         signal[i][REAL] = rrand();
         signal[i][IMAG] = rrand();
-#endif
     }
 }
 
 int main(int argc, char **argv){
+     unsigned long NUM_POINTS;
      int N=16;
      double c1,c2,s1,s2,d1,d2;
      if (argc > 1) N=atoi(argv[1]);
@@ -75,7 +127,7 @@ int main(int argc, char **argv){
      NUM_POINTS=N*N;
      printf("grid size %d elements %ld\n",N,NUM_POINTS);
 #endif
-#ifdef D3
+#ifdef THREED
      NUM_POINTS=N*N*N;
      printf("cube size %d elements %ld\n",N,NUM_POINTS);
 #endif
@@ -96,7 +148,6 @@ are not overwritten during planning.
 computing several FFTs and measuring their execution time. Depending
 on your machine, this can take some time (often a few seconds).
 FFTW_MEASURE is the default planning option.
-
 */
     printf(" create plan\n");
     c1=mysecond();
@@ -106,19 +157,30 @@ FFTW_MEASURE is the default planning option.
 #ifdef TWOD
     p = fftw_plan_dft_2d(N,N,   signal,result,FFTW_FORWARD,FFTW_ESTIMATE);
 #endif
-#ifdef D3
+#ifdef THREED
     p = fftw_plan_dft_3d(N,N,N, signal,result,FFTW_FORWARD,FFTW_ESTIMATE);
 #endif
     c2=mysecond();
     printf(" stuff in data\n");
     s1=mysecond();
-    fillit(signal);
+#ifdef TRIG
+    trig(signal,N);
+#else
+    randomv(signal,NUM_POINTS);
+#endif
     s2=mysecond();
+    if (NUM_POINTS < 513 ){
+	    printf("signal\n");
+        printit(signal,NUM_POINTS,'>');
+    }
     printf(" do it\n");
     d1=mysecond();
     fftw_execute(p);
     d2=mysecond();
-    if (NUM_POINTS < 257 ) printit(result);
+    if (NUM_POINTS < 513 ) {
+    	printf("result\n");
+    	printit(result,NUM_POINTS,'<');
+    }
     printf(" clean up\n");
     fftw_destroy_plan(p);  
 #ifdef ONED    
@@ -127,10 +189,18 @@ FFTW_MEASURE is the default planning option.
 #ifdef TWOD
     printf("create 2d plan %15.6f\n",c2-c1);
 #endif
-#ifdef D3
+#ifdef THREED
     printf("create 3d plan %15.6f\n",c2-c1);
 #endif
     printf(" stuff in data %15.6f\n",s2-s1);
     printf("        do fft %15.6f\n",d2-d1);
 }
+
+
+
+
+
+
+
+
 
