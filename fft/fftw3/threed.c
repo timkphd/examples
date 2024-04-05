@@ -17,8 +17,8 @@
 #undef THREED
 #endif
 
-#ifdef PMAX
-#define PMAX=512
+#ifndef PMAX
+#define PMAX 512
 #endif
 
 /* fftw_complex *an_array;
