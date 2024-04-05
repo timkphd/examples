@@ -107,8 +107,8 @@ void trig(fftw_complex* signal, int N){
 	  			signal[n][IMAG]=0.0;
 #ifdef PRINT
 	  		 	printf("+ %4d %4d %4d %4d %10.6f %10.6f %10.6f %10.6f\n",i0,i1,i2,n,t0,t1,t2,signal[n][REAL]);		
-	  		}  		
 #endif
+	  		}  		
 	  	}
 	  }
 #endif
