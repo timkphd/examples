@@ -1,0 +1,12 @@
+
+# run from inside spack directory
+SBASE=`pwd`
+mv $SBASE/var/spack/repos/builtin/packages/xcb-proto/package.py $SBASE/var/spack/repos/builtin/packages/xcb-proto/package.org
+wget https://raw.githubusercontent.com/spack/spack/0c5747abb559c58157245a5fba9dfe0cbdaf009c/var/spack/repos/builtin/packages/xcb-proto/package.py
+mv package.py $SBASE/var/spack/repos/builtin/packages/xcb-proto/package.py 
+
+
+mv $SBASE/var/spack/repos/builtin/packages/libxcb/package.py $SBASE/var/spack/repos/builtin/packages/libxcb/package.org
+wget https://raw.githubusercontent.com/spack/spack/0c5747abb559c58157245a5fba9dfe0cbdaf009c/var/spack/repos/builtin/packages/libxcb/package.py
+mv package.py $SBASE/var/spack/repos/builtin/packages/libxcb/package.py 
+
