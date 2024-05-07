@@ -13,7 +13,8 @@ mem=data['samples']['metrics']['node_mem_percent']['maxs']
 tot_mem=data['info']['metrics']['memory_per_node']['mean']
 tot_mem=float(tot_mem)/1e9
 f=open(outfile,"w")
+sm=mem[0]
 for t, m in zip(times, mem):
-    m=float(m)*tot_mem/100.0
+    m=float(m-sm)*tot_mem/100.0
 # memory is in GB
     x=f.write(str(t)+" "+str(m)+"\n")     

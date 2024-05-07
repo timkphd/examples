@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import numpy as np  
 import pandas as pd  
 from pandas import Series, DataFrame  
@@ -20,7 +21,7 @@ from math import log10,acos,sqrt,sin,cos
 dummy = [1, 2, 3, 4]
 tymer(["-i","reading data"])
 thehead=["year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly"]
-dat=pd.read_csv('start',sep='\s+',names=thehead)
+dat=pd.read_csv('start',sep=r'\s+',names=thehead)
 tymer(["-i","got data"])
 
 #The following enables memory cleanup that can be seen with map
@@ -366,7 +367,7 @@ mymax=np.zeros([dlat,dlon])
 
 tymer(["-i","reading data"])
 thehead=["year","month","day","hour","minute","second","cuspid","latitude","longitude","depth","SCSN","PandS","statino","residual","tod","method","ec","nen","dt","stdpos","stddepth","stdhorrel","stddeprel","le","ct","poly"]
-dat=pd.read_csv('start',sep='\s+',names=thehead)
+dat=pd.read_csv('start',sep=r'\s+',names=thehead)
 dep=dat['depth']
 tymer(["-i","got data"])
 
