@@ -16,12 +16,12 @@ which python
 
 rm -rf *map *json *dat *profile *PROFILE
 map --profile  srun -n 3  python dompimem.py
-map --export dompimem.json  dompimem*map
+map --export dompimem.json  *dompimem*map
 ./dojson.py dompimem
 
 
 map --profile python domem.py
-map --export domem.json domem*map
+map --export domem.json *domem*map
 ./dojson.py domem
 
 mprof run domem.py
@@ -29,7 +29,7 @@ mv mprofile* domem.profile
 
 
 map --profile python quake.py
-map --export quake.json quake*map
+map --export quake.json *quake*map
 ./dojson.py quake
 
 mprof run quake.py

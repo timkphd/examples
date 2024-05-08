@@ -9,7 +9,8 @@
 import os
 import sys 
 import numpy as np
-import time
+from time import time as epoc
+from time import sleep
 import  psutil
 import gc
 def getmem():
@@ -17,6 +18,8 @@ def getmem():
     return m
 
 dompi=False
+doinvert=True
+over1=0
 myid=0
 MAXTASK=1
 # run as MPI program if mpi is in the name for the executable
@@ -61,20 +64,23 @@ if myid < MAXTASK :
 		rays[i]=np.ones([size,size])*0.1
 		for j in diag:
 			rays[i][j,j]=3.14
-		t1=time.time()
-		over1=inv(rays[i])
-		t2=time.time()
+		t1=epoc()
+		if doinvert :
+			over1=inv(rays[i])
+		else :
+			sleep(0.1)
+		t2=epoc()
 		print(f % (i,t2-t1,getmem()))
 	
 	print("releasing memory")
 	for i in sets:
-		t1=time.time()
+		t1=epoc()
 		x=rays.pop(i)
 	#either del x arter pop or set rays[i]=None does the trick
 		del x
 	#    rays[i]=None
 		gc.collect()
-		t2=time.time()
+		t2=epoc()
 		print(f % (i,t2-t1,getmem()))
 	
 	del rays
@@ -89,9 +95,12 @@ if myid < MAXTASK :
 		rays[i]=np.ones([size,size])*0.1
 		for j in diag:
 			rays[i][j,j]=3.14
-		t1=time.time()
-		over1=inv(rays[i])
-		t2=time.time()
+		t1=epoc()
+		if doinvert :
+			over1=inv(rays[i])
+		else :
+			sleep(0.1)
+		t2=epoc()
 		print(f % (i,t2-t1,getmem()))
 
 if dompi: MPI.Finalize()
