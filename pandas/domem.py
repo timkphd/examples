@@ -34,9 +34,16 @@ if sys.argv[0].find("mpi") > -1 :
 	# Processor name?
 		name = MPI.Get_processor_name()
 		print("from ",myid," of ",numprocs," on ",name)
+        # How many tasks allocate memory
+		if myid == 0 :
+			if len(sys.argv) > 1 :
+				try:
+					MAXTASK=int(sys.argv[1])
+				except:
+					pass
+		MAXTASK=comm.bcast(MAXTASK, root=0)
 	except:
 		dompi=False
-
 
 if myid < MAXTASK :
 	inv=np.linalg.inv

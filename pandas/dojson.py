@@ -15,6 +15,8 @@ tot_mem=float(tot_mem)/1e9
 f=open(outfile,"w")
 sm=mem[0]
 for t, m in zip(times, mem):
+    # divide by 100 because memory reported is %
     m=float(m-sm)*tot_mem/100.0
+    if m < 0 : m=0
 # memory is in GB
     x=f.write(str(t)+" "+str(m)+"\n")     
