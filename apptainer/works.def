@@ -1,0 +1,36 @@
+Bootstrap: localimage
+#From: rocky.base
+
+%labels
+    Maintainer Mike Lake
+    Version 1.0
+
+%help
+    This is a Rocky Linux 8 container for running fortune and cowsay.
+
+%runscript
+    echo "Running the main script from inside the Rocky Linux 8 container."
+    date
+
+
+%post
+    echo "Installing packages into the Rocky Linux 8 container"
+    ls /usr/bin
+    dnf -y update
+    #dnf -y install gcc
+    dnf -y group install "Development Tools"
+    dnf -y install git
+    dnf -y install python
+    dnf -y install wget
+    
+: << SKIP
+
+git clone -c feature.manyFiles=true https://github.com/spack/spack.git rspack
+cd rspack/
+. share/spack/setup-env.sh
+spack compiler find
+spack external find
+spack install cuda@12.1.0 arch=skylake_avx512
+
+SKIP
+

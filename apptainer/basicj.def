@@ -1,0 +1,23 @@
+bootstrap: docker
+from: rockylinux:8.6
+#bootstrap: localimage
+#from: timkphd_timkphd_rocky86.sif
+
+
+
+%post
+    mkdir -p /rocky01
+    mkdir -p /rocky02
+    mkdir -p /rocky03
+    mkdir -p /rocky04
+    dnf -y install procps
+    dnf -y install findutils
+cd /rocky01
+curl -fsSL https://install.julialang.org > install
+chmod 700 install 
+./install -y -p /rocky01
+
+
+
+
+

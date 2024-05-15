@@ -1,0 +1,6 @@
+Bootstrap: docker
+From: rockylinux:9.0
+
+%runscript
+    /bin/bash "$@"
+

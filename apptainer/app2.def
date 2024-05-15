@@ -1,0 +1,11 @@
+Bootstrap: localimage
+from: app1.sif
+
+%post
+/opt/spack/install/opt/linux-ubuntu22.04-icelake/gcc-11.3.0/apptainer-1.1.9-dnxzzawgenfhndqrz6ygvzxb36rhkojs/bin/spack_perms_fix.sh
+
+
+%environment
+export PATH=/opt/spack/install/opt/linux-ubuntu22.04-icelake/gcc-11.3.0/apptainer-1.1.9-dnxzzawgenfhndqrz6ygvzxb36rhkojs/bin:$PATH
+
+

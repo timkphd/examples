@@ -1,0 +1,35 @@
+bootstrap: docker
+from: rockylinux:8.6
+
+%labels
+	Maintainer Tim Kaiser
+	Version 1.0
+
+%help
+    This is a Rocky Linux 8 container for development.
+
+
+
+%runscript
+    echo "Running the main script from inside the Rocky Linux 8 container."
+    date
+
+
+
+
+%post
+    echo "Installing packages into the Rocky Linux 8 container"
+    ls /usr/bin
+    dnf remove *i686*
+    dnf -y install openssh
+    #dnf -y upgrade
+    #dnf -y update
+    dnf -y install gcc
+    echo ++++++++++ installed gcc
+    dnf -y group install "Development Tools"
+    dnf -y install git
+    dnf -y install wget
+#    mkdir -p /usr/local/julia ; cd /usr/local/juila ; curl -fsSL https://install.julialang.org | sh
+
+
+

@@ -1,0 +1,54 @@
+bootstrap: docker
+from: rockylinux:8.6
+
+%labels
+	Maintainer Tim Kaiser
+	Version 1.0
+
+%help
+    This is a Rocky Linux  container for running apptainer.
+
+
+
+
+
+
+
+%runscript
+    echo "Running the main script from inside the Rocky Linux  container."
+    echo APPTAINER
+    /usr/bin/which apptainer
+    apptainer --help
+
+
+
+
+
+
+
+
+%post
+    echo "Installing packages into the Rocky Linux 8 container"
+    ls /usr/bin
+    dnf -y update
+    #dnf -y install gcc
+    dnf -y group install "Development Tools"
+    dnf -y install git
+    #dnf -y install python
+    #dnf -y install python-devel
+    dnf -y install wget
+    dnf -y install epel-release 
+    dnf -y install apptainer-suid
+    dnf -y install sudo
+    dnf -y install findutils
+
+    mkdir /extra01
+    mkdir /extra02
+    mkdir /extra03
+    mkdir /extra04
+
+
+
+
+
+

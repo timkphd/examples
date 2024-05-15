@@ -1,0 +1,46 @@
+Bootstrap: localimage
+from: apptainer.sif 
+
+%runscript
+echo https://www.geeksforgeeks.org/how-to-compile-decompile-and-run-c-code-in-linux/
+echo mono /extra01/geeks.exe
+mono /extra01/geeks.exe
+
+
+%post
+
+mkdir /extra01
+mkdir /extra02
+mkdir /extra03
+mkdir /extra04
+
+apt -y install gnupg ca-certificates
+apt -y update
+export DEBIAN_FRONTEND=noninteractive 
+#apt install -y dialog
+apt -yqq install mono-complete 
+
+cd /extra01
+
+cat > geeks.cs <<STUFF
+using System;
+ 
+public class GFG {
+ 
+    static public void Main()
+    {
+        Console.WriteLine("Hello World! from C#.");
+        //Console.ReadKey();
+      
+    }
+}
+STUFF
+
+chmod +x geeks.cs
+
+mcs -out:geeks.exe geeks.cs
+monodis --output=geeks.txt geeks.exe
+
+
+
+

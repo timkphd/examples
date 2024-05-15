@@ -1,0 +1,17 @@
+bootstrap: localimage
+from: py11.sif
+
+%labels
+	Maintainer Tim Kaiser
+	Version 1.0
+
+%help
+    This is a Rocky Linux 9 container with /nopt
+
+%post
+mkdir -p /nopt/nrel/apps/containers
+
+
+
+
+

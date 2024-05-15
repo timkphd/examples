@@ -1,0 +1,4 @@
+bootstrap: docker
+from: nvcr.io/nvidia/hpc-benchmarks:23.10
+
+

@@ -1,0 +1,67 @@
+Bootstrap: localimage
+#From: rocky.base
+
+%labels
+    Maintainer Tim Kaiser
+    Version 1.0
+
+%help
+    This is a Rocky Linux 9 container for running apptainer.
+
+%runscript
+    echo "Running the main script from inside the Rocky Linux 9 container."
+    echo APPTAINER
+    /usr/bin/which apptainer
+    apptainer --help
+
+
+%post
+    echo "Installing packages into the Rocky Linux 8 container"
+    ls /usr/bin
+    dnf -y update
+    #dnf -y install gcc
+    dnf -y group install "Development Tools"
+    dnf -y install git
+    dnf -y install python
+    dnf -y install python-devel
+    dnf -y install wget
+    dnf -y install epel-release 
+    dnf -y install apptainer-suid
+    dnf -y install sudo
+
+    mkdir /extra01
+    mkdir /extra02
+    mkdir /extra03
+    mkdir /extra04
+    
+# at this point we have a version of apptainer installed but we use spack to get a specific version
+    rm -rf /opt/spack
+    mkdir /opt/spack
+    cd /opt/spack
+    git clone -c feature.manyFiles=true https://github.com/spack/spack.git  
+    wget https://raw.githubusercontent.com/timkphd/examples/master/tims_tools/setinstall
+    chmod 755 setinstall
+    cd spack
+    ../setinstall `realpath -P etc/spack/defaults` /opt/spack/install
+    . share/spack/setup-env.sh
+    spack compiler find
+    spack external find
+    # Do the install
+    for pack in aspell apptainer@1.1.9 ; do
+    #for pack in slurm ; do
+    echo $pack
+    spack install --no-check-signature $pack
+    done
+    doit=`find /opt/spack/install/opt -name spack_perms_fix.sh`
+    . $doit
+    apath=`dirname $doit`
+    echo $apath
+
+
+%environment
+    export APATH=`find /opt/spack/install/opt -name spack_perms_fix.sh`
+    export APATH=`dirname $APATH`
+    export PATH=$APATH:$PATH
+    export BPATH=$apath
+
+

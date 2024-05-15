@@ -1,0 +1,5 @@
+Bootstrap: docker
+From: intel/oneapi-hpckit:devel-ubuntu22.04
+
+
+

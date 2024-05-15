@@ -1,0 +1,101 @@
+Bootstrap: docker
+from: ubuntu:latest
+
+%files
+tf.py /usr/local/bin/tf.py
+
+#%environment
+    # Point to OPENMPI binaries, libraries man pages
+    #export OPENMPI_DIR=/opt/openmpi
+    #export PATH="$OPENMPI_DIR/bin:$PATH"
+    #export LD_LIBRARY_PATH="$OPENMPI_DIR/lib:$LD_LIBRARY_PATH"
+    #export MANPATH=$OPENMPI_DIR/share/man:$MANPATH
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/lib64
+
+
+
+
+%post
+    echo "Installing required packages..."
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y wget git bash gcc gfortran g++ make python3 vim
+    apt-get install coreutils;
+    apt-get install vim
+    apt install -y git
+    apt install -y curl
+    apt install xz-utils
+    apt install -y lbzip2
+    apt install -y software-properties-common
+    add-apt-repository -y ppa:apptainer/ppa
+    apt update
+    apt install -y apptainer-suid
+    apt install sudo
+    useradd -p $(openssl passwd -1 026+SmR) joeuser
+    usermod -aG sudo joeuser
+
+apt-get install -y tcl
+apt-get install -y tcl-dev
+apt-get install -y libbz2-dev
+export LMOD_VER=8.4.3
+mkdir -p /build
+
+cd /build
+curl -LO http://github.com/TACC/Lmod/archive/${LMOD_VER}.tar.gz
+mv /build/${LMOD_VER}.tar.gz /build/Lmod-${LMOD_VER}.tar.gz
+tar xvf Lmod-${LMOD_VER}.tar.gz
+
+cd /build/Lmod-${LMOD_VER}
+
+apt-get install -y  lua5.3 liblua5.3-dev lua-posix lua-filesystem tcl iproute2
+
+./configure --prefix=/usr/share
+make install
+ln -s /usr/share/lmod/lmod/init/profile /etc/profile.d/modules.sh
+ln -s /usr/share/lmod/lmod/init/cshrc /etc/profile.d/modules.csh
+
+
+    mkdir -p /extra
+    mkdir -p /aopt/spack
+    cd /aopt/spack
+
+    git clone -c feature.manyFiles=true https://github.com/spack/spack.git  
+    wget https://raw.githubusercontent.com/timkphd/examples/master/tims_tools/setinstall
+    chmod 755 setinstall
+    cd spack
+    ../setinstall `realpath -P etc/spack/defaults` /aopt/spack/install
+    . share/spack/setup-env.sh
+    spack compiler find
+    spack external find
+    #git checkout b431c4dc06ec0757b00b6f790be25b601f774a53
+    # Do the install
+    for pack in coreutils python@3.11.2 python@3.12.0 ; do 
+      echo INSTALLING $pack
+      spack install --no-check-signature --no-checksum $pack arch=x86_64
+    done
+    wget  https://bootstrap.pypa.io/get-pip.py
+    for pack in  python@3.11.2 python@3.12.0 ; do 
+      spack load $pack
+      python get-pip.py
+      pip install numpy scipy pandas matplotlib jupyterlab
+      spack unload $pack
+    done
+    for pack in  gcc@9.4.0 gcc@10.5.0 gcc@11.4.0 gcc@12.3.0 gcc@13.2.0 ; do 
+      echo INSTALLING $pack
+      spack install --no-check-signature --no-checksum $pack +binutils arch=x86_64
+     #spack install --no-check-signature --no-checksum --keep-prefix --no-checksum --deprecated $pack
+    done
+%environment
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/lib64
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/libfabric/1.15.2.0/lib64
+    export MODULEPATH=/aopt/spack/install/lmod/linux-ubuntu22.04-x86_64/Core
+    . /etc/profile.d/modules.sh
+    echo "If modules are not available run this commands:"
+    echo ". /etc/profile.d/modules.sh"
+    echo "Then:"
+    echo "module avail"
+    echo "module load coreutils"
+    echo "module load python"
+    export LC_ALL=C
+    export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+
+

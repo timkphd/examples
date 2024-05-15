@@ -1,0 +1,57 @@
+bootstrap: localimage
+from: cudaredo.sif
+
+%labels
+	Maintainer Tim Kaiser
+	Version 1.0
+
+%help
+    This is a Rocky Linux 9 container with cuda.
+
+%files
+tf.py /examples/tf.py
+mnist.py  /examples/mnist.py 
+
+
+
+
+%environment
+    # Point to CUDA binaries, libraries man pages
+    export CUDA_DIR=/usr/local/cuda
+    export PATH="$CUDA_DIR/bin:$PATH"
+    export LD_LIBRARY_PATH="$CUDA_DIR/lib:$LD_LIBRARY_PATH"
+    export MANPATH=$CUDA_DIR/man:$MANPATH
+    export LC_ALL="en_US.UTF-8"
+
+
+
+
+%runscript
+    echo "Running the main script from inside the Rocky Linux 9 container."
+    date
+    echo running /usr/bin/nvidia-smi
+    /usr/bin/nvidia-smi
+    echo Extra directories: /extra[01-04]
+    echo running /examples/cuda1
+    /examples/cuda1
+    echo running /examples/tf.py
+    /examples/tf.py
+    echo running /examples/mnist.py
+    /examples/mnist.py
+    echo reporting glibc version
+    /examples/getlibc
+
+
+
+
+
+%post
+dnf -y module install nvidia-driver:latest
+chmod 755 /examples/mnist.py /examples/tf.py
+
+
+
+
+
+
+

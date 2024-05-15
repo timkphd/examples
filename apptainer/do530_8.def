@@ -1,0 +1,158 @@
+bootstrap: localimage
+from: addpip86.sif
+
+%labels
+	Maintainer Tim Kaiser
+	Version 1.0
+
+%help
+    This is a Rocky Linux 8 container with cuda.
+
+
+
+
+
+%environment
+    # Point to CUDA binaries, libraries man pages
+    export CUDA_DIR=/usr/local/cuda
+    export PATH="$CUDA_DIR/bin:$PATH"
+    export LD_LIBRARY_PATH="$CUDA_DIR/lib:$LD_LIBRARY_PATH"
+    export MANPATH=$CUDA_DIR/man:$MANPATH
+    export LC_ALL="en_US.UTF-8"
+
+
+
+
+%runscript
+    echo "Running the main script from inside the Rocky Linux 8 container."
+    date
+    echo running /usr/bin/nvidia-smi
+    /usr/bin/nvidia-smi
+    echo Extra directories: /extra[01-04]
+    echo running /examples/cuda1
+    /examples/cuda1
+    echo reporting glibc version
+    /examples/getlibc
+
+
+
+
+
+%post
+
+dnf -y install man-pages man-db man
+
+#subscription-manager repos --enable=codeready-builder-for-rhel-8-x86_64-rpms
+dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo
+dnf search cuda-demo-suite
+dnf -y install cuda-demo-suite-12-1.x86_64
+#dnf -y install cuda-toolkit
+dnf -y install cuda-toolkit-12-1.x86_64
+#dnf -y module install nvidia-driver:latest
+dnf module list nvidia-driver
+dnf -y module install nvidia-driver:460
+dnf config-manager --add-repo https://developer.download.nvidia.com/hpc-sdk/rhel/nvhpc.repo
+#dnf install -y nvhpc-23.11
+dnf clean all
+
+# give us some spare mount points
+mkdir -p /extra01
+mkdir -p /extra02
+mkdir -p /extra03
+mkdir -p /extra04
+mkdir -p /examples
+mkdir -p /nopt
+
+cd /examples
+cat > cuda1.cu <<STUFF
+#include <stdio.h>
+#include <time.h>
+
+__global__
+void saxpy(int n, float a, float *x, float *y)
+{
+  int i = blockIdx.x*blockDim.x + threadIdx.x;
+  if (i < n) y[i] = a*x[i] + y[i];
+}
+
+int main(void)
+{
+  clock_t t1,t2,t3,t4,t5;
+  int N = 1<<20;
+  float *x, *y, *d_x, *d_y;
+  x = (float*)malloc(N*sizeof(float));
+  y = (float*)malloc(N*sizeof(float));
+
+  cudaMalloc(&d_x, N*sizeof(float)); 
+  cudaMalloc(&d_y, N*sizeof(float));
+
+  for (int i = 0; i < N; i++) {
+    x[i] = 1.0f;
+    y[i] = 2.0f;
+  }
+  t1 = clock();
+  cudaMemcpy(d_x, x, N*sizeof(float), cudaMemcpyHostToDevice);
+  t2 = clock();
+  cudaMemcpy(d_y, y, N*sizeof(float), cudaMemcpyHostToDevice);
+  t3 = clock();
+
+  // Perform SAXPY on 1M elements
+  saxpy<<<(N+255)/256, 256>>>(N, 2.0f, d_x, d_y);
+  t4 = clock();
+
+  cudaMemcpy(y, d_y, N*sizeof(float), cudaMemcpyDeviceToHost);
+  t5 = clock();
+
+  float maxError = 0.0f;
+  for (int i = 0; i < N; i++)
+    maxError = max(maxError, abs(y[i]-4.0f));
+  printf("Max error: %f\n", maxError);
+  t5=(t5-t4);
+  t4=(t4-t3);
+  t3=(t3-t2);
+  t2=(t2-t1);
+  printf(" cudaMemcpy %g\n cudaMemcpy %g\n      saxpy %g\n cudaMemcpy %g\n",(float)t2/CLOCKS_PER_SEC,
+                         (float)t3/CLOCKS_PER_SEC,
+                         (float)t4/CLOCKS_PER_SEC,
+                         (float)t5/CLOCKS_PER_SEC);
+ 
+  cudaFree(d_x);
+  cudaFree(d_y);
+  free(x);
+  free(y);
+}
+STUFF
+
+cat > getlibc.c <<STUFF
+#include <gnu/libc-version.h>
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    // method 1, use macro
+    printf("%d.%d\n", __GLIBC__, __GLIBC_MINOR__);
+
+    // method 2, use gnu_get_libc_version 
+    puts(gnu_get_libc_version());
+
+    // method 3, use confstr function
+    char version[30] = {0};
+    confstr(_CS_GNU_LIBC_VERSION, version, 30);
+    puts(version);
+
+    return 0;
+}
+STUFF
+
+    export CUDA_DIR=/usr/local/cuda
+    export PATH="$CUDA_DIR/bin:$PATH"
+    export LD_LIBRARY_PATH="$CUDA_DIR/lib:$LD_LIBRARY_PATH"
+    nvcc cuda1.cu -o cuda1
+    cc getlibc.c -o getlibc
+
+
+
+
+
+
+

@@ -1,0 +1,85 @@
+bootstrap: localimage
+from: rocky86.sif
+
+%labels
+	Version 1.0
+	Maintainer Tim Kaiser
+
+%help
+    This is a Rocky Linux 8.6 container for running apptainer and compiling
+
+
+
+
+
+
+
+
+
+%environment
+PY312=`find /spack/spack/opt/spack -name python3.12 | grep bin`
+export PY312=`dirname $PY312`
+export PATH=$PY312:$PATH
+
+
+
+
+
+
+
+
+%runscript
+    echo "Running the main script from inside the Rocky Linux 8.6 container."
+    echo APPTAINER
+    /usr/bin/which apptainer
+    apptainer --help
+    /usr/bin/which gcc
+    gcc -v
+    /usr/bin/which python3
+    python3 -V
+ 
+
+
+
+
+
+
+
+
+
+
+
+%post
+
+mkdir /spack
+cd /spack
+git clone -c feature.manyFiles=true https://github.com/spack/spack.git
+cd spack/
+ls
+cd share/
+ls
+cd spack/
+pwd
+ls
+. ./setup-env.sh
+spack compiler find
+spack external find
+spack install python@3.12.0
+
+PY312=`find /spack/spack/opt/spack -name python3.12 | grep bin`
+export PY312=`dirname $PY312`
+export PATH=$PY312:$PATH
+wget  https://bootstrap.pypa.io/get-pip.py
+which python
+python get-pip.py
+pip install --upgrade  --no-cache-dir pip
+pip3 install  --no-cache-dir matplotlib
+pip3 install  --no-cache-dir pandas
+pip3 install  --no-cache-dir scipy
+pip3 install  --no-cache-dir jupyterlab
+pip3 install  --no-cache-dir reframe-hpc
+
+
+
+
+

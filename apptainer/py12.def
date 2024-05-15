@@ -1,0 +1,112 @@
+bootstrap: localimage
+from: rocky9.sif
+
+%labels
+	Maintainer Tim Kaiser
+	Version 1.0
+
+%help
+    This is a Rocky Linux 9 container for running apptainer and compiling
+
+
+
+
+
+
+
+
+
+%environment
+PY312=`find /spack/spack/opt/spack -name python3.12 | grep bin`
+export PY312=`dirname $PY312`
+export PATH=$PY312:$PATH
+
+
+
+
+
+
+
+
+%runscript
+    sl 
+    echo "Running the main script from inside the Rocky Linux 9 container."
+    echo APPTAINER
+    /usr/bin/which apptainer
+    apptainer --help
+    echo
+    echo "++++++++++++++++++++"
+    /usr/bin/which gcc
+    echo
+    echo "++++++++++++++++++++"
+    gcc -v
+    echo
+    echo "++++++++++++++++++++"
+    getlibc
+    echo
+    echo "++++++++++++++++++++"
+    /usr/bin/which python3
+    echo
+    echo "++++++++++++++++++++"
+    python3 -V
+
+
+
+
+
+
+
+
+
+
+
+%post
+
+dnf -y install sl
+
+mkdir /spack
+cd /spack
+cat > libc.c <<STUFF
+#include <gnu/libc-version.h>
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    // method 1, use macro
+    printf("GLIBC VERSION: %d.%d\n", __GLIBC__, __GLIBC_MINOR__);
+    return 0;
+}
+STUFF
+gcc libc.c -o /usr/local/sbin/getlibc
+
+git clone -c feature.manyFiles=true https://github.com/spack/spack.git
+cd spack/
+ls
+cd share/
+ls
+cd spack/
+pwd
+ls
+. ./setup-env.sh
+spack compiler find
+spack external find
+spack info --all python
+spack install python@3.12.0
+
+PY312=`find /spack/spack/opt/spack -name python3.12 | grep bin`
+export PY312=`dirname $PY312`
+export PATH=$PY312:$PATH
+wget  https://bootstrap.pypa.io/get-pip.py
+which python
+python get-pip.py
+pip install --upgrade  --no-cache-dir pip
+pip3 install  --no-cache-dir matplotlib
+pip3 install  --no-cache-dir pandas
+pip3 install  --no-cache-dir scipy
+pip3 install  --no-cache-dir jupyterlab
+pip3 install  --no-cache-dir reframe-hpc
+
+
+
+
+
