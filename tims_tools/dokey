@@ -1,0 +1,6 @@
+dokey () {
+  dosshagent=`ssh-agent |  head -2 | tr '\n' ' '`
+  eval $dosshagent
+  ssh-add -t 28800 ~/.ssh/git
+}
+
