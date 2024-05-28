@@ -221,6 +221,7 @@ int main(int argc, char** argv)
     set_array<real><<<dimGrid,dimBlock>>>(d_a, 2.f, N);
     set_array<real><<<dimGrid,dimBlock>>>(d_b, .5f, N);
     set_array<real><<<dimGrid,dimBlock>>>(d_c, .5f, N);
+    double st2=mysecond();
 
     /*  --- MAIN LOOP --- repeat test cases NTIMES times --- */
 
@@ -269,9 +270,13 @@ int main(int argc, char** argv)
 
     // Use right units
     const double G = SI ? 1.e9 : static_cast<double>(1<<30);
+    double f0,f1,f2,f3,f4;
+    double tt;
+    f0=mysecond();
     fprintf(FOUT,"\nFunction      Rate %s  Avg time(s)  Min time(s)  Max time(s)\n",
            SI ? "(GB/s) " : "(GiB/s)" );
     fprintf(FOUT,"-----------------------------------------------------------------\n");
+    f1=mysecond();
     for (j=0; j<4; j++) {
         avgtime[j] = avgtime[j]/(double)(NTIMES-1);
 
@@ -282,12 +287,27 @@ int main(int argc, char** argv)
                 maxtime[j]);
     }
 
-    fprintf(FOUT," Total time %10.4g seconds\n",mysecond()-st);
+    f2=mysecond();
+    tt=mysecond()-st;
+    fprintf(FOUT," Total time %10.2f seconds\n",tt);
+    f3=mysecond();
     fclose(FOUT);
+    f4=mysecond();
     /* Free memory on device */
     cudaFree(d_a);
     cudaFree(d_b);
     cudaFree(d_c);
+    mpi_err=MPI_Comm_rank(MPI_COMM_WORLD,&myid);
+    printf("%4.4d %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n",myid,st,st2,f0,f1,f2,f3,f4,tt);
+#ifdef DEBUG
+    sprintf(fname,"times.%4.4d",myid);
+    FOUT=fopen(fname,"w");
+    for (k=0; k<NTIMES; k++) 
+    {
+        fprintf(FOUT,"%15.9f %15.9f %15.9f %15.9f\n",times[0][k],times[1][k],times[2][k],times[3][k]);
+    }
+    fclose(FOUT);
+#endif    
     mpi_err = MPI_Finalize();
     return (mpi_err);
 }
