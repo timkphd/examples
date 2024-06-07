@@ -1,4 +1,19 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
+"""
+(3.11.7b) [tkaiser2@kl1 junk]$vi setup.py
+
+from distutils.core import setup, Extension
+
+setup (name = 'tymer',
+       version = '1.0',
+       description = 'This is a utililty module with a tymer',
+       py_modules = ['tymer'])
+
+
+##python setup.py install
+"""
+
 
 #### copy this file to ~/bin
 #### ln -s tymer myutils.py
