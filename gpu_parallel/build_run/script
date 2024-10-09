@@ -1,0 +1,69 @@
+#!/bin/bash
+#SBATCH --time=0:30:00
+#SBATCH --partition=gpu-h100
+#SBATCH --nodes=2
+#SBATCH --gres=gpu:h100:4
+#SBATCH --exclusive
+#SBATCH --output=output-%j.out
+#SBATCH --error=infor-%j.out
+
+
+if echo $SLURM_SUBMIT_HOST | egrep "kl5|kl6" >> /dev/null  ; then : ; else echo Run script from a GPU node; exit ; fi
+# a simple timer
+dt ()
+{
+    now=`date +"%s.%N"`;
+    if (( $# > 0 )); then
+        rtn=$(printf "%0.3f" `echo $now - $1 | bc`);
+    else
+        rtn=$(printf "%0.3f" `echo $now`);
+    fi;
+    echo $rtn
+}
+
+printenv > env-$SLURM_JOB_ID.out
+cat $0 > script-$SLURM_JOB_ID.out
+
+#runs script to put our restore function in our environment
+. whack.sh
+myrestore
+
+#some possible values for gcc module
+#export MYGCC=gcc-native/12.1
+#export MYGCC=gcc-stdalone/10.1.0
+#export MYGCC=gcc-stdalone/12.3.0 
+#export MYGCC=gcc-stdalone/13.1.0
+
+if [ -z ${MYGCC+x} ]; then export MYGCC=gcc-native/12.1  ; else echo MYGCC already set ; fi
+echo MYGCC=$MYGCC
+
+if [ -z ${doits+x} ]; then 
+	doits=`find . -name doit | sort -t/ -k2,2`
+else 
+	echo doits already set 
+fi
+
+for x in $doits ; do
+	echo running example in `dirname $x`
+done
+
+startdir=`pwd`
+t1=`dt`
+for x in $doits ; do
+ dir=`dirname $x`
+ echo ++++++++ $dir >&2 
+ echo ++++++++
+ echo $dir
+ cd $dir
+ tbegin=`dt`
+ . doit | tee  $SLURM_JOB_ID
+ echo Runtime `dt $tbegin` $dir `dt $t1` total
+ cd $startdir
+done
+echo FINISHED `dt $t1`
+
+# post  (this is optional)
+mkdir -p /scratch/$USER/gputest/$SLURM_JOB_ID
+cp *out  /scratch/$USER/gputest/$SLURM_JOB_ID
+# . cleanup
+
