@@ -4,6 +4,7 @@
 !  in the current MPI run. 
 !*********************************************
       program hello
+      use iso_fortran_env
       include "mpif.h"
       integer myid,numprocs,ierr,nlength
       character(len=MPI_MAX_LIBRARY_VERSION_STRING+1) :: version
@@ -16,6 +17,7 @@
       write (*,*) "Hello from ",trim(myname)," # ",myid," of ",numprocs
       if (myid .eq. 0)then
               write(*,*)trim(version)
+              write(*,*)"compiler: ",compiler_version()
       endif
       call MPI_FINALIZE(ierr)
       stop

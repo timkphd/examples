@@ -1,0 +1,116 @@
+#!/bin/bash
+#SBATCH --time=1:00:00
+#SBATCH --partition=debug
+#SBATCH --nodes=2
+#SBATCH --exclusive
+
+
+myrestore ()
+{
+    source /nopt/nrel/apps/env.sh;
+}
+
+
+cat > coarray.f90 << END
+
+
+program pi_coarray
+
+   use iso_fortran_env
+   implicit none
+   integer, parameter :: r15 = selected_real_kind(15)
+   integer, parameter :: n = huge(1)
+   real(kind=r15), parameter :: pi_ref = 3.1415926535897932384626433_real64
+
+   integer :: i
+   integer :: n_per_image[*]
+   real(kind=r15) :: real_n[*]
+   real(kind=r15) :: pi[*] = 0.0
+   real(kind=r15) :: t[*]
+   real(kind=r15) :: dt
+   character(len=128) :: hostname
+   INTEGER :: count1, count2,count_rate, count_max
+
+   CALL HOSTNM(hostname)
+      write(*,"('Image: ',i4,'  On: ',a16)")this_image(),hostname
+   if (this_image() .eq. num_images()) then
+      n_per_image = n/num_images()
+      real_n = real(n_per_image*num_images(), r15)
+
+      print *, 'Number of terms requested : ', n
+      print *, 'Real number of terms      : ', real_n
+      print *, 'Terms to compute per image: ', n_per_image
+      print *, 'Number of images          : ', num_images()
+      do i = 1, num_images() - 1
+         n_per_image[i] = n_per_image
+         real_n[i] = real(n_per_image*num_images(), r15)
+      end do
+
+   end if
+
+   sync all
+   CALL SYSTEM_CLOCK(count1, count_rate, count_max)
+
+   ! Computed on each image
+   do i = (this_image() - 1)*n_per_image, this_image()*n_per_image - 1
+      t = (real(i,r15) + 0.05_r15)/real_n
+      pi = pi + 4.0_r15/(1.0_r15 + t*t)
+   end do
+
+   sync all
+   CALL SYSTEM_CLOCK(count2, count_rate, count_max)
+
+   if (this_image() .eq. num_images()) then
+     if(count2 < count1)then
+       count2=count2+count_max
+     endif
+     dt=real(count2-count1)/(real(count_rate))
+
+      do i = 1, num_images() - 1
+         !print *, pi[i]/real_n
+         pi = pi + pi[i]
+      end do
+
+      print *, "Time:", dt
+      print *, "Computed value", pi/real_n
+      print *, "abs difference with reference", abs(pi_ref - pi/n)
+   end if
+
+end program pi_coarray
+
+END
+
+
+for IMAGES in 4 8 16 32 64 ; do
+echo 
+echo "IMAGES="$IMAGES
+
+myrestore
+ml openmpi/4.1.6-gcc 2>/dev/null
+module use /projects/hpcapps/builds/102224_4/lmod/linux-rhel8-x86_64/openmpi/4.1.6-eu6e2uq/gcc/12.2.1
+ml opencoarrays 2>/dev/null
+export LCOA=/projects/hpcapps/builds/102224_4/opt/linux-rhel8-sapphirerapids/gcc-12.2.1/opencoarrays-2.10.2-jjtvof5josax6mvcczs34pr35k2a3ocz/lib64
+
+mpif90 -O3 -fcoarray=lib -L$LCOA -lcaf_mpi coarray.f90 
+echo
+echo gfortran
+srun -n  $IMAGES --nodes=2 ./a.out
+
+
+myrestore
+ml intel-oneapi-mpi/2021.12.1-intel 2>/dev/null
+ml intel-oneapi 2>/dev/null
+export FOR_COARRAY_NUM_IMAGES=$IMAGES
+echo
+echo Intel_Local
+mpiifx -coarray coarray.f90
+./a.out
+echo
+echo Intel_MPI
+mpiifx -O3 -coarray=single coarray.f90
+srun -n $IMAGES --nodes=2 ./a.out
+done
+
+rm a.out
+
+
