@@ -245,7 +245,7 @@
         ISEED(3) = NP - MY_RANK
         ISEED(4) = 2*MY_RANK + 1
       DO 650 J = 0, LOCAL_MAT_COLS - 1
-            CALL SLARNV(1, ISEED, LOCAL_MAT_ROWS, &
+            CALL DLARNV(1, ISEED, LOCAL_MAT_ROWS, &
                         A_LOCAL(J*LOCAL_MAT_ROWS + 1))
   650 CONTINUE
 !
@@ -256,7 +256,7 @@
 !
 !   Use PBLAS function PSGEMV to compute right-hand side B = A*EXACT
 !     'N': Multiply by A -- not A^T or A^H
-      CALL PSGEMV('N', M, N, 1.0, A_LOCAL, 1, 1, A_DESCRIP, &
+      CALL PDGEMV('N', M, N, 1.0, A_LOCAL, 1, 1, A_DESCRIP, &
                    EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1, 0.0, &
                    B_LOCAL, 1, 1, B_DESCRIP, 1)
 ! 
@@ -264,7 +264,7 @@
 !   Done with setup!  Solve the system.
       CALL MPI_BARRIER(MPI_COMM_WORLD, IERROR)
       START_TIME = MPI_WTIME()
-      CALL PSGESV(N, 1, A_LOCAL, 1, 1, A_DESCRIP, PIVOT_LIST, &
+      CALL PDGESV(N, 1, A_LOCAL, 1, 1, A_DESCRIP, PIVOT_LIST, &
                         B_LOCAL, 1, 1, B_DESCRIP, IERROR)
       ELAPSED_TIME = MPI_WTIME() - START_TIME
       IF (IERROR.NE.0) THEN
@@ -284,10 +284,10 @@
 !
 !   Now find the norm of the error.
 !     First compute EXACT = -1*B + EXACT
-        CALL PSAXPY(N, -1.0, B_LOCAL, 1, 1, B_DESCRIP, 1, &
+        CALL PDAXPY(N, -1.0, B_LOCAL, 1, 1, B_DESCRIP, 1, &
                     EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
 !     Now compute 2-norm of EXACT
-      CALL PSNRM2(N, ERROR_2, EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
+      CALL PDNRM2(N, ERROR_2, EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
 !
 !
       IF (MY_RANK.EQ.0) THEN
