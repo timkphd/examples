@@ -313,6 +313,4 @@
 !
 !     End of Main Program LINSOLVE
       END
-!
-!
 
