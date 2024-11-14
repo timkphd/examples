@@ -145,7 +145,7 @@
       CALL MPI_COMM_SIZE(MPI_COMM_WORLD, NP, IERROR)
       CALL MPI_COMM_RANK(MPI_COMM_WORLD, MY_RANK, IERROR)
       if(my_rank .eq. 0 .and. outnum .gt. 6 .and. pr) then
-        open(outnum,file="gesv.out",status="unknown")
+        open(unit=outnum,file="gesv.out",status="unknown")
       endif
 !      CALL BLACS_PINFO(IAM, NPROCS)
 !     
