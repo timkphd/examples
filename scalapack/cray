@@ -1,5 +1,5 @@
-rm -f pdgesv.intel pdgesv.gnu pdgesv.cray pdgesv.local dlinsolve linsolve
-rm -f out.intel out.gnu out.cray out.local gesv.out
+rm -f pdgesv.intel pdgesv.gnu pdgesv.cray pdgesv.local dlinsolve linsolve dlinsolve.intel linsolve.intel
+rm -f out.intel out.gnu out.cray out.local gesv.out gesv.sp gesv.dp numz.mod NUMZ.mod
 
 module restore
 ml python
