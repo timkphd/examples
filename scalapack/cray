@@ -1,0 +1,37 @@
+rm -f pdgesv.intel pdgesv.gnu pdgesv.cray pdgesv.local dlinsolve linsolve
+rm -f out.intel out.gnu out.cray out.local gesv.out
+
+module restore
+ml python
+./invert2.py
+
+module restore
+ml intel-oneapi-mkl/2024.0.0-intel intel-oneapi-compilers/2024.1.0 intel-oneapi-mpi/2021.12.1-intel
+mpiifx  -O1 -g -traceback  -check bounds -o pdgesv.intel pdgesv.f90 -qmkl -L$MKLROOT/lib -lmkl_scalapack_lp64  -lmkl_blacs_intelmpi_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lmkl_intel_lp64
+#mpiifx  -O1 -g -traceback  -check bounds -o linsolve.intel linsolve.f90  -qmkl -L$MKLROOT/lib -lmkl_scalapack_lp64  -lmkl_blacs_intelmpi_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lmkl_intel_lp64
+#mpiifx  -O1 -g -traceback  -check bounds -o dlinsolve.intel dlinsolve.f90  -qmkl -L$MKLROOT/lib -lmkl_scalapack_lp64  -lmkl_blacs_intelmpi_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lmkl_intel_lp64
+srun -n 6 ./pdgesv.intel > out.intel 
+
+module restore
+ftn -O1 pdgesv.f90 -o pdgesv.gnu
+srun -n 6 ./pdgesv.gnu > out.gnu
+
+module restore
+module load PrgEnv-cray
+ftn -O1 pdgesv.f90 -o pdgesv.cray
+srun -n 6 ./pdgesv.cray > out.cray
+ftn dlinsolve.f90 -o dlinsolve
+ftn linsolve.f90 -o linsolve
+srun -n 4 ./dlinsolve < in.dat
+mv gesv.out gesv.dp
+srun -n 4 ./linsolve < in.dat
+mv gesv.out gesv.sp
+
+module restore
+ml netlib-scalapack/2.2.0-gcc
+module load openmpi
+mpif90 -L/nopt/nrel/apps/cpu_stack/libraries-gcc/06-24/linux-rhel8-sapphirerapids/gcc-12.3.0/netlib-scalapack-2.2.0-3bwnaqvynct3jng6hhm2xwez3kn52q6e/lib pdgesv.f90 -lscalapack -o pdgesv.local
+srun -n 6 ./pdgesv.local > out.local 2>/dev/null
+
+
+

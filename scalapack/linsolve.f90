@@ -1,3 +1,7 @@
+      module numz
+!        integer,parameter :: bx=selected_real_kind(12)
+        integer,parameter :: bx=selected_real_kind(4)
+      end module
 !   linsolve.f
 !   Use Scalapack and MPI to solve a system of linear equations
 !   on a virtual rectangular grid of processes.
@@ -47,24 +51,27 @@
 !           since the matrix is square, NPROC_ROWS = NPROC_COLS.
 !
       PROGRAM LINSOLVE
+      use numz
+      implicit none 
       INCLUDE 'mpif.h'
 !
 !   Constants
       INTEGER           MAX_VECTOR_SIZE
       INTEGER           MAX_MATRIX_SIZE
       INTEGER           DESCRIPTOR_SIZE
-      PARAMETER (MAX_VECTOR_SIZE = 1000)
+      PARAMETER (MAX_VECTOR_SIZE =1000) 
       PARAMETER   (MAX_MATRIX_SIZE = 250000)
       PARAMETER   (DESCRIPTOR_SIZE = 10)
+      real(bx) pwork(100000)
 !
 !   Array Variables
-      REAL        B_LOCAL(MAX_VECTOR_SIZE)
+      REAL(bx)        B_LOCAL(MAX_VECTOR_SIZE)
       INTEGER           B_DESCRIP(DESCRIPTOR_SIZE)
 !
-      REAL        EXACT_LOCAL(MAX_VECTOR_SIZE)
+      REAL(bx)        EXACT_LOCAL(MAX_VECTOR_SIZE)
       INTEGER           EXACT_DESCRIP(DESCRIPTOR_SIZE)
 !
-      REAL        A_LOCAL(MAX_MATRIX_SIZE)
+      REAL(bx)        A_LOCAL(MAX_MATRIX_SIZE)
       INTEGER           A_DESCRIP(DESCRIPTOR_SIZE)
       INTEGER           PIVOT_LIST(MAX_VECTOR_SIZE)
 !
@@ -77,22 +84,25 @@
       INTEGER           M, N
       INTEGER           ROW_BLOCK_SIZE
       INTEGER           COL_BLOCK_SIZE
-        INTEGER         INPUT_DATA_TYPE
-        INTEGER         BLACS_CONTEXT
-        INTEGER         TEMP_CONTEXT
-        INTEGER         LOCAL_MAT_ROWS
-        INTEGER         LOCAL_MAT_COLS
+      INTEGER         INPUT_DATA_TYPE
+      INTEGER         BLACS_CONTEXT
+      INTEGER         TEMP_CONTEXT
+      INTEGER         LOCAL_MAT_ROWS
+      INTEGER         LOCAL_MAT_COLS
       INTEGER           EXACT_LOCAL_SIZE
       INTEGER           B_LOCAL_SIZE
       INTEGER           I, J
       INTEGER           MY_PROCESS_ROW
       INTEGER           MY_PROCESS_COL
-        REAL            ERROR_2
+      REAL(bx)            ERROR_2
       DOUBLE PRECISION START_TIME
       DOUBLE PRECISION ELAPSED_TIME
+      real randout
+      integer , allocatable ::  myseed(:)
+      integer nseed
 !
 !   Local Functions
-!       REAL            RAND_VAL
+!       REAL(bx)            RAND_VAL
 !
 !   External subroutines
 !     MPI:
@@ -117,14 +127,26 @@
 !
 !   Junk Variables
       INTEGER           ISEED(4)
+      logical pr,nat_rand
+      integer outnum
 !
 !   Begin Executable Statements
 !
+!  print arrays
+      pr=.true.
+!  Fortran file output number 6 = stadout
+!  Anything over 6 and a file will be created
+      outnum=18
+! use native random for matrix generation
+      nat_rand=.true.
 !   Initialize MPI and BLACS
       CALL MPI_INIT(IERROR)
 !
       CALL MPI_COMM_SIZE(MPI_COMM_WORLD, NP, IERROR)
       CALL MPI_COMM_RANK(MPI_COMM_WORLD, MY_RANK, IERROR)
+      if(my_rank .eq. 0 .and. outnum .gt. 6 .and. pr) then
+        open(outnum,file="gesv.out",status="unknown")
+      endif
 !      CALL BLACS_PINFO(IAM, NPROCS)
 !     
 !
@@ -227,12 +249,19 @@
 !
 !
 !   Now initialize A_LOCAL and EXACT_LOCAL
-!     CALL SEED(MY_RANK)
-!     DO 600 J = 0, LOCAL_MAT_COLS - 1
-!         DO 500 I = 1, LOCAL_MAT_ROWS
-!           A_LOCAL(LOCAL_MAT_ROWS*J + I) = RAND_VAL()
-!  500          CONTINUE
-!  600  CONTINUE
+    if (nat_rand) then
+     call random_seed(size=nseed)
+     allocate(myseed(nseed))
+     myseed=my_rank+10
+     CALL random_SEED(put=myseed)
+     DO 600 J = 0, LOCAL_MAT_COLS - 1
+         DO 500 I = 1, LOCAL_MAT_ROWS
+         CALL RANDOM_NUMBER(randout)
+           A_LOCAL(LOCAL_MAT_ROWS*J + I) = randout
+  500          CONTINUE
+  600  CONTINUE
+  else
+  call RANDOM_NUMBER(A_LOCAL)
 !     SGI subroutine -- generates the full matrix
       ISEED(1) = MY_RANK
         ISEED(2) = MY_RANK*MY_RANK
@@ -242,17 +271,20 @@
             CALL SLARNV(1, ISEED, LOCAL_MAT_ROWS, &
                         A_LOCAL(J*LOCAL_MAT_ROWS + 1))
   650 CONTINUE
-!
+  endif
+      if(pr)call pslaprnt( N, N, a_local, 1, 1, a_DESCRIP, 0, 0, "aaaaa", outnum, PWORK )
       DO 700 I = 1, EXACT_LOCAL_SIZE
-          EXACT_LOCAL(I) = 1.0
+          EXACT_LOCAL(I) = 1.0_bx
   700 CONTINUE
 !
 !
 !   Use PBLAS function PSGEMV to compute right-hand side B = A*EXACT
 !     'N': Multiply by A -- not A^T or A^H
-      CALL PSGEMV('N', M, N, 1.0, A_LOCAL, 1, 1, A_DESCRIP, &
-                   EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1, 0.0, &
+      CALL PSGEMV('N', M, N, 1.0_bx, A_LOCAL, 1, 1, A_DESCRIP, &
+                   EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1, 0.0_bx, &
                    B_LOCAL, 1, 1, B_DESCRIP, 1)
+      if(pr)call pslaprnt( N, 1, B_local, 1, 1, B_DESCRIP, 0, 0, "bbbbb", outnum, PWORK )
+      if(pr)call pslaprnt( N, 1, EXACT_LOCAL, 1, 1, B_DESCRIP, 0, 0, "XXXXX", outnum, PWORK )
 ! 
 !
 !   Done with setup!  Solve the system.
@@ -266,24 +298,26 @@
   800       FORMAT(' ','Proc ',I2,' > PSGESV FAILED, IERROR = ',I3)
             CALL MPI_ABORT(MPI_COMM_WORLD, -1, IERROR)
         END IF
-!
-!     WRITE(6,850) MY_RANK, (B_LOCAL(J), J = 1, B_LOCAL_SIZE)
-! 850   FORMAT(' ','Proc ',I2,' > B = ',F6.3,' ',F6.3,' ',F6.3,' ', &
-!             F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ', &
-!             F6.3)
-!     WRITE(6,860) MY_RANK, (EXACT_LOCAL(I), I = 1, EXACT_LOCAL_SIZE)
-! 860   FORMAT(' ','Proc ',I2,' > EXACT = ',F6.3,' ',F6.3,' ',F6.3,' ', &
-!             F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ', &
-!             F6.3)
-!
+
+!      WRITE(6,850) MY_RANK, (B_LOCAL(J), J = 1, B_LOCAL_SIZE)
+!  850   FORMAT(' ','Proc ',I2,' > B = ',F6.3,' ',F6.3,' ',F6.3,' ', &
+!              F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ', &
+!              F6.3)
+!      WRITE(6,860) MY_RANK, (EXACT_LOCAL(I), I = 1, EXACT_LOCAL_SIZE)
+!  860   FORMAT(' ','Proc ',I2,' > EXACT = ',F6.3,' ',F6.3,' ',F6.3,' ', &
+!              F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ', &
+!              F6.3)
+
 !   Now find the norm of the error.
 !     First compute EXACT = -1*B + EXACT
-        CALL PSAXPY(N, -1.0, B_LOCAL, 1, 1, B_DESCRIP, 1, &
+        CALL PSAXPY(N, -1.0_bx, B_LOCAL, 1, 1, B_DESCRIP, 1, &
                     EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
 !     Now compute 2-norm of EXACT
       CALL PSNRM2(N, ERROR_2, EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
 !
 !
+      if(pr)call pslaprnt( N, 1, B_local, 1, 1, B_DESCRIP, 0, 0, "BBBBB", outnum, PWORK )
+      !write(MY_RANK+10,"(10f10.0)")b_local
       IF (MY_RANK.EQ.0) THEN
           WRITE(6,900) N, NP
   900       FORMAT(' ','N = ',I4,', Number of Processes = ',I2)
@@ -307,21 +341,4 @@
 !
 !     End of Main Program LINSOLVE
       END
-!
-!
-
-      subroutine dummy(x)
-        character TRANS
-integer M
-integer N
-integer NRHS
-double precision A
-integer LDA
-double precision B
-integer LDB
-double precision WORK
-integer LWORK
-integer INFO 
-    call dgels(TRANS, M, N, NRHS,A,LDA,B,LDB,WORK,LWORK, INFO )
-end subroutine
 
