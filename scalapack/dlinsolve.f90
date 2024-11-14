@@ -138,7 +138,7 @@
 !  Anything over 6 and a file will be created
       outnum=18
 ! use native random for matrix generation
-      nat_rand=.true.
+      nat_rand=.false.
 !   Initialize MPI and BLACS
       CALL MPI_INIT(IERROR)
 !
@@ -261,7 +261,6 @@
   500          CONTINUE
   600  CONTINUE
   else
-  call RANDOM_NUMBER(A_LOCAL)
 !     SGI subroutine -- generates the full matrix
       ISEED(1) = MY_RANK
         ISEED(2) = MY_RANK*MY_RANK

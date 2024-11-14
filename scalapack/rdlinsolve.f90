@@ -1,6 +1,6 @@
       module numz
-!        integer,parameter :: bx=selected_real_kind(12)
-        integer,parameter :: bx=selected_real_kind(4)
+        integer,parameter :: bx=selected_real_kind(12)
+!        integer,parameter :: bx=selected_real_kind(4)
       end module
 !   linsolve.f
 !   Use Scalapack and MPI to solve a system of linear equations
@@ -261,17 +261,12 @@
   500          CONTINUE
   600  CONTINUE
   else
-!     SGI subroutine -- generates the full matrix
-      ISEED(1) = MY_RANK
-        ISEED(2) = MY_RANK*MY_RANK
-        ISEED(3) = NP - MY_RANK
-        ISEED(4) = 2*MY_RANK + 1
-      DO 650 J = 0, LOCAL_MAT_COLS - 1
-            CALL SLARNV(1, ISEED, LOCAL_MAT_ROWS, &
-                        A_LOCAL(J*LOCAL_MAT_ROWS + 1))
-  650 CONTINUE
+          if(my_rank .eq. 0)write(6,"('Reading A')")
+! echo "800 800" > A
+! grep aa gesv.dp | awk '{print $4}' >> A
+          call pdlaread( "A" , A_local, a_DESCRIP, 0,0, PWORK )
   endif
-      if(pr)call pslaprnt( N, N, a_local, 1, 1, a_DESCRIP, 0, 0, "aaaaa", outnum, PWORK )
+      if(pr)call pdlaprnt( N, N, a_local, 1, 1, a_DESCRIP, 0, 0, "aaaaa", outnum, PWORK )
       DO 700 I = 1, EXACT_LOCAL_SIZE
           EXACT_LOCAL(I) = 1.0_bx
   700 CONTINUE
@@ -279,17 +274,17 @@
 !
 !   Use PBLAS function PSGEMV to compute right-hand side B = A*EXACT
 !     'N': Multiply by A -- not A^T or A^H
-      CALL PSGEMV('N', M, N, 1.0_bx, A_LOCAL, 1, 1, A_DESCRIP, &
+      CALL PDGEMV('N', M, N, 1.0_bx, A_LOCAL, 1, 1, A_DESCRIP, &
                    EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1, 0.0_bx, &
                    B_LOCAL, 1, 1, B_DESCRIP, 1)
-      if(pr)call pslaprnt( N, 1, B_local, 1, 1, B_DESCRIP, 0, 0, "bbbbb", outnum, PWORK )
-      if(pr)call pslaprnt( N, 1, EXACT_LOCAL, 1, 1, B_DESCRIP, 0, 0, "XXXXX", outnum, PWORK )
+      if(pr)call pdlaprnt( N, 1, B_local, 1, 1, B_DESCRIP, 0, 0, "bbbbb", outnum, PWORK )
+      if(pr)call pdlaprnt( N, 1, EXACT_LOCAL, 1, 1, B_DESCRIP, 0, 0, "XXXXX", outnum, PWORK )
 ! 
 !
 !   Done with setup!  Solve the system.
       CALL MPI_BARRIER(MPI_COMM_WORLD, IERROR)
       START_TIME = MPI_WTIME()
-      CALL PSGESV(N, 1, A_LOCAL, 1, 1, A_DESCRIP, PIVOT_LIST, &
+      CALL PDGESV(N, 1, A_LOCAL, 1, 1, A_DESCRIP, PIVOT_LIST, &
                         B_LOCAL, 1, 1, B_DESCRIP, IERROR)
       ELAPSED_TIME = MPI_WTIME() - START_TIME
       IF (IERROR.NE.0) THEN
@@ -309,13 +304,13 @@
 
 !   Now find the norm of the error.
 !     First compute EXACT = -1*B + EXACT
-        CALL PSAXPY(N, -1.0_bx, B_LOCAL, 1, 1, B_DESCRIP, 1, &
+        CALL PDAXPY(N, -1.0_bx, B_LOCAL, 1, 1, B_DESCRIP, 1, &
                     EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
 !     Now compute 2-norm of EXACT
-      CALL PSNRM2(N, ERROR_2, EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
+      CALL PDNRM2(N, ERROR_2, EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
 !
 !
-      if(pr)call pslaprnt( N, 1, B_local, 1, 1, B_DESCRIP, 0, 0, "BBBBB", outnum, PWORK )
+      if(pr)call pdlaprnt( N, 1, B_local, 1, 1, B_DESCRIP, 0, 0, "BBBBB", outnum, PWORK )
       !write(MY_RANK+10,"(10f10.0)")b_local
       IF (MY_RANK.EQ.0) THEN
           WRITE(6,900) N, NP

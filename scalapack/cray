@@ -1,5 +1,5 @@
-rm -f pdgesv.intel pdgesv.gnu pdgesv.cray pdgesv.local dlinsolve linsolve dlinsolve.intel linsolve.intel
-rm -f out.intel out.gnu out.cray out.local gesv.out gesv.sp gesv.dp numz.mod NUMZ.mod
+rm -f pdgesv.intel pdgesv.gnu pdgesv.cray pdgesv.local dlinsolve linsolve dlinsolve.intel linsolve.intel rdlinsolve
+rm -f out.intel out.gnu out.cray out.local gesv.out gesv.sp gesv.dp numz.mod NUMZ.mod A
 
 module restore
 ml python
@@ -21,11 +21,15 @@ module load PrgEnv-cray
 ftn -O1 pdgesv.f90 -o pdgesv.cray
 srun -n 6 ./pdgesv.cray > out.cray
 ftn dlinsolve.f90 -o dlinsolve
+ftn rdlinsolve.f90 -o rdlinsolve
 ftn linsolve.f90 -o linsolve
 srun -n 4 ./dlinsolve < in.dat
 mv gesv.out gesv.dp
 srun -n 4 ./linsolve < in.dat
 mv gesv.out gesv.sp
+echo "800 800" > A
+grep aa gesv.dp | awk '{print $4}' >> A
+srun -n 4 ./rdlinsolve < in.dat
 
 module restore
 ml netlib-scalapack/2.2.0-gcc
