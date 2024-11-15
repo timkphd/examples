@@ -1,338 +1,335 @@
+! Based on Pacheco, Peter S. Parallel Programming with MPI. San Francisco: Morgan Kaufmann, 1997.
 module numz
    integer, parameter :: bx = selected_real_kind(12)
 !        integer,parameter :: bx=selected_real_kind(4)
 end module
 !   linsolve.f
-!   Use Scalapack and MPI to solve a system of linear equations
+!   use scalapack and mpi to solve a system of linear equations
 !   on a virtual rectangular grid of processes.
 !
-!   Input:
-!       N: order of linear system
-!       NPROC_ROWS: number of rows in process grid
-!       NPROC_COLS: number of columns in process grid
-!       ROW_BLOCK_SIZE:  blocking size for matrix rows
-!       COL_BLOCK_SIZE:  blocking size for matrix columns
+!   input:
+!       n: order of linear system
+!       nproc_rows: number of rows in process grid
+!       nproc_cols: number of columns in process grid
+!       row_block_size:  blocking size for matrix rows
+!       col_block_size:  blocking size for matrix columns
 !
-!   Output:
-!       Input data, error in solution, and time to solve system.
+!   output:
+!       input data, error in solution, and time to solve system.
 !
-!   Algorithm:
-!     1.  Initialize MPI and BLACS.
-!       2.  Get process rank (MY_RANK) and total number of
-!           processes (NP).   Use both BLACS and MPI.
-!       3a. Process 0 read and broadcast matrix order (N),
-!           number of process rows (NPROC_ROWS), number
-!           of process columns (NPROC_COLS), ROW_BLOCK_SIZE,
-!         and COL_BLOCK_SIZE.
-!       3b. Process != 0 receive same.
-!       4.  Use BLACS_GRIDINIT to set up process grid.
-!       5.  Compute amount of storage needed for local arrays.
-!       6.  Use ScaLAPACK routine DESCINIT to initialize
-!           descriptors for A, EXACT (= exact solution), and B.
-!       7.  Use random number generator to generate contents
-!           of local block of matrix (A_LOCAL).
-!       8.  Set entries of EXACT to 1.0.
-!     9.  Generate B by computing B = A*EXACT.  Use
-!           PBLAS routine PSGEMV.
-!      10.  Solve linear system by call to ScaLAPACK routine
-!           PSGESV (solution returned in B).
-!      11.  Use PBLAS routines PSAXPY and PSNRM2 to compute
-!           the norm of the error ||B - EXACT||_2.
-!      12.  Process 0 print results.
-!      13.  Free up storage, shutdown BLACS and MPI.
+!   algorithm:
+!     1.  initialize mpi and blacs.
+!       2.  get process rank (my_rank) and total number of
+!           processes (np).   use both blacs and mpi.
+!       3a. process 0 read and broadcast matrix order (n),
+!           number of process rows (nproc_rows), number
+!           of process columns (nproc_cols), row_block_size,
+!           and col_block_size.
+!       3b. process != 0 receive same.
+!       4.  use blacs_gridinit to set up process grid.
+!       5.  compute amount of storage needed for local arrays.
+!       6.  use scalapack routine descinit to initialize
+!           descriptors for a, exact (= exact solution), and b.
+!       7.  use random number generator to generate contents
+!           of local block of matrix (a_local) or read from 
+!           disk.
+!       8.  set entries of exact to 1.0.
+!       9.  generate b by computing b = a*exact.  use
+!           pblas routine psgemv.
+!      10.  solve linear system by call to scalapack routine
+!           psgesv (solution returned in b).
+!      11.  use pblas routines psaxpy and psnrm2 to compute
+!           the norm of the error ||b - exact||_2.
+!      12.  process 0 print results.
+!      13.  free up storage, shutdown blacs and mpi.
 !
-!   Notes:
-!       1.  The vectors EXACT, and B are significant only
+!   notes:
+!       1.  the vectors exact, and b are significant only
 !           in the first process column.
-!       2.  A_LOCAL is allocated as a linear array.
-!       3.  The solver only allows square blocks.  So we
-!           read in a single value, BLOCK_SIZE, and assign
-!           it to ROW_BLOCK_SIZE and COL_BLOCK_SIZE.  Thus,
-!           since the matrix is square, NPROC_ROWS = NPROC_COLS.
+!       2.  a_local is allocated as a linear array.
+!       3.  the solver only allows square blocks.  so we
+!           read in a single value, block_size, and assign
+!           it to row_block_size and col_block_size.  thus,
+!           since the matrix is square, nproc_rows = nproc_cols.
 !
-PROGRAM LINSOLVE
+subroutine sendlog(l1,l2)
+    use mpi
+    logical l1,l2
+    integer x1,x2
+    integer ierror
+    x1=0
+    x2=0 
+    if(l1)x1=1
+    if(l2)x2=1   
+    call mpi_bcast(x1, 1, mpi_integer, 0, mpi_comm_world, ierror)
+    call mpi_bcast(x2, 1, mpi_integer, 0, mpi_comm_world, ierror)
+    l1=(x1 == 1)
+    l2=(x2 == 1)
+end subroutine
+
+
+program linsolve
    use numz
+   use mpi
    implicit none
-   INCLUDE 'mpif.h'
 !
-!   Constants
-   INTEGER MAX_VECTOR_SIZE
-   INTEGER MAX_MATRIX_SIZE
-   INTEGER DESCRIPTOR_SIZE
-   PARAMETER(MAX_VECTOR_SIZE=1000)
-   PARAMETER(MAX_MATRIX_SIZE=250000)
-   PARAMETER(DESCRIPTOR_SIZE=10)
+!   constants
+   integer max_vector_size
+   integer max_matrix_size
+   integer descriptor_size
+   parameter(max_vector_size=1000)
+   parameter(max_matrix_size=250000)
+   parameter(descriptor_size=10)
    real(bx) pwork(100000)
 !
-!   Array Variables
-   REAL(bx) B_LOCAL(MAX_VECTOR_SIZE)
-   INTEGER B_DESCRIP(DESCRIPTOR_SIZE)
+!   array variables
+   real(bx) b_local(max_vector_size)
+   integer b_descrip(descriptor_size)
 !
-   REAL(bx) EXACT_LOCAL(MAX_VECTOR_SIZE)
-   INTEGER EXACT_DESCRIP(DESCRIPTOR_SIZE)
+   real(bx) exact_local(max_vector_size)
+   integer exact_descrip(descriptor_size)
 !
-   REAL(bx) A_LOCAL(MAX_MATRIX_SIZE)
-   INTEGER A_DESCRIP(DESCRIPTOR_SIZE)
-   INTEGER PIVOT_LIST(MAX_VECTOR_SIZE)
+   real(bx) a_local(max_matrix_size)
+   integer a_descrip(descriptor_size)
+   integer pivot_list(max_vector_size)
 !
-!   Scalar Variables
-   INTEGER NP
-   INTEGER MY_RANK
-   INTEGER NPROC_ROWS
-   INTEGER NPROC_COLS
-   INTEGER IERROR
-   INTEGER M, N
-   INTEGER ROW_BLOCK_SIZE
-   INTEGER COL_BLOCK_SIZE
-   INTEGER INPUT_DATA_TYPE
-   INTEGER BLACS_CONTEXT
-   INTEGER TEMP_CONTEXT
-   INTEGER LOCAL_MAT_ROWS
-   INTEGER LOCAL_MAT_COLS
-   INTEGER EXACT_LOCAL_SIZE
-   INTEGER B_LOCAL_SIZE
-   INTEGER I, J
-   INTEGER MY_PROCESS_ROW
-   INTEGER MY_PROCESS_COL
-   REAL(bx) ERROR_2
-   DOUBLE PRECISION START_TIME
-   DOUBLE PRECISION ELAPSED_TIME
-   real randout
+!   scalar variables
+   integer np
+   integer my_rank
+   integer nproc_rows
+   integer nproc_cols
+   integer ierror
+   integer m, n
+   integer row_block_size
+   integer col_block_size
+   integer input_data_type
+   integer blacs_context
+   integer local_mat_rows
+   integer local_mat_cols
+   integer exact_local_size
+   integer b_local_size
+   integer i, j
+   integer my_process_row
+   integer my_process_col
+   real(bx) error_2
+   double precision start_time
+   double precision elapsed_time
+   real(bx) randout
    integer, allocatable ::  myseed(:)
    integer nseed
-!
-!   Local Functions
-!       REAL(bx)            RAND_VAL
-!
-!   External subroutines
-!     MPI:
-!      EXTERNAL    MPI_INIT, MPI_COMM_SIZE, MPI_COMM_RANK
-!      EXTERNAL    MPI_BCAST, MPI_ABORT
-!      EXTERNAL    MPI_BARRIER, MPI_FINALIZE
-!     BLACS:
-!      EXTERNAL    BLACS_GET, BLACS_GRIDINIT, BLACS_PCOORD
-!      EXTERNAL    BLACS_EXIT
-!     PBLAS:
-!      EXTERNAL    PSGEMV, PSAXPY, PSNRM2
-!     ScaLAPACK
-!      EXTERNAL    DESCINIT, PSGESV
-!     System
-!      EXTERNAL    SLARNV
-!
-!   External functions
-!     ScaLAPACK:
-   INTEGER NUMROC
-!      EXTERNAL    NUMROC
-   INTEGER IAM, NPROCS
-!
-!   Junk Variables
-   INTEGER ISEED(4)
-   logical pr, nat_rand
+   integer numroc
+   logical pr, nat_rand,l1,l2
    integer outnum
 !
-!   Begin Executable Statements
+!   begin executable statements
 !
+! defalut values for printing and reading
 !  print arrays
    pr = .true.
-!  Fortran file output number 6 = stadout
-!  Anything over 6 and a file will be created
+!  fortran file output number 6 = stadout
+!  anything over 6 and a file will be created
    outnum = 18
-! use native random for matrix generation
+! use create random a matrix
+! if false read from file.
    nat_rand = .false.
-!   Initialize MPI and BLACS
-   CALL MPI_INIT(IERROR)
-!
-   CALL MPI_COMM_SIZE(MPI_COMM_WORLD, NP, IERROR)
-   CALL MPI_COMM_RANK(MPI_COMM_WORLD, MY_RANK, IERROR)
+!   initialize mpi
+   call mpi_init(ierror)
+   call mpi_comm_size(mpi_comm_world, np, ierror)
+   call mpi_comm_rank(mpi_comm_world, my_rank, ierror)
+
+!   get setup data
+   if (my_rank .eq. 0) then
+      read (5, *) n, nproc_rows, nproc_cols, row_block_size, col_block_size
+      !read pr and nat_rand if available
+      read(5,*,iostat=ierror)l1,l2
+      if(ierror == 0 )then
+          pr=l1
+          nat_rand=l2
+       endif
+       if(pr)write(6,*)"saving data"
+   end if
+   call sendlog(pr,nat_rand)
+   call mpi_bcast(n, 1, mpi_integer, 0, mpi_comm_world, ierror)
+   call mpi_bcast(nproc_rows, 1, mpi_integer, 0, mpi_comm_world, ierror)
+   call mpi_bcast(nproc_cols, 1, mpi_integer, 0, mpi_comm_world, ierror)
+   call mpi_bcast(row_block_size, 1, mpi_integer, 0, mpi_comm_world, ierror)
+   call mpi_bcast(col_block_size, 1, mpi_integer, 0, mpi_comm_world, ierror)
+
+   if (np .lt. (nproc_rows*nproc_cols)) then
+      write (6, "(' proc ', i2, ' > np = ', i2,        &
+                  ', nproc_rows = ', i2,                 &
+                  ', nproc_cols = ', i2)") my_rank, np, nproc_rows, nproc_cols
+      write (6, "(' need more processes!  quitting.')")
+      call mpi_abort(mpi_comm_world, -1, ierror)
+   end if
+   
    if (my_rank .eq. 0 .and. outnum .gt. 6 .and. pr) then
       open (unit=outnum, file="gesv.out", status="unknown")
    end if
-!      CALL BLACS_PINFO(IAM, NPROCS)
-!
-!
-!   Get Input Data.
-   IF (MY_RANK .EQ. 0) THEN
-      READ (5, *) N, NPROC_ROWS, NPROC_COLS, ROW_BLOCK_SIZE, COL_BLOCK_SIZE
-   END IF
-   CALL MPI_BCAST(N, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, IERROR)
-   CALL MPI_BCAST(NPROC_ROWS, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, IERROR)
-   CALL MPI_BCAST(NPROC_COLS, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, IERROR)
-   CALL MPI_BCAST(ROW_BLOCK_SIZE, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, IERROR)
-   CALL MPI_BCAST(COL_BLOCK_SIZE, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, IERROR)
-   IF (NP .LT. (NPROC_ROWS*NPROC_COLS)) THEN
-      WRITE (6, 250) MY_RANK, NP, NPROC_ROWS, NPROC_COLS
-250   FORMAT(' ', 'Proc ', I2, ' > NP = ', I2, ', NPROC_ROWS = ', I2, ', NPROC_COLS = ', I2)
-      WRITE (6, 260)
-260   FORMAT(' ', 'Need more processes!  Quitting.')
-      CALL MPI_ABORT(MPI_COMM_WORLD, -1, IERROR)
-   END IF
+
 
 !
-!   The matrix is square
-   M = N
+!   the matrix is square
+   m = n
 !
 !
-!   Build BLACS grid.
-!     First get BLACS System Context (in TEMP_CONTEXT(1))
-   CALL BLACS_GET(0, 0, BLACS_CONTEXT)
-!      BLACS_CONTEXT = TEMP_CONTEXT
+!   build blacs grid.
+   call blacs_get(0, 0, blacs_context)
 !
-!     BLACS_CONTEXT is in/out.
-!     'R': process grid will use row major ordering.
-   CALL BLACS_GRIDINIT(BLACS_CONTEXT, 'Row', NPROC_ROWS, NPROC_COLS)
+!     'r': process grid will use row major ordering.
+   call blacs_gridinit(blacs_context, 'row', nproc_rows, nproc_cols)
 !
 !
-!   Figure out how many rows and cols we'll need in the local
+!   figure out how many rows and cols we'll need in the local
 !     matrix.
-   CALL BLACS_PCOORD(BLACS_CONTEXT, MY_RANK, MY_PROCESS_ROW, MY_PROCESS_COL)
-   LOCAL_MAT_ROWS = NUMROC(M, ROW_BLOCK_SIZE, MY_PROCESS_ROW, 0, NPROC_ROWS)
-   LOCAL_MAT_COLS = NUMROC(N, COL_BLOCK_SIZE, MY_PROCESS_COL, 0, NPROC_COLS)
-   IF (LOCAL_MAT_ROWS*LOCAL_MAT_COLS .GT. MAX_MATRIX_SIZE) THEN
-      WRITE (6, 290) MY_RANK, LOCAL_MAT_ROWS, LOCAL_MAT_COLS, MAX_MATRIX_SIZE
-290   FORMAT(' ', 'Proc ', I2, &
-             ' > LOCAL_MAT_ROWS = ', I5, &
-             ', LOCAL_MAT_COLS = ', I5, &
-             ', MAX_MATRIX_SIZE = ', I6)
-      WRITE (6, 292)
-292   FORMAT(' ', 'Insufficient storage!  Quitting.')
-      CALL MPI_ABORT(MPI_COMM_WORLD, -1, IERROR)
-   END IF
+   call blacs_pcoord(blacs_context, my_rank, my_process_row, my_process_col)
+   local_mat_rows = numroc(m, row_block_size, my_process_row, 0, nproc_rows)
+   local_mat_cols = numroc(n, col_block_size, my_process_col, 0, nproc_cols)
+   if (local_mat_rows*local_mat_cols .gt. max_matrix_size) then
+      write (6, "(' proc ', i2,                  &
+                  ' > local_mat_rows = ', i5,   &
+                  ', local_mat_cols = ', i5,    &
+                  ', max_matrix_size = ', i6)") &
+                       my_rank, local_mat_rows, local_mat_cols, max_matrix_size
+      write (6, "(' insufficient storage!  quitting.')")
+      call mpi_abort(mpi_comm_world, -1, ierror)
+   end if
 !
-! Now figure out storage for B_LOCAL and EXACT_LOCAL
-   B_LOCAL_SIZE = NUMROC(M, ROW_BLOCK_SIZE, MY_PROCESS_ROW, 0, NPROC_ROWS)
-   IF (B_LOCAL_SIZE .GT. MAX_VECTOR_SIZE) THEN
-      WRITE (6, 294) MY_RANK, B_LOCAL_SIZE, MAX_VECTOR_SIZE
-294   FORMAT(' ', 'Proc ', I2, ' > B_LOCAL_SIZE = ', I5, ', MAX_VECTOR_SIZE = ', I5)
-      WRITE (6, 296)
-296   FORMAT(' ', 'Insufficient storage!  Quitting.')
-      CALL MPI_ABORT(MPI_COMM_WORLD, -1, IERROR)
-   END IF
+! now figure out storage for b_local and exact_local
+   b_local_size = numroc(m, row_block_size, my_process_row, 0, nproc_rows)
+   if (b_local_size .gt. max_vector_size) then
+      write (6, "(' proc ', i2,                  &
+                  ' > b_local_size = ', i5,     &
+                  ', max_vector_size = ', i5)") &
+                        my_rank, b_local_size, max_vector_size
+      write (6, "(' insufficient storage!  quitting.')")
+      call mpi_abort(mpi_comm_world, -1, ierror)
+   end if
 !
-   EXACT_LOCAL_SIZE = NUMROC(N, COL_BLOCK_SIZE, MY_PROCESS_ROW, 0, NPROC_ROWS)
-   IF (EXACT_LOCAL_SIZE .GT. MAX_VECTOR_SIZE) THEN
-      WRITE (6, 298) MY_RANK, EXACT_LOCAL_SIZE, MAX_VECTOR_SIZE
-298   FORMAT(' ', 'Proc ', I2, ' > EXACT_LOCAL_SIZE = ', I5, ', MAX_VECTOR_SIZE = ', I5)
-      WRITE (6, 299)
-299   FORMAT(' ', 'Insufficient storage!  Quitting.')
-      write (*, *) "calling abort"
-      CALL MPI_ABORT(MPI_COMM_WORLD, -1, IERROR)
-   END IF
-!
-!
-! Now build the matrix descriptors
-   CALL DESCINIT(A_DESCRIP, M, N, ROW_BLOCK_SIZE, &
-                 COL_BLOCK_SIZE, 0, 0, BLACS_CONTEXT, &
-                 LOCAL_MAT_ROWS, IERROR)
-   IF (IERROR .NE. 0) THEN
-      WRITE (6, 300) MY_RANK, IERROR
-300   FORMAT(' ', 'Proc ', I2, ' > DESCINIT FOR A FAILED, IERROR = ', I3)
-      CALL MPI_ABORT(MPI_COMM_WORLD, -1, IERROR)
-   END IF
-!
-   CALL DESCINIT(B_DESCRIP, M, 1, ROW_BLOCK_SIZE, 1, &
-                 0, 0, BLACS_CONTEXT, B_LOCAL_SIZE, &
-                 IERROR)
-   IF (IERROR .NE. 0) THEN
-      WRITE (6, 350) MY_RANK, IERROR
-350   FORMAT(' ', 'Proc ', I2, ' > DESCINIT FOR B FAILED, IERROR = ', I3)
-      CALL MPI_ABORT(MPI_COMM_WORLD, -1, IERROR)
-   END IF
-!
-   CALL DESCINIT(EXACT_DESCRIP, N, 1, COL_BLOCK_SIZE, 1, &
-                 0, 0, BLACS_CONTEXT, EXACT_LOCAL_SIZE, &
-                 IERROR)
-   IF (IERROR .NE. 0) THEN
-      WRITE (6, 400) MY_RANK, IERROR
-400   FORMAT(' ', 'Proc > ', I2, ' > DESCINIT FOR EXACT FAILED, IERROR = ', I3)
-      CALL MPI_ABORT(MPI_COMM_WORLD, -1, IERROR)
-   END IF
+   exact_local_size = numroc(n, col_block_size, my_process_row, 0, nproc_rows)
+   if (exact_local_size .gt. max_vector_size) then
+      write (6, "(' proc ', i2,                  &
+                  ' > exact_local_size = ', i5, &
+                  ', max_vector_size = ', i5)") &
+                       my_rank, exact_local_size, max_vector_size
+      write (6, "(' insufficient storage!  quitting.')")
+      call mpi_abort(mpi_comm_world, -1, ierror)
+   end if
 !
 !
-!   Now initialize A_LOCAL and EXACT_LOCAL
+! now build the matrix descriptors
+   call descinit(a_descrip, m, n, row_block_size, &
+                 col_block_size, 0, 0, blacs_context, &
+                 local_mat_rows, ierror)
+   if (ierror .ne. 0) then
+      write (6, "(' proc ', i2, ' > descinit for a failed, ierror = ', i3)") &
+                 my_rank, ierror
+      call mpi_abort(mpi_comm_world, -1, ierror)
+   end if
+!
+   call descinit(b_descrip, m, 1, row_block_size, 1, &
+                 0, 0, blacs_context, b_local_size,  &
+                 ierror)
+   if (ierror .ne. 0) then
+      write (6, "(' proc ', i2, ' > descinit for b failed, ierror = ', i3)")  &
+                 my_rank, ierror
+      call mpi_abort(mpi_comm_world, -1, ierror)
+   end if
+!
+   call descinit(exact_descrip, n, 1, col_block_size, 1, &
+                 0, 0, blacs_context, exact_local_size,  &
+                 ierror)
+   if (ierror .ne. 0) then
+      write (6, "(' proc > ', i2, ' > descinit for exact failed, ierror = ', i3)") &
+                 my_rank, ierror
+      call mpi_abort(mpi_comm_world, -1, ierror)
+   end if
+!
+!
+!   now initialize a_local and exact_local
    if (nat_rand) then
+      if (my_rank .eq. 0) write (6, "(' random a')")
       call random_seed(size=nseed)
       allocate (myseed(nseed))
       myseed = my_rank + 10
-      CALL random_SEED(put=myseed)
-      DO 600 J = 0, LOCAL_MAT_COLS - 1
-         DO 500 I = 1, LOCAL_MAT_ROWS
-            CALL RANDOM_NUMBER(randout)
-            A_LOCAL(LOCAL_MAT_ROWS*J + I) = randout
-500         CONTINUE
-600         CONTINUE
-            else
-            if (my_rank .eq. 0) write (6, "('Reading A')")
-! echo "800 800" > A
-! grep aa gesv.dp | awk '{print $4}' >> A
-            call pdlaread("A", A_local, a_DESCRIP, 0, 0, PWORK)
-            end if
-            if (pr) call pdlaprnt(N, N, a_local, 1, 1, a_DESCRIP, 0, 0, "aaaaa", outnum, PWORK)
-            DO 700 I = 1, EXACT_LOCAL_SIZE
-               EXACT_LOCAL(I) = 1.0_bx
-700            CONTINUE
+      call random_seed(put=myseed)
+      do j = 0, local_mat_cols - 1
+         do  i = 1, local_mat_rows
+            call random_number(randout)
+            a_local(local_mat_rows*j + i) = randout
+         enddo
+      enddo
+    else
+! echo "800 800" > a
+! grep aa gesv.dp | awk '{print $4}' >> a
+! layout is as follows without a(*,*)=
+!800 800
+!a(1,1)=0.435675925118591323e+00
+!a(2,1)=0.415248813315404419e+00
+!...
+!a(799,800)=0.566665140079333440e+00
+!a(800,800)=0.650882145626408004e+00
+      if (my_rank .eq. 0) write (6, "('reading a')")
+        call pdlaread("a", a_local, a_descrip, 0, 0, pwork)
+    end if
+    if (pr) call pdlaprnt(n, n, a_local, 1, 1, a_descrip, 0, 0, "aaaaa", outnum, pwork)
+    do  i = 1, exact_local_size
+        exact_local(i) = 1.0_bx
+    enddo
 !
 !
-!   Use PBLAS function PSGEMV to compute right-hand side B = A*EXACT
-!     'N': Multiply by A -- not A^T or A^H
-               CALL PDGEMV('N', M, N, 1.0_bx, A_LOCAL, 1, 1, A_DESCRIP, &
-                           EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1, 0.0_bx, &
-                           B_LOCAL, 1, 1, B_DESCRIP, 1)
-               if (pr) call pdlaprnt(N, 1, B_local, 1, 1, B_DESCRIP, 0, 0, "bbbbb", outnum, PWORK)
-               if (pr) call pdlaprnt(N, 1, EXACT_LOCAL, 1, 1, B_DESCRIP, 0, 0, "XXXXX", outnum, PWORK)
+!   use pblas function psgemv to compute right-hand side b = a*exact
+!     'n': multiply by a -- not a^t or a^h
+               call pdgemv('n', m, n, 1.0_bx, a_local, 1, 1, a_descrip, &
+                           exact_local, 1, 1, exact_descrip, 1, 0.0_bx, &
+                           b_local, 1, 1, b_descrip, 1)
+               if (pr) call pdlaprnt(n, 1, b_local, 1, 1, b_descrip, 0, 0, "bbbbb", outnum, pwork)
+               if (pr) call pdlaprnt(n, 1, exact_local, 1, 1, b_descrip, 0, 0, "xxxxx", outnum, pwork)
 !
 !
-!   Done with setup!  Solve the system.
-               CALL MPI_BARRIER(MPI_COMM_WORLD, IERROR)
-               START_TIME = MPI_WTIME()
-               CALL PDGESV(N, 1, A_LOCAL, 1, 1, A_DESCRIP, PIVOT_LIST, &
-                           B_LOCAL, 1, 1, B_DESCRIP, IERROR)
-               ELAPSED_TIME = MPI_WTIME() - START_TIME
-               IF (IERROR .NE. 0) THEN
-                  WRITE (6, 800) MY_RANK, IERROR
-800               FORMAT(' ', 'Proc ', I2, ' > PSGESV FAILED, IERROR = ', I3)
-                  CALL MPI_ABORT(MPI_COMM_WORLD, -1, IERROR)
-               END IF
+!   done with setup!  solve the system.
+               call mpi_barrier(mpi_comm_world, ierror)
+               start_time = mpi_wtime()
+               call pdgesv(n, 1, a_local, 1, 1, a_descrip, pivot_list, &
+                           b_local, 1, 1, b_descrip, ierror)
+               elapsed_time = mpi_wtime() - start_time
+               if (ierror .ne. 0) then
+                  write (6, "(' proc ', i2, ' > psgesv failed, ierror = ', i3)") my_rank, ierror
+                  call mpi_abort(mpi_comm_world, -1, ierror)
+               end if
+!      write(6,850) my_rank, (b_local(j), j = 1, b_local_size)
+!  850   format(' ','proc ',i2,' > b = ',f6.3,' ',f6.3,' ',f6.3,' ', &
+!              f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ', &
+!              f6.3)
+!      write(6,860) my_rank, (exact_local(i), i = 1, exact_local_size)
+!  860   format(' ','proc ',i2,' > exact = ',f6.3,' ',f6.3,' ',f6.3,' ', &
+!              f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ', &
+!              f6.3)
 
-!      WRITE(6,850) MY_RANK, (B_LOCAL(J), J = 1, B_LOCAL_SIZE)
-!  850   FORMAT(' ','Proc ',I2,' > B = ',F6.3,' ',F6.3,' ',F6.3,' ', &
-!              F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ', &
-!              F6.3)
-!      WRITE(6,860) MY_RANK, (EXACT_LOCAL(I), I = 1, EXACT_LOCAL_SIZE)
-!  860   FORMAT(' ','Proc ',I2,' > EXACT = ',F6.3,' ',F6.3,' ',F6.3,' ', &
-!              F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ',F6.3,' ', &
-!              F6.3)
+!   now find the norm of the error.
+!     first compute exact = -1*b + exact
+               call pdaxpy(n, -1.0_bx, b_local, 1, 1, b_descrip, 1, &
+                           exact_local, 1, 1, exact_descrip, 1)
+!     now compute 2-norm of exact
+               call pdnrm2(n, error_2, exact_local, 1, 1, exact_descrip, 1)
+!
+               if (pr) call pdlaprnt(n, 1, b_local, 1, 1, b_descrip, 0, 0, "bbbbb", outnum, pwork)
+               !write(my_rank+10,"(10f10.0)")b_local
+               if (my_rank .eq. 0) then
+                  write (6, "(' n = ', i4, ', number of processes = ', i2)") n, np
+                  write (6, "(' process rows = ', i2, ', process cols = ', i2)") nproc_rows, nproc_cols
+                  write (6, "(' row block size = ', i3, ', col block size = ', i3)") row_block_size, col_block_size
+                  write (6, "(' 2-norm of error = ', e13.6)") error_2
+                  write (6, "(' elapsed time = ', d13.6, ' milliseconds')") 1000.0*elapsed_time
+               end if
 
-!   Now find the norm of the error.
-!     First compute EXACT = -1*B + EXACT
-               CALL PDAXPY(N, -1.0_bx, B_LOCAL, 1, 1, B_DESCRIP, 1, &
-                           EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
-!     Now compute 2-norm of EXACT
-               CALL PDNRM2(N, ERROR_2, EXACT_LOCAL, 1, 1, EXACT_DESCRIP, 1)
+!   now free up allocated resources and shut down
+!     call blacs_exit.  argument != 0 says, "i'll shut down mpi."
+               call blacs_exit(1)
+               call mpi_finalize(ierror)
 !
+               stop
 !
-               if (pr) call pdlaprnt(N, 1, B_local, 1, 1, B_DESCRIP, 0, 0, "BBBBB", outnum, PWORK)
-               !write(MY_RANK+10,"(10f10.0)")b_local
-               IF (MY_RANK .EQ. 0) THEN
-                  WRITE (6, 900) N, NP
-900               FORMAT(' ', 'N = ', I4, ', Number of Processes = ', I2)
-                  WRITE (6, 950) NPROC_ROWS, NPROC_COLS
-950               FORMAT(' ', 'Process rows = ', I2, ', Process cols = ', I2)
-                  WRITE (6, 1000) ROW_BLOCK_SIZE, COL_BLOCK_SIZE
-1000              FORMAT(' ', 'Row block size = ', I3, ', Col block size = ', I3)
-                  WRITE (6, 1100) ERROR_2
-1100              FORMAT(' ', '2-Norm of error = ', E13.6)
-                  WRITE (6, 1200) 1000.0*ELAPSED_TIME
-1200              FORMAT(' ', 'Elapsed time = ', D13.6, ' milliseconds')
-               END IF
-!
-!
-!   Now free up allocated resources and shut down
-!     Call BLACS_EXIT.  Argument != 0 says, "I'll shut down MPI."
-               CALL BLACS_EXIT(1)
-               CALL MPI_FINALIZE(IERROR)
-!
-               STOP
-!
-!     End of Main Program LINSOLVE
-            END
+!     end of main program linsolve
+            end
 
