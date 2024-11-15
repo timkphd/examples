@@ -96,40 +96,34 @@ program linsolve
 !   scalar variables
    integer np
    integer my_rank
-   integer nproc_rows
-   integer nproc_cols
+   integer nproc_rows, nproc_cols
    integer ierror
    integer m, n
-   integer row_block_size
-   integer col_block_size
-   integer input_data_type
+   integer row_block_size, col_block_size
    integer blacs_context
-   integer local_mat_rows
-   integer local_mat_cols
+   integer local_mat_rows, local_mat_cols
    integer exact_local_size
    integer b_local_size
    integer i, j
-   integer my_process_row
-   integer my_process_col
+   integer my_process_row, my_process_col
    real(bx) error_2
-   double precision start_time
-   double precision elapsed_time
+   double precision start_time, elapsed_time
    real(bx) randout
    integer, allocatable ::  myseed(:)
    integer nseed
    integer numroc
-   logical pr, nat_rand,l1,l2
-   integer outnum
+   logical pr,nat_rand,l1,l2
+!  fortran file output for printing arrays 
+!  outnum 6 = stdout
+!  anything other than 6 and a file will be created
+   integer, parameter :: outnum=18
 !
 !   begin executable statements
 !
-! defalut values for printing and reading
+!  default values for printing and reading
 !  print arrays
    pr = .true.
-!  fortran file output number 6 = stadout
-!  anything over 6 and a file will be created
-   outnum = 18
-! use create random a matrix
+! nat_rand create random a matrix
 ! if false read from file.
    nat_rand = .false.
 !   initialize mpi
