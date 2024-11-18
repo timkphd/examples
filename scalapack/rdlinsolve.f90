@@ -1,7 +1,55 @@
 ! Based on Pacheco, Peter S. Parallel Programming with MPI. San Francisco: Morgan Kaufmann, 1997.
 module numz
    integer, parameter :: bx = selected_real_kind(12)
-!        integer,parameter :: bx=selected_real_kind(4)
+!  integer,parameter :: bx=selected_real_kind(4)
+   integer,parameter :: descriptor_size=10
+   real(bx) pwork(100000)
+end module
+
+module fillit
+ contains
+subroutine doa(my_rank,local_mat_rows,local_mat_cols,a_local,a_descrip,nat_rand)
+   use numz
+   implicit none
+   integer my_rank,local_mat_rows,local_mat_cols
+   real(bx) a_local(:)
+   integer a_descrip(descriptor_size)
+   logical nat_rand
+! locals
+   real(bx) randout
+   integer nseed
+   integer, allocatable ::  myseed(:)
+   integer i,j
+   if (nat_rand) then
+! random_number is compiler dependent so different
+! compilers will produce different a
+      if (my_rank .eq. 0) write (6, "(' random a')")
+      call random_seed(size=nseed)
+      allocate (myseed(nseed))
+      myseed = my_rank + 10
+      call random_seed(put=myseed)
+      deallocate(myseed)
+      do j = 0, local_mat_cols - 1
+         do  i = 1, local_mat_rows
+            call random_number(randout)
+            a_local(local_mat_rows*j + i) = randout
+         enddo
+      enddo
+    else
+! echo "800 800" > a
+! grep aa gesv.dp | awk '{print $4}' >> a
+! layout is as follows without a(*,*)=
+!800 800
+!a(1,1)=0.435675925118591323e+00
+!a(2,1)=0.415248813315404419e+00
+!...
+!a(799,800)=0.566665140079333440e+00
+!a(800,800)=0.650882145626408004e+00
+      if (my_rank .eq. 0) write (6, "('reading a')")
+        call pdlaread("a", a_local, a_descrip, 0, 0, pwork)
+    end if
+end subroutine doa
+
 end module
 !   linsolve.f
 !   use scalapack and mpi to solve a system of linear equations
@@ -71,16 +119,15 @@ end subroutine
 program linsolve
    use numz
    use mpi
+   use fillit
+
    implicit none
 !
 !   constants
    integer max_vector_size
    integer max_matrix_size
-   integer descriptor_size
    parameter(max_vector_size=1000)
    parameter(max_matrix_size=250000)
-   parameter(descriptor_size=10)
-   real(bx) pwork(100000)
 !
 !   array variables
    real(bx) b_local(max_vector_size)
@@ -109,7 +156,6 @@ program linsolve
    real(bx) error_2
    double precision start_time, elapsed_time
    real(bx) randout
-   integer, allocatable ::  myseed(:)
    integer nseed
    integer numroc
    logical pr,nat_rand,l1,l2
@@ -151,7 +197,7 @@ program linsolve
 
    if (np .lt. (nproc_rows*nproc_cols)) then
       write (6, "(' proc ', i2, ' > np = ', i2,        &
-                  ', nproc_rows = ', i2,                 &
+                  ', nproc_rows = ', i2,               &
                   ', nproc_cols = ', i2)") my_rank, np, nproc_rows, nproc_cols
       write (6, "(' need more processes!  quitting.')")
       call mpi_abort(mpi_comm_world, -1, ierror)
@@ -240,34 +286,19 @@ program linsolve
    end if
 !
 !
-!   now initialize a_local and exact_local
-   if (nat_rand) then
-      if (my_rank .eq. 0) write (6, "(' random a')")
-      call random_seed(size=nseed)
-      allocate (myseed(nseed))
-      myseed = my_rank + 10
-      call random_seed(put=myseed)
-      deallocate(myseed)
-      do j = 0, local_mat_cols - 1
-         do  i = 1, local_mat_rows
-            call random_number(randout)
-            a_local(local_mat_rows*j + i) = randout
-         enddo
-      enddo
-    else
-! echo "800 800" > a
-! grep aa gesv.dp | awk '{print $4}' >> a
-! layout is as follows without a(*,*)=
-!800 800
-!a(1,1)=0.435675925118591323e+00
-!a(2,1)=0.415248813315404419e+00
-!...
-!a(799,800)=0.566665140079333440e+00
-!a(800,800)=0.650882145626408004e+00
-      if (my_rank .eq. 0) write (6, "('reading a')")
-        call pdlaread("a", a_local, a_descrip, 0, 0, pwork)
-    end if
+!   now initialize a_local
+    call doa(my_rank,local_mat_rows,local_mat_cols,a_local,a_descrip,nat_rand)
     if (pr) call pdlaprnt(n, n, a_local, 1, 1, a_descrip, 0, 0, "aaaaa", outnum, pwork)
+
+! exact_local
+! this is a bit backwards but useful.  exact_local is a target solution.  we use this
+! target to create our b vector a*x=b in the next section.  this prevents us from needing
+! to save copies of a_local and b_local to do the check.  they both get overwritten
+! in pdgemv.  after pdgemv b_local becomes our answer and we just need to compare it to
+! exact_local with the call to pdaxpy which in this case just returns exact_local-b_local.
+! for a real problem you could read b_local using pdlaread as done in subroutine doa.  
+! to do the check you would need to regenerate a_local and call pdgemv as done below. 
+! the compare would need to be against your original b_local.  
     do  i = 1, exact_local_size
         exact_local(i) = 1.0_bx
     enddo
@@ -317,7 +348,6 @@ program linsolve
                   write (6, "(' 2-norm of error = ', e13.6)") error_2
                   write (6, "(' elapsed time = ', d13.6, ' milliseconds')") 1000.0*elapsed_time
                end if
-
 !   now free up allocated resources and shut down
 !     call blacs_exit.  argument != 0 says, "i'll shut down mpi."
                call blacs_exit(1)
