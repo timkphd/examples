@@ -180,7 +180,7 @@ program linsolve
    local_mat_rows = numroc(m, row_block_size, my_process_row, 0, nproc_rows)
    local_mat_cols = numroc(n, col_block_size, my_process_col, 0, nproc_cols)
    if (local_mat_rows*local_mat_cols .gt. max_matrix_size) then
-      write (6, "(' proc ', i2,                  &
+      write (6, "(' proc ', i2,                 &
                   ' > local_mat_rows = ', i5,   &
                   ', local_mat_cols = ', i5,    &
                   ', max_matrix_size = ', i6)") &
@@ -192,7 +192,7 @@ program linsolve
 ! now figure out storage for b_local and exact_local
    b_local_size = numroc(m, row_block_size, my_process_row, 0, nproc_rows)
    if (b_local_size .gt. max_vector_size) then
-      write (6, "(' proc ', i2,                  &
+      write (6, "(' proc ', i2,                 &
                   ' > b_local_size = ', i5,     &
                   ', max_vector_size = ', i5)") &
                         my_rank, b_local_size, max_vector_size
@@ -202,7 +202,7 @@ program linsolve
 !
    exact_local_size = numroc(n, col_block_size, my_process_row, 0, nproc_rows)
    if (exact_local_size .gt. max_vector_size) then
-      write (6, "(' proc ', i2,                  &
+      write (6, "(' proc ', i2,                 &
                   ' > exact_local_size = ', i5, &
                   ', max_vector_size = ', i5)") &
                        my_rank, exact_local_size, max_vector_size
@@ -247,6 +247,7 @@ program linsolve
       allocate (myseed(nseed))
       myseed = my_rank + 10
       call random_seed(put=myseed)
+      deallocate(myseed)
       do j = 0, local_mat_cols - 1
          do  i = 1, local_mat_rows
             call random_number(randout)
@@ -292,12 +293,12 @@ program linsolve
                   call mpi_abort(mpi_comm_world, -1, ierror)
                end if
 !      write(6,850) my_rank, (b_local(j), j = 1, b_local_size)
-!  850   format(' ','proc ',i2,' > b = ',f6.3,' ',f6.3,' ',f6.3,' ', &
+!  850   format(' ','proc ',i2,' > b = ',f6.3,' ',f6.3,' ',f6.3,' ',  &
 !              f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ', &
 !              f6.3)
 !      write(6,860) my_rank, (exact_local(i), i = 1, exact_local_size)
 !  860   format(' ','proc ',i2,' > exact = ',f6.3,' ',f6.3,' ',f6.3,' ', &
-!              f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ', &
+!              f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',f6.3,' ',    &
 !              f6.3)
 
 !   now find the norm of the error.
