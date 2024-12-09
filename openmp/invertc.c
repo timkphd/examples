@@ -1,5 +1,6 @@
 /* cc  -lm t4.c -qsmp */
 #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
 #include <math.h>
