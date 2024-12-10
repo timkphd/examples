@@ -3,6 +3,8 @@
 #include <mpi.h>
 #include <math.h>
 void pass(int myid,int numprocs); 
+void chkerr(int ierr,int myid, char* routine);
+
 /************************************************************
 This is a simple hello world program. Each processor prints
 name, rank, and total run size.
@@ -34,17 +36,33 @@ void pass(int myid,int numprocs) {
 	i=myid;
 	to=myid+1;
 	from=myid-1;
-	ierr=MPI_Bcast(&i,1,MPI_INT,0, MPI_COMM_WORLD);
-	if( i != 0)printf("bcast failed %d\n",myid);
+	ierr=MPI_Bcast(&i,1,MPI_INT,0, MPI_COMM_WORLD); chkerr(ierr,myid,"bcast");
+	if( i != 0) {
+	    printf("bcast failed %d\n",myid);
+	    ierr=MPI_Abort(MPI_COMM_WORLD,-1);
+	    }
 	if (myid == 0){
 		from=numprocs-1;
-		ierr=MPI_Send(&i,1,MPI_INT,to,my_tag,MPI_COMM_WORLD);
-		ierr=MPI_Recv(&i,1,MPI_INT,from,my_tag,MPI_COMM_WORLD,&status);
+		i=1;
+		ierr=MPI_Send(&i,1,MPI_INT,to,my_tag,MPI_COMM_WORLD); chkerr(ierr,myid,"send");
+		ierr=MPI_Recv(&i,1,MPI_INT,from,my_tag,MPI_COMM_WORLD,&status); chkerr(ierr,myid,"recv");
+		if (i != numprocs){
+	        printf("send /recv failed %d\n",i);
+	        ierr=MPI_Abort(MPI_COMM_WORLD,-1);
+		}
 	}
 	else {
 		if (myid == numprocs-1)to=0;
-		ierr=MPI_Recv(&i,1,MPI_INT,from,my_tag,MPI_COMM_WORLD,&status);
-		ierr=MPI_Send(&i,1,MPI_INT,to,my_tag,MPI_COMM_WORLD);
+		ierr=MPI_Recv(&i,1,MPI_INT,from,my_tag,MPI_COMM_WORLD,&status); chkerr(ierr,myid,"recv");
+		i=i+1;
+		ierr=MPI_Send(&i,1,MPI_INT,to,my_tag,MPI_COMM_WORLD); chkerr(ierr,myid,"send");
 	}
 }
 
+void chkerr(int ierr,int myid, char* routine){
+#include <mpi.h>
+if(ierr != 0 {
+    printf("%s failed on %d\n",routine,myid);
+    MPI_Abort(MPI_COMM_WORLD,-3);
+    }
+}
