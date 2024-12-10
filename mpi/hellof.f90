@@ -66,9 +66,9 @@
 subroutine chkerr(ierr,myid,routine)
       include "mpif.h"
       integer ierr,myid
-      character*128 routine
+      character (len=*)  routine
       if (ierr .ne. 0)then
-         write(*,*)routine," failed on "myid
+         write(*,*)routine," failed on ",myid
          call MPI_Abort(MPI_COMM_WORLD,-3,ierr)
       endif
 end subroutine

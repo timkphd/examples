@@ -61,7 +61,7 @@ void pass(int myid,int numprocs) {
 
 void chkerr(int ierr,int myid, char* routine){
 #include <mpi.h>
-if(ierr != 0 {
+if(ierr != 0 ){
     printf("%s failed on %d\n",routine,myid);
     MPI_Abort(MPI_COMM_WORLD,-3);
     }
