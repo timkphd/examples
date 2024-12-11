@@ -16,16 +16,16 @@ int main(int argc, char **argv)
     char myname[MPI_MAX_PROCESSOR_NAME] ;
     int vlan;
     MPI_Init(&argc,&argv);
-    MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
-    MPI_Get_processor_name(myname,&resultlen); 
-    printf(" Hello from %s %d of %d\n",myname,myid,numprocs);
-    if(numprocs > 1)pass(myid,numprocs);
     if (myid == 0 ) {
 	    MPI_Get_library_version(version, &vlan);
 	    printf("%s\n",version);
-	    printf(" SUCCESS\n");
     }
+    MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
+    MPI_Get_processor_name(myname,&resultlen); 
+    printf(" Hello from %s %d of %d\n",myname,myid,numprocs);
+    if(numprocs > 1)pass(myid,numprocs);
+    if (myid == 0 )printf(" SUCCESS\n");
     MPI_Finalize();
 }
 void pass(int myid,int numprocs) {

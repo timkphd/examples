@@ -11,17 +11,17 @@
       character (len=MPI_MAX_PROCESSOR_NAME+1):: myname
       call MPI_INIT( ierr )
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
+      if (myid .eq. 0)then
+          call MPI_Get_library_version(version, nlength, ierr)
+          write(*,*)trim(version)
+          write(*,*)"compiler: ",compiler_version()
+          write(*,*)              
+      endif
       call MPI_COMM_SIZE( MPI_COMM_WORLD, numprocs, ierr )
       call MPI_Get_processor_name(myname,nlength,ierr)
-      call MPI_Get_library_version(version, nlength, ierr)
       write (*,*) "Hello from ",trim(myname)," # ",myid," of ",numprocs
       if(numprocs .gt. 1)call pass(myid,numprocs)
-      if (myid .eq. 0)then
-              write(*,*)trim(version)
-              write(*,*)"compiler: ",compiler_version()
-              write(*,*)
-              write(*,*)"SUCCESS"
-      endif
+      if (myid .eq. 0)write(*,*)"SUCCESS"
       call MPI_FINALIZE(ierr)
       stop
       end
