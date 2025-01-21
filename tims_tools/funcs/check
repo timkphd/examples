@@ -1,0 +1,11 @@
+CHECK () 
+{ 
+    if [ $? -ne 0 ]; then
+        echo " ##### FAILURE #####";
+    else
+        echo " ##### SUCCESS #####";
+    fi
+}
+
+
+
