@@ -19,10 +19,7 @@ extra: inverts.c extra.cpp
 	g++ inverts.c -DPRINT -DEXTRA -DDOE extra.cpp -o extra
 
 run:all
-	export INSTRUMENT=dostuff:doitA:doitC:doitD:doitB
-	export OMP_NUM_THREADS=1
-	export TRACETOOL_LIB=`pwd`/libtracelib.so
-	./trace_tool extra
+	. ./runit
  
 clean:
 	rm -rf tracelib.o libtracelib.so extra trace_tool
