@@ -1,0 +1,28 @@
+export DINC=$(DBASE)/include
+export BINC=$(BBASE)/include
+export IINC=$(IBASE)/include
+
+export DLIB=$(DBASE)/lib
+export BLIB=$(BBASE)/lib
+export ILIB=$(IBASE)/lib
+
+all: trace_tool libtracelib.so extra
+	
+trace_tool:tracetool.cpp
+	g++ tracetool.cpp -L$(DLIB) -ldyninstAPI -lpcontrol -lpatchAPI -linstructionAPI  -lcommon -I$(DINC)  -Wno-deprecated-declarations  -L$(BLIB) -lboost_filesystem -I$(BINC) -I$(IINC) -o trace_tool
+
+libtracelib.so: tracelib.cpp
+	g++ -c -fPIC tracelib.cpp
+	g++ -shared tracelib.o -o libtracelib.so
+
+extra: inverts.c extra.cpp
+	g++ inverts.c -DPRINT -DEXTRA -DDOE extra.cpp -o extra
+
+run:all
+	export INSTRUMENT=dostuff:doitA:doitC:doitD:doitB
+	export OMP_NUM_THREADS=1
+	export TRACETOOL_LIB=`pwd`/libtracelib.so
+	./trace_tool extra
+ 
+clean:
+	rm -rf tracelib.o libtracelib.so extra trace_tool
