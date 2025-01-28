@@ -16,7 +16,7 @@ libtracelib.so: tracelib.cpp
 	g++ -shared tracelib.o -o libtracelib.so
 
 extra: inverts.c extra.cpp
-	g++ inverts.c -DPRINT -DEXTRA -DDOE extra.cpp -o extra
+	g++ inverts.c -DPRINT -DINVERT -DDOE extra.cpp -o extra
 
 run:all
 	. ./runit

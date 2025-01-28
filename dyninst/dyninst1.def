@@ -1,0 +1,206 @@
+Bootstrap: docker
+from: ubuntu:latest
+
+
+#%environment
+    # Point to OPENMPI binaries, libraries man pages
+    #export OPENMPI_DIR=/opt/openmpi
+    #export PATH="$OPENMPI_DIR/bin:$PATH"
+    #export LD_LIBRARY_PATH="$OPENMPI_DIR/lib:$LD_LIBRARY_PATH"
+    #export MANPATH=$OPENMPI_DIR/share/man:$MANPATH
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/lib64
+
+%help
+
+Container with Apptainer, Dyninst and newer Pythons 
+Apptainer is in your $PATH
+For python: 
+   . /pythons/3.13.1/bin/activate
+   . /pythons/3.12.8/bin/activate
+
+For modules:
+   . /aopt/libs/mods
+
+For newer gcc and python:
+   . /aopt/libs/pygcc
+
+
+For dyninst the following base paths for include and libraries are set
+   DBASE
+   BBASE
+   IBASE
+See /test_dyninst for an example
+
+For some commands you will  get a warning about the fakeroot library.  This 
+is a know issue - working on it.   
+   
+   
+%runscript
+  echo DBASE=$DBASE
+  echo DBASE=$DBASE
+  echo DBASE=$DBASE
+  echo Apptainer
+  which apptainer
+  echo . /pythons/3.13.1/bin/activate
+  . /pythons/3.13.1/bin/activate
+  which python3
+  python3 -V
+  deactivate
+  echo . /pythons/3.13.1/bin/activate
+  . /pythons/3.13.1/bin/activate
+  which python3
+  python3 -V
+  deactivate
+  echo extra directories: /extra[1-4]
+  cd /test_dyninst ; . ./runit
+  
+ 
+
+
+%post
+    echo "Installing required packages..."
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y wget git bash gcc gfortran g++ make python3 vim cmake pip
+    apt-get install coreutils;
+    apt-get install vim
+
+    apt install -y git
+    apt install -y curl
+    apt install xz-utils
+    apt install -y lbzip2
+    apt install -y software-properties-common
+    add-apt-repository -y ppa:apptainer/ppa
+    apt update
+    apt install -y apptainer-suid
+    apt install sudo
+    #useradd -p $(openssl passwd -1 026+SmR) joeuser
+    #usermod -aG sudo joeuser
+
+apt-get install -y tcl
+apt-get install -y tcl-dev
+apt-get install -y libbz2-dev
+export LMOD_VER=8.4.3
+mkdir -p /build
+
+cd /build
+curl -LO http://github.com/TACC/Lmod/archive/${LMOD_VER}.tar.gz
+mv /build/${LMOD_VER}.tar.gz /build/Lmod-${LMOD_VER}.tar.gz
+tar xvf Lmod-${LMOD_VER}.tar.gz
+
+cd /build/Lmod-${LMOD_VER}
+
+apt-get install -y  lua5.3 liblua5.3-dev lua-posix lua-filesystem tcl iproute2
+
+./configure --prefix=/usr/share
+make install
+ln -s /usr/share/lmod/lmod/init/profile /etc/profile.d/modules.sh
+ln -s /usr/share/lmod/lmod/init/cshrc /etc/profile.d/modules.csh
+
+    apt install -y python3.12-venv
+    python3 -m venv /pythons/base
+    . /pythons/base/bin/activate
+    wget  https://bootstrap.pypa.io/get-pip.py
+    python3 get-pip.py
+    pip install numpy scipy pandas matplotlib jupyterlab
+    deactivate
+
+    mkdir -p /extra01
+    mkdir -p /extra02
+    mkdir -p /extra03
+    mkdir -p /extra04
+    mkdir -p /aopt/spack
+    cd /aopt/spack
+
+    git clone -c feature.manyFiles=true https://github.com/spack/spack.git  
+    wget https://raw.githubusercontent.com/timkphd/examples/master/tims_tools/setinstall
+    chmod 755 setinstall
+    cd spack
+    ../setinstall `realpath -P etc/spack/defaults` /aopt/spack/install
+    . share/spack/setup-env.sh
+    spack compiler find
+    spack external find --exclude openssl
+    #git checkout b431c4dc06ec0757b00b6f790be25b601f774a53
+    # Do the install
+
+    for pack in  gcc ; do 
+      echo INSTALLING $pack
+      spack install --no-check-signature --no-checksum $pack +binutils arch=x86_64
+    done
+    for pack in  apptainer  ; do 
+      echo INSTALLING $pack
+      spack install --no-check-signature --no-checksum $pack arch=x86_64
+    done
+    find /aopt/spack/install/opt -name spack_perms_fix.sh
+    `find /aopt/spack/install/opt -name spack_perms_fix.sh`
+    for pack in  "python@3.12.8 +ssl"  "python@3.13.1 +ssl" ; do 
+      echo INSTALLING $pack
+      spack install --no-check-signature --no-checksum $pack arch=x86_64
+    done
+      wget  https://bootstrap.pypa.io/get-pip.py
+
+    for pack in  3.12.8 3.13.1 ; do 
+      spack load python@$pack
+      python3 -m venv /pythons/$pack
+      . /pythons/$pack/bin/activate
+      pip install numpy scipy pandas matplotlib jupyterlab
+      deactivate
+      spack unload python@$pack
+    done
+    for pack in dyninst ; do 
+      echo INSTALLING $pack
+      spack install --no-check-signature --no-checksum $pack arch=x86_64
+    done
+echo "void FaKeIt() {}" > dummy.c
+gcc -c -fPIC dummy.c
+mkdir -p /aopt/libs
+gcc -shared dummy.o -o /aopt/libs/libfakeroot.so
+strip --strip-all --discard-all --verbose /aopt/libs/libfakeroot.so 
+#apt install -y  openssh-server
+#apt install -y openssh-client
+#systemctl enable sshd.service
+#useradd -p $(openssl passwd -1 robin) -m -s $(which bash) -G sudo batman
+#usermod -aG sudo batman
+
+#build a simple dyninst test
+    mkdir /test_dyninst
+    cd /test_dyninst
+    wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/extra.cpp
+    wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/inverts.c
+    wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/makefile
+    wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/runit
+    wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/tracelib.cpp
+    wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/tracetool.cpp
+    export DBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep dyninst))
+    export BBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep boost))
+    export IBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep tbb))
+    make
+
+cat > /aopt/libs/mods <<STUFF
+modules () {
+  . /etc/profile.d/modules.sh
+   module use /aopt/spack/install/lmod/*/Core 2> /dev/null
+}
+modules 
+STUFF
+
+cat > /aopt/libs/pygcc <<STUFF
+   . /pythons/3.13.1/bin/activate
+   module load gcc 2> /dev/null || . /aopt/libs/mods ; module load gcc gmake cmake 2> /dev/null
+STUFF
+
+
+%environment
+    #systemctl restart sshd.service
+    #export MODULEPATH=`find /aopt/spack/install/lmod -name Core`
+    #export LD_PRELOAD=/aopt/libs/libfakeroot.so
+    echo "# For modules and newer programming envrionment run these commands:"
+    echo ". /aopt/libs/mods"
+    echo ". /aopt/libs/pygcc"
+    export LC_ALL=C
+    export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    export PATH=$(dirname $(find /aopt/spack/install/opt -name apptainer | grep bin)):$PATH
+    export DBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep dyninst))
+    export BBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep boost))
+    export IBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep tbb))
+
+
