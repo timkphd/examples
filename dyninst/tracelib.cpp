@@ -22,38 +22,38 @@ double myclock() {
 
 extern "C" void trace_entry_func(char const* func_name, char const* desc_line, int num_func_args,
                                  void* func_arg1, int func_arg1_type) {
-	auto old_flags = std::cout.flags(); // save flags
-  std::cout << "[TRACE_ENTRY- func: " << func_name << ", num_args: " << num_func_args;
+	auto old_flags = std::cerr.flags(); // save flags
+  std::cerr << "[TRACE_ENTRY- func: " << func_name << ", num_args: " << num_func_args;
 
   if(func_arg1_type == 1) {
-    std::cout << ", arg1: " << *static_cast<int*>(func_arg1);
+    std::cerr << ", arg1: " << *static_cast<int*>(func_arg1);
   }
-std::cout << ", " << desc_line << ", " << get_formatted_time() << " ST "<< std::setprecision(20)<< myclock() << "]\n";
-std::cout.flags(old_flags); // restore flags
+std::cerr << ", " << desc_line << ", " << get_formatted_time() << " ST "<< std::setprecision(20)<< myclock() << "]\n";
+std::cerr.flags(old_flags); // restore flags
 }
 
 extern "C" void trace_exit_func(char const* func_name, char const* desc_line, void* ret_val,
                                 int ret_val_type) {
-	auto old_flags = std::cout.flags(); // save flags
-  std::cout << "[TRACE_EXIT- func: " << func_name;
+	auto old_flags = std::cerr.flags(); // save flags
+  std::cerr << "[TRACE_EXIT- func: " << func_name;
 
   if(ret_val_type == 1) {
-    std::cout << ", ret_val: " << *static_cast<int*>(ret_val);
+    std::cerr << ", ret_val: " << *static_cast<int*>(ret_val);
   }
-std::cout << ", " << desc_line << ", " << get_formatted_time() << " ET "<< std::setprecision(20)<< myclock() << "]\n";
-std::cout.flags(old_flags); // restore flags
+std::cerr << ", " << desc_line << ", " << get_formatted_time() << " ET "<< std::setprecision(20)<< myclock() << "]\n";
+std::cerr.flags(old_flags); // restore flags
 }
 
 int count = 0;
 
 extern "C" void trace_callsite_func(char* callsite_func_name, char* desc_line, int num_callsite_args,
                                     void* callsite_arg1, int callsite_arg1_type) {
-  std::cout << "[TRACE_CALLSITE- callsite: " << callsite_func_name << ", num_args: " << num_callsite_args;
+  std::cerr << "[TRACE_CALLSITE- callsite: " << callsite_func_name << ", num_args: " << num_callsite_args;
 
   if(num_callsite_args > 0 && callsite_arg1_type == 1) {
-    std::cout << ", callsite_arg1: " << *static_cast<int*>(callsite_arg1);
+    std::cerr << ", callsite_arg1: " << *static_cast<int*>(callsite_arg1);
   }
 
-  std::cout << ", " << desc_line << ", " << get_formatted_time() << "]\n";
+  std::cerr << ", " << desc_line << ", " << get_formatted_time() << "]\n";
 }
 

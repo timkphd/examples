@@ -32,7 +32,7 @@ BPatch_function* findFunc(char const* str) {
   BPatch_Vector<BPatch_function*>* funcBuf = new BPatch_Vector<BPatch_function*>;
   appImage->findFunction(str, *funcBuf);
   if((*funcBuf).size() < 1) {
-    std::cerr << "couldn't find the function " << str << "\n";
+    std::cout << "couldn't find the function " << str << "\n";
     exit(1);
   }
 
@@ -42,13 +42,13 @@ BPatch_function* findFunc(char const* str) {
 void initTraceLibrary() {
   const char* tracetool_lib = getenv("TRACETOOL_LIB");
   if(tracetool_lib == nullptr) {
-    std::cerr << "Need to set environment variable TRACETOOL_LIB to use "
+    std::cout << "Need to set environment variable TRACETOOL_LIB to use "
               << "tracetool\n";
     exit(1);
   }
 
   if(!appThread->loadLibrary(tracetool_lib)) {
-    std::cerr << "failed when attempting to load library " << tracetool_lib << std::endl;
+    std::cout << "failed when attempting to load library " << tracetool_lib << std::endl;
     exit(1);
   }
 
@@ -90,7 +90,7 @@ void instrument_entry(BPatch_function* func, char* funcname) {
 
   BPatch_Vector<BPatch_point*>* entryPointBuf = func->findPoint(BPatch_entry);
   if((*entryPointBuf).size() != 1) {
-    std::cerr << "couldn't find entry point for func " << funcname << std::endl;
+    std::cout << "couldn't find entry point for func " << funcname << std::endl;
     exit(1);
   }
   BPatch_point* entryPoint = (*entryPointBuf)[0];
@@ -150,7 +150,7 @@ void instrument_callsites(BPatch_function* func, char* callee_funcname) {
   for(auto* callsite_point : *callsites) {
     BPatch_function* callsite_func = callsite_point->getCalledFunction();
     if(callsite_func == nullptr) {
-      std::cerr << "    skipping instrumentation for callsite in function \n"
+      std::cout << "    skipping instrumentation for callsite in function \n"
                 << "    " << callee_funcname << " since can't determine callee at callsite\n";
       continue;
     }
@@ -159,7 +159,7 @@ void instrument_callsites(BPatch_function* func, char* callee_funcname) {
 }
 
 void instrument_exit(BPatch_function* func, char* funcname) {
-  std::cerr << "calling instrument_exit\n";
+  std::cout << "calling instrument_exit\n";
   BPatch_type* retType = func->getReturnType();
 
   enum arg_type argOneType = tr_unknown;
@@ -181,12 +181,12 @@ void instrument_exit(BPatch_function* func, char* funcname) {
 
   // dyninst might not be able to find exit point
   if((*exitPointBuf).size() == 0) {
-    std::cerr << "   couldn't find exit point, so returning\n";
+    std::cout << "   couldn't find exit point, so returning\n";
     return;
   }
 
   for(auto* curExitPt : *exitPointBuf) {
-    std::cerr << "   inserting an exit pt instrumentation\n";
+    std::cout << "   inserting an exit pt instrumentation\n";
 
     BPatch_funcCallExpr traceExitCall(*traceExitFunc, traceFuncArgs);
     appThread->insertSnippet(traceExitCall, *curExitPt, BPatch_callAfter, BPatch_firstSnippet);
@@ -234,13 +234,13 @@ void usage() {
 // clang-format on
 
 void postForkFunc(BPatch_thread* parent, BPatch_thread* child) {
-  std::cerr << "###############################################################\n";
-  std::cerr << "tool:  a fork occurred, parent pid: " << parent->getProcess()->getPid()
+  std::cout << "###############################################################\n";
+  std::cout << "tool:  a fork occurred, parent pid: " << parent->getProcess()->getPid()
             << ", child pid: " << child->getProcess()->getPid() << std::endl;
-  std::cerr << "###############################################################\n";
+  std::cout << "###############################################################\n";
   parent->getProcess()->continueExecution();
   child->getProcess()->continueExecution();
-  std::cerr << "done with postForkFunc\n";
+  std::cout << "done with postForkFunc\n";
 }
 
 // End the sequence with a nullptr
@@ -368,18 +368,18 @@ int main(int argc, char **argv, char *envp[]) {
            if (pos != std::string::npos)OUTSIDE=false;
         }
   
-  std::cerr << "DETACH  "<< DETACH << std::endl;
-  std::cerr << "INSIDE  "<< INSIDE << std::endl;
-  std::cerr << "OUTSIDE "<< OUTSIDE << std::endl;
+  std::cout << "DETACH  "<< DETACH << std::endl;
+  std::cout << "INSIDE  "<< INSIDE << std::endl;
+  std::cout << "OUTSIDE "<< OUTSIDE << std::endl;
 
   BPatch bpatch;
   bpatch.registerPostForkCallback(postForkFunc);
 
   if(pid > 0) { // attach case
-    std::cerr << "Attaching to process " << program_path << " with pid " << pid << std::endl;
+    std::cout << "Attaching to process " << program_path << " with pid " << pid << std::endl;
     appThread = bpatch.processAttach(program_path, pid);
   } else { // create case
-    std::cerr << "Creating process " << program_path << " with specified args\n";
+    std::cout << "Creating process " << program_path << " with specified args\n";
     appThread = bpatch.processCreate(program_path, prog_args);
   }
 
@@ -401,13 +401,13 @@ int main(int argc, char **argv, char *envp[]) {
     }
   }
 
-   std::cerr << "done instrumenting\n";
-   std::cerr << "=====================================================\n";
+   std::cout << "done instrumenting\n";
+   std::cout << "=====================================================\n";
   
   /* the rest of the execution occurs in postForkFunc() */
   if (DETACH) {
   // detach and continueExecution
-  std::cerr << "detach and continueExecution\n";
+  std::cout << "detach and continueExecution\n";
   appThread->detach(true);
    return 0;
   }
@@ -415,10 +415,10 @@ int main(int argc, char **argv, char *envp[]) {
   appThread->continueExecution();
   while(bpatch.waitForStatusChange()) {
     if(appThread->isTerminated()) {
-      std::cerr << "==> process pid " << appThread->getPid() << " has exited\n";
+      std::cout << "==> process pid " << appThread->getPid() << " has exited\n";
       break;
     } else if(appThread->isStopped()) {
-      std::cerr << "==> process pid " << appThread->getPid() << " is stopped\n";
+      std::cout << "==> process pid " << appThread->getPid() << " is stopped\n";
       break;
     }
   }
