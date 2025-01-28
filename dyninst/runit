@@ -2,5 +2,10 @@ export INSTRUMENT=dostuff:doitA:doitC:doitD:doitB
 export OMP_NUM_THREADS=1
 export TRACETOOL_LIB=`pwd`/libtracelib.so
 export LD_LIBRARY_PATH=$DBASE/lib:$LD_LIBRARY_PATH
+echo normal run
+./extra
+echo
+echo
+echo with dyninst 
 ./trace_tool extra
 
