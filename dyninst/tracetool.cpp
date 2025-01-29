@@ -368,6 +368,7 @@ int main(int argc, char **argv, char *envp[]) {
            if (pos != std::string::npos)OUTSIDE=false;
         }
   
+  std::cout << "VERBOSE "<< VERBOSE << std::endl;
   std::cout << "DETACH  "<< DETACH << std::endl;
   std::cout << "INSIDE  "<< INSIDE << std::endl;
   std::cout << "OUTSIDE "<< OUTSIDE << std::endl;

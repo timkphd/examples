@@ -1,0 +1,5 @@
+#tree -L 1 -H . -I "tindex.html|http"  > tindex.html
+#mv tindex.html index.html
+echo  "kill -9 \`ps | grep http.server | grep Python | awk '{print \$1}'\`"
+python -m http.server > /dev/null 2>&1 &
+
