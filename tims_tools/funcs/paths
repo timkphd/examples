@@ -1,0 +1,54 @@
+addlib () 
+{ 
+    export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
+}
+
+addpath () 
+{ 
+    export PATH=$1:$PATH
+}
+
+rmpath () 
+{
+	lpaths=`echo $PATH | tr ":" " "`
+	export OPATH=$PATH
+	npath=""
+	for l in $lpaths ; do 
+	  echo $l | grep -v $1  > /dev/null
+	  if [ $? -eq 0 ]; then
+		npath=`echo $l | grep -v $1`:$npath
+	  fi
+	done
+	export PATH=$npath
+}
+
+
+rmlib () 
+{
+	lpaths=`echo $LD_LIBRARY_PATH | tr ":" " "`
+	export OLD_LIBRARY_PATH=$LD_LIBRARY_PATH
+	npath=""
+	for l in $lpaths ; do 
+	  echo $l | grep -v $1  > /dev/null
+	  if [ $? -eq 0 ]; then
+		npath=`echo $l | grep -v $1`:$npath
+	  fi
+	done
+	export LD_LIBRARY_PATH=$npath
+}
+
+rmmod () 
+{
+	lpaths=`echo $MODULEPATH | tr ":" " "`
+	export OMODULEPATH=$LD_LIBRARY_PATH
+	npath=""
+	for l in $lpaths ; do 
+	  echo $l | grep -v $1  > /dev/null
+	  if [ $? -eq 0 ]; then
+		npath=`echo $l | grep -v $1`:$npath
+	  fi
+	done
+	export MODULEPATH=$npath
+}
+
+

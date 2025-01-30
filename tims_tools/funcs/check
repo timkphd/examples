@@ -2,10 +2,30 @@ CHECK ()
 { 
     if [ $? -ne 0 ]; then
         echo " ##### FAILURE #####";
+	return 1
     else
         echo " ##### SUCCESS #####";
+	return 0
     fi
 }
+VCHECK() {
+  if [ -z "${!1+x}" ]; then
+    echo "Variable $1 is not defined."
+    return 1
+  else
+    echo "Variable $1 is defined."
+    return 0
+  fi
+}
+
+FCHECK() {
+  if [ -f "$1" ]; then
+    return 0  # True
+  else
+    return 1  # False
+  fi
+}
+
 
 
 
