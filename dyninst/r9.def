@@ -1,114 +1,76 @@
-Bootstrap: docker
-from: ubuntu:latest
+bootstrap: docker
+from: rockylinux:9.3
 
-
-#%environment
-    # Point to OPENMPI binaries, libraries man pages
-    #export OPENMPI_DIR=/opt/openmpi
-    #export PATH="$OPENMPI_DIR/bin:$PATH"
-    #export LD_LIBRARY_PATH="$OPENMPI_DIR/lib:$LD_LIBRARY_PATH"
-    #export MANPATH=$OPENMPI_DIR/share/man:$MANPATH
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/lib64
+%labels
+	Maintainer Tim Kaiser
+	Version 1.0
 
 %help
-
-Container with Apptainer, Dyninst and newer Pythons 
-Apptainer is in your $PATH
-For python: 
-   . /pythons/3.13.1/bin/activate
-   . /pythons/3.12.8/bin/activate
-
-For modules:
-   . /aopt/libs/mods
-
-For newer gcc and python:
-   . /aopt/libs/pygcc
+    This is a Rocky Linux 9.3 container for running apptainer and compiling
 
 
-For dyninst the following base paths for include and libraries are set
-   DBASE
-   BBASE
-   IBASE
-See /test_dyninst for an example
 
-For some commands you will  get a warning about the fakeroot library.  This 
-is a know issue - working on it.   
-   
-   
+
+
+
+
+
+
 %runscript
-  echo DBASE=$DBASE
-  echo DBASE=$DBASE
-  echo DBASE=$DBASE
-  echo Apptainer
-  which apptainer
-  echo . /pythons/3.13.1/bin/activate
-  . /pythons/3.13.1/bin/activate
-  which python3
-  python3 -V
-  deactivate
-  echo . /pythons/3.13.1/bin/activate
-  . /pythons/3.13.1/bin/activate
-  which python3
-  python3 -V
-  deactivate
-  echo extra directories: /extra[1-4]
-  cd /test_dyninst ; . ./runit
-  
- 
-
+    echo "Running the main script from inside the Rocky Linux 9.3 container."
+    echo APPTAINER
+    /usr/bin/which apptainer
+    apptainer --version
+    apptainer --help
+    /usr/bin/which gcc
+    gcc -v
+    /usr/bin/which python3
+    python3 -V
+    echo ". /aopt/libs/pygcc"
+    . /aopt/libs/pygcc
+    /usr/bin/which gcc
+    gcc -v
+    /usr/bin/which python3
+    python3 -V
+    echo dyninst in /test_dyninst is broken
+    cd /test_dyninst
+    . ./runit
+    echo dyninst works with OUTSIDE=0
+    export OUTSIDE=0
+    ./trace_tool extra
 
 %post
-    echo "Installing required packages..."
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update && apt-get install -y wget git bash gcc gfortran g++ make python3 vim cmake pip
-    apt-get install coreutils;
-    apt-get install vim
-    apt install -y gettext || echo apt did not find gettext
+    echo "Installing packages into the Rocky Linux 9.3 container"
+    ls /usr/bin
+    dnf -y update
+    #dnf -y install gcc
+    dnf -y group install "Development Tools"
+    dnf -y install git
+    dnf -y install cmake
+    dnf -y install make
+    #dnf -y install python
+    #dnf -y install python-devel
+    dnf -y --allowerasing install curl-7.76.1-31.el9.x86_64
+    dnf -y install wget
+    dnf -y install epel-release 
+    dnf -y install apptainer-suid
+    dnf -y install sudo
+    dnf -y install findutils
+    dnf -y install gfortran
+    dnf -y update python
+    dnf -y install zlib-ng
+    dnf -y install procps 
+    dnf -y install perl
+    dnf -y install sed
+    
 
-    apt install -y git
-    apt install -y curl
-    apt install xz-utils
-    apt install -y lbzip2
-    apt install -y software-properties-common
-    add-apt-repository -y ppa:apptainer/ppa
-    apt update
-    apt install -y apptainer-suid
-    apt install sudo
-    #useradd -p $(openssl passwd -1 026+SmR) joeuser
-    #usermod -aG sudo joeuser
 
-apt-get install -y tcl
-apt-get install -y tcl-dev
-apt-get install -y libbz2-dev
-# export LMOD_VER=8.4.3
-# mkdir -p /build
-# 
-# cd /build
-# curl -LO http://github.com/TACC/Lmod/archive/${LMOD_VER}.tar.gz
-# mv /build/${LMOD_VER}.tar.gz /build/Lmod-${LMOD_VER}.tar.gz
-# tar xvf Lmod-${LMOD_VER}.tar.gz
-# 
-# cd /build/Lmod-${LMOD_VER}
-# 
-# apt-get install -y  lua5.3 liblua5.3-dev lua-posix lua-filesystem tcl iproute2
-# 
-# ./configure --prefix=/usr/share
-# make install
-# ln -s /usr/share/lmod/lmod/init/profile /etc/profile.d/modules.sh
-# ln -s /usr/share/lmod/lmod/init/cshrc /etc/profile.d/modules.csh
+    mkdir /extra01
+    mkdir /extra02
+    mkdir /extra03
+    mkdir /extra04
 
-    apt install -y python3.12-venv
-    python3 -m venv /pythons/base
-    . /pythons/base/bin/activate
-    wget  https://bootstrap.pypa.io/get-pip.py
-    python3 get-pip.py
-    pip install numpy scipy pandas matplotlib jupyterlab
-    deactivate
 
-    mkdir -p /extra01
-    mkdir -p /extra02
-    mkdir -p /extra03
-    mkdir -p /extra04
     mkdir -p /aopt/spack
     cd /aopt/spack
 
@@ -119,30 +81,38 @@ apt-get install -y libbz2-dev
     ../setinstall `realpath -P etc/spack/defaults` /aopt/spack/install
     . share/spack/setup-env.sh
     spack compiler find
-    spack external find gettext    || echo spack did not find gettext
+    spack external find gettext  || echo spack did not find gettext
+    spack external find gmake    || echo spack did not find gmake
+    spack external find cmake    || echo spack did not find cmake
+    spack external find zlib-ng  || echo spack did not find zlib-ng
+    spack external find perl     || echo spack did not find perl
+
     spack external find --exclude openssl
     #git checkout b431c4dc06ec0757b00b6f790be25b601f774a53
     # Do the install
-    
+
+    for pack in  gcc ; do 
+      echo INSTALLING $pack
+      spack install --no-check-signature --no-checksum $pack +binutils target=skylake
+    done
     spack install --only  dependencies lmod target=skylake  || echo lmod failed dependencies
     spack install --show-log-on-error --keep-prefix lmod target=skylake  || echo lmod failed
     echo ". `find /aopt/spack/install/opt -name bash | grep lmod`" > /aopt/spack/domods
     echo export MODULEPATH=`find /aopt/spack/install/lmod -name Core` >> /aopt/spack/domods
-
-
-    for pack in  gcc ; do 
+    
+    for pack in  curl  ; do 
       echo INSTALLING $pack
-      spack install --no-check-signature --no-checksum $pack +binutils arch=x86_64
+      spack install --no-check-signature --no-checksum $pack target=skylake
     done
     for pack in  apptainer  ; do 
       echo INSTALLING $pack
-      spack install --no-check-signature --no-checksum $pack arch=x86_64
+      spack install --no-check-signature --no-checksum $pack target=skylake
     done
     find /aopt/spack/install/opt -name spack_perms_fix.sh
     `find /aopt/spack/install/opt -name spack_perms_fix.sh`
     for pack in  "python@3.12.8 +ssl"  "python@3.13.1 +ssl" ; do 
       echo INSTALLING $pack
-      spack install --no-check-signature --no-checksum $pack arch=x86_64
+      spack install --no-check-signature --no-checksum $pack target=skylake
     done
       wget  https://bootstrap.pypa.io/get-pip.py
 
@@ -156,7 +126,7 @@ apt-get install -y libbz2-dev
     done
     for pack in dyninst ; do 
       echo INSTALLING $pack
-      spack install --no-check-signature --no-checksum $pack arch=x86_64
+      spack install --no-check-signature --no-checksum $pack target=skylake
     done
 echo "void FaKeIt() {}" > dummy.c
 gcc -c -fPIC dummy.c
@@ -176,6 +146,7 @@ strip --strip-all --discard-all --verbose /aopt/libs/libfakeroot.so
     wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/inverts.c
     wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/makefile
     wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/runit
+    sed -ix '5s,^,export LD_LIBRARY_PATH=$BBASE/lib:$LD_LIBRARY_PATH\n,' runit || echo sed failed
     wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/tracelib.cpp
     wget https://raw.githubusercontent.com/timkphd/examples/refs/heads/master/dyninst/tracetool.cpp
     export DBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep dyninst))
@@ -201,17 +172,14 @@ STUFF
     #systemctl restart sshd.service
     #export MODULEPATH=`find /aopt/spack/install/lmod -name Core`
     #export LD_PRELOAD=/aopt/libs/libfakeroot.so
-    echo "# For modules and newer programming envrionment run these commands:"
-    #echo ". /aopt/libs/mods"
+    echo "# For newer programming envrionment run this commands:"
     echo ". /aopt/libs/pygcc"
-    . `find /aopt/spack/install/opt -name bash | grep lmod`
-    export MODULEPATH=`find /aopt/spack/install/lmod -name Core`
-
     export LC_ALL=C
     export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     export PATH=$(dirname $(find /aopt/spack/install/opt -name apptainer | grep bin)):$PATH
     export DBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep dyninst))
     export BBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep boost))
     export IBASE=$(find /aopt/spack/install/opt  -name $(ls /aopt/spack/install/opt/*/*  | grep tbb))
-
+    . `find /aopt/spack/install/opt -name bash | grep lmod`
+    export MODULEPATH=`find /aopt/spack/install/lmod -name Core`
 
