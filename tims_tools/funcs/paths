@@ -8,6 +8,18 @@ addpath ()
     export PATH=$1:$PATH
 }
 
+caddpath () 
+{
+    echo $PATH | grep $1 > /dev/null || export PATH=$1:$PATH
+}
+
+caddlib () 
+{
+    echo $LD_LIBRARY_PATH | grep $1 > /dev/null || export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
+}
+
+
+
 rmpath () 
 {
 	lpaths=`echo $PATH | tr ":" " "`
@@ -37,10 +49,12 @@ rmlib ()
 	export LD_LIBRARY_PATH=$npath
 }
 
+
+
 rmmod () 
 {
 	lpaths=`echo $MODULEPATH | tr ":" " "`
-	export OMODULEPATH=$LD_LIBRARY_PATH
+	export OMODULEPATH=$MODULEPATH
 	npath=""
 	for l in $lpaths ; do 
 	  echo $l | grep -v $1  > /dev/null
