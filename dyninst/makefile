@@ -9,7 +9,7 @@ export ILIB=$(IBASE)/lib
 all: trace_tool libtracelib.so extra
 	
 trace_tool:tracetool.cpp
-	g++ -g tracetool.cpp -L$(DLIB) -ldyninstAPI -lpcontrol -lpatchAPI -linstructionAPI  -lcommon -I$(DINC)  -Wno-deprecated-declarations  -L$(BLIB) -lboost_filesystem -I$(BINC) -I$(IINC) -o trace_tool
+	g++ -g tracetool.cpp $(EXFLAGS) -L$(DLIB) -ldyninstAPI -lpcontrol -lpatchAPI -linstructionAPI  -lcommon -I$(DINC)  -Wno-deprecated-declarations  -L$(BLIB) -lboost_filesystem -I$(BINC) -I$(IINC) -o trace_tool
 
 libtracelib.so: tracelib.cpp
 	g++ -c -fPIC tracelib.cpp
