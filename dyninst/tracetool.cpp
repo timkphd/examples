@@ -101,7 +101,11 @@ void instrument_entry(BPatch_function* func, char* funcname) {
 
 void instrument_callsite(char* callee_funcname, BPatch_function* callsite_func,
                          BPatch_point* callsite_point) {
+#ifdef SKIPPARMS
+  BPatch_Vector<BPatch_localVar*>* params = nullptr;
+#else
   BPatch_Vector<BPatch_localVar*>* params = callsite_func->getParams();
+#endif
   int num_args = 0;
   if(params != nullptr)
     num_args = (*params).size();
