@@ -19,7 +19,6 @@ caddlib ()
 }
 
 
-
 rmpath () 
 {
 	lpaths=`echo $PATH | tr ":" " "`
