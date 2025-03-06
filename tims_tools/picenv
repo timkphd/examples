@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+import sys
+import os
+import pickle
+# This program must have as part of its name "env" and/or "mod"
+
+def dohelp(pname):
+	envname=pname.replace("mod","env")
+	envname=envname.split("/")[-1].strip()
+	modname=pname.replace("env","mod")
+	modname=modname.split("/")[-1].strip()
+
+	print("Usage:")
+	print(envname,"|",modname," outfile")
+	print("     create a python pickle file containing either the module avail list or the linux environment\n")
+	print("     The default output is dependent on the name of this program.  If it contains `env` the output")
+	print("     will be for the environment.  If it contains `mod` it will be a dump of `module avail`.  The")
+	print("     command line options `-e` and `-m` override the program name convention.\n")
+	print(envname,"|",modname," infile1 infile2 [-v]")
+	print("     compare two files.  -v = show detailed differences\n")
+	print(envname,"|",modname," infile1 -d")
+	print("     dump the contents of the file as text")
+	exit()
+
+def full_key_list(list1, list2):
+	"""Merges two key lists, removing duplicates and preserving order."""
+	"""This routine is modified AI generated"""
+	combined_list = list(list1) + list(list2)
+	unique_list = []
+	seen = set()
+	for item in combined_list:
+		if item not in seen:
+			unique_list.append(item)
+			seen.add(item)
+	return unique_list
+
+doenv=True
+domod=False
+myhelp=False
+verb=False
+dump=False
+if sys.argv[0].find("mod") > 0 :
+	doenv=False
+	domod=True
+ev1f=""
+ev2f=""
+files=0
+## -h -v -d
+if len(sys.argv) > 1:
+	for clo in sys.argv[1:] :
+		print(clo.find("-h"),clo.find("-v"),clo.find("-d"),clo.find("-m"),clo.find("-e"))
+		if clo.find("-h") == 0 :
+			myhelp=True
+			continue
+		if clo.find("-v") == 0 :
+			verb=True
+			continue
+		if clo.find("-d") == 0 :
+			dump=True
+			continue
+		if clo.find("-m") == 0 :
+			domod=True
+			doenv=False
+			continue
+		if clo.find("-e") == 0 :
+			doenv=True
+			domod=False
+			continue
+		if len(ev1f) == 0 :
+			ev1f=clo
+			files=1
+			continue
+		if len(ev2f) == 0 :
+			ev2f=clo
+			files=2
+			continue
+
+if(myhelp): 
+	dohelp(sys.argv[0])
+if(dump): 
+		ev1=pickle.load(open(ev1f,"rb"))
+		k1=ev1.keys()
+		for k in k1:
+			print(k,":\n",ev1[k],"\n")
+		exit()
+if files > 1:
+# we're going to compare two files
+	ev1=pickle.load(open(ev1f,"rb"))
+	ev2=pickle.load(open(ev2f,"rb"))
+	k1=ev1.keys()
+	k2=ev2.keys()
+	merged=full_key_list(k1,k2)
+	merged.sort()
+	print("**** In both but differ:")
+	for k in merged:
+		both=ev1.__contains__(k) and ev2.__contains__(k)
+		if both :
+			same=(ev1[k]==ev2[k])
+			if (not same):
+				print(k)
+				if(verb):
+					print(ev1f,ev1[k])
+					print(ev2f,ev2[k])
+	print()
+	print("**** Only in ",ev2f,":")
+	for k in merged:
+		if (ev1.__contains__(k)) :
+			pass
+		else:
+			print(k)
+	print()
+	print("**** Only in ",ev1f,":")
+	for k in merged:
+		if (ev2.__contains__(k)) :
+			pass
+		else:
+			print(k)
+else:
+	""" Save your environment in a pickle file."""
+	if doenv :
+		if len(ev1f) == 0 :
+			ofile="env_dump"
+		else:
+			ofile=ev1f
+		wtf=os.environ.__dict__
+		ky=wtf['_data'].keys()
+		bonk={}
+		for k in ky:
+			bonk[k]=wtf['_data'][k]
+		file=open(ofile,"wb")
+		pickle.dump(bonk,file)
+		file.close()
+	""" Save your module list in a pickle file."""
+	if domod :
+		x=os.popen("module avail 2>&1","r")
+		avails=x.readlines()
+		cdir=""
+		dlist={}
+		for a in avails:
+			a=a.strip()
+			if(len(a) == 0 and len(cdir) > 0 ):
+				#print(cdir,mlist)
+				mlist.sort()
+				dlist[cdir]=mlist
+				cdir=""
+				continue
+			if (len(a) == 0):
+				cdir=""
+				continue
+			if a.find("-") == 0:
+				cdir=a.split()[1]
+				mlist=[]
+				#print(cdir)
+				continue
+			if len(cdir) > 0 :
+				mods=a.split()
+				for mod in mods:
+					if(mod.find("(") == -1 ) :
+						mlist.append(mod)
+		if len(ev1f) == 0:
+			ofile="mod_dump"
+		else:
+			ofile=ev1f
+		modfile=open(ofile,"wb")
+		pickle.dump(dlist,modfile)
+		modfile.close()
