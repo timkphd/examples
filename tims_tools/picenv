@@ -48,7 +48,7 @@ files=0
 ## -h -v -d
 if len(sys.argv) > 1:
 	for clo in sys.argv[1:] :
-		print(clo.find("-h"),clo.find("-v"),clo.find("-d"),clo.find("-m"),clo.find("-e"))
+		#print(clo.find("-h"),clo.find("-v"),clo.find("-d"),clo.find("-m"),clo.find("-e"))
 		if clo.find("-h") == 0 :
 			myhelp=True
 			continue
