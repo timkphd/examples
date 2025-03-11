@@ -14,14 +14,16 @@ all: trace_tool libtracelib.so extra
 	
 trace_tool:tracetool.cpp
 	#g++ tracetool.cpp -L$(DLIB) -ldyninstAPI -lpcontrol -lpatchAPI -linstructionAPI  -lcommon -I$(DINC)  -Wno-deprecated-declarations  -L$(BLIB) -lboost_filesystem -I$(BINC) -I$(IINC) -o trace_tool
-	g++ tracetool.cpp $(EXFLAGS) -L$(DLIB) -ldyninstAPI -lpcontrol -lpatchAPI -linstructionAPI  -lcommon -I$(DINC)  -Wno-deprecated-declarations                                                   -o trace_tool
+	g++ -g -O0 -DSKIPPARMS tracetool.cpp -L$(DLIB) -ldyninstAPI -lpcontrol -lpatchAPI -linstructionAPI  -lcommon -I$(DINC)  -Wno-deprecated-declarations                                                   -o trace_tool
 
 libtracelib.so: tracelib.cpp
-	g++ -c -fPIC tracelib.cpp
+	g++ -g -O0 -c -fPIC tracelib.cpp
 	g++ -shared tracelib.o -o libtracelib.so
 
 extra: inverts.c extra.cpp
-	g++ inverts.c -DPRINT -DINVERT -DDOE extra.cpp -o extra
+	g++ -g -O0 inverts.c -DPRINT -DINVERT -DDOE extra.cpp -o extra
+	#g++ inverts.c -DPRINT -DINVERT  extra.cpp -o extra
+	#g++ inverts.c -DPRINT extra.cpp -o extra
 
 run:all
 	. ./runit

@@ -7,24 +7,25 @@
 #include <sys/time.h>
 #include <unistd.h>
 #define FLT double
+#define INT int
 
 /* utility routines */
-FLT system_clock(FLT *x);
-FLT **matrix(int nrl,int nrh,int ncl,int nch);
+double system_clock(double  *x);
+FLT **matrix(INT nrl,INT nrh,INT ncl,INT nch);
 
 /* work routines */
-void mset(FLT **m, int n, int in);
-FLT mcheck(FLT **m, int n, int in);
-void over(FLT ** mat,int size);
+void mset(FLT **m, INT n, INT in);
+FLT mcheck(FLT **m, INT n, INT in);
+void over(FLT ** mat,INT size);
 
 int main(int argc,char *argv[]) {
     FLT **m1,**m2,**m3,**m4;
-    FLT t0_start;
-    FLT t1_start,t1_end,e1;
-    FLT t2_start,t2_end,e2;
-    FLT t3_start,t3_end,e3;
-    FLT t4_start,t4_end,e4;
-    int n;
+    double t0_start;
+    double t1_start,t1_end,e1;
+    double t2_start,t2_end,e2;
+    double t3_start,t3_end,e3;
+    double t4_start,t4_end,e4;
+    INT n;
     n=750;
     m1=matrix(1,n,1,n);
     m2=matrix(1,n,1,n);
@@ -34,7 +35,8 @@ int main(int argc,char *argv[]) {
     mset(m2,n,20);
     mset(m3,n,30);
     mset(m4,n,40);
-    
+    printf("size of FLT %d\n",sizeof(FLT));    
+    printf("size of INT %d\n",sizeof(INT));    
     system_clock(&t0_start);
 
 #pragma omp parallel sections
@@ -87,8 +89,8 @@ int main(int argc,char *argv[]) {
 return 0;
 }
 
-void mset(FLT **m, int n, int in) {
-	int i,j;
+void mset(FLT **m, INT n, INT in) {
+	INT i,j;
     for(i=1;i<=n;i++) 
        for(j=1;j<=n;j++) {
            if(i == j) {
@@ -100,8 +102,8 @@ void mset(FLT **m, int n, int in) {
    
 }
 
-FLT mcheck(FLT **m, int n, int in) {
-	int i,j;
+FLT mcheck(FLT **m, INT n, INT in) {
+	INT i,j;
 	FLT x;
     x=0.0;
     for(i=1;i<=n;i++) 
@@ -115,11 +117,11 @@ FLT mcheck(FLT **m, int n, int in) {
    return x;
 }
 
-void over(FLT ** mat,int size)
+void over(FLT ** mat,INT size)
 {
-        int k, jj, kp1, i, j, l, krow, irow;
+        INT k, jj, kp1, i, j, l, krow, irow;
         FLT pivot, temp;
-        int sw[2000][2];
+        INT sw[2000][2];
         for (k = 1 ;k<= size ; k++)
         {
                 jj = k;
@@ -180,9 +182,9 @@ Numerical Recipes in C The Art of Scientific Computing
 Press, Flannery, Teukolsky, Vetting
 Cambridge University Press, 1988.
 */
-FLT **matrix(int nrl,int nrh,int ncl,int nch)
+FLT **matrix(INT nrl,INT nrh,INT ncl,INT nch)
 {
-    int i;
+    INT i;
         FLT **m;
         m=(FLT **) malloc((unsigned) (nrh-nrl+1)*sizeof(FLT*));
         if (!m){
@@ -206,9 +208,9 @@ FLT **matrix(int nrl,int nrh,int ncl,int nch)
         return m;
 }
 
-FLT system_clock(FLT *x) {
-	FLT t;
-	FLT six=1.0e-6;
+double system_clock(double *x) {
+	double t;
+	double six=1.0e-6;
 	struct timeval tb;
 	struct timezone tz;
 	gettimeofday(&tb,&tz);
