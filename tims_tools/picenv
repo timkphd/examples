@@ -20,6 +20,12 @@ def dohelp(pname):
 	print("     compare two files.  -v = show detailed differences\n")
 	print(envname,"|",modname," infile1 -d")
 	print("     dump the contents of the file as text")
+	print(envname,"|",modname," infile1 -D")
+	print("     created a python pickle file from the input text file from module avail")
+	print("     input file is required")
+	print(envname,"|",modname," infile1 -E")
+	print("     created a python pickle file from the input text file from printenv")
+	print("     input file is required")
 	exit()
 
 def full_key_list(list1, list2):
@@ -34,6 +40,8 @@ def full_key_list(list1, list2):
 			seen.add(item)
 	return unique_list
 
+dotenv=False
+dotmod=False
 doenv=True
 domod=False
 myhelp=False
@@ -65,6 +73,16 @@ if len(sys.argv) > 1:
 		if clo.find("-e") == 0 :
 			doenv=True
 			domod=False
+			continue
+		if clo.find("-M") == 0 :
+			domod=False
+			doenv=False
+			dotmod=True
+			continue
+		if clo.find("-E") == 0 :
+			doenv=False
+			domod=False
+			dotenv=True
 			continue
 		if len(ev1f) == 0 :
 			ev1f=clo
@@ -115,6 +133,7 @@ if files > 1:
 			pass
 		else:
 			print(k)
+	exit()
 else:
 	""" Save your environment in a pickle file."""
 	if doenv :
@@ -130,6 +149,7 @@ else:
 		file=open(ofile,"wb")
 		pickle.dump(bonk,file)
 		file.close()
+		exit()
 	""" Save your module list in a pickle file."""
 	if domod :
 		x=os.popen("module avail 2>&1","r")
@@ -164,3 +184,76 @@ else:
 		modfile=open(ofile,"wb")
 		pickle.dump(dlist,modfile)
 		modfile.close()
+		exit()
+
+
+if len(ev1f) == 0:
+	dohelp(sys.argv[0])
+else:
+	infile=ev1f
+fin=open(infile,"r")
+x=fin.readlines()
+fin.close()
+
+"""created a pkl file from a text file containing output from printenv"""
+if dotenv:	
+	indef=False
+	dic={}
+	k=0
+	brac=0
+	for n in x:
+		if brac > 0 :
+			v=v+n
+			brac=v.count("{")-v.count("}")
+			if brac == 0: 
+				d=d.encode('utf-8')
+				v=v.strip()
+				v=v.encode('utf-8')
+				dic[d]=v
+				#print(d,v)
+			continue
+		if (n.find("=()") > -1 ):
+			d,v=n.split("=",1)
+			brac=brac+v.count("{")-v.count("}")
+			if brac == 0:
+				d=d.encode('utf-8')
+				v=v.strip()
+				v=v.encode('utf-8')
+				dic[d]=v
+				#print(d,v)
+			continue
+		d,v=n.split("=",1)
+		d=d.encode('utf-8')
+		v=v.strip()
+		dic[d]=v.encode('utf-8')
+	file=open(infile+".pkl","wb")
+	pickle.dump(dic,file) 
+	exit()  
+"""created a python pickle file from the input text file from module avail"""
+if dotmod:
+	cdir=""
+	dlist={}
+	for a in x:
+		a=a.strip()
+		if(len(a) == 0 and len(cdir) > 0 ):
+			#print(cdir,mlist)
+			mlist.sort()
+			dlist[cdir]=mlist
+			cdir=""
+			continue
+		if (len(a) == 0):
+			cdir=""
+			continue
+		if a.find("-") == 0:
+			cdir=a.split()[1]
+			mlist=[]
+			#print(cdir)
+			continue
+		if len(cdir) > 0 :
+			mods=a.split()
+			for mod in mods:
+				if(mod.find("(") == -1 ) :
+					mlist.append(mod)
+	file=open(infile+".pkl","wb")
+	pickle.dump(dlist,file)
+	exit()
