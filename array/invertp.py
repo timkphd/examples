@@ -62,6 +62,8 @@ if iargs > 1:
             n[i-1]=int(sys.argv[i])
         except:
             n[i-1]=100
+        if  n[i-1] == 1 :  n[i-1]=-1
+
 size=n[4]
 for k in range(0,10) :
     print(k,n)

@@ -34,7 +34,7 @@ int main(int argc,char *argv[]) {
     if(iarg > 5)iarg=5;
     if(iarg > 1){
     for (narg=1;narg<=iarg;narg++) {
-	diag[narg-1]=atoi(argv[narg]);
+	if (atoi(argv[narg]) != 1)diag[narg-1]=atoi(argv[narg]);
     }
     }
     for(narg=0;narg<5;narg++)
