@@ -190,6 +190,7 @@ int main(int argc, char **argv, char *envp[]) {
     help = 0;
     dotime = 0;
     when = 0;
+    dt=0.0;
 //  printf("%d\n", STREAM_ARRAY_SIZE);
     if (argc > 1) {
       int opt; 
