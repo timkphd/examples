@@ -1,0 +1,5 @@
+ rm -rf slurm0/hostlist 
+ rm -rf slurm0/std*
+ rm -rf slurm0/spread
+ rm -rf `find . -name "*7*"`
+

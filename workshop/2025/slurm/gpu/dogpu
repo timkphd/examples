@@ -1,0 +1,27 @@
+#!/bin/bash 
+#SBATCH --job-name="gpu_job"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --time=00:02:00
+#SBATCH --partition=gpu-h100
+#SBATCH --gres=gpu:h100:4
+#SBATCH --exclusive=user
+##SBATCH --account=hpcapps
+
+if echo $SLURM_SUBMIT_HOST | egrep "kl5|kl6" > /dev/null  ; then : ; else echo Run script from a GPU node;  echo  exit ; fi
+
+mkdir $SLURM_JOBID
+cp  mstream.cu makefile doit dogpu  $SLURM_JOBID
+cd $SLURM_JOBID
+
+
+nvidia-smi -L > gpuinfo
+
+
+ml PrgEnv-nvhpc
+CC mstream.cu -o mstream
+srun -n 4 ./mstream -n 5000 > mstream.out
+
+
+mv slurm-$SLURM_JOBID.out .
+

@@ -1,0 +1,80 @@
+
+
+
+
+
+thenodes () 
+{ 
+    if (( $# > 0 )); then
+        idwc=$(squeue -j $1 -ho %N);
+        dfwe=$(scontrol show hostnames $idwc | tr '\n' ' ');
+    else
+        dfwe=$(scontrol show hostnames | tr '\n' ' ');
+    fi;
+    echo $dfwe
+}
+
+## Show your accounts
+alias accounts='sacctmgr show associations user=$USER format=account%15'
+
+
+## Show information about a job
+alias showjob='scontrol show job'
+
+## Show what I have in the queue
+alias sq='squeue -u $USER'
+alias sqd='squeue -u $USER  --format='\''%10A%10L %60Z'\'''
+
+
+## clean module list in load order
+mylist () {
+    ml 2>&1 | sed s"/) /)/g" | tr " " "\n" | sort -n | grep ")" | sed s"/^[0-9]*//" | sed s"/)//"
+}
+
+## show my recent jobs
+recent () 
+{ 
+    if [ -z ${SUSER+x} ]; then
+        ACC=$USER;
+    else
+        ACC=$SUSER;
+    fi;
+    if (($# == 2)); then
+        echo sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` -E `date --date="$2 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,start,nodelist%25,WorkDir%125;
+        sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` -E `date --date="$2 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,start,nodelist%25,WorkDir%125 | sed "s/ \+ /\t/g" | egrep --color=auto -v ^"[0-9]{6,}\.";
+    fi;
+    if (($# == 1)); then
+        echo sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,start,nodelist%25,WorkDir%125;
+        sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,start,nodelist%25,WorkDir%125 | sed "s/ \+ /\t/g" | egrep --color=auto -v ^"[0-9]{6,}\.";
+    fi;
+    if (($# == 0)); then
+        echo sacct -S `date --date="14 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,start,nodelist%25,WorkDir%125;
+        sacct -S `date --date="14 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,start,nodelist%25,WorkDir%125 | sed "s/ \+ /\t/g" | egrep --color=auto -v ^"[0-9]{6,}\.";
+    fi
+}
+
+## show my recent jobs 
+recentt () 
+{ 
+    if [ -z ${SUSER+x} ]; then
+        ACC=$USER;
+    else
+        ACC=$SUSER;
+    fi;
+    if (($# == 2)); then
+        echo sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` -E `date --date="$2 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,elapsed,nodelist%25,WorkDir%125;
+        sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` -E `date --date="$2 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,elapsed,nodelist%25,WorkDir%125 | sed "s/ \+ /\t/g" | egrep --color=auto -v ^"[0-9]{6,}\.";
+    fi;
+    if (($# == 1)); then
+        echo sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,elapsed,nodelist%25,WorkDir%125;
+        sacct -S `date --date="$1 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,elapsed,nodelist%25,WorkDir%125 | sed "s/ \+ /\t/g" | egrep --color=auto -v ^"[0-9]{6,}\.";
+    fi;
+    if (($# == 0)); then
+        echo sacct -S `date --date="14 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,elapsed,nodelist%25,WorkDir%125;
+        sacct -S `date --date="14 days ago" +"%Y-%m-%d"` -u $ACC --format=JobID,ExitCode,elapsed,nodelist%25,WorkDir%125 | sed "s/ \+ /\t/g" | egrep --color=auto -v ^"[0-9]{6,}\.";
+    fi
+}
+
+## Show a list of node to soon be used (maybe)
+alias pnodes='squeue --start -o "%S %t %Y" |  grep -v null |  grep PD | sed "s/PD//" | sort  | sed "s/T/ /" | head -20'
+

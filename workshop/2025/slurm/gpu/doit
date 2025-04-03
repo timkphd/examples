@@ -1,0 +1,4 @@
+MYDIR=`pwd`
+MYACC=$SBATCH_ACCOUNT
+COMMAND="cd $MYDIR ; sbatch --account=$MYACC dogpu"
+ssh kl5 $COMMAND

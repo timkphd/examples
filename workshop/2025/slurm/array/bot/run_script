@@ -1,0 +1,37 @@
+#!/bin/bash -e
+#SBATCH --job-name="bot_job"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --cpus-per-task=1
+#SBATCH --time=00:05:00
+#SBATCH -o out.%j
+#SBATCH --export=ALL
+##SBATCH --account=hpcapps
+#SBATCH --partition=debug
+
+
+#Activate a conda environment, for example:
+#conda activate tfgpu
+
+#Then:
+#conda install mpi4py
+#conda install matplotlib
+#conda install Tornado
+
+#Change the account line above from hpcapps
+#to one that works for you.
+
+#Submit the job
+
+#sbatch run_script
+
+#After the job finishes the directory laser
+#will contain *png files created in parallel.
+
+#For produiction runs change the partition
+#and time=00:05:00
+
+
+tar -xzf laser.tgz
+rm -rf laser/*png
+mpirun -n 4 -hosts=$SLURM_NODELIST ./simple.py < flist

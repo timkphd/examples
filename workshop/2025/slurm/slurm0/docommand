@@ -1,0 +1,8 @@
+#!/bin/bash
+#SBATCH --job-name="atest"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=00:01:00
+
+srun $COMMAND > $OUTFILE 
+

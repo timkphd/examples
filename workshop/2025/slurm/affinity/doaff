@@ -1,0 +1,51 @@
+#!/usr/bin/bash
+#SBATCH --job-name="affinity"
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --export=ALL
+#SBATCH --time=00:10:00
+#SBATCH --partition=short
+
+# Select MPI version based on the variable MYMPI, default to intel-oneapi-mpi
+if [ -z "${MYMPI+x}" ]; then export MYMPI=intel-oneapi-mpi ; fi
+
+# Setup
+export BASE=$SLURM_SUBMIT_DIR
+mkdir -p $BASE/$SLURM_JOB_ID
+cd $BASE/$SLURM_JOB_ID
+
+# Save info
+cat $0   > $SLURM_JOB_ID.script
+printenv > $SLURM_JOB_ID.env
+
+# Get and build glorified "Hello World"
+curl -s https://raw.githubusercontent.com/timkphd/examples/master/hybrid/pstream.c -o pstream.c
+module load $MYMPI
+echo MYMPI $MYMPI
+echo MPI= `which mpicc`
+mpicc -fopenmp pstream.c -o pstream
+
+for nmpi in 1 2 4 8 13 26 52 104 ; do
+   for nthreads in  2 4 8 13 ; do
+     cores=`echo "$nmpi*$nthreads" | bc`
+     if [ "$cores" -le "104" ] ; then
+     	echo Running on a total of $cores cores
+     	export OMP_NUM_THREADS=$nthreads
+     	export OMP_PROC_BIND=spread
+	# The last column of output from pstream is the core on which a task/thread is run
+
+	srun --cpu-bind=v --threads-per-core=1 --cpus-per-task=$nthreads --ntasks $nmpi ./pstream -F -D -t 2 > ${nmpi}_${nthreads}
+# If we don't use the extra settings some tasks/threads will get mapped to the same cores and you'll see FAILED	
+       #srun --cpu-bind=v                                                --ntasks $nmpi ./pstream -F -D -t 2 > ${nmpi}_${nthreads}
+	# We grab the core #s.  There should be unique set and the size should be equal to $cores
+	used=`cat  ${nmpi}_${nthreads} | grep ^0 | awk '{print $6}' | sort -u | wc -l`
+	if [ "$cores" -eq "$used" ] ; then 
+		echo SUCCESS ${nmpi}_${nthreads} 
+	else
+		echo FAILED ${nmpi}_${nthreads}
+	fi
+     fi
+    done
+done
+cp $SLURM_SUBMIT_DIR/slurm-$SLURM_JOB_ID.* .
+

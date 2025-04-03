@@ -1,0 +1,98 @@
+#!/usr/bin/python3
+import os
+import sys
+import re
+nlist={}
+defnode="x1000c0s0b0n1"
+get=['CPUAlloc','CPULoad','FreeMem']
+command="scontrol show node "+defnode
+if len(sys.argv) > 1 :
+	for arg in sys.argv[:]:
+		if arg.find("-h") > -1 or arg.find("-H") > -1 :
+			print("USAGE:")
+			name=sys.argv[0].split("/")
+			name=name[-1]
+			print(name+" compressed node list + -Fattribute1,attribute2,...")
+			print("Where a compressed node list is of the form:")
+			print("                     x1002c4s5b1n1,x1002c5s2b0n0,x1002c5s5b1n0,x1002c6s3b1n[0-1]")
+			print()
+			print("Without any inputs:")
+			print("default node is "+defnode)
+			print("default attributes are: "+str(get))
+			print()
+			print("all is a valid input for both nodes and attributes")
+			print()
+			print("Examples:")
+			print("     Get the state of all nodes")
+			print(name+" all -FState")
+			print()
+			print("     Get a list of attributes")
+			print(name+"  -Fall")
+			print("     OR")
+			print(name+"  -F")
+			print()
+			exit()
+if len(sys.argv) > 1 :
+	for arg in sys.argv[1:]:
+		if arg.find("-F") == 0  or arg.find("-f") == 0:
+			get=arg.replace("-F","")
+			get=get.replace("-f","")
+			get=get.split(",")
+			if len(get[0]) == 0:
+				get=["all"]
+		else:
+			if arg == "all" :
+				command=command.replace(defnode,"")
+			else:
+				command=command.replace(defnode,"")
+				command=command+" "+arg
+f=os.popen(command,"r")
+lines=f.read()
+junk=lines.split('NodeName=')[1:]
+for t in junk:
+    start=t.find("OS=")
+    end=t[start:].find("\n")+start
+    #print(start,end)
+    nospace=t[start:end].replace(" ","_")
+    t=t.replace(t[start:end],nospace)
+    
+    start=t.find("CfgTRES=")
+    end=t[start:].find("\n")+start
+    start=start+len("CfgTRES=")
+    nospace=t[start:end].replace("=","_")
+    t=t.replace(t[start:end],nospace)
+    
+    start=t.find("AllocTRES=")
+    end=t[start:].find("\n")+start
+    start=start+len("AllocTRES=")
+    nospace=t[start:end].replace("=","_")
+    t=t.replace(t[start:end],nospace)
+
+
+    t=t.replace("\n","")
+    fspace=t.find(" ")
+    node=t[0:fspace]
+    t=t[fspace+1:]
+    #print(node)
+    #print(t)
+    x=re.split("=| +",t)
+    #print(x)
+    k=0
+    bonk={}
+    for a in x :
+        if k == 0:
+            key=a
+            k=k+1
+        else:
+            bonk[key]=a
+            k=k-1
+    nlist[node]=bonk
+#print(nlist)
+if get==["all"]:
+	#print(bonk.keys())
+	get=bonk.keys()
+for n in nlist.keys():
+    print(n)
+    for g in get:
+        print("    "+g+"="+nlist[n][g])
+

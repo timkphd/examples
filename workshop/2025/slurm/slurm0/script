@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#SBATCH --job-name="atest"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=00:02:00
+#SBATCH -o stdout
+#SBATCH -e stderr
+#SBATCH --export=ALL
+##SBATCH --account=hpcapps
+##SBATCH --partition=debug
+##SBATCH --mail-type=ALL
+##SBATCH --mail-user=joeuser@nrel.gov
+
+#----------------------
+#cd /scratch/$USER
+srun hostname > hostlist
+

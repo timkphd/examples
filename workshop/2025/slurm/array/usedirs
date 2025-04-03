@@ -9,7 +9,7 @@
 ###### create extra output for each subjob
 ##SBATCH -o /dev/null
 #SBATCH --exclusive=user
-#SBATCH --account=hpcapps
+##SBATCH --account=hpcapps
 
 #SBATCH --mem=5G
 
@@ -58,12 +58,6 @@ cat $0 > myscript
 # Get the name of our LIST, default to list
 if [ -z ${LIST+x} ]; then echo "LIST is unset"; export LIST=list ; else echo "LIST is set to '$LIST'"; fi
 
-if [ -z ${USEDIRS+x} ]; then
- 	# USEDIRS is not set; default to no
- 	export USEDIRS=no
-fi
-
-if [[ "$USEDIRS" = "yes" ]] ; then
 
 # Here we assume that our LIST is is a set of directories
 # under a "main" directory "inputs" each containing data sets.  
@@ -71,7 +65,6 @@ if [[ "$USEDIRS" = "yes" ]] ; then
 # input file myinput.
 #
 # We get the directory from the list
-        echo using directories for input
 	dir=`head -n $SUB_ID $SLURM_SUBMIT_DIR/$LIST | tail -1`
 # Copy our input from the directory
 	cp -r $SLURM_SUBMIT_DIR/inputs/$dir/* .
@@ -84,21 +77,3 @@ if [[ "$USEDIRS" = "yes" ]] ; then
 	$SLURM_SUBMIT_DIR/tymer timer start_time
 	$SLURM_SUBMIT_DIR/$EXE `cat myinput` > output
 	$SLURM_SUBMIT_DIR/tymer timer end_time
-else
-
-# Here we assume that our each line of our LIST contains 
-# data for our program.
-#
-# Grab the line  
-        echo using command line input
-        export input=`head -n $SUB_ID $SLURM_SUBMIT_DIR/$LIST | tail -1`
-        printenv > envs
-
-# Run our job
-	$SLURM_SUBMIT_DIR/tymer timer start_time
-	echo $input > myinput
-	eval $SLURM_SUBMIT_DIR/$EXE `cat myinput` > output
-	hostname > node
-	$SLURM_SUBMIT_DIR/tymer timer end_time
-fi
-

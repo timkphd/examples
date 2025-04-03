@@ -2,15 +2,18 @@
 make clean
 make
 
-export ACC=--account=hpcapps
+
 # run assuming each line of "in_list" contains a directory
+export USEDIRS=yes
 export LIST=dir_list
-sbatch $ACC --array=1-24  usedirs
-sbatch $ACC --array=25-48  usedirs
+sbatch  --array=1-24   useboth
+sbatch  --array=25-48  useboth
 
 # run assuming each line of "in_list" contains input
+export USEDIRS=no
 export LIST=in_list
-sbatch $ACC --array=1-24  uselist
-sbatch $ACC --array=25-48  uselist
+sbatch  --array=1-24   useboth
+sbatch  --array=25-48  useboth
 
 unset LIST
+unset USEDIRS

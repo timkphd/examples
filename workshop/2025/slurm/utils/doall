@@ -1,0 +1,23 @@
+export STARTD=`pwd`
+cd $STARTD
+
+cd affinity
+sbatch doaff
+cd $STARTD
+
+cd array
+source doit
+cd $STARTD
+
+cd gpu
+source doit
+cd $STARTD
+
+cd slurm0
+sbatch script
+cd $STARTD
+
+cd slurm1
+sbatch script
+cd $STARTD
+

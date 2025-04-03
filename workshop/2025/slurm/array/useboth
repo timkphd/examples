@@ -9,7 +9,7 @@
 ###### create extra output for each subjob
 ##SBATCH -o /dev/null
 #SBATCH --exclusive=user
-#SBATCH --account=hpcapps
+##SBATCH --account=hpcapps
 
 #SBATCH --mem=5G
 
