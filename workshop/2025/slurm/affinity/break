@@ -8,6 +8,9 @@
 
 # Select MPI version based on the variable MYMPI, default to intel-oneapi-mpi
 if [ -z "${MYMPI+x}" ]; then export MYMPI=intel-oneapi-mpi ; fi
+# Optionally set srun command line arguments, default should work ok
+if [ -z "${SOPT+x}" ]; then export SOPT="--cpu-bind=v --threads-per-core=1 --cpus-per-task=\${nthreads}"; fi
+echo srun options $SOPT
 
 # Setup
 export BASE=$SLURM_SUBMIT_DIR
@@ -34,9 +37,8 @@ for nmpi in 1 2 4 8 13 26 52 104 ; do
      	export OMP_PROC_BIND=spread
 	# The last column of output from pstream is the core on which a task/thread is run
 
-	#srun --cpu-bind=v --threads-per-core=1 --cpus-per-task=$nthreads --ntasks $nmpi ./pstream -F -D -t 2 > ${nmpi}_${nthreads}
 # If we don't use the extra settings some tasks/threads will get mapped to the same cores and you'll see FAILED	
-        srun --cpu-bind=v                                                --ntasks $nmpi ./pstream -F -D -t 2 > ${nmpi}_${nthreads}
+        srun `eval echo ${SOPT}` --ntasks $nmpi ./pstream -F -D -t 2 > ${nmpi}_${nthreads}
 	# We grab the core #s.  There should be unique set and the size should be equal to $cores
 	used=`cat  ${nmpi}_${nthreads} | grep ^0 | awk '{print $6}' | sort -u | wc -l`
 	if [ "$cores" -eq "$used" ] ; then 
