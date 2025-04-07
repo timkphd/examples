@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+cores=104
+def flipit(z,flist):
+    zlist=list(z)
+    for i in flist:
+        if zlist[i]=="0" : 
+            zlist[i]="1"
+        else:
+            zlist[i]="0"
+    return(''.join(zlist))
+
+def mask0(flist):
+    dig=cores
+    zeros="0"*dig
+    bits=flipit(zeros,flist)
+    bits=bits[::-1]
+    #print(bits)
+    return(hex(int(bits,2)))
+
+def allow(tasks):
+    mlist=[]
+    for t in tasks:
+        #print(t)
+        mlist.append(mask0(t))
+    mstr=','.join(mlist)
+    return mstr
+
+def dohelp(name):
+    print("Generate a task/thread mask for srun")
+    print(name," p0_c0,p0_c1...p0_cN    p1_c0,p1_c1...p1_cN    ......    pM_c0,pM_c1...pM_cN")
+    print("Each commented seperated list is the set of cores to which a processes is restricted")
+    print("There will a set for each task.")
+    print()
+    print(name," 0,13 52,66" )
+    print("Would create a mask were all threads for task 0 are restricted to cores 0 and 13")
+    print("and threads for task 1 would be restricted to cores 52 and 66")
+    print()
+    print("Typical usage:")
+    OUTPUT="""
+[user@hpc]$export OMP_NUM_THREADS=2
+[user@hpc]$export M=`XXXXX 0,13 52,66`
+[user@hpc]$echo $M
+0x2001,0x40010000000000000
+[user@hpc]$ srun -n 2 --cpu-bind=v,mask_cpu=$M  --threads-per-core=1 ./a.out -F -D -t 2
+cpu-bind=MASK - x1000c0s1b1n0, task  0  0 [2575299]: mask 0x2001 set
+cpu-bind=MASK - x1000c0s1b1n0, task  1  1 [2575300]: mask 0x40010000000000000 set
+MPI VERSION Intel(R) MPI Library 2021.12 for Linux* OS
+
+task    thread             node name  first task    # on node  core
+0000      0000         x1000c0s1b1n0        0000         0000  0000
+0000      0001         x1000c0s1b1n0        0000         0000  0013
+0001      0001         x1000c0s1b1n0        0000         0001  0052
+0001      0000         x1000c0s1b1n0        0000         0001  0066
+total time      3.317
+"""
+    OUTPUT=OUTPUT.replace("XXXXX",name)
+    print(OUTPUT)
+    OUTPUT="""
+If the mask viewd as binay it can read right to left.
+From above...
+echo $M
+0x2001,0x40010000000000000
+
+python3 -c "print(bin(0x2001))"
+0b10000000000001
+  ^13          ^0 
+pyhon3 -c "print(bin(0x40010000000000000))"
+0b1000000000000010000000000000000000000000000000000000000000000000000
+  ^66           ^52
+"""
+    print(OUTPUT)
+    exit()
+
+import sys
+procs=[]
+if len(sys.argv)== 1:
+    dohelp(sys.argv[0])
+
+for x in sys.argv[1:]:
+    pset=[]
+    x=x.split(",")
+    for z in x:
+        pset.append(int(z))
+    procs.append(pset)
+#print(procs)
+print(allow(procs))
+
+
