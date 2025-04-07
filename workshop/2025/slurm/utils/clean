@@ -1,5 +1,11 @@
- rm -rf slurm0/hostlist 
- rm -rf slurm0/std*
- rm -rf slurm0/spread
- rm -rf `find . -name "*7*"`
+cleandoit ()
+{
+  newf=`git ls-files --others --exclude-standard`
+  for x in $newf ; do
+    echo $x
+    #rm $x
+  done
+}
 
+
+echo rm `cleandoit`
