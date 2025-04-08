@@ -14,7 +14,7 @@ input:setarray.py
 	./setarray.py 100
 
 clean:
-	rm -rf invertc in_list dir_list inputs slurm*out 7*
+	rm -rf invertc in_list dir_list inputs slurm*out `find . -type d | grep "/"`
 
 backup:
 	tar -czf array.tgz bot doit doboth invertc.c invertp.py makefile setarray.py tymer useboth usedirs uselist

@@ -8,5 +8,5 @@ mstream: mstream.cu
 	CC mstream.cu -o mstream
 
 clean:
-	rm -rf strm.00*  mstream  mstream.out  slurm*out gpuinfo
+	rm -rf strm.00*  mstream  mstream.out  slurm*out gpuinfo `find . -type d | grep "/"`
 
