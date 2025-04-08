@@ -1,7 +1,7 @@
 # make our program and data set
 make clean
 make
-
+if [ -n "$SBATCH_PARTITION" ]  ;     then export OLD_PART=$SBATCH_PARTITION ;fi ; export SBATCH_PARTITION=shared
 # run assuming each line of "in_list" contains a directory
 export LIST=dir_list
 sbatch  --array=1-24  usedirs
@@ -12,4 +12,5 @@ export LIST=in_list
 sbatch  --array=1-24  uselist
 sbatch  --array=25-48  uselist
 
+unset SBATCH_PARTITION ; if [ -n "$OLD_PART" ]  ;     then export SBATCH_PARTITION=$OLD_PART ; unset OLD_PART  ;fi
 unset LIST
