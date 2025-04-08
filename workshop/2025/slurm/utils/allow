@@ -76,6 +76,9 @@ procs=[]
 if len(sys.argv)== 1:
     dohelp(sys.argv[0])
 
+if sys.argv[1].find("-") > -1 :
+    dohelp(sys.argv[0])
+
 for x in sys.argv[1:]:
     pset=[]
     x=x.split(",")
