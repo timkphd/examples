@@ -128,3 +128,37 @@ alloc ()
     echo $mycmd;
     eval $mycmd
 }
+
+
+## Send a job to debug, long, short, set time to 1, 5, 60 minutes
+todebug ()  {      
+    scontrol update JobId=$1 TimeLimit=01:00:00 
+    scontrol update JobId=$1 Partition=debug
+}
+
+tolong ()
+{
+    scontrol update JobId=$1 Partition=long
+}
+
+toshort ()
+{
+    scontrol update JobId=$1 Partition=short
+}
+
+
+to01 ()
+{
+scontrol update JobId=$1 TimeLimit=00:01:00
+}
+
+to05 ()
+{
+scontrol update JobId=$1 TimeLimit=00:05:00
+}
+
+to60 ()
+{
+scontrol update JobId=$1 TimeLimit=00:60:00
+}
+
