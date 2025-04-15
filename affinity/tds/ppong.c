@@ -106,7 +106,7 @@ double MYCLOCK()
         gettimeofday(&timestr, Tzp);
         return ((double)timestr.tv_sec + 1.0E-06*(double)timestr.tv_usec);
 }
-
+// #define MYCLOCK MPI_Wtime
 #ifdef PAPI
 long PAPI_get_real_cyc(void);
 #define TIMER ((double)PAPI_get_real_cyc()*(double)1.0E-06)
@@ -149,8 +149,13 @@ int main(int argc,char *argv[],char *env[])
   int *todo;
   int mapit,packed,iarg;
   double t1,t2;
+#ifdef DOSAVE
   double **times;
+  FILE *output;
+  char filename[32];
   char fname[256];
+  FILE *F;
+#endif
   int count[20];
   int is,ir,mysize,isize,resultlen,repeat;
   int rc_calls;
@@ -158,9 +163,7 @@ int main(int argc,char *argv[],char *env[])
   int step;
   int BSIZE;
   step=4;
-  FILE *file,*F;
-  char filename[32];
-  FILE *output;
+  FILE *file;
   logs=log((double)step);
 
     char version[MPI_MAX_LIBRARY_VERSION_STRING] ;
