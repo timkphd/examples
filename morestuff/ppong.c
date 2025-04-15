@@ -230,7 +230,9 @@ int main(int argc,char *argv[],char *env[])
 
     cores=(int*)malloc(4*numprocs);
     yours=(char*)malloc(MPI_MAX_PROCESSOR_NAME);
-		printf("%d %s %e %e\n",0,myname,t1,t2);
+    t1=MPI_Wtick();
+    t2=et-st;
+    printf("%d %s %e %e\n",0,myname,t1,t2);
     for(ir=1;ir<numprocs;ir++) {
 		MPI_Recv(yours,MPI_MAX_PROCESSOR_NAME,MPI_CHAR,ir,345,MPI_COMM_WORLD,&status);
 		MPI_Recv(&t1,1,MPI_DOUBLE,ir,456,MPI_COMM_WORLD,&status);
