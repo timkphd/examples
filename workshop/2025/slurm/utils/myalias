@@ -91,7 +91,7 @@ alloc ()
     fi;
     if [ -z ${SLURM_ACCOUNT+x} ]; then
         #ACC=hpcapps;
-        ACC=`sacctmgr -n show associations user=$USER format=account | head -1 | sed "s/ //g"
+        ACC=`sacctmgr -n show associations user=$USER format=account | head -1 | sed "s/ //g"`
     else
         ACC=$SLURM_ACCOUNT;
     fi;
@@ -162,3 +162,5 @@ to60 ()
 scontrol update JobId=$1 TimeLimit=00:60:00
 }
 
+thedir=`dirname $(realpath ${BASH_SOURCE[0]})`
+echo $PATH | grep $thedir > /dev/null ;  if [ $? -ne 0 ]; then export PATH=$thedir:$PATH ; fi
