@@ -1,0 +1,5 @@
+# patch package for --disable-gil
+cp var/spack/repos/builtin/packages/python/package.py ~/python.org
+sed -e 's/# Optional Python modules/&\n    variant("nogil", default=False, description="Turn off gil")/' var/spack/repos/builtin/packages/python/package.py  > tmp1
+sed -e 's/cflags = \[\]/&\n        if "+nogil" in spec: config_args.append("--disable-gil")/'     tmp1 > var/spack/repos/builtin/packages/python/package.py 
+
