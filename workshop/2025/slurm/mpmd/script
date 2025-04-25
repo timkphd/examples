@@ -1,0 +1,45 @@
+#!/bin/bash
+#SBATCH --job-name="atest"
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=20
+#SBATCH --time=00:03:00
+#SBATCH -o stdout
+#SBATCH -e stderr
+#SBATCH --partition=debug
+
+
+## build
+### hostlist is broken for cray mpich
+ml openmpi
+make
+
+## create/use  hostlist
+scontrol show hostnames | ./mlist.py  4 2 6 4 > hlist
+export SLURM_HOSTFILE=hlist
+
+## create app list
+cat <<ALIST > apps
+0-5 ./helloF
+6-8   ./helloc
+9   ./helloF
+10    ./helloc
+11  ./helloF
+12-15 ./helloc
+ALIST
+
+## show what we have
+cat hlist
+cat apps
+
+## runit 3 ways
+### use both hostlist and apps file
+srun  -n 16 --multi-prog apps > run_1
+
+### just use hostlist
+srun  -n 16 ./helloF > run_2
+
+### just use apps file
+unset SLURM_HOSTFILE
+srun  -n 16 --multi-prog apps > run_3
+
+
