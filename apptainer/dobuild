@@ -1,0 +1,129 @@
+#!/bin/bash
+#SBATCH --job-name="apptainer"
+#SBATCH --nodes=1
+##SBATCH --exclusive
+#SBATCH --mem=0 
+#SBATCH --time=02:00:00
+#SBATCH --partition=short
+##SBATCH --partition=gpu-h100 
+##SBATCH --reservation=h100-testing 
+##SBATCH --gres=gpu:h100:4
+#SBATCH --account=hpcapps
+
+#set up a newer environment
+#source /nopt/nrel/apps/gpu_stack/env_cpe23.sh
+
+# make sure we have git
+which git 2> /dev/null || ml git
+# Simple timer
+mytime () 
+{ 
+    now=`date +"%s.%N"`;
+    if (( $# > 0 )); then
+        rtn=$(printf "%0.3f" `echo $now - $1 | bc`);
+    else
+        rtn=$(printf "%0.3f" `echo $now`);
+    fi;
+    echo $rtn
+}
+
+# Where are we?
+cd `realpath -P .`
+STARTDIR=`pwd`
+echo $STARTDIR
+
+# MDY is used as the build directory relative to
+# the starting directory and as the subdirectory
+# for the install.  It's a date stamp with a trailing
+# lettter.
+export LETTER=d
+
+if [ -z "$LETTER" ]  ; then export LETTER=a ; fi
+export MDY=`date +%m%d%y_$LETTER`
+
+# set our base install directory
+#if [ -z "$BASED" ]  ; then export BASED=/nopt/nrel/apps/cudnn ; fi
+
+export BIRD=${BASED}/${MDY}
+
+echo $BIRD
+echo $MDY
+
+rm -rf $BIRD
+rm -rf $MDY
+mkdir -p $BIRD
+mkdir $MDY
+
+# get patches 
+ls setinstall 2>/dev/null || wget https://raw.githubusercontent.com/timkphd/examples/master/tims_tools/setinstall
+chmod 755 setinstall
+ 
+# save our environment in the build and install directories
+cat $0 > $BIRD/build_script
+cp setinstall $BIRD
+cp tkinter $BIRD
+printenv > $BIRD/env
+
+
+st=`mytime`
+now=$st
+
+cd $MDY
+git clone https://github.com/spack/spack.git  
+cd spack
+
+export SPACK_ROOT=`pwd`
+export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/.spack
+export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/.cache
+export TMPDIR=$SPACK_ROOT/tmp
+mkdir -p $TMPDIR
+
+$STARTDIR/setinstall `realpath -P etc/spack/defaults` `realpath $BIRD`
+source share/spack/setup-env.sh
+
+unset go
+ml gcc       || echo gcc   module not found
+ml gmake     || echo gmake module not found
+ml binutils  || echo binutils module not found
+ml python    || echo python module not found
+ml go        || echo go mosule not found
+spack compiler find
+spack external find
+
+
+#report on install
+module list 2>&1 |  egrep -v "Current|No modules loaded" | sed "s/..)/\n/g" |sed "/^[[:space:]]*$/d"
+echo export STARTDIR=$STARTDIR
+echo export SPACK_ROOT=$SPACK_ROOT
+echo export SPACK_USER_CONFIG_PATH=$SPACK_ROOT/.spack
+echo export SPACK_USER_CACHE_PATH=$SPACK_ROOT/.cache
+echo export TMPDIR=$SPACK_ROOT/tmp
+echo source $SPACK_ROOT/share/spack/setup-env.sh
+echo Install directory \$BIRD=$BIRD
+
+for pack in glib@2.78.3  "apptainer +suid +libsubid" "apptainer -libsubid" ; do
+  echo installing $pack
+  now=`mytime`
+  #spack install --no-check-signature --no-checksum $pack
+  #spack install --keep-stage -j 8 $pack
+  spack install -j 8 $pack
+  echo Time to install $pack: $(mytime $now)
+done
+
+#report on install
+module list 2>&1 |  egrep -v "Current|No modules loaded" | sed "s/..)/\n/g" |sed "/^[[:space:]]*$/d"
+echo export STARTDIR=$STARTDIR
+echo export SPACK_ROOT=$SPACK_ROOT
+echo export SPACK_USER_CONFIG_PATH=$SPACK_ROOT/.spack
+echo export SPACK_USER_CACHE_PATH=$SPACK_ROOT/.cache
+echo export TMPDIR=$SPACK_ROOT/tmp
+echo source $SPACK_ROOT/share/spack/setup-env.sh
+echo Install directory \$BIRD=$BIRD
+cd $STARTDIR
+echo "modules in:"
+BASE=$BIRD
+#find our module directory
+LDIR=$(for x in `find $BASE/lmod -type f` ; do dirname `dirname $x` ; done | sort -u | grep lmod)
+echo $LDIR
+
+
