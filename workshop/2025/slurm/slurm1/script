@@ -31,6 +31,8 @@ echo "Second run:"
 export OMP_NUM_THREADS=18
 srun --nodes=1 --ntasks=4 --ntasks-per-node=4 ./pstream -F -D -t 5 > pstream.out
 
-mv $SLURM_SUBMIT_DIR/$SLURM_JOB_ID.out .
-mv $SLURM_SUBMIT_DIR/$SLURM_JOB_ID.err .
+#cp $SLURM_SUBMIT_DIR/$SLURM_JOB_ID.out .
+#cp $SLURM_SUBMIT_DIR/$SLURM_JOB_ID.err .
+cp /scratch/$USER/$SLURM_JOB_ID.out .
+cp /scratch/$USER/$SLURM_JOB_ID.err .
 
