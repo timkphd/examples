@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --time=1:00:00
+#SBATCH --nodes=4
+#SBATCH --tasks-per-node=4
+
+LNODE=`scontrol show hostnames | tail -1`
+# run temperature monitor for 2 minutes
+srun --nodes=1 -w $LNODE -n 1 --time=00:02:00 --overlap ./temp &
+
+
+# sleep a bit to get initial temperature
+sleep 10
+
+module load mpich
+srun -n 4 --tasks-per-node=1 ./stf_01 < big.in > big.out
+
+
+wait
+
+

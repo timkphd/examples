@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+export DIR=`pwd`/times
+mkdir -p $DIR
+me=`hostname`
+rm -rf $DIR/$me
+st=`date +"%s"`
+while true ; do
+# this gives the temperature of socket 0 in celsius
+  temp=`echo "scale=2;$(cat /sys/class/thermal/thermal_zone0/temp) /1000" | bc -l`
+  now=`date +"%s"`
+  #echo $me $temp `date +"%s"`>> $DIR/$me
+  dt=`echo $now - $st | bc`
+  echo $me $dt $temp  >> $DIR/$me
+  sleep 2
+done
+
