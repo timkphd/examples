@@ -23,5 +23,5 @@ CC mstream.cu -o mstream
 srun -n 4 ./mstream -n 5000 > mstream.out
 
 
-mv slurm-$SLURM_JOBID.out .
+mv ../slurm-$SLURM_JOBID.out .
 

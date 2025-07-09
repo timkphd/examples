@@ -2,7 +2,7 @@
  * xpmem_master: controller thread for various XPMEM tests
  *
  * Copyright (c) 2010 Cray, Inc.
- * Copyright (c) 2025 NREL MPI version 
+ * Copyright (c) 2025 NREL for MPI version 
  *
  * This file is subject to the terms and conditions of the GNU General Public
  * License.  See the file "COPYING" in the main directory of this archive
@@ -38,6 +38,7 @@ int test_base1()
 	char astr[128];
 	int i, ret=0, *data, expected;
 	xpmem_segid_t segid;
+// set up the shared memory location.  Address is in segid.
 	segid = make_share(&data, SHARE_SIZE);
         for (i = 0; i < SHARE_INT_SIZE; i++) {
 		*(data + i)=i;
@@ -50,7 +51,16 @@ int test_base1()
 	printf("xpmem_proc1: sharing %ld bytes\n", SHARE_SIZE);
 	printf("xpmem_proc1: segid = %llx at %p\n\n", segid, data);
 	sprintf(astr, "%llx", segid);
+// We tell the other process where to find the memory block.
+// This could/should be sent as a long but the orginal code
+// used a string put in a file which is then read by the second
+// process.
 	MPI_Send(&astr,128,MPI_CHARACTER,m1,2345,MPI_COMM_WORLD);
+	
+// This MPI_Recv just a synchronization.  The Recv happens after
+// the second process updates the memory block.  In a real
+// code you would not use MPI for this but have a mutex like
+// block that gets updated.
 	MPI_Recv(&astr,128,MPI_CHARACTER,m1,2345,MPI_COMM_WORLD,&status);
 
 	printf("xpmem_proc1: verifying data...");
@@ -74,6 +84,9 @@ int test_base2()
 	xpmem_segid_t segid;
 	xpmem_apid_t apid;
 	int i, ret=0, *data;
+// We get the memory location as a string from the first process.
+// This could/should be sent as a long but the orginal code
+// used a string.  
 	MPI_Recv(&astr,128,MPI_INT,m0,2345,MPI_COMM_WORLD,&status);
 	segid = strtol(astr, NULL, 16);
 	data = attach_segid(segid, &apid);
@@ -84,7 +97,7 @@ int test_base2()
 	printf("xpmem_proc2: mypid = %d\n", getpid());
 	printf("xpmem_proc2: segid = %llx\n", segid);
 	printf("xpmem_proc2: attached at %p\n", data);
-
+// Update the bufffer.
 	printf("xpmem_proc2: adding 1 to all elems\n\n");
 	for (i = 0; i < SHARE_INT_SIZE; i++) {
 		if (i < 10  || i >  (SHARE_INT_SIZE-10))printf("%d\n",*(data + i));
@@ -97,6 +110,9 @@ int test_base2()
 		*(data + i) += 1;
 	}
 	sprintf(astr,"%s","done");
+// Tell the other process we are done.   In a real code 
+// you would not use MPI for this but have a mutex like
+// block that gets updated.
 	MPI_Send(&astr,128,MPI_CHARACTER,m0,2345,MPI_COMM_WORLD);
 	xpmem_detach(data);
 	xpmem_release(apid);

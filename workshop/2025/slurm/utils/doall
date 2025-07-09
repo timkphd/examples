@@ -9,6 +9,10 @@ cd array
 source doit
 cd $STARTD
 
+cd mpmd
+sbatch script
+cd $STARTD
+
 cd gpu
 source doit
 cd $STARTD

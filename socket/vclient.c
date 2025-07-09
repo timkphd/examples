@@ -5,7 +5,9 @@
 #include <arpa/inet.h>
 #include <time.h>
 /* https://www.codeconvert.ai/python-to-c-converter */
+#ifndef PORT
 #define PORT 20000
+#endif
 #define COUNT 10
 
 void server() {
