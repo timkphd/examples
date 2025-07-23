@@ -140,7 +140,7 @@ if __name__ == "__main__":
         pytrds=os.getenv("PY_THREADS","8")
         pytrds=int(pytrds)
         print("PY_THREADS: ",pytrds)
-        omp=os.getenv("OMP_NUM_THREADS","")
+        omp=os.getenv("OMP_NUM_THREADS","1")
         print("OMP_NUM_THREADS: ",omp)
         buffer[0]=pytrds
         buffer[1]=omp
