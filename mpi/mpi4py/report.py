@@ -49,6 +49,7 @@ version=version.replace(",",".")
 version=version.replace(" ","")
 tag=" "
 if myid == 0:
+	print(sys.version)
 	print("Tasks: ",numprocs," MPI Version ",version)
 	print("Running MPI libary ",lib)
 # tag is just an optional command line argument that
