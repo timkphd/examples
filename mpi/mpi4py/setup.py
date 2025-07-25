@@ -1,14 +1,12 @@
-from distutils.core import setup, Extension
-
-module1 = Extension('spam',
-                    sources = ['spam.c'])
-
-setup (name = 'PackageName',
-       version = '1.0',
-       description = 'This is a process - core mapping package',
-       ext_modules = [module1])
-
-
-##python setup.py build
-##export PYTHONPATH=`pwd`/build/lib.linux-x86_64-3.7
-
+from setuptools import setup, Extension
+setup(
+        name="spam",
+        version="1.0",
+        ext_modules=[
+            Extension(
+                "spam",  # Module name as imported in Python
+                sources=["spam.c"],  # List of C/C++ source files
+                # Optional: other compilation flags, libraries, etc.
+            )
+        ]
+    )

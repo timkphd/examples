@@ -21,6 +21,12 @@ clean:
 tar: clean HTML
 	tar --exclude .svn --exclude CVS --exclude CVSROOT --exclude .DS_Store  -czf mpi4py.tgz *
 
+spam: setup.py spam.c
+	rm -rf green
+	mkdir green
+	cp setup.py spam.c green
+	cd green ; python setup.py build ; python setup.py install
+
 
 PS=${wildcard *.py}
 PO=${PS:.py=.html}
