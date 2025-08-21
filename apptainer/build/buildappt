@@ -1,0 +1,75 @@
+#!/bin/bash -e
+#SBATCH --job-name="hogb"
+#SBATCH --nodes=1
+#SBATCH --time=01:00:00
+#SBATCH --account=hpcapps
+#SBATCH --tasks-per-node=104 
+#SBATCH --exclusive
+#SBATCH --partition=debug
+cat $0
+module restore
+mkdir -p /nopt/nrel/apps/software/apptainer/aug25
+cd /nopt/nrel/apps/software/apptainer/aug25
+export STARTDIR=`pwd`
+git clone https://github.com/spack/spack.git
+cd spack
+export SPACK_ROOT=`pwd`
+export SPACK_ROOT=/nopt/nrel/apps/software/apptainer/aug25/install
+export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/.spack
+export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/.cache
+export TMPDIR=$SPACK_ROOT/tmp
+mkdir -p $TMPDIR
+. share/spack/setup-env.sh
+
+spack config add "modules:default:enable:[tcl]"
+spack config add "modules:default:roots:tcl:'/nopt/nrel/apps/software/apptainer/aug25/modules'"
+spack config add "config:install_tree:root:'/nopt/nrel/apps/software/apptainer/aug25/install/opt'"
+echo "+++++++++++++++" `date`
+spack install -j 24 libxml2@2.12.9 
+spack install -j 24 pkg-config 
+spack install  --only dependencies libseccomp 
+
+module use /nopt/nrel/apps/software/apptainer/aug25/modules/linux-rhel8-sapphirerapids/
+ml gperf
+pushd /nopt/nrel/apps/software/apptainer/aug25
+rm -rf libseccomp*
+wget https://github.com/seccomp/libseccomp/releases/download/v2.6.0/libseccomp-2.6.0.tar.gz
+tar -xzf libseccomp-2.6.0.tar.gz
+cd libseccomp-2.6.0
+./configure --prefix=/nopt/nrel/apps/software/apptainer/aug25/libseccomp/install
+make
+make install
+popd
+
+export SPACK_EDITOR=ed
+spack config edit packages <<BONK
+a
+  libseccomp:
+    externals:
+    - spec: libseccomp@2.6.0
+      prefix: /nopt/nrel/apps/software/apptainer/aug25/libseccomp/install
+.
+w
+q
+BONK
+
+unset SPACK_EDITOR
+
+spack load pkg-config
+echo "+++++++++++++++" `date`
+#spack install -j 24 lmod                    || echo lmod nope
+echo "+++++++++++++++" `date`
+spack install -j 24 apptainer               || echo apptainer nope
+spack install -j 24 apptainer  +suid +libsubid              || echo apptainer nope
+echo "+++++++++++++++" `date`
+spack install -j 24 apptainer@1.3.3 +suid   || echo 1.3.3 nope
+echo "+++++++++++++++" `date`
+spack install -j 24 apptainer@1.1.9 +suid   || echo 1.1.9 nope
+echo "+++++++++++++++" `date`
+
+pushd /nopt/nrel/apps/software/apptainer/aug25/install
+find "$PWD" -name spack_perms_fix.sh
+popd
+
+
+cp $SLURM_SUBMIT_DIR/slurm-$SLURM_JOBID.out  /nopt/nrel/apps/software/apptainer/aug25

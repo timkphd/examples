@@ -1,0 +1,26 @@
+#!/bin/bash
+#SBATCH --time=2:00:00
+#SBATCH --partition=short
+#SBATCH --nodes=1
+#SBATCH --exclusive
+# This runs in 58:59. 
+# Might what to run in short instead of debug.
+mkdir $SLURM_JOBID
+cat $0 >$SLURM_JOBID/script
+cp r1.def r4.def ub1.def ub2.def ub3.def  $SLURM_JOBID
+cd $SLURM_JOBID
+ml apptainer
+apptainer build r1.sif r1.def
+apptainer exec r1.sif apptainer build r4.sif r4.def
+apptainer exec r4.sif apptainer build ub1.sif ub1.def
+apptainer exec ub1.sif apptainer build ub2.sif ub2.def
+apptainer exec ub2.sif apptainer build ub3.sif ub3.def
+
+#This needs to be run outside of slurm. Ask THK why.
+ssh $SLURM_JOB_NODELIST "ml apptainer ; apptainer run --bind /nopt/xalt/current/lib64 `pwd`/ub3.sif" > run.out
+
+#However, we can run the MPI app directly witth srun
+srun -n 4 apptainer exec ub3.sif /examples/mpi/hellof > srun.out
+
+
+

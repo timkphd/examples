@@ -1,0 +1,29 @@
+bootstrap: docker
+from: rockylinux:9.3.20231119
+#from: rockylinux
+
+%files
+/nopt/xalt/current/lib64 /nopt/xalt/current/lib64
+
+%post
+    echo "Installing packages into the Rocky Linux 9.3 container"
+    dnf -y update
+    dnf install -y which
+    dnf -y install epel-release
+    dnf -y install apptainer-suid
+    dnf -y group install "Development Tools" || echo nope Development Tools
+    dnf -y upgrade --refresh
+    dnf -y install openssh-server || echo nope openssh-server 
+    dnf -y install openssh || echo nope openssh
+    dnf -y install git
+    dnf -y install cmake
+    dnf -y install make
+    dnf -y install wget
+    dnf -y install findutils
+    dnf -y install gfortran
+    dnf -y update python
+    dnf -y install zlib-ng || echo nope  zlib-ng 
+    dnf -y install procps 
+    dnf -y install perl
+    dnf -y install sed
+

@@ -1,0 +1,32 @@
+Bootstrap: localimage
+from: ub1.sif
+
+
+
+%post
+
+cd /
+git clone https://github.com/timkphd/examples.git
+cd /build
+export STARTDIR=`pwd`
+cd spack
+export SPACK_ROOT=`pwd`
+export SPACK_ROOT=/build/install
+export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/.spack
+export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/.cache
+export TMPDIR=$SPACK_ROOT/tmp
+. share/spack/setup-env.sh
+
+spack install python +tkinter
+export PYDIR=`find /build/install/.cache/package_repos/*/repos/spack_repo/builtin -name python`
+PACK=$PYDIR/package.py
+ls -lt $PACK
+sed -e 's/# Optional Python modules/&\n    variant("nogil", default=False, description="Turn off gil")/' $PACK > tmp1
+sed -e 's/cflags = \[\]/&\n        if "+nogil" in spec: config_args.append("--disable-gil")/'     tmp1 > $PACK
+ls -lt $PACK
+spack install python +nogil 
+spack install gcc@15.2.0
+spack install mpich
+
+
+

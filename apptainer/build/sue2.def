@@ -1,0 +1,70 @@
+bootstrap: localimage
+from: sue1.sif
+
+%labels
+	Maintainer Tim Kaiser
+	Version 1.0
+
+%help
+    This is a suse Linux container with lmod and apptainer
+    
+%post
+
+mkdir /extra02
+mkdir /extra03
+mkdir /extra04
+mkdir /build
+
+cd /build
+export STARTDIR=`pwd`
+git clone https://github.com/spack/spack.git
+cd spack
+export SPACK_ROOT=`pwd`
+export SPACK_ROOT=/build/install
+export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/.spack
+export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/.cache
+export TMPDIR=$SPACK_ROOT/tmp
+mkdir -p $TMPDIR
+. share/spack/setup-env.sh
+
+spack config add "modules:default:enable:[tcl]"
+spack config add "modules:default:roots:tcl:'/build/modules'"   
+spack config add "config:install_tree:root:'/build/install'"   
+
+
+spack install -j 48 libxml2@2.12.9
+spack install -j 48 pkg-config
+spack load pkg-config
+echo "+++++++++++++++" `date`
+spack install -j 48 lmod             || echo lmod nope
+echo "+++++++++++++++" `date`
+spack install -j 48 apptainer || echo apptainer nope
+echo "+++++++++++++++" `date`
+spack install -j 48 apptainer@1.3.3 +suid  || echo 1.3.3 nope
+echo "+++++++++++++++" `date`
+spack install -j 48 apptainer@1.1.9 +suid || echo 1.1.9 nope
+echo "+++++++++++++++" `date`
+
+for doit in `find /build/install/ -name spack_perms_fix.sh` ; do
+. $doit
+done
+
+echo ". `find /build/install/* -name  bash | grep init`"  > /.singularity.d/env/99-zmine.sh            || echo find nope
+echo export MODULEPATH=/build/modules/`ls /build/modules/` >>  /.singularity.d/env/99-zmine.sh      || echo modpath nope
+echo export LD_LIBRARY_PATH=/nopt/xalt/current/lib64:\$LD_LIBRARY_PATH >>  /.singularity.d/env/99-zmine.sh || echo LD_LIBRARY_PATH
+echo ml apptainer/1.1.9 >> /.singularity.d/env/99-zmine.sh
+
+spack install python +tkinter || spack install python
+export PYDIR=`find /build/install/.cache/package_repos/*/repos/spack_repo/builtin -name python`
+PACK=$PYDIR/package.py
+ls -lt $PACK
+sed -e 's/# Optional Python modules/&\n    variant("nogil", default=False, description="Turn off gil")/' $PACK > tmp1
+sed -e 's/cflags = \[\]/&\n        if "+nogil" in spec: config_args.append("--disable-gil")/'     tmp1 > $PACK
+ls -lt $PACK
+spack install python +nogil  || echo nogil failed
+spack install gcc@15.2.0     || echo gcc failed
+spack install mpich          || mpich failed
+
+cd /
+git clone https://github.com/timkphd/examples.git
+

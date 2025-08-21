@@ -1,0 +1,36 @@
+Bootstrap: localimage
+from: sue2.sif
+
+
+%runscript
+. /.singularity.d/env/99-zmine.sh
+ml mpich
+echo running mpi hello world
+mpirun -n 4 /examples/mpi/hellof
+echo
+echo running stream fortran
+/examples/stream/stream_f
+echo
+echo running stream c
+/examples/stream/stream_c
+echo
+echo our pythons
+for p in `find /build/install/linux-sapphirerapids/python-3.13.5* -name python3`; do 
+  echo $p
+  $p -VV
+done
+
+%post
+
+
+. /.singularity.d/env/99-zmine.sh
+ml gcc
+ml mpich
+
+cd /examples/stream
+make
+cd /examples/mpi
+mpif90 hellof.f90 -o hellof
+
+
+
