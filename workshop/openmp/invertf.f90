@@ -188,7 +188,7 @@ program tover
  write(*,1)2,t2_start,t2_end,e2
  write(*,1)3,t3_start,t3_end,e3
  write(*,1)4,t4_start,t4_end,e4
- 1 format("section ",i4," start time= ",g12.5," end time= ",g12.5," error=",g12.5)
+ 1 format("section ",i4," start time= ",g15.5," end time= ",g15.5," error=",g15.5)
  end program
 
     
