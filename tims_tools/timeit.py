@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#### ml wget 
 #### watch -n 10 ./timeit.py 3 | tee speed
 import time
 from subprocess import run
@@ -6,10 +7,20 @@ from random import random
 import sys
 sites=[]
 sites.append("https://www.python.org/ftp/python/3.13.7/Python-3.13.7.tgz")
-sites.append("https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.8.tar.gz")
 sites.append("https://www.mpich.org/static/downloads/4.3.1/mpich-4.3.1.tar.gz")
+sites.append("https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.8.tar.gz")
 #sites.append("https://bigsearcher.com/mirrors/gcc/releases/gcc-11.1.0/gcc-11.1.0.tar.xz")
 #sites.append("https://julialang-s3.julialang.org/bin/linux/x64/1.11/julia-1.11.7-linux-x86_64.tar.gz")
+"""
+starlink
+tkaiser@air examples % tims_tools/timeit.py 5
+       29382166     1.327 Tue Sep 16 12:51:18 2025
+       37469641     2.196 Tue Sep 16 12:51:36 2025
+       42820074     2.127 Tue Sep 16 12:51:56 2025
+       78877216     0.605 Tue Sep 16 12:54:06 2025
+      286235430     1.130 Tue Sep 16 12:58:19 2025
+tkaiser@air examples % 
+"""
 if len(sys.argv) > 1:
 	nc=int(sys.argv[1])
 else:
