@@ -1,0 +1,9 @@
+#!/bin/bash
+#nmcli radio wifi on
+#nmcli device wifi list
+sudo nmcli device wifi connect TourofMO password Bob=1=Tom
+for pies in pi00 pi01 pi02 pi03 ; do
+ssh $pies "sudo nmcli device wifi connect NAME password PASSWORD ; ifconfig | grep 192"
+done
+
+
