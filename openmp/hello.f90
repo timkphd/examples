@@ -14,7 +14,7 @@ program hybrid
 !$OMP CRITICAL
   core=findmycpu() 
   write(unit=*,fmt="(i4,a,a)",advance="no")myid," running on ",trim(myname)
-  write(unit=*,fmt="(a,i2,a,i2i,a,i8)")" thread= ",OMP_GET_THREAD_NUM()," of ",OMP_GET_MAX_THREADS()," on core",core
+  write(unit=*,fmt="(a,i2,a,i2,a,i8)")" thread= ",OMP_GET_THREAD_NUM()," of ",OMP_GET_MAX_THREADS()," on core",core
 !$OMP END CRITICAL
 !$OMP END PARALLEL
 end program

@@ -3,15 +3,18 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <time.h>
 
 /* utility routines */
 double system_clock(double *x);
 void mysleep(float t); 
 
-#ifdef ISLEEP
-#define MYSLEEP mysleep
-#else
+#ifdef SSLEEP
+// sleep takes and integer do you can't use
+// it to sleep for a fraction of a second
 #define MYSLEEP sleep
+#else
+#define MYSLEEP mysleep
 #endif
 
 int main(int argc,char *argv[]) {
@@ -45,6 +48,14 @@ int main(int argc,char *argv[]) {
 	       MYSLEEP(dt);
        }
     }
+    for(m=0;m<n;m++) {
+       free(rays[m]);
+       printf("freed %6d\n",m+1);
+       if((dt > 0.0) && (m < (n-1))){
+	       printf("sleeping %8.2f\n",dt);
+	       MYSLEEP(dt);
+       }
+    }
 }
 
 double system_clock(double *x) {
@@ -61,11 +72,23 @@ double system_clock(double *x) {
 }
 
 void mysleep(float t) {
-	double now,t2;
-	system_clock(&now);
-	t2=now+t;
-	while (now < t2 ) {
-		system_clock(&now);
-	}
+	struct timespec request;
+	struct timespec remaining;
+	int isec = (int)t;
+	double fnano=1e9*(t-isec);
+	request.tv_sec=isec;
+	request.tv_nsec=(long)fnano;
+	int result=nanosleep(&request, &remaining);
+	if (result != 0)perror("nanosleep failed");
 }
+
+void spinsleep(float t) {
+      double now,t2;
+      system_clock(&now);
+      t2=now+t;
+      while (now < t2 ) {
+              system_clock(&now);
+      }
+}
+
 
