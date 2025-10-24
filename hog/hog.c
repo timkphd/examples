@@ -4,13 +4,14 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <time.h>
+#include <errno.h>
 
 /* utility routines */
 double system_clock(double *x);
 void mysleep(float t); 
 
 #ifdef SSLEEP
-// sleep takes and integer do you can't use
+// sleep takes and integer so you can't use
 // it to sleep for a fraction of a second
 #define MYSLEEP sleep
 #else
@@ -71,6 +72,16 @@ double system_clock(double *x) {
  	return(t);
 }
 
+#ifdef SPINSLEEP
+void mysleep(float t) {
+      double now,t2;
+      system_clock(&now);
+      t2=now+t;
+      while (now < t2 ) {
+              system_clock(&now);
+      }
+}
+#else
 void mysleep(float t) {
 	struct timespec request;
 	struct timespec remaining;
@@ -79,16 +90,12 @@ void mysleep(float t) {
 	request.tv_sec=isec;
 	request.tv_nsec=(long)fnano;
 	int result=nanosleep(&request, &remaining);
-	if (result != 0)perror("nanosleep failed");
+	if (result != 0){
+	  perror("sleep interrupted");
+	  printf("%d %lld.%.9ld", errno,(long long)remaining.tv_sec, remaining.tv_nsec);
+	}
 }
+#endif
 
-void spinsleep(float t) {
-      double now,t2;
-      system_clock(&now);
-      t2=now+t;
-      while (now < t2 ) {
-              system_clock(&now);
-      }
-}
 
 
