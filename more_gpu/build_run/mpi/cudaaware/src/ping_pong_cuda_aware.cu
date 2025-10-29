@@ -59,8 +59,30 @@ int main(int argc, char *argv[])
 
 	// Map MPI ranks to GPUs
     int num_devices = 0;
+    int gin[2];
+    if (rank == 0) {
+	    if (argc == 3){
+		    gin[0]=atoi(argv[1]);
+		    gin[1]=atoi(argv[2]);
+	    }
+	    else{
+	   	gin[0]=-1;
+	    	gin[1]=-1;
+	    }
+	}
+    MPI_Bcast(gin,2,MPI_INT,0,MPI_COMM_WORLD);
+
     cudaErrorCheck( cudaGetDeviceCount(&num_devices) );
+    if (gin[rank] == -1 ){
+    	printf("task %d on %s gpu %d\n",rank,myname,(rank % num_devices));
 	cudaErrorCheck( cudaSetDevice(rank % num_devices) );
+    }
+    else {
+    	printf("task %d on %s gpu %d\n",rank,myname,gin[rank]);
+	cudaErrorCheck( cudaSetDevice(gin[rank])) ;
+    }
+
+
 
 	/* -------------------------------------------------------------------------------------------
 		Loop from 8 B to 1 GB
