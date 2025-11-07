@@ -1,0 +1,11 @@
+bootstrap: docker   
+from:  ubuntu:latest
+
+%post
+apt update
+apt install -y wget git gcc gfortran g++ make python3 cmake pip
+apt install -y software-properties-common 
+add-apt-repository -y ppa:apptainer/ppa 
+apt update 
+apt install -y apptainer 
+

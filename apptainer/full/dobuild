@@ -1,0 +1,17 @@
+module purge
+module use /kfs2/projects/hpcapps/tkaiser/appt/110725_a/modules/linux-rhel8-sapphirerapids/
+module load apptainer
+apptainer build r0.sif r0.def
+apptainer build suse0.sif suse0.def
+apptainer exec r0.sif apptainer build ub0.sif ub0.def
+
+for os in r suse ub ; do
+	echo +++++++++++++++++ $os +++++++++++++++++
+	apptainer exec ${os}0.sif apptainer build ${os}1.sif ${os}1.def
+done
+
+for os in r suse ub ; do
+	echo +++++++++++++++++ $os +++++++++++++++++
+	srun -e /dev/null -n 4 apptainer exec  ${os}1.sif hellof 
+done
+

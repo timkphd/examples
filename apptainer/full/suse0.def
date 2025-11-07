@@ -1,0 +1,44 @@
+bootstrap: docker
+from: registry.suse.com/bci/gcc:14
+
+%labels
+	Maintainer Tim Kaiser
+	Version 1.0
+
+%help
+    This is a suse Linux container with apptainer
+    
+    
+    
+%post
+
+zypper  addrepo https://download.opensuse.org/repositories/filesystems/SLE_15_SP6/filesystems.repo
+zypper --gpg-auto-import-keys refresh
+zypper  --non-interactive install squashfuse
+
+zypper --non-interactive dup
+zypper addrepo https://download.opensuse.org/repositories/home:mslacken:pr/openSUSE_Tumbleweed/home:mslacken:pr.repo
+zypper --gpg-auto-import-keys refresh
+zypper --non-interactive install apptainer
+zypper --non-interactive  install  curl
+zypper --non-interactive  install  libcurl-devel
+zypper --non-interactive  install  wget
+zypper --non-interactive  install  libcryptopp-devel
+zypper --no-gpg-checks  --gpg-auto-import-keys --non-interactive  addrepo https://download.opensuse.org/repositories/devel:languages:go/15.6/devel:languages:go.repo
+zypper --gpg-auto-import-keys refresh
+zypper --gpg-auto-import-keys addrepo https://download.opensuse.org/repositories/editors/15.6/editors.repo 
+zypper --gpg-auto-import-keys refresh 
+zypper --non-interactive install nano
+zypper --non-interactive  install  python3
+zypper --non-interactive  install  xz
+zypper --non-interactive  install  bzip2
+zypper --non-interactive  install  libbz2-devel 
+zypper --non-interactive  install  patch
+zypper --non-interactive  install  openssl
+zypper --non-interactive  install  openssl-devel
+zypper --non-interactive  install  perl
+zypper --non-interactive  install  vim
+zypper --non-interactive  install  squashfs
+zypper --non-interactive  install  libasm-devel
+zypper --non-interactive  install  libdw-devel
+zypper --non-interactive  install  cpp

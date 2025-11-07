@@ -1,0 +1,42 @@
+
+
+# Make a install location and go there
+mkdir -p /nopt/local/apptainer
+cd /nopt/local/apptainer
+export BASE=`pwd`
+BUILD=`date +"%m%d%y"_a`
+rm -rf $BASE/$BUILD
+mkdir -p $BASE/$BUILD
+cat $0 > $BASE/$BUILD/script
+cd $BASE
+
+# Get spack; do initial setup and start it
+wget https://github.com/spack/spack/releases/download/v1.0.2/spack-1.0.2.tar.gz
+tar -xzf spack-1.0.2.tar.gz
+mv spack-1.0.2 spack$BUILD
+cd spack$BUILD
+export SPACK_ROOT=`pwd`
+export SPACK_ROOT=$BASE/$BUILD/install
+export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/.spack
+export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/.cache
+export TMPDIR=$SPACK_ROOT/tmp
+mkdir -p $TMPDIR
+. share/spack/setup-env.sh
+
+# Set up modules and install location
+spack config add "modules:default:enable:[tcl]"
+spack config add "modules:default:roots:tcl:'$BASE/$BUILD/modules'"
+spack config add "config:install_tree:root:'$BASE/$BUILD/install'"
+
+# Don't rebuild these
+spack external find bash perl grep tar
+
+# Preinstall libseccomp.  This might not be nessessary or
+# might even break some builds.  It is required on RH-8.8.
+# Note: this could be specified on the apptainer install line.
+spack install libseccomp@2.3.3
+
+#spack install apptainer -suid +libsubid || echo apptainer+libsubid FAILED
+spack install apptainer -suid -libsubid || echo apptainer-libsubid FAILED
+
+
