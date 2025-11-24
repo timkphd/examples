@@ -1,0 +1,13 @@
+server () {
+        add=`ifconfig | egrep $1  | awk '{print $2}'`
+        echo address is $add
+        if [ $# -eq 2 ] ; then
+            port=$2
+        else
+                port=8000
+        fi
+                echo address is $add:$port
+
+        python -m http.server $port --bind $add
+        }
+
