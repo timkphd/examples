@@ -15,7 +15,7 @@ rmpath ()
     for l in $( echo "$lpaths" ) ; do
         echo $l | grep -v $1 > /dev/null;
         if [ $? -eq 0 ]; then
-            npath=`echo $l | grep -v $1`:$npath;
+            npath=$npath:`echo $l | grep -v $1`
         fi;
     done;
     export PATH=$npath
@@ -37,7 +37,7 @@ rmlib ()
     for l in $( echo "$lpaths" ) ; do
         echo $l | grep --color=auto -v $1 > /dev/null;
         if [ $? -eq 0 ]; then
-            npath=`echo $l | grep -v $1`:$npath;
+            npath=$npath:`echo $l | grep -v $1`
         fi;
     done;
     export LD_LIBRARY_PATH=$npath
