@@ -6,6 +6,8 @@
 #include <math.h>
 #include <sys/time.h>
 #include <unistd.h>
+// #define FLT long double
+// #define INT long long
 #define FLT double
 #define INT int
 

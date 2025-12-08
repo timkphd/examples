@@ -1,0 +1,16 @@
+# make our program and data set
+make clean
+make
+
+export ACC=--account=hpcapps
+##run assuming each line of "in_list" contains our input
+export LIST=dir_list
+sbatch $ACC --array=1-24  usedirs
+sbatch $ACC --array=25-48  usedirs
+
+#run assuming data in in directories specified in "dir_list"
+export LIST=in_list
+sbatch $ACC --array=1-24  uselist
+sbatch $ACC --array=25-48  uselist
+
+unset LIST
