@@ -39,7 +39,7 @@ subroutine invert (matrix,size)
     real(b8) matrix(:,:)
     integer size
     integer switch,k, jj, kp1, i, j, l, krow, irow,nmax
-    parameter (nmax=1000)
+    parameter (nmax=2000)
     dimension switch(nmax,2)
     real(b8) pivot,temp
     do  k = 1,size
@@ -137,7 +137,7 @@ program tover
     real(b8) t3_start,t3_end,e3;
     real(b8) t4_start,t4_end,e4;
 
-    n=750
+    n=1500
     allocate(m1(n,n),m2(n,n),m3(n,n),m4(n,n))
     call mset(m1,n,10)
     call mset(m2,n,20)
