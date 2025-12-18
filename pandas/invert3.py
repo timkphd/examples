@@ -81,9 +81,10 @@ from time import time
 mysize=100
 nt=10
 verbose=False
+theseed=42
 print("Matrix size: ",mysize)
 
-np.random.seed(42)
+np.random.seed(theseed)
 py=np.zeros([nt])
 pyres=np.empty([mysize,nt])
 print("\nPure python")
@@ -100,7 +101,7 @@ for i in range(0,nt):
         formatted_vector = f"[{' '.join(f'{x:8.4f}' for x in solution)}]"
         print("  ",formatted_vector)
 
-np.random.seed(42)
+np.random.seed(theseed)
 nba=np.zeros([nt])
 nures=np.empty([mysize,nt])
 print("\nNumba")
@@ -117,7 +118,7 @@ for i in range(0,nt):
         formatted_vector = f"[{' '.join(f'{x:8.4f}' for x in solution)}]"
         print("  ",formatted_vector)
 
-np.random.seed(42)
+np.random.seed(theseed)
 lib=np.zeros([nt])
 libres=np.empty([mysize,nt])
 print("\nnp.linalg.solve")
@@ -160,5 +161,6 @@ print(f"{pys:8.3e}  {nbas:8.3e}  {libs:8.3e}"  )
 print(f"{1:.0f}           {(pys/nbas):8.2f}   {(pys/libs):8.2f}"  )
 
 print("\nError Check against linalg.solve")
-print(f"{sum(sum(abs(pyres-libres))):8.3e}")
-print(f"{sum(sum(abs(nures-libres))):8.3e}")
+print('python:',f"{sum(sum(abs(pyres-libres)))/(nt*mysize):8.3e}")
+print(' numba:',f"{sum(sum(abs(nures-libres)))/(nt*mysize):8.3e}")
+
