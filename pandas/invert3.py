@@ -85,6 +85,7 @@ print("Matrix size: ",mysize)
 
 np.random.seed(42)
 py=np.zeros([nt])
+pyres=np.empty([mysize,nt])
 print("\nPure python")
 for i in range(0,nt):
     a=np.random.random([mysize,mysize]).astype(np.float64)
@@ -94,12 +95,14 @@ for i in range(0,nt):
     t2=time()
     print("%8.2e" % (t2-t1))
     py[i]=t2-t1
+    pyres[:,i]=solution
     if verbose :
         formatted_vector = f"[{' '.join(f'{x:8.4f}' for x in solution)}]"
         print("  ",formatted_vector)
 
 np.random.seed(42)
 nba=np.zeros([nt])
+nures=np.empty([mysize,nt])
 print("\nNumba")
 for i in range(0,nt):
     a=np.random.random([mysize,mysize]).astype(np.float64)
@@ -109,12 +112,14 @@ for i in range(0,nt):
     t2=time()
     print("%8.2e" % (t2-t1))
     nba[i]=t2-t1
+    nures[:,i]=solution
     if verbose :
         formatted_vector = f"[{' '.join(f'{x:8.4f}' for x in solution)}]"
         print("  ",formatted_vector)
 
 np.random.seed(42)
 lib=np.zeros([nt])
+libres=np.empty([mysize,nt])
 print("\nnp.linalg.solve")
 for i in range(0,nt):
     a=np.random.random([mysize,mysize]).astype(np.float64)
@@ -124,6 +129,7 @@ for i in range(0,nt):
     t2=time()
     print("%8.2e" % (t2-t1))
     lib[i]=t2-t1
+    libres[:,i]=solution
     if verbose :
         formatted_vector = f"[{' '.join(f'{x:8.4f}' for x in solution)}]"
         print("  ",formatted_vector)
@@ -152,3 +158,7 @@ nbas=nbas/count
 libs=libs/count
 print(f"{pys:8.3e}  {nbas:8.3e}  {libs:8.3e}"  )
 print(f"{1:.0f}           {(pys/nbas):8.2f}   {(pys/libs):8.2f}"  )
+
+print("\nError Check against linalg.solve")
+print(f"{sum(sum(abs(pyres-libres))):8.3e}")
+print(f"{sum(sum(abs(nures-libres))):8.3e}")
