@@ -1,8 +1,6 @@
 #!/opt/spack/base/120925/envs/3.14.1/bin/python
 # coding: utf-8
 
-# In[ ]:
-
 # https://www.geeksforgeeks.org/dsa/gaussian-elimination/
 import numpy as np
 def gaussian_elimination_solver_org(A_coeffs, b_constants):
@@ -37,10 +35,6 @@ def gaussian_elimination_solver_org(A_coeffs, b_constants):
         sum_ax = np.sum(aug_matrix[i, i+1:n] * x[i+1:n])
         x[i] = (aug_matrix[i, n] - sum_ax) / aug_matrix[i, i]       
     return x
-
-
-# In[ ]:
-
 
 import numpy as np
 from numba import jit
@@ -83,38 +77,11 @@ def gaussian_elimination_solver(A_coeffs, b_constants):
         x[i] = (aug_matrix[i, n] - sum_ax) / aug_matrix[i, i]
     return(x)
 
-
-# In[ ]:
-
-
 from time import time
 mysize=100
 nt=10
 verbose=False
 print("Matrix size: ",mysize)
-
-
-# In[ ]:
-
-
-np.random.seed(42)
-nba=np.zeros([nt])
-print("\nNumba")
-for i in range(0,nt):
-    a=np.random.random([mysize,mysize]).astype(np.float64)
-    b=np.random.random([mysize]).astype(np.float64)
-    t1=time()
-    solution = gaussian_elimination_solver(a, b)
-    t2=time()
-    print("%8.2e" % (t2-t1))
-    nba[i]=t2-t1
-    if verbose :
-        formatted_vector = f"[{' '.join(f'{x:8.4f}' for x in solution)}]"
-        print("  ",formatted_vector)
-
-
-# In[ ]:
-
 
 np.random.seed(42)
 py=np.zeros([nt])
@@ -131,9 +98,20 @@ for i in range(0,nt):
         formatted_vector = f"[{' '.join(f'{x:8.4f}' for x in solution)}]"
         print("  ",formatted_vector)
 
-
-# In[ ]:
-
+np.random.seed(42)
+nba=np.zeros([nt])
+print("\nNumba")
+for i in range(0,nt):
+    a=np.random.random([mysize,mysize]).astype(np.float64)
+    b=np.random.random([mysize]).astype(np.float64)
+    t1=time()
+    solution = gaussian_elimination_solver(a, b)
+    t2=time()
+    print("%8.2e" % (t2-t1))
+    nba[i]=t2-t1
+    if verbose :
+        formatted_vector = f"[{' '.join(f'{x:8.4f}' for x in solution)}]"
+        print("  ",formatted_vector)
 
 np.random.seed(42)
 lib=np.zeros([nt])
@@ -150,16 +128,6 @@ for i in range(0,nt):
         formatted_vector = f"[{' '.join(f'{x:8.4f}' for x in solution)}]"
         print("  ",formatted_vector)
 
-
-# In[ ]:
-
-
-lib
-
-
-# In[ ]:
-
-
 print("\nTimes (sec)")
 print("python     numba      linalg")
 pys=0.0
@@ -173,10 +141,6 @@ for i in range(1,nt):
     nbas=nbas+nba[i]
     libs=libs+lib[i]
 
-
-# In[ ]:
-
-
 print("\nSpeedup")
 print("python  numba   linalg")
 for i in range(1,nt):   
@@ -188,9 +152,3 @@ nbas=nbas/count
 libs=libs/count
 print(f"{pys:8.3e}  {nbas:8.3e}  {libs:8.3e}"  )
 print(f"{1:.0f}           {(pys/nbas):8.2f}   {(pys/libs):8.2f}"  )
-
-
-
-
-
-
