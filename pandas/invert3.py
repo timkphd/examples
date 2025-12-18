@@ -3,7 +3,7 @@
 
 # In[ ]:
 
-
+# https://www.geeksforgeeks.org/dsa/gaussian-elimination/
 import numpy as np
 def gaussian_elimination_solver_org(A_coeffs, b_constants):
     """
