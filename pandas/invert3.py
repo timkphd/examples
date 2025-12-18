@@ -162,8 +162,16 @@ lib
 
 print("\nTimes (sec)")
 print("python     numba      linalg")
+pys=0.0
+nbas=0.0
+libs=0.0
+count=0
 for i in range(1,nt):
     print(f"{py[i]:8.3e}  {nba[i]:8.3e}  {lib[i]:8.3e}"  )
+    count=count+1
+    pys=pys+py[i]
+    nbas=nbas+nba[i]
+    libs=libs+lib[i]
 
 
 # In[ ]:
@@ -173,6 +181,13 @@ print("\nSpeedup")
 print("python  numba   linalg")
 for i in range(1,nt):   
     print(f"{1:.0f}      {(py[i]/nba[i]):6.2f}   {(py[i]/lib[i]):6.2f}"  )
+
+print("\nAverages")
+pys=pys/count
+nbas=nbas/count
+libs=libs/count
+print(f"{pys:8.3e}  {nbas:8.3e}  {libs:8.3e}"  )
+print(f"{1:.0f}           {(pys/nbas):8.2f}   {(pys/libs):8.2f}"  )
 
 
 
