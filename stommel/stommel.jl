@@ -85,11 +85,12 @@ end
 diff=[0.0]
 iout=steps/100
 st = time()
+using Printf
 for i=1:steps
     #do_jacobi(psi,new_psi,diff,i1,i2,j1,j2)
     do_jacobi(diff,i1,i2,j1,j2)
     if (mod(i,iout) == 0)
-        println(i," ",diff)
+        @printf("%8d %12.6e %10.4f\n",i,diff[1],time()-st)
     end
 end
 
