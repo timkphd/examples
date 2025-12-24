@@ -129,6 +129,9 @@ program stommel
 ! set the force array
     call do_force(i1,i2,j1,j2)
     new_psi=psi
+    !write(*,"(12e15.5)")for
+    !write(*,*)"**************************"
+    !write(*,"(12f10.0)")psi
 ! do the jacobian iterations
     iout=steps/100
     if(iout == 0)iout=1

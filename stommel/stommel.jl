@@ -36,11 +36,11 @@ theforce = OffsetArray(zeros(nx+2, ny+2), 0:nx+1, 0:ny+1)
 
 
 function bc!(psi,i1,i2,j1,j2)
-    for k=j1:j2
+    for k=j1-1:j2+1
         psi[i1-1,k]=0.0
         psi[i2+1,k]=0.0
     end
-    for k=i1:i2
+    for k=i1-1:i2+1
         psi[k,j1-1]=0.0
         psi[k,j2+1]=0.0
     end
@@ -56,7 +56,9 @@ function do_force(i1,i2,j1,j2)
     for i=i1:i2
         for j=j1:j2
             y=j*dy
-            theforce[i,j]=force(y)
+            #theforce[i,j]=force(y)
+            # so it prints the same as fortran...
+            theforce[j,i]=force(y)
             end
         end
 end 

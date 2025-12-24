@@ -6,8 +6,8 @@ lx,ly=parse.(Float64,split(readline()))
 alpha,beta,gamma=parse.(Float64,split(readline()))
 steps=parse.(Int64,split(readline()))
 =#
-nx,ny=parse.(Int64,split("100 100"))
 nx,ny=parse.(Int64,split("200 200"))
+
 lx,ly=parse.(Float64,split("2000000 2000000"))
 alpha,beta,gamma=parse.(Float64,split("1.0e-9 2.25e-11 3.0e-6"))
 steps=parse.(Int64,"75000")
@@ -35,11 +35,11 @@ using OffsetArrays
 
 
 function bc!(psi,i1,i2,j1,j2)
-    for k=j1:j2
+    for k=j1-1:j2+1
         psi[i1-1,k]=0.0
         psi[i2+1,k]=0.0
     end
-    for k=i1:i2
+    for k=i1-1:i2+1
         psi[k,j1-1]=0.0
         psi[k,j2+1]=0.0
     end
@@ -55,7 +55,9 @@ function do_force(theforce,i1,i2,j1,j2)
     for i=i1:i2
         for j=j1:j2
             y=j*dy
-            theforce[i,j]=force(y)
+            #theforce[i,j]=force(y)
+            # so it prints the same as fortran...
+            theforce[j,i]=force(y)
             end
         end
 end 
@@ -79,7 +81,10 @@ psi = OffsetArray(ones(nx+2, ny+2), 0:nx+1, 0:ny+1)
 new_psi = OffsetArray(zeros(nx+2, ny+2), 0:nx+1, 0:ny+1)
 theforce = OffsetArray(zeros(nx+2, ny+2), 0:nx+1, 0:ny+1)
 do_force(theforce,i1,i2,j1,j2)
+#println(theforce)
+#println("***************")
 bc!(psi,i1,i2,j1,j2)
+#println(psi)
 diff=[0.0]
 iout=steps/100
 st = time()
