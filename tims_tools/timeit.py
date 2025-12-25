@@ -47,5 +47,7 @@ for c in range(0,nc):
 				z=int(z[0])
 	dt=t2-t1
 	rate=z/dt
+	if rate == 0:
+		print("Maybe ml wget?")
 	print("%15i %9.3f %s" %(z,rate/1e6,time.asctime()))        
 

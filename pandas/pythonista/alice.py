@@ -50,7 +50,134 @@ power
 button
 scroll"""
 words = words.split()
-
+words="""about
+all
+also
+any
+as
+been
+by
+call
+come
+could
+did
+do
+does
+down
+each
+find
+first
+go
+good
+has
+her
+him
+his
+if
+into
+its
+know
+made
+many
+me
+more
+most
+my
+no
+number
+of
+one
+only
+or
+other
+over
+part
+people
+right
+said
+see
+should
+small
+so
+some
+their
+them
+there
+these
+time
+to
+try
+two
+up
+us
+use
+very
+water
+were
+what
+when
+where
+which
+who
+why
+word
+work
+your"""
+words = words.split()
+import random
+random.shuffle(words)
+words = """after 
+again 
+along 
+always
+animal 
+answer 
+around 
+away
+because 
+before 
+between 
+change
+different 
+even 
+every 
+example
+father 
+follow 
+give 
+great
+group 
+heard 
+high 
+house
+kind 
+large 
+learn 
+letter
+ligth 
+little 
+mean 
+might
+mother 
+move 
+much 
+never
+picture 
+place 
+point 
+read
+sentence 
+study 
+though
+thought 
+three 
+together 
+while
+world 
+year"""
+words = words.split()
+import random
+random.shuffle(words)
 
 # In[10]:
 
@@ -64,6 +191,12 @@ image_height = 760
 
 # In[12]:
 
+
+from os import mkdir,chdir,getcwd
+from time import strftime
+s = strftime("%m%d%H%M")
+mkdir(s)
+chdir(s)
 
 startdir = getcwd()
 print(startdir)
@@ -95,10 +228,14 @@ for w in words:
         pass
     chdir(w+".dir")
     index = 1
-    img = Image.new('RGB', (image_width, image_height), color=(51, 144, 255))
+    mycol=(128, 128, 255)
+    img = Image.new('RGB', (image_width, image_height), color=mycol)
     # create the canvas
     canvas = ImageDraw.Draw(img)
-    text_width, text_height = canvas.textsize(w, font=font)
+
+    #text_width, text_height = canvas.textsize(w, font=font)
+    text_width = canvas.textlength(w, font=font)
+    text_height = canvas.textlength(w, font=font)
     #print(f"Text width: {text_width}")
     #print(f"Text height: {text_height}")
     x_pos = int((image_width - text_width) / 2)
@@ -120,10 +257,12 @@ for w in words:
         l = l+letter
         index = index+1
         img = Image.new('RGB', (image_width, image_height),
-                        color=(51, 144, 255))
+                        color=mycol)
         # create the canvas
         canvas = ImageDraw.Draw(img)
-        text_width, text_height = canvas.textsize(w, font=font)
+        #text_width, text_height = canvas.textsize(w, font=font)
+        text_width = canvas.textlength(w, font=font)
+
         #print(f"Text width: {text_width}")
         #print(f"Text height: {text_height}")
         x_pos = int((image_width - text_width) / 2)
@@ -143,10 +282,13 @@ for w in words:
     for iend in [1, 2]:
         index = index+1
         img = Image.new('RGB', (image_width, image_height),
-                        color=(51, 144, 255))
+                        color=mycol)
     # create the canvas
         canvas = ImageDraw.Draw(img)
-        text_width, text_height = canvas.textsize(w, font=font)
+        #text_width, text_height = canvas.textsize(w, font=font)
+        text_width = canvas.textlength(w, font=font)
+        text_height = canvas.textlength(w, font=font)
+
     #print(f"Text width: {text_width}")
     #print(f"Text height: {text_height}")
         x_pos = int((image_width - text_width) / 2)

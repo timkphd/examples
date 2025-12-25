@@ -1,10 +1,12 @@
 CFLAGS = -O2 -fopenmp -mcmodel=medium
+CFLAGS = -O2 -fopenmp 
 CC=gcc
 FC=gfortran
 
 #  Fortran code is modified so all integers are 8 bytes
 #  We may still need to add options to compile for large memory as shown below
 FFLAGS = -O2 -fopenmp -mcmodel=large
+FFLAGS = -O2 -fopenmp 
 
 
 all: stream_f.exe stream_c.exe
