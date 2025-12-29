@@ -52,6 +52,8 @@ class input:
 	lx,ly=(2000000 , 2000000)
 	alpha,beta,gamma=(1.0e-9 , 2.25e-11 , 3.0e-6)
 	steps=5000
+	# nx,ny=200,200
+	# steps=75000
 	def __init__(this):
 		pass
 	def getInput(this):
@@ -152,7 +154,8 @@ ttot=0
 for i in range(0,vals.steps):
 	diff=do_jacobi(psi,new_psi,i1,i2,j1,j2)
 	if ((i+1) % iout) == 0 :
-		print(i+1,diff)
+		t2=walltime()
+		print(f"{(i+1):8d}{diff:15.6e}{(t2-t1):10.3f}")
 t2=walltime()
 write_it(psi,i1,i2,j1,j2,i2,j2)
 print("total time=",t2-t1, "  time spent in do_jacobi=",ttot)
