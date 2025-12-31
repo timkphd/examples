@@ -1,7 +1,7 @@
 #!/opt/spack/base/120925/envs/3.14.1/bin/python
 # coding: utf-8
-
 # https://www.geeksforgeeks.org/dsa/gaussian-elimination/
+#  See also ../stommel/python/usenumba.py
 import numpy as np
 def gaussian_elimination_solver_org(A_coeffs, b_constants):
     """
