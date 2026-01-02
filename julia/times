@@ -1,0 +1,21 @@
+Time on M1 Mac
+invert.jl
+[3.0, 7.0, 7.999999999999999]
+  3.331761 seconds (6.06 M allocations: 15.381 GiB, 21.41% gc time, 1.23% compilation time)
+  3.433772 seconds (6.00 M allocations: 15.378 GiB, 22.00% gc time)
+  3.363662 seconds (6.00 M allocations: 15.378 GiB, 21.78% gc time)
+  3.393586 seconds (6.00 M allocations: 15.378 GiB, 21.63% gc time)
+13.666367053985596
+  0.196271 seconds (997.36 k allocations: 55.772 MiB, 1.44% gc time, 95.01% compilation time)
+  0.005490 seconds (17 allocations: 7.672 MiB)
+  0.005548 seconds (17 allocations: 7.672 MiB)
+  0.005258 seconds (17 allocations: 7.672 MiB)
+0.26344799995422363
+51.875007805564074
+error: 4.505725470583638e-9
+
+TIME invert.jl    15.70
+TIME stj_00.jl    11.80
+TIME stj_00a.jl  466.52
+TIME stommel.jl 1036.02
+TIME stommel2.jl   9.68
