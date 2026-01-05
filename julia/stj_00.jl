@@ -1,3 +1,5 @@
+#!/usr/bin/env julia
+
 using OffsetArrays
 function bc(psi,i1,i2,j1,j2)
   e1=@view psi[i1-1,:]
@@ -58,20 +60,24 @@ end;
 #75000
 
 
-z=split(readline())
+#z=split(readline())
+z=["200" , "200"]
 nx=parse(Int64,z[1])
 ny=parse(Int64,z[2])
 
-z=split(readline())
+#z=split(readline())
+z=["2000000" , "2000000"]
 lx=parse(Float64,z[1])
 ly=parse(Float64,z[2])
 
-z=split(readline())
+#z=split(readline())
+z=["1.0e-9" ,"2.25e-11" ,"3.0e-6"]
 alpha=parse(Float64,z[1])
 beta=parse(Float64,z[2])
 gamma=parse(Float64,z[3])
 
-z=split(readline())
+#z=split(readline())
+z=["75000"]
 steps=parse(Int64,z[1])
 
 # allocate the grid to size nx * ny plus the boundary cells
@@ -106,14 +112,20 @@ j2=ny
 # set boundary conditions
 @time bc(psi,i1,i2,j1,j2)
 @time do_force(fors,i1,i2,j1,j2)
+using Printf
+
 
 function doit(psi,new_psi,fors,a1,a2,a3,a4,a5)
+st = time()
 for istep=1:steps
  mydiff=do_jacobi(psi,new_psi,fors,i1,i2,j1,j2,a1,a2,a3,a4,a5)
  if mod(istep,steps/100) == 0 
-     print(istep, " ", mydiff,"\n")
+     @printf("%8d %12.6e %10.4f\n",istep,mydiff,time()-st)
  end
 end
+et=time()
+println("run time=",et-st)
+
 end;
 
 @time doit(psi,new_psi,fors,a1,a2,a3,a4,a5)

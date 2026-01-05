@@ -1,3 +1,4 @@
+#!/usr/bin/env julia
 using OffsetArrays
 function bc(psi,i1,i2,j1,j2)
   e1=@view psi[i1-1,:]
@@ -98,11 +99,16 @@ j2=ny
 # set boundary conditions
 bc(psi,i1,i2,j1,j2)
 do_force(fors,i1,i2,j1,j2)
-#print(fors)
+using Printf
 
+
+st = time()
 for istep=1:steps
  mydiff=do_jacobi(psi,new_psi,i1,i2,j1,j2)
  if mod(istep,steps/100) == 0 
-     print(istep, " ", mydiff,"\n")
+     @printf("%8d %12.6e %10.4f\n",istep,mydiff,time()-st)
  end
 end
+et=time()
+println("run time=",et-st)
+

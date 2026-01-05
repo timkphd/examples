@@ -1,10 +1,11 @@
-#!/Users/tkaiser/.juliaup/bin/julia
+#!/usr/bin/env julia
 #= 
 nx,ny=parse.(Int64,split(readline()))
 lx,ly=parse.(Float64,split(readline()))
 alpha,beta,gamma=parse.(Float64,split(readline()))
 steps=parse.(Int64,split(readline()))
 =#
+nx,ny=parse.(Int64,split("10 10"))
 nx,ny=parse.(Int64,split("200 200"))
 lx,ly=parse.(Float64,split("2000000 2000000"))
 alpha,beta,gamma=parse.(Float64,split("1.0e-9 2.25e-11 3.0e-6"))
@@ -58,25 +59,28 @@ function do_force(i1,i2,j1,j2)
             y=j*dy
             #theforce[i,j]=force(y)
             # so it prints the same as fortran...
-            theforce[j,i]=force(y)
+            #theforce[j,i]=force(y)
+            #theforce[j,i]=force(y)
+            theforce[i,j]=force(y)
             end
         end
 end 
 
-bc!(psi,i1,i2,j1,j2)
 
+
+bc!(psi,i1,i2,j1,j2)
 do_force(i1,i2,j1,j2)
 
-theforce
 
 #function do_jacobi(psi,new_psi,diff,i1,i2,j1,j2)
 function do_jacobi(diff,i1,i2,j1,j2)
 	ldiff=0.0
-	for i=i1:i2
+	#for i=i1:i2
 		for j=j1:j2
-		#for i=i1:i2
+		for i=i1:i2
 		#   for i=i1:i2
-			@inbounds    new_psi[i,j]=a1*psi[i+1,j] + a2*psi[i-1,j] + a3*psi[i,j+1] + a4*psi[i,j-1] - a5*theforce[i,j]
+			#@inbounds    new_psi[i,j]=a1*psi[i+1,j] + a2*psi[i-1,j] + a3*psi[i,j+1] + a4*psi[i,j-1] - a5*theforce[i,j]
+			new_psi[i,j]=a1*psi[i+1,j] + a2*psi[i-1,j] + a3*psi[i,j+1] + a4*psi[i,j-1] - a5*theforce[i,j]
 			ldiff=ldiff+abs(new_psi[i,j]-psi[i,j])
 		end
 	end
@@ -86,8 +90,12 @@ end
 
 diff=[0.0]
 iout=steps/100
-st = time()
+
 using Printf
+bc!(psi,i1,i2,j1,j2)
+
+
+st = time()
 for i=1:steps
     #do_jacobi(psi,new_psi,diff,i1,i2,j1,j2)
     do_jacobi(diff,i1,i2,j1,j2)

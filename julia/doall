@@ -1,0 +1,16 @@
+for p in invert.jl  stj_00.jl  stj_00a.jl  stommel.jl  stommel2.jl ; do
+  echo $p
+  d1=`date +"%s.%N"`
+  ./$p
+  d2=`date +"%s.%N"`
+  dt=`echo $d2 - $d1 | bc`
+  echo TIME $p $dt
+done
+#Times for m1 laptop
+#TIME invert.jl      14.544188000
+#TIME stj_00.jl      12.646228000
+#TIME stj_00a.jl    474.420747000
+#TIME stommel.jl   1079.228102000
+#TIME stommel2.jl     9.686810000
+
+

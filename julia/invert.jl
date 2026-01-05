@@ -1,5 +1,4 @@
 #!/usr/bin/env julia
-
 A = [1 2 3; 4 1 6; 7 8 1]
 y=[5,3,4]
 x=A\y

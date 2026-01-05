@@ -1,4 +1,4 @@
-#!/Users/tkaiser/.juliaup/bin/julia
+#!/usr/bin/env julia
 using Profile
 #= 
 nx,ny=parse.(Int64,split(readline()))
@@ -6,6 +6,7 @@ lx,ly=parse.(Float64,split(readline()))
 alpha,beta,gamma=parse.(Float64,split(readline()))
 steps=parse.(Int64,split(readline()))
 =#
+nx,ny=parse.(Int64,split("10 10"))
 nx,ny=parse.(Int64,split("200 200"))
 
 lx,ly=parse.(Float64,split("2000000 2000000"))
@@ -45,11 +46,22 @@ function bc!(psi,i1,i2,j1,j2)
     end
 end
 
+function bc_x!(psi,i1,i2,j1,j2)
+  e1=@view psi[i1-1,:]
+  e2=@view psi[i2+1,:]
+  e3=@view psi[:,j1-1]
+  e4=@view psi[:,j2+1]
+  fill!(e1, 0)
+  fill!(e2, 0)
+  fill!(e3, 0)
+  fill!(e4, 0)
+  end;
+
 function force(y)
     force=-alpha*sin(y*a6)
 end 
 
-function do_force(theforce,i1,i2,j1,j2)
+function do_force_org(theforce,i1,i2,j1,j2)
 # sets the force conditions
 # input is the grid and the indices for the interior cells
     for i=i1:i2
@@ -58,9 +70,22 @@ function do_force(theforce,i1,i2,j1,j2)
             #theforce[i,j]=force(y)
             # so it prints the same as fortran...
             theforce[j,i]=force(y)
+            #theforce[j,i]=force(y)
             end
         end
 end 
+
+function do_force(forc,i1,i2,j1,j2)
+# sets the force conditions
+# input is the grid and the indices for the interior cells
+    for i=i1:i2
+        for j=j1:j2
+            y=j*dy
+            forc[i,j]=force(y)
+        end
+    end
+end;
+
 
 function do_jacobi(psi::OffsetMatrix{Float64, Matrix{Float64}},new_psi::OffsetMatrix{Float64, Matrix{Float64}},diff,i1,i2,j1,j2,theforce::OffsetMatrix{Float64, Matrix{Float64}})
 	ldiff=0.0
@@ -71,6 +96,7 @@ function do_jacobi(psi::OffsetMatrix{Float64, Matrix{Float64}},new_psi::OffsetMa
 		end
 	end
 	psi.=new_psi
+
 	diff[1]=ldiff
         return nothing
 end
@@ -78,13 +104,15 @@ end
 using Printf
 function main()
 psi = OffsetArray(ones(nx+2, ny+2), 0:nx+1, 0:ny+1)
+# set initial guess for the value of the grid
+fill!(psi,1.0)
+
 new_psi = OffsetArray(zeros(nx+2, ny+2), 0:nx+1, 0:ny+1)
 theforce = OffsetArray(zeros(nx+2, ny+2), 0:nx+1, 0:ny+1)
 do_force(theforce,i1,i2,j1,j2)
 #println(theforce)
 #println("***************")
 bc!(psi,i1,i2,j1,j2)
-#println(psi)
 diff=[0.0]
 iout=steps/100
 st = time()
