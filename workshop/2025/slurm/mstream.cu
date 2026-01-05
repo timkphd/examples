@@ -184,12 +184,11 @@ int main(int argc, char** argv)
     // int NGPUS; cudaGetDeviceCount(&NGPUS);
     GPU=myid % NGPUS;
     if (SGPU >= NGPUS ) GPU= (SGPU  % NGPUS);
-    mpi_err=MPI_Bcast(&SI,1,MPI_INT,0,MPI_COMM_WORLD);
+    mpi_err=MPI_Bcast(&SI,1,MPI_C_BOOL,0,MPI_COMM_WORLD);
     mpi_err=MPI_Bcast(&N,1,MPI_LONG,0,MPI_COMM_WORLD);
     mpi_err=MPI_Bcast(&blockSize,1,MPI_INT,0,MPI_COMM_WORLD);
     cudaSetDevice(GPU);
     cudaGetDeviceProperties(&prop, GPU);
-    myid=0;
     double st=mysecond();
 
     fprintf(FOUT," STREAM Benchmark implementation in CUDA on device %d of %s\n",GPU,hostbuffer);
