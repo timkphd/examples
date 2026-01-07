@@ -1,4 +1,4 @@
-Time on M1 Mac
+Time on 2021 Apple M1 Pro
 invert.jl
 [3.0, 7.0, 7.999999999999999]
   3.331761 seconds (6.06 M allocations: 15.381 GiB, 21.41% gc time, 1.23% compilation time)
@@ -21,3 +21,10 @@ TIME stommel.jl 1036.02
 TIME stommel2.jl   9.68
 TIME ode.jl       10.58
 
+Swift
+TIME invert.jl    19.52
+TIME stj_00.jl    18.15
+TIME stj_00a.jl  807.59
+TIME stommel.jl 1842.70
+TIME stommel2.jl  17.71
+TIME ode.jl       22.24
