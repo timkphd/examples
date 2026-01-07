@@ -19,3 +19,5 @@ TIME stj_00.jl    11.80
 TIME stj_00a.jl  466.52
 TIME stommel.jl 1036.02
 TIME stommel2.jl   9.68
+TIME ode.jl       10.58
+
