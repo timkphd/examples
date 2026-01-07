@@ -28,3 +28,11 @@ TIME stj_00a.jl  807.59
 TIME stommel.jl 1842.70
 TIME stommel2.jl  17.71
 TIME ode.jl       22.24
+
+2024 Apple M4 Pro (mini)
+TIME invert.jl     8.17
+TIME stj_00.jl     6.71
+TIME stj_00a.jl  338.17
+TIME stommel.jl  774.38
+TIME stommel2.jl   6.38
+TIME ode.jl        6.94
