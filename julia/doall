@@ -1,3 +1,10 @@
+#!/bin/bash
+#SBATCH --job-name="jules"
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --mem=0 
+#SBATCH --time=24:00:00
+
 for p in invert.jl  stj_00.jl  stj_00a.jl  stommel.jl  stommel2.jl ode.jl ; do
   echo $p
   d1=`date +"%s.%N"`
