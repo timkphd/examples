@@ -120,7 +120,7 @@ program main
     a4=dx2/bottom
     a5=dx2*dy2/(gamma*bottom)
     a6=pi/(lx)
-    write(*,*)a1,a2,a3,a4,a5,a6
+!    write(*,"(6(e14.7,2x))")a1,a2,a3,a4,a5,a6
  allocate( aapar(n,m) )
  allocate( bbpar(n,m) )
  allocate( aahost(n,m) )
@@ -150,9 +150,13 @@ program main
 
  call system_clock( count=c1 )
  call smooth( aapar, bbpar, a1, a2, a3, a4, a5, n, m, iters ,force)
- write(*,*)sum(aapar-bbpar),maxval(aapar),minval(aapar)
+ write(*,'("convergance diff ",e14.7," max/min ",2e14.7)') &
+          sum(aapar-bbpar),maxval(aapar),minval(aapar)
  call system_clock( count=c2 )
  cpar = c2 - c1
+ write(*,*)"n= ",n," iterations= ",iters*2
+ tpar=real(cpar,real64)/real(count_rate_val,real64)
+ write(*,'(f15.6,a)')tpar, ' seconds on parallel with do concurrent'
  call smoothhost( aahost, bbhost, a1, a2, a3, a4, a5, n, m, iters ,force)
  call system_clock( count=c3)
  if (n .le. 20)then
@@ -178,11 +182,8 @@ endif
  enddo
  !print *, cpar, ' microseconds on parallel with do concurrent'
  !print *, cseq, ' microseconds on sequential'
- tpar=real(cpar,real64)/real(count_rate_val,real64)
  tseq=real(cseq,real64)/real(count_rate_val,real64)
 
- write(*,*)"n= ",n," iterations= ",iters*2
- write(*,'(f15.6,a)')tpar, ' seconds on parallel with do concurrent'
  write(*,'(f15.6,a)')tseq, ' seconds on sequential'
  if (errs .ne. 0) then
     print *, "Test FAILED"
