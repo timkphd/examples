@@ -143,7 +143,8 @@ program stommel
     t2=walltime()
     write(*,'("run time =",f10.2)')t2-t1
 ! write out the final grid
-    call write_grid(psi,i1,i2,j1,j2)
+    !call write_grid(psi,i1,i2,j1,j2)
+    call binary(psi,i1,i2,j1,j2)
 end program stommel
 !*********************
 subroutine bc(psi,i1,i2,j1,j2)
@@ -245,6 +246,19 @@ subroutine write_grid(psi,i1,i2,j1,j2)
     enddo
     close(23)
 end subroutine write_grid
+
+subroutine binary(psi,i1,i2,j1,j2)
+    use numz
+    implicit none
+    real(b8),dimension(i1-1:i2+1,j1-1:j2+1):: psi
+    integer i1,i2,j1,j2
+    write(*,101)i1-1,i2+1,j1-1,j2+1
+101 format(6x," (",i3," <= i <= ",i3,") , ", &
+              " (",i3," <= j <= ",i3,")")
+    open(13,file="psi.dat",access='stream',form='unformatted',status='replace')
+    write(13)psi
+    close(13)
+end subroutine
 
 
 function walltime()
