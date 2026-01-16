@@ -25,7 +25,7 @@ function read_2d_binary(filename::String, rows::Int, cols::Int, dtype::Type)
     return data
 end
 
-org=read_2d_binary("/Users/tkaiser2/web/examples/stommel/psi.dat",202,202,Float64)
+org=read_2d_binary("psi.dat",202,202,Float64)
 
 
 x = range(-1, 1; length=202)
@@ -36,7 +36,7 @@ porg=heatmap(x, y, org)
 Plots.savefig(porg,"Original.pdf")
 
 
-dat=read_2d_binary("/Users/tkaiser2/web/examples/stommel/aahost.dat",200,200,Float32)
+dat=read_2d_binary("aahost.dat",200,200,Float32)
 x = range(-1, 1; length=200)
 y = range(-1, 1; length=200)
 maxdat=maximum(dat)
