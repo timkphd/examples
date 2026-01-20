@@ -19,8 +19,8 @@
 !
 ! This program was modified to solve the stommel problem.  The
 ! results will not be identical to the other versions because 
-! this is real*4, the boundaries are at i=0 & n , j=0 & m, thus
-! the gride is slightly smaller.
+! this is real*4, the "old" boundaries are at i=0 & n+1, j=0 & m+1,
+! thus this grid is slightly smaller.
 
   
 module ver
@@ -49,7 +49,7 @@ contains
 
     enddo
     do concurrent(i=2 : n-1, j=2 : m-1)
-                    b(i,j)=a1*a(i+1,j) + a2*a(i-1,j) + &
+                b(i,j)=a1*a(i+1,j) + a2*a(i-1,j) + &
                        a3*a(i,j+1) + a4*a(i,j-1) - &
                        a5*force(i,j)
     enddo
@@ -71,7 +71,7 @@ contains
     enddo
     do i = 2,n-1
      do j = 2,m-1
-                    b(i,j)=a1*a(i+1,j) + a2*a(i-1,j) + &
+                b(i,j)=a1*a(i+1,j) + a2*a(i-1,j) + &
                        a3*a(i,j+1) + a4*a(i,j-1) - &
                        a5*force(i,j)
      enddo
@@ -108,7 +108,12 @@ program main
  alpha=1.0e-9
  beta=2.25e-11
  gamma=3.0e-6
- iters = 75000/2
+ iters = 75000
+!read(*,*)n,m
+!read(*,*)lx,ly
+!read(*,*)alpha,beta,gamma
+!read(*,*)iters
+    iters=iters/2
     dx=lx/(n+1)
     dy=ly/(m+1)
     dx2=dx*dx
@@ -150,12 +155,13 @@ program main
 
  call system_clock( count=c1 )
  call smooth( aapar, bbpar, a1, a2, a3, a4, a5, n, m, iters ,force)
- write(*,'("convergance diff ",e14.7," max/min ",2e14.7)') &
-          sum(aapar-bbpar),maxval(aapar),minval(aapar)
  call system_clock( count=c2 )
+ write(*,'("convergance diff ",e14.7," max ",e14.7," min ",e14.7)') &
+          sum(aapar-bbpar),maxval(aapar),minval(aapar)
  cpar = c2 - c1
  write(*,*)"n= ",n," iterations= ",iters*2
  tpar=real(cpar,real64)/real(count_rate_val,real64)
+ call system_clock( count=c2 )
  write(*,'(f15.6,a)')tpar, ' seconds on parallel with do concurrent'
  call smoothhost( aahost, bbhost, a1, a2, a3, a4, a5, n, m, iters ,force)
  call system_clock( count=c3)
