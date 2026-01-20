@@ -34,11 +34,17 @@ module ver
 end subroutine
 end module
 
+module numz
+! module defines the basic real type and pi
+    integer, parameter:: b8 = selected_real_kind(4)
+end module
+
 module sm
 contains
  subroutine smooth( a, b ,a1, a2, a3, a4, a5, n, m, niters,force)
-  real, dimension(:,:) :: a,b,force
-  real :: a1, a2, a3, a4, a5
+  use numz
+  real(b8), dimension(:,:) :: a,b,force
+  real(b8) :: a1, a2, a3, a4, a5
   integer :: n, m, niters
   integer :: i, j, iter
    do iter = 1,niters
@@ -57,8 +63,9 @@ contains
  end subroutine
  
  subroutine smoothhost( a, b, a1, a2, a3, a4, a5, n, m, niters ,force)
-  real, dimension(:,:) :: a,b,force
-  real :: a1, a2, a3, a4, a5
+  use numz
+  real(b8), dimension(:,:) :: a,b,force
+  real(b8) :: a1, a2, a3, a4, a5
   integer :: n, m, niters
   integer :: i, j, iter
    do iter = 1,niters
@@ -81,26 +88,27 @@ contains
 end module
 
 program main
+ use numz 
  use sm
  use ver
  use iso_fortran_env, only: int64, real64
  implicit none
  real(real64) tpar,tseq
- real,dimension(:,:),allocatable :: aahost, bbhost, aapar, bbpar,force
- real :: a1, a2, a3, a4, a5, a6
+ real(b8),dimension(:,:),allocatable :: aahost, bbhost, aapar, bbpar,force
+ real(b8) :: a1, a2, a3, a4, a5, a6
  integer :: i,j,n,m,iters
  integer (int64) :: c0, c1, c2, c3, c4, cpar, cseq
  integer :: errs, args
  character(10) :: arg
- real :: dif, tol
+ real(b8) :: dif, tol
  integer(int64) :: count_max_val,count_rate_val
  integer num_args
- real :: dx,dy,dx2,dy2,bottom,pi,y
- real :: lx,ly,alpha,beta,gamma
+ real(b8) :: dx,dy,dx2,dy2,bottom,pi,y
+ real(b8) :: lx,ly,alpha,beta,gamma
  call system_clock(count_rate=count_rate_val, count_max=count_max_val)
 
 
- pi = 3.141592653589793239
+ pi = 3.141592653589793239_b8
  n = 200
  m = n
  lx=2000000.0
