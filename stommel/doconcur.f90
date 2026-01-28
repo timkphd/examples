@@ -35,7 +35,7 @@ end subroutine
 end module
 
 module numz
-! module defines the basic real type and pi
+! module defines the basic real type
     integer, parameter:: b8 = selected_real_kind(4)
 end module
 
@@ -69,15 +69,15 @@ contains
   integer :: n, m, niters
   integer :: i, j, iter
    do iter = 1,niters
-    do i = 2,n-1
      do j = 2,m-1
+    do i = 2,n-1
                 a(i,j)=a1*b(i+1,j) + a2*b(i-1,j) + &
                        a3*b(i,j+1) + a4*b(i,j-1) - &
                        a5*force(i,j)
      enddo
     enddo
-    do i = 2,n-1
      do j = 2,m-1
+    do i = 2,n-1
                 b(i,j)=a1*a(i+1,j) + a2*a(i-1,j) + &
                        a3*a(i,j+1) + a4*a(i,j-1) - &
                        a5*force(i,j)
