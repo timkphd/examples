@@ -5,6 +5,7 @@
 
 
 import sys
+import os
 from math import *
 from random import random
 from random import seed
@@ -98,13 +99,21 @@ def doit():
     return(bonk)
 from time import time
 t1=time()
-get_ipython().system('rm -rf data/cells*')
-get_ipython().system('rm -rf data/rcsout*')
-for ijk in range(0,1000):
+#get_ipython().system('rm -rf data/cells*')
+#get_ipython().system('rm -rf data/rcsout*')
+command='rm -rf data/cells*'
+xcmd=os.popen(command,"r") ; bonkit=xcmd.read() ; xcmd.close()
+command='rm -rf data/rcsout*'
+xcmd=os.popen(command,"r") ; bonkit=xcmd.read() ; xcmd.close()
+
+for ijk in range(0,10000):
     b=doit()
     if ((ijk % 100) == 0):
         print(ijk,time()-t1)
-    get_ipython().system('./rcs >/dev/null')
+    #get_ipython().system('./rcs >/dev/null')
+    command='./rcs >/dev/null'
+    xcmd=os.popen(command,"r") ; bonkit=xcmd.read() ; xcmd.close()
+
     #!(awk '{printf("%3.1f ",$4)}' wing.dat ; echo "") >> data/cells
     #!(awk '{printf("%10.4f ",$1)}' out.dat ; echo "") >> data/rcs
 t2=time()
@@ -119,12 +128,26 @@ import torch
 dtype = np.float32
 file_path = 'data/rcsout.bin'
 numpy_array = np.fromfile(file_path, dtype=dtype)
-numpy_array = numpy_array.reshape(37,numpy_array.shape[0]//37)
+#numpy_array = numpy_array.reshape(37,numpy_array.shape[0]//37)
+numpy_array = numpy_array.reshape(360,numpy_array.shape[0]//360)
 torch_tensor = torch.from_numpy(numpy_array)
+print(file_path)
+print(torch_tensor.size())
+print(torch_tensor)
+
+file_path = 'data/cells.bin'
+numpy_array = np.fromfile(file_path, dtype=dtype)
+#numpy_array = numpy_array.reshape(37,numpy_array.shape[0]//37)
+numpy_array = numpy_array.reshape(79,numpy_array.shape[0]//79)
+torch_tensor = torch.from_numpy(numpy_array)
+print(file_path)
+print(torch_tensor.size())
+print(torch_tensor)
+
 
 
 # In[ ]:
 
 
-torch_tensor
+print(torch_tensor)
 

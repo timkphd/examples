@@ -411,8 +411,8 @@ program rcs
 !       write(11,"(3g20.10)")e(n),cabs(e(n))
 !   enddo 
  16 format(i4,",",g20.10)
-    !do m=0,359
-    do m=-18,18
+    do m=0,359
+    !do m=-18,18
         ang1=m
         ang1=ang1*pi/180.0_b4
         xin=1000.0_b8*cos(ang1)
