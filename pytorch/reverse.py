@@ -109,7 +109,7 @@ print(fart.size(),fart)
 
 # Define a loss function and optimizer
 criterion = torch.nn.MSELoss()  # mean squared error loss
-optimizer = torch.optim.SGD(model.parameters(), lr=0.0005)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.000001)
 t1=clock()
 # Training loop
 try:

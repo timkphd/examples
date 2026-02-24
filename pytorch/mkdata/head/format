@@ -1,0 +1,21 @@
+od --endian=big  -t d4 t10k-images-idx3-ubyte.head   | head -1
+od --endian=big  -t d4 train-images-idx3-ubyte.head  | head -1
+od --endian=big  -t d4 t10k-labels-idx1-ubyte.head   | head -1
+od --endian=big  -t d4 train-labels-idx1-ubyte.head  | head -1
+echo +++++++++++++++++++
+od --endian=big  -t x4 t10k-images-idx3-ubyte.head   | head -1
+od --endian=big  -t x4 train-images-idx3-ubyte.head  | head -1
+od --endian=big  -t x4 t10k-labels-idx1-ubyte.head   | head -1
+od --endian=big  -t x4 train-labels-idx1-ubyte.head  | head -1
+
+:<<OUTPUT
+0000000        2051       10000          28          28
+0000000        2051       60000          28          28
+0000000        2049       10000
+0000000        2049       60000
++++++++++++++++++++
+0000000 00000803 00002710 0000001c 0000001c
+0000000 00000803 0000ea60 0000001c 0000001c
+0000000 00000801 00002710
+0000000 00000801 0000ea60
+OUTPUT

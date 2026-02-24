@@ -34,13 +34,14 @@ print("final device ",device)
 
 
 torch.manual_seed(0)  # for reproducibility
-wingboxes=79
+wingboxes=1
 angles=360
 
 
-invert=False
+invert=True
 dtype = np.float32
 file_path = 'data/rcsout.bin'
+#file_path = 'data/rcsout.norm'
 numpy_array = np.fromfile(file_path, dtype=dtype)
 #numpy_array = numpy_array.reshape(numpy_array.shape[0]//angles,angles)
 numpy_array = numpy_array.reshape(angles,numpy_array.shape[0]//angles)
@@ -56,8 +57,9 @@ if invert :
 else:
     y = torch.from_numpy(numpy_array).to(device)
 
-file_path = 'data/cells.bin'
-numpy_array = np.fromfile(file_path, dtype=dtype)
+file_path = 'data/cfile'
+numpy_array = np.fromfile(file_path, dtype=np.uint8)
+numpy_array = numpy_array.astype(np.float32)
 #numpy_array = numpy_array.reshape(numpy_array.shape[0]//wingboxes,wingboxes)
 numpy_array = numpy_array.reshape(wingboxes,numpy_array.shape[0]//wingboxes)
 numpy_array=numpy_array.T
@@ -97,11 +99,11 @@ print(fart.size(),fart)
 
 # Define a loss function and optimizer
 criterion = torch.nn.MSELoss()  # mean squared error loss
-optimizer = torch.optim.SGD(model.parameters(), lr=0.0005)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.000005)
 t1=clock()
 # Training loop
 try:
-	for epoch in range(10001):
+	for epoch in range(30001):
 			model.train()                 # set model to training mode (good practice)
 			y_pred = model(k)             # forward pass: compute predicted y
 			loss = criterion(y_pred, y)   # compute loss between prediction and true y
@@ -125,15 +127,27 @@ print(f"time for {str(device):s} {(t2-t1):6.2f} seconds")
 w = model.weight
 b = model.bias
 print("weight matrix size ",w.size(),"\nbias size",b.size())
-tinput=k[0,:]
-z=k[0,:] @ w.t()
+tc=0
+tinput=k[tc,:]
+z=k[tc,:] @ w.t()
 print("input size",tinput.size()," output size",z.size())
 print("input\n",tinput)
-print("y\n",y[0,:])
+print("y\n",y[tc,:])
 print("z\n",z)
-print("z-y\n",z-y[0,:])
+print("z-y\n",z-y[tc,:])
+
+for tc in range(20):
+	print("case ",tc)
+	tinput=k[tc,:]
+	z=k[tc,:] @ w.t()
+	#print("input size",tinput.size()," output size",z.size())
+	#print("input\n",tinput)
+	print("y    ",y[tc,:])
+	print("z    ",z)
+	print("z-y  ",z-y[tc,:])
 
 
+#exit(0)
 # In[1]:
 
 
@@ -189,16 +203,16 @@ class MLP(nn.Module):
         return self.model(x)
 
 # Create and test the MLP
-mlp = MLP(input_dim=360, hidden_dims=[300, 200, 100], output_dim=79).to(device)
+mlp = MLP(input_dim=360, hidden_dims=[300, 200, 100], output_dim=1).to(device)
 
 # Test with batch of images (flattened MNIST-like)
-batch = torch.randn(64, 360).to(device)
-output = mlp(batch).to(device)
+#batch = torch.randn(64, 360).to(device)
+#output = mlp(batch).to(device)
 
-assert output.shape == (64, 79), f"Output shape mismatch: {output.shape}"
-print(f"MLP architecture: 360 → 300 → 200 → 100 → 79")
-print(f"Input shape: {batch.shape}")
-print(f"Output shape: {output.shape}")
+#assert output.shape == (360, 1), f"Output shape mismatch: {output.shape}"
+print(f"MLP architecture: 360 → 300 → 200 → 100 → 1")
+#print(f"Input shape: {batch.shape}")
+#print(f"Output shape: {output.shape}")
 print(f"Total parameters: {sum(p.numel() for p in mlp.parameters()):,}")
 
 
@@ -206,7 +220,7 @@ print(f"Total parameters: {sum(p.numel() for p in mlp.parameters()):,}")
 
 
 torch.manual_seed(0)  # for reproducibility
-wingboxes=79
+wingboxes=1
 angles=360
 invert=True
 dtype = np.float32
@@ -226,10 +240,12 @@ if invert :
 else:
     y = torch.from_numpy(numpy_array).to(device)
 
-file_path = 'data/cells.bin'
-numpy_array = np.fromfile(file_path, dtype=dtype)
+file_path = 'data/cfile'
+numpy_array = np.fromfile(file_path, dtype=np.uint8)
+numpy_array = numpy_array.astype(np.float32)
 #numpy_array = numpy_array.reshape(numpy_array.shape[0]//wingboxes,wingboxes)
 numpy_array = numpy_array.reshape(wingboxes,numpy_array.shape[0]//wingboxes)
+#numpy_array=numpy_array*100
 numpy_array=numpy_array.T
 
 if invert :
@@ -244,13 +260,13 @@ else:
 # Define a loss function and optimizer
 criterion = torch.nn.MSELoss()  # mean squared error loss
 #criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(mlp.parameters(), lr=0.0005)
+optimizer = torch.optim.SGD(mlp.parameters(), lr=0.00001)
 #optimizer = torch.optim.Adam(mlp.parameters(), lr=0.001)
 t1=clock()
 # Training loop
 retain_graph=True
 try:
-	for epoch in range(10001):
+	for epoch in range(20001):
 			mlp.train()                 # set model to training mode (good practice)
 			y_pred = mlp(k)             # forward pass: compute predicted y
 			loss = criterion(y_pred, y)   # compute loss between prediction and true y
@@ -279,6 +295,19 @@ print("input\n",tinput)
 print("y\n",y[0,:])
 print("z\n",z)
 print("z-y\n",z-y[0,:])
+
+print("#####################################")
+
+for tc in range(20):
+	print("case ",tc)
+	tinput=k[tc,:]
+	z=k[tc,:] @ w.t()
+	z=mlp(k[tc,:])
+	#print("input size",tinput.size()," output size",z.size())
+	#print("input\n",tinput)
+	print("y    ",y[tc,:])
+	print("z    ",z)
+	print("z-y  ",z-y[tc,:])
 
 
 # In[ ]:

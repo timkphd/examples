@@ -316,7 +316,7 @@ program rcs
     do n=1,nbox
     	do m=n+1,nbox
     		r=sqrt( ( x(m)-x(n) )**2+( y(m)-y(n) )**2)
-            if(r .le. 1e-4)then
+            if(r .le. 1e-5)then
                 write(*,*)"points overlap",n,m
                 stop
             endif
@@ -411,10 +411,11 @@ program rcs
 !       write(11,"(3g20.10)")e(n),cabs(e(n))
 !   enddo 
  16 format(i4,",",g20.10)
-    do m=0,359
+    do m=0,783
     !do m=-18,18
         ang1=m
         ang1=ang1*pi/180.0_b4
+        ang1=ang1*(360.0/784.0)
         xin=1000.0_b8*cos(ang1)
         yin=1000.0_b8*sin(ang1)
         es=cmplx(0,0)
