@@ -25,32 +25,32 @@ def foil(m,p,tu,tl,n):
 # p The position of the maximum camber in fraction of chord
 # t the maximum thickness of the airfoil in fraction of chord
 #NACA 2415 <=> foil(.02,.4,.15,.15,100)
-	xua=[]
-	yua=[]
-	xla=[]
-	yla=[]
-	dx=1.0/(n-1.0)
-	for i in range(0,n):
-		x=i*dx
-		if(x < p):
-			yc=(m/(p*p))*(2.0*p*x-x*x)
-			ycp=(m/(p*p))*(2.0*p-2.0*x)
-		else:
-			yc=(m/((1.0-p)**2))*((1.0-2.0*p)+2.0*p*x-x**2)
-			ycp=(m/((1.0-p)**2))*(2.0*p-2.0*x)
-		ytu=(tu/0.2)*(0.2969*sqrt(x)-0.1260*x-0.3516*x**2+0.2843*x**3-0.1015*x**4)
-		ytl=(tl/0.2)*(0.2969*sqrt(x)-0.1260*x-0.3516*x**2+0.2843*x**3-0.1015*x**4)
-		theta=atan(ycp)
-		xu=x-ytu*sin(theta)
-		yu=yc+ytu*cos(theta)
-		xl=x+ytl*sin(theta)
-		yl=yc-ytl*cos(theta)
-		xua.append(xu)
-		yua.append(yu)
-		xla.append(xl)
-		yla.append(yl)
-	#return(xua,yua,xla,yla)
-	return(turb(xua),turb(yua),turb(xla),turb(yla))
+    xua=[]
+    yua=[]
+    xla=[]
+    yla=[]
+    dx=1.0/(n-1.0)
+    for i in range(0,n):
+        x=i*dx
+        if(x < p):
+            yc=(m/(p*p))*(2.0*p*x-x*x)
+            ycp=(m/(p*p))*(2.0*p-2.0*x)
+        else:
+            yc=(m/((1.0-p)**2))*((1.0-2.0*p)+2.0*p*x-x**2)
+            ycp=(m/((1.0-p)**2))*(2.0*p-2.0*x)
+        ytu=(tu/0.2)*(0.2969*sqrt(x)-0.1260*x-0.3516*x**2+0.2843*x**3-0.1015*x**4)
+        ytl=(tl/0.2)*(0.2969*sqrt(x)-0.1260*x-0.3516*x**2+0.2843*x**3-0.1015*x**4)
+        theta=atan(ycp)
+        xu=x-ytu*sin(theta)
+        yu=yc+ytu*cos(theta)
+        xl=x+ytl*sin(theta)
+        yl=yc-ytl*cos(theta)
+        xua.append(xu)
+        yua.append(yu)
+        xla.append(xl)
+        yla.append(yl)
+    #return(xua,yua,xla,yla)
+    return(turb(xua),turb(yua),turb(xla),turb(yla))
 
 
 # In[ ]:
@@ -144,9 +144,9 @@ def doit(cfile):
     (m,p,tu,tl)=(.02,.4,.15,.15)
     """
     if(len(sys.argv) >= 2):
-    	np=int(sys.argv[1])
+        np=int(sys.argv[1])
     if(len(sys.argv) == 6):
-    	(m,p,tu,tl)=(float(sys.argv[2]),float(sys.argv[3]),float(sys.argv[4]),float(sys.argv[5]))
+        (m,p,tu,tl)=(float(sys.argv[2]),float(sys.argv[3]),float(sys.argv[4]),float(sys.argv[5]))
     """
     funcs=[foil,box,circle,scatter]
     #xu,yu,xl,yl=foil(m,p,tu,tl,np)
@@ -181,44 +181,46 @@ def doit(cfile):
 
     i=0
     for x in xu:
-    	rp=int(random()*4)+1
-    	rp=(random()*0.1)+2
-    	if(i == 0):
-    		size=sqrt((xu[i]-xu[i+1])**2+(yu[i]-yu[i+1])**2)*0.5
-    	else:
-    		size=sqrt((xu[i]-xu[i-1])**2+(yu[i]-yu[i-1])**2)*0.5
-    		size=size*0.5
+        rp=int(random()*4)+1
+        rp=(random()*0.1)+2
+        if(i == 0):
+            size=sqrt((xu[i]-xu[i+1])**2+(yu[i]-yu[i+1])**2)*0.5
+        else:
+            size=sqrt((xu[i]-xu[i-1])**2+(yu[i]-yu[i-1])**2)*0.5
+            size=size*0.5
     # we flip the wing around so that it faces right and center it
-    	if shape == 3: size=0.015
-    	f.write("%10f %10f %10f  %10f,%10f\n" % (-(xu[i]-0.5),yu[i],size,rp,ip))
-    	bonk.append(rp)
+        if shape == 3: size=0.015
+        f.write("%10f %10f %10f  %10f,%10f\n" % (-(xu[i]-0.5),yu[i],size,rp,ip))
+        bonk.append(rp)
 
-    	i=i+1
+        i=i+1
 
     i=i-1
     for x in xl:
-    	rp=int(random()*4)+1
-    	rp=(random()*0.1)+2
+        rp=int(random()*4)+1
+        rp=(random()*0.1)+2
 
 
-    	if(i == 0):
-    		pass
-    	else:
-    		size=sqrt((xl[i]-xl[i-1])**2+(yl[i]-yl[i-1])**2)*0.5
+        if(i == 0):
+            pass
+        else:
+            size=sqrt((xl[i]-xl[i-1])**2+(yl[i]-yl[i-1])**2)*0.5
     # we flip the wing around so that it faces right and center it
-    		if shape == 3: size=0.015
-    		f.write("%10f %10f %10f  %10f,%10f\n" % (-(xl[i]-0.5),yl[i],size,rp,ip))
-    		bonk.append(rp)
-    	i=i-1
+            if shape == 3: size=0.015
+            f.write("%10f %10f %10f  %10f,%10f\n" % (-(xl[i]-0.5),yl[i],size,rp,ip))
+            bonk.append(rp)
+        i=i-1
     return(shape)
-if True:
+
+def runit(icount):
     t1=time()
     command="rm -rf data/cells*" ; runit=os.popen(command,"r") ; runit.read()
     command="rm -rf data/rcsout*" ; runit=os.popen(command,"r") ; runit.read()
     command="rm -rf data/cfile*" ; runit=os.popen(command,"r") ; runit.read()
+    command="mkdir -p data" ; runit=os.popen(command,"r") ; runit.read()
     cfile=open("data/cfile","wb")
 
-    for ijk in range(0,70000):
+    for ijk in range(0,icount):
         acell=ijk
         b=doit(cfile)
         if ((ijk % 100) == 0):
@@ -229,5 +231,18 @@ if True:
         #!(awk '{printf("%10.4f ",$1)}' out.dat ; echo "") >> data/rcs
     t2=time()
     cfile.close()
-print(t2-t1)
+    print(t2-t1)
+
+if __name__ == "__main__":
+
+    if len(sys.argv) > 1 :
+        iseed=int(sys.argv[1])
+        print(iseed)
+        seed(iseed)
+    icount=70000
+    if len(sys.argv) > 2 :
+        icount=int(sys.argv[2])
+        print(icount)
+    runit(icount)
+    
 

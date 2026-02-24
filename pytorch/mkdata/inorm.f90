@@ -4,8 +4,8 @@ program doit
  character cline(784)
 
  
- open(88,file='rcsout.bin',status='old',FORM='UNFORMATTED',access='stream')
- open(37,file='rcsout.norm',status='new',FORM='UNFORMATTED',access='stream')
+ open(88,file='data/rcsout.bin',status='old',FORM='UNFORMATTED',access='stream')
+ open(37,file='data/rcsout.norm',status='new',FORM='UNFORMATTED',access='stream')
 
  do i=1,70000
    read(88,end=1234)aline
@@ -18,7 +18,7 @@ b=y1-a*x1
    aline=aline*a+b
    iline=aline
    write(37)iline
-   write(*,"(i4)")iline
+!   write(*,"(i4)")iline
  enddo
  1234 write(*,*)i-1
  end program
