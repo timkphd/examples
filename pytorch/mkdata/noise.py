@@ -18,6 +18,53 @@ def turb(xp):
 seed(42)
 global acell
 acell=0
+def vert(dm,dp,dtu,dtl,dnp):
+    yp=np.zeros(79)
+    xp=np.zeros(79)
+    r=0.5
+    for i in range(79):
+        xp[i]=0
+        yp[i]=r-i/79.0
+    #return(xp,yp,[],[])
+    return(turb(xp),turb(yp),[],[])
+def horz(dm,dp,dtu,dtl,dnp):
+    yp=np.zeros(79)
+    xp=np.zeros(79)
+    r=0.5
+    for i in range(79):
+        yp[i]=0
+        xp[i]=r-i/79.0
+    #return(xp,yp,[],[])
+    return(turb(xp),turb(yp),[],[])
+def corner(dm,dp,dtu,dtl,dnp):
+    yp=np.zeros(79)
+    xp=np.zeros(79)
+    r=0.5
+    for i in range(40):
+        xp[i]=r-i/79.0
+        yp[i]=r-i/79.0
+    for j in range(40,79):
+        i=j-39
+        xp[j]=r-i/79.0
+        yp[j]=-(r-i/79.0)
+    #return(xp,yp,[],[])
+    return(turb(xp),turb(yp),[],[])
+
+def wedge(dm,dp,dtu,dtl,dnp):
+    yp=np.zeros(79)
+    xp=np.zeros(79)
+    r=0.5
+    for i in range(40):
+        xp[i]=r-i/79.0
+        yp[i]=r-i/79.0
+    for j in range(40,79):
+        i=j-39
+        xp[j]=r-i/79.0
+        yp[j]=-(r-i/79.0)
+    xp=-xp
+    #return(xp,yp,[],[])
+    return(turb(xp),turb(yp),[],[])
+    
 def foil(m,p,tu,tl,n):
 ### http://www.aerospaceweb.org/question/airfoils/q0041.shtml ###
 ### http://en.wikipedia.org/wiki/NACA_airfoil ###
@@ -148,12 +195,12 @@ def doit(cfile):
     if(len(sys.argv) == 6):
         (m,p,tu,tl)=(float(sys.argv[2]),float(sys.argv[3]),float(sys.argv[4]),float(sys.argv[5]))
     """
-    funcs=[foil,box,circle,scatter]
+    funcs=[foil,box,circle,scatter,wedge,horz,vert,corner]
     #xu,yu,xl,yl=foil(m,p,tu,tl,np)
     #xu,yu,xl,yl=box(m,p,tu,tl,np)
     #xu,yu,xl,yl=circle(m,p,tu,tl,np)
     #xu,yu,xl,yl=scatter(m,p,tu,tl,np)
-    shape=int(random()*3)
+    shape=int(random()*len(funcs))
     #shape=acell
     #print(shape)
     #sout=(shape+1)*10
