@@ -11,6 +11,9 @@
 import multiprocessing
 multiprocessing.set_start_method('fork')
 
+# The first time it is run it will download the MNIST data set.
+# Then you can drop in replace the data with the rcs data from mkdata.
+# YOu might want to run for 2000 iterations.
 
 # In[ ]:
 
