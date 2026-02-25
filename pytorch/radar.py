@@ -222,6 +222,7 @@ if __name__ == "__main__":
     print("train error:", 1.0 - net.predict(x).eq(y).float().mean().item())
     outfile=open(fname,"w")
     outfile.write("train error:"+str(1.0 - net.predict(x).eq(y).float().mean().item())+"\n"+str(args)+"\n")
+    outfile.write("device: "+str(device)+" time:"+str(dt)+"\n")
     outfile.close()
 
     x_te, y_te = next(iter(test_loader))
