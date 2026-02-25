@@ -1,10 +1,16 @@
 data: rcs inorm stuff
 
+# could be ifx and -mkl
+FORT ?= gfortran
+LIBDIR ?= -L/Users/tkaiser/lapack-3.12.1
+LIBS ?= $(LIBDIR) -llapack -lrefblas
+
 rcs: less.f90
-	gfortran -L/Users/tkaiser/lapack-3.12.1 -llapack -lrefblas -O4 less.f90 -o rcs
+	 $(FORT) $(LIBS) -O4 less.f90 -o rcs
+	 rm *mod
 	
 inorm: inorm.f90
-	gfortran inorm.f90 -o inorm
+	$(FORT) inorm.f90 -o inorm
 
 #todo... add more shapes to noise.py
 #should be able to go up to 0-9 
@@ -13,7 +19,7 @@ stuff:
 	python noise.py
 	
 
-mninst:
+mnist:
 	rm -rf data/rcsout.norm ; \
 	./inorm ; \
 	cd data ; \
@@ -28,4 +34,7 @@ mninst:
 	cp *ubyte  ../../data/MNIST/raw
 
 clean:
-	rm -rf data inorm rcs
+	rm -rf inorm rcs *mod wing.dat out.dat
+	
+distclean: clean
+	rm -rf data

@@ -8,12 +8,17 @@
 # https://github.com/mohammadpz/pytorch_forward_forward and licensed under the MIT License.
 # Modifications/Improvements to the original code have been made by Vivek V Patel.
 
+# Minor modifications by Tim Kaiser
+# By default it will download the MNIST dataset on first run.  However, you can
+# build a radar dataset in the directory mkdata.  This is a drop in replacement 
+# for MNIST.  
+
+# suggested parameters for the radar data
+#./radar.py --epochs=2500 --lr=0.04 --repeat
+
 import multiprocessing
 multiprocessing.set_start_method('fork')
 
-# The first time it is run it will download the MNIST data set.
-# Then you can drop in replace the data with the rcs data from mkdata.
-# YOu might want to run for 2000 iterations.
 
 # In[ ]:
 
@@ -168,8 +173,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.seed=42
     if args.repeat:
-    	torch.manual_seed(args.seed)
-    	print("set manual_seed")
+        torch.manual_seed(args.seed)
+        print("set manual_seed")
 
     use_accel = not args.no_accel and torch.accelerator.is_available()
     if use_accel:
@@ -180,10 +185,13 @@ if __name__ == "__main__":
     print(args)
     train_kwargs = {"batch_size": args.train_size}
     test_kwargs = {"batch_size": args.test_size}
-
+    
     if use_accel:
-        #accel_kwargs = {"num_workers": 1, "pin_memory": True, "shuffle": True}
-        accel_kwargs = {"num_workers": 1, "pin_memory": False, "shuffle": True}
+        if (str(device).find("mps")) > -1 :
+            accel_kwargs = {"num_workers": 1, "pin_memory": False, "shuffle": True}
+            #print("turning off pin_memory for mac mps gpu")
+        else:
+            accel_kwargs = {"num_workers": 1, "pin_memory": True, "shuffle": True}
         train_kwargs.update(accel_kwargs)
         test_kwargs.update(accel_kwargs)
 
@@ -333,30 +341,30 @@ class Layer(nn.Linear):
 
 # In[ ]:
 if args.save_model:
-	print("reloading saved model")
-	model=torch.load(ptname,weights_only=False)
-	transform = Compose(
-		[
-			ToTensor(),
-			Normalize((0.1307,), (0.3081,)),
-			Lambda(lambda x: torch.flatten(x)),
-		]
-		)
-	
-	
-	# In[ ]:
-	
-	
-	device = torch.accelerator.current_accelerator()
-	test_dataset=MNIST("./data/", train=False, download=True, transform=transform)
-	for it in range(0,10):        
-		image,lable=test_dataset[it]
-	#help(net.eval)
-		with torch.no_grad():
-			bonk=image.unsqueeze(0)
-			dbonk=bonk.to(device)
-			output=model.predict(dbonk)
-			print(it,lable,int(output[0]))
+    print("reloading saved model")
+    model=torch.load(ptname,weights_only=False)
+    transform = Compose(
+        [
+            ToTensor(),
+            Normalize((0.1307,), (0.3081,)),
+            Lambda(lambda x: torch.flatten(x)),
+        ]
+        )
+    
+    
+    # In[ ]:
+    
+    
+    device = torch.accelerator.current_accelerator()
+    test_dataset=MNIST("./data/", train=False, download=True, transform=transform)
+    for it in range(0,10):        
+        image,lable=test_dataset[it]
+    #help(net.eval)
+        with torch.no_grad():
+            bonk=image.unsqueeze(0)
+            dbonk=bonk.to(device)
+            output=model.predict(dbonk)
+            print(it,lable,int(output[0]))
 
 
 # In[ ]:
