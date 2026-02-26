@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
 	device = torch.accelerator.current_accelerator()
 	test_dataset=MNIST("./data/", train=False, download=True, transform=transform)
-	for it in range(0,10):        
+	for it in range(0,1000):        
 		image,lable=test_dataset[it]
 	#help(net.eval)
 		with torch.no_grad():

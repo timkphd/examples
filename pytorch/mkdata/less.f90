@@ -316,7 +316,7 @@ program rcs
     do n=1,nbox
     	do m=n+1,nbox
     		r=sqrt( ( x(m)-x(n) )**2+( y(m)-y(n) )**2)
-            if(r .le. 1e-5)then
+            if(r .le. 1e-7)then
                 write(*,*)"points overlap",n,m
                 stop
             endif

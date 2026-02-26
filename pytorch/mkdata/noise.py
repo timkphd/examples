@@ -13,7 +13,7 @@ import os
 from time import time
 import numpy as np
 def turb(xp):
-    xp=xp+0.05*(np.random.rand(len(xp))-0.5)
+    xp=xp+0.025*(np.random.rand(len(xp))-0.5)
     return(xp)
 seed(42)
 global acell
