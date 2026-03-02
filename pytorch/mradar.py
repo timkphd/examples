@@ -19,7 +19,7 @@
 import multiprocessing
 multiprocessing.set_start_method('fork')
 
-REDIRECT=False
+
 # In[ ]:
 
 
@@ -32,8 +32,11 @@ from torchvision.transforms import Compose, ToTensor, Normalize, Lambda
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 import time
+# mpi4py module
+from mpi4py import MPI
 # Initialize MPI and print out hello
-myid=0
+comm=MPI.COMM_WORLD
+myid=comm.Get_rank()
 
 fname=time.strftime("%m%d%H%M%S")
 fname=fname+"_"+str(myid)
@@ -178,12 +181,22 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     print(args)
+    args.epochs=comm.bcast(      args.epochs,       root=0)
+    args.lr=comm.bcast(          args.lr,           root=0)
+    args.no_accel=comm.bcast(    args.no_accel,     root=0)
+    args.repeat=comm.bcast(      args.repeat,       root=0)
+    args.seed=comm.bcast(        args.seed,         root=0)
+    args.save_model=comm.bcast(  args.save_model,   root=0)
+    args.f=comm.bcast(           args.f,            root=0)
+    args.train_size=comm.bcast(  args.train_size,   root=0)
+    args.threshold=comm.bcast(   args.threshold,    root=0)
+    args.test_size=comm.bcast(   args.test_size,    root=0)
+    args.log_interval=comm.bcast(args.log_interval, root=0)
     
     
     original = sys.stdout
-    if REDIRECT: 
-        newstdout=str('%4.4i.out' % myid)
-        sys.stdout=open(newstdout,"w")
+    newstdout=str('%4.4i.out' % myid)
+    sys.stdout=open(newstdout,"w")
     if args.repeat:
         torch.manual_seed(args.seed)
         print("set manual_seed")
@@ -191,6 +204,9 @@ if __name__ == "__main__":
     use_accel = not args.no_accel and torch.accelerator.is_available()
     if use_accel:
         device = torch.accelerator.current_accelerator()
+        ngpu=torch.cuda.device_count()
+        if (ngpu > 1 ):
+            torch.cuda.set_device(myid % ngpu)
     else:
         device = torch.device("cpu")
 
@@ -383,7 +399,8 @@ if args.save_model:
 
 sys.stdout = original
 xyz=(1-net.predict(x).eq(y).float().mean().item())
-print(f"{myid:4d} {dt:6.2f}  {xyz:10.6f}")
+print(f"{myid:4d} {dt:6.2f}  {xyz:10.6f} {MPI.Get_processor_name():s}")
+MPI.Finalize()
 
 # In[ ]:
 
