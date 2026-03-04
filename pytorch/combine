@@ -1,0 +1,10 @@
+mkdir -p mkdata/data
+rm -rf mkdata/data/*
+for f in cells  cells.bin  cfile  rcsout  rcsout.bin ; do
+touch mkdata/data/$f
+  for m in mkdata_* ; do
+    echo $f $m
+    cat $m/data/$f >>  mkdata/data/$f
+  done 
+done
+

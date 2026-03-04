@@ -16,7 +16,7 @@ inorm: inorm.f90
 #should be able to go up to 0-9 
 
 stuff: 
-	python noise.py
+	python noise.py $(MYSEED) $(MYCOUNT)
 	
 
 mnist:
