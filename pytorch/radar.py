@@ -231,10 +231,14 @@ if __name__ == "__main__":
     print("train time:", dt)
 
     print("train error:", 1.0 - net.predict(x).eq(y).float().mean().item())
-    outfile=open(fname,"w")
-    outfile.write("train error:"+str(1.0 - net.predict(x).eq(y).float().mean().item())+"\n"+str(args)+"\n")
-    outfile.write("device: "+str(device)+" time:"+str(dt)+"\n")
-    outfile.close()
+    try:
+        outfile=open(fname,"w")
+        outfile.write("train error:"+str(1.0 - net.predict(x).eq(y).float().mean().item())+"\n"+str(args)+"\n")
+        outfile.write("device: "+str(device)+" time:"+str(dt)+"\n")
+        outfile.close()
+    except:
+        print("train error:"+str(1.0 - net.predict(x).eq(y).float().mean().item())+"\n"+str(args))
+        print("device: "+str(device)+" time:"+str(dt))
 
     x_te, y_te = next(iter(test_loader))
     x_te, y_te = x_te.to(device), y_te.to(device)
