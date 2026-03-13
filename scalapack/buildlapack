@@ -1,0 +1,39 @@
+#tymer /home/tkaiser2/scratch/lpath/times start00
+# get the source and unpack it
+wget https://github.com/Reference-LAPACK/lapack/archive/refs/tags/v3.12.1.tar.gz
+tar -xzf v3.12.1.tar.gz 
+
+# go there
+cd lapack-3.12.1/
+
+# create a build directory and go there
+mkdir build
+cd build
+
+# make the static library version
+#tymer /home/tkaiser2/scratch/lpath/times start01
+cmake  -DBUILD_SHARED_LIBS=OFF .. -DCMAKE_INSTALL_PREFIX=$HOME/lapack/3.12.1s
+make
+make install
+cp -r include $HOME/lapack/3.12.1s
+#tymer /home/tkaiser2/scratch/lpath/times start02
+
+# copy stuff to where I want it
+mkdir -p $HOME/lapack/3.12.1s
+cp -r lib* $HOME/lapack/3.12.1s
+cp -r include $HOME/lapack/3.12.1s
+
+# create a new build directory and go there
+cd ..
+mkdir buildshared
+cd buildshared
+# make the shared library version
+#tymer /home/tkaiser2/scratch/lpath/times start03
+cmake  -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$HOME/lapack/3.12.1 ..
+make
+make install
+# copy stuff to where I want it
+# for the shared libary version it does the libs automatically
+cp -r include $HOME/lapack/3.12.1
+#tymer /home/tkaiser2/scratch/lpath/times start04
+
