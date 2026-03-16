@@ -23,6 +23,7 @@ multiprocessing.set_start_method('fork')
 # In[ ]:
 
 
+import sys
 import argparse
 import torch
 import torch.nn as nn
@@ -32,6 +33,7 @@ from torch.utils.data import DataLoader
 from torch.optim import Adam
 import time
 fname=time.strftime("%m%d%H%M%S")
+fname=str(time.time())
 ptname=fname+".pt"
 print(fname)
 
@@ -221,6 +223,8 @@ if __name__ == "__main__":
 
     print("train error:", 1.0 - net.predict(x).eq(y).float().mean().item())
     outfile=open(fname,"w")
+    outfile.write(sys.version)
+    outfile.write("\n"+sys.executable+"\n")
     outfile.write("train error:"+str(1.0 - net.predict(x).eq(y).float().mean().item())+"\n"+str(args)+"\n")
     outfile.write("device: "+str(device)+" time:"+str(dt)+"\n")
     outfile.close()
