@@ -1,5 +1,55 @@
+#https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path
 
-addpath () 
+inpath()
+{
+echo ":$PATH:" *":$1:"* 
+if [[ ":$PATH:" == *":$1:"* ]]; then
+  #echo "Directory $1 is in \$PATH."
+  return 0
+else
+  #echo "Directory $1 is not in \$PATH."
+  return 1
+fi
+}
+
+inlibpath()
+{
+if [[ ":$LD_LIBRARY_PATH:" == *":$1:"* ]]; then
+  #echo "Directory $1 is in \$LD_LIBRARY_PATH."
+  return 0
+else
+  #echo "Directory $1 is not in \$LD_LIBRARY_PATH."
+  return 1
+fi
+}
+
+addpath()
+{
+if ! inpath $1 ; then  export PATH=$1:$PATH  ; fi
+}
+
+addlib()
+{
+if ! inpath $1 ; then  export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH  ; fi
+}
+
+pathedit()
+{
+    [[ -z $2 ]] && return 2
+    PATH=:$PATH: PATH=${PATH//:$2:/:}
+    case $1 in
+    -p ) PATH=$2$PATH ;;
+    -a ) PATH=$PATH$2 ;;
+    -r ) ;;
+    * ) return 2 ;;
+    esac
+    while [[ $PATH == *::* ]] ; do
+        PATH=${PATH//::/:}
+    done
+    PATH=${PATH#:} PATH=${PATH%:}
+}
+
+addpath_old () 
 { 
 	echo $PATH | grep $1 > /dev/null
 	if [ $? -ne 0 ]; then
@@ -7,8 +57,10 @@ addpath ()
 	fi
 }
 
-rmpath () 
-{ 
+rmpathx () 
+{
+#This nuk's the path of all dirs that contain $1 as a substring
+#use carefully
     lpaths=`echo $PATH | tr ":" " "`;
     export OPATH=$PATH;
     npath="";
@@ -21,7 +73,21 @@ rmpath ()
     export PATH=$npath
 }
 
-addlib () 
+rmpath () 
+{ 
+    lpaths=`echo $PATH | tr ":" " "`;
+    export OPATH=$PATH;
+    npath="";
+    for l in $( echo "$lpaths" ) ; do
+        if [[ $1 != $l ]]; then            
+            npath=$npath:`echo $l`
+        fi;
+    done;
+    #echo $npath
+    export PATH=$npath
+}
+
+addlib_old () 
 { 
 	echo $LD_LIBRARY_PATH | grep $1 > /dev/null
 	if [ $? -ne 0 ]; then
@@ -29,8 +95,10 @@ addlib ()
 	fi
 }
 
-rmlib () 
-{ 
+rmlibx () 
+{
+#This nuk's the path of all dirs that contain $1 as a substring
+#use carefully
     lpaths=`echo $LD_LIBRARY_PATH | tr ":" " "`;
     export OLD_LIBRARY_PATH=$LD_LIBRARY_PATH;
     npath="";
@@ -42,3 +110,17 @@ rmlib ()
     done;
     export LD_LIBRARY_PATH=$npath
 }
+
+rmlibx () 
+{
+    lpaths=`echo $LD_LIBRARY_PATH | tr ":" " "`;
+    export OLD_LIBRARY_PATH=$LD_LIBRARY_PATH;
+    npath="";
+    for l in $( echo "$lpaths" ) ; do
+        if [[ $1 != $l ]]; then            
+            npath=$npath:`echo $l`
+        fi;
+    done;
+    export LD_LIBRARY_PATH=$npath
+}
+
