@@ -1,0 +1,39 @@
+# run this file
+# then run combine
+# finally in mkdata
+#    make mnist
+
+rm -rf mkdata_*
+mkdir mkdata_01
+mkdir mkdata_02
+mkdir mkdata_03
+mkdir mkdata_04
+mkdir mkdata_05
+mkdir mkdata_06
+mkdir mkdata_07
+
+cp -r mkdata/* mkdata_01
+cp -r mkdata/* mkdata_02
+cp -r mkdata/* mkdata_03
+cp -r mkdata/* mkdata_04
+cp -r mkdata/* mkdata_05
+cp -r mkdata/* mkdata_06
+cp -r mkdata/* mkdata_07
+
+export OMP_NUM_THREADS=1
+
+export MYSEED=2345 ; export MYCOUNT=10000 ; cd mkdata_01 ; make > /dev/null &
+cd ..
+export MYSEED=3456 ; export MYCOUNT=10000 ; cd mkdata_02 ; make > /dev/null &
+cd ..
+export MYSEED=4567 ; export MYCOUNT=10000 ; cd mkdata_03 ; make > /dev/null &
+cd ..
+export MYSEED=5678 ; export MYCOUNT=10000 ; cd mkdata_04 ; make > /dev/null &
+cd ..
+export MYSEED=6789 ; export MYCOUNT=10000 ; cd mkdata_05 ; make > /dev/null &
+cd ..
+export MYSEED=7891 ; export MYCOUNT=10000 ; cd mkdata_06 ; make > /dev/null &
+cd ..
+export MYSEED=8911 ; export MYCOUNT=10000 ; cd mkdata_07 ; make > /dev/null &
+cd ..
+
