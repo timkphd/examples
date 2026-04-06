@@ -2,7 +2,7 @@
 
 inpath()
 {
-echo ":$PATH:" *":$1:"* 
+#echo ":$PATH:" *":$1:"* 
 if [[ ":$PATH:" == *":$1:"* ]]; then
   #echo "Directory $1 is in \$PATH."
   return 0
@@ -49,13 +49,6 @@ pathedit()
     PATH=${PATH#:} PATH=${PATH%:}
 }
 
-addpath_old () 
-{ 
-	echo $PATH | grep $1 > /dev/null
-	if [ $? -ne 0 ]; then
-    		export PATH=$1:$PATH
-	fi
-}
 
 rmpathx () 
 {
@@ -87,14 +80,6 @@ rmpath ()
     export PATH=$npath
 }
 
-addlib_old () 
-{ 
-	echo $LD_LIBRARY_PATH | grep $1 > /dev/null
-	if [ $? -ne 0 ]; then
-    		export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
-	fi
-}
-
 rmlibx () 
 {
 #This nuk's the path of all dirs that contain $1 as a substring
@@ -111,7 +96,7 @@ rmlibx ()
     export LD_LIBRARY_PATH=$npath
 }
 
-rmlibx () 
+rmlib () 
 {
     lpaths=`echo $LD_LIBRARY_PATH | tr ":" " "`;
     export OLD_LIBRARY_PATH=$LD_LIBRARY_PATH;
@@ -122,5 +107,27 @@ rmlibx ()
         fi;
     done;
     export LD_LIBRARY_PATH=$npath
+}
+
+
+caddpath () 
+{
+    echo $PATH | grep $1 > /dev/null || export PATH=$1:$PATH
+}
+
+caddlib () 
+{
+    echo $LD_LIBRARY_PATH | grep $1 > /dev/null || export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
+}
+
+
+faddpath () 
+{ 
+    		export PATH=$1:$PATH
+}
+
+faddlib () 
+{ 
+    		export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
 }
 
