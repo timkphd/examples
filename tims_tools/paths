@@ -1,5 +1,32 @@
 #https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path
 
+#### simple append to any PATH line variable
+#### $1 is the variable to which you want to add $2
+append () 
+{ 
+    if [ $1 == "-h" ]; then
+        echo "append P_VAR new_item";
+        echo "appends new_item to the path P_VAR";
+    else
+        END=`printenv $1`;
+        if [ -z "$END" ]; then
+            export $1=$2;
+        else
+            export $1=$END:$2;
+        fi;
+    fi
+}
+
+#The logic of adding ":" to varaibles and then
+#checking to see if one is a substring of the 
+#other is from the above web page.  I which I
+#would have thought of this.  We use this to
+#do conditional adds to pathsi using addpath 
+##and addlib.  pathedit also from the above 
+#page use similar logic to prepend append, 
+#or rm a path.
+
+
 inpath()
 {
 #echo ":$PATH:" *":$1:"* 
