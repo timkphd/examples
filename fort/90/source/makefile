@@ -88,5 +88,5 @@ global_test.o: global_test.$(F)
 
 
 clean:
-	rm  -f *.mod *.o darwin
+	rm  -f *.mod *.o darwin *dat
 
