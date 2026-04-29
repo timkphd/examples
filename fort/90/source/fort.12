@@ -1,24 +1,50 @@
-&THE_INPUT NCOLOR=4,FORCE=F,nstates=22,num_gen=200,num_genes=1000,do_one=F,the_top=T,fitmax=1.0,seed=-4321 /
-ar ok tx la mo xx 
-az ca nm ut nv xx 
-ca az nv or xx 
-co nm ut wy ne ks xx 
-ia mo ne sd mn xx 
-id wa or nv ut wy mt xx 
-ks ne co ok mo xx 
-la tx ar xx 
-mn ia sd nd xx 
-mo ar ok ks ne ia xx 
-mt wy id nd xx 
-nd mt sd wy xx 
-ne sd wy co ks mo ia xx 
-nm az co ok tx mn xx 
-nv ca or id ut az xx 
-ok ks nm tx ar mo xx 
-or ca wa id xx 
-sd nd wy ne ia mn xx 
-tx ok nm la ar xx 
-ut nv az co wy id xx 
-wa id or mt xx 
-wy co mt id ut nd sd ne xx 
+&THE_INPUT NCOLOR=4,FORCE=F,nstates=48,num_gen=2000,num_genes=1000,do_one=F,the_top=T,fitmax=1.0,seed=-5678 /
+al fl ga ms tn xx
+az ca nm nv ut xx
+ar la mo ms ok tn tx xx
+ca az nv or xx
+co ks ne nm ok ut wy xx
+ct ma ny ri xx
+de md nj pa xx
+fl al ga xx
+ga al fl nc sc tn xx
+id mt nv or ut wa wy xx
+ia il mn mo ne sd wi xx
+il ia in ky mo wi xx
+in il ky mi oh xx
+ks co mo ne ok xx
+ky il in mo oh tn va wv xx
+la ar ms tx xx
+me nh xx
+md de pa va wv xx
+ma ct nh ny ri vt xx
+mi in oh wi xx
+mn ia nd sd wi xx
+ms al ar la tn xx
+mo ar ia il ks ky ne ok tn xx
+mt id nd sd wy xx
+ne co ia ks mo sd wy xx
+nv az ca id or ut xx
+nh ma me vt xx
+nj de ny pa xx
+nm az co ok tx xx
+ny ct ma nj pa vt xx
+nc ga sc tn va xx
+nd mn mt sd xx
+oh in ky mi pa wv xx
+ok ar co ks mo nm tx xx
+or ca id nv wa xx
+pa de md nj ny oh wv xx
+ri ct ma xx
+sc ga nc xx
+sd ia mn mt nd ne wy xx
+tn al ar ga ky mo ms nc va xx
+tx ar la nm ok xx
+ut az co id nv wy xx
+vt ma nh ny xx
+va ky md nc tn wv xx
+wa id or xx
+wv ky md oh pa va xx
+wi ia il mi mn xx
+wy co id mt ne sd ut xx
 

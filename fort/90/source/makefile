@@ -30,7 +30,8 @@ L= f95 $(SIZE) -g
 P= f95 -c $(SIZE) -g
 
 ##### end for cray/sgi #####
-
+L=gfortran -g -O3
+P=gfortran -g -c -O3
 OBJ1= face.o          control.o       more.o          reproduce.o
 OBJ2= fitness.o       linked.o        mutate.o        rest.o
 OBJ3= galapagos.o     list_stuff.o    numz.o          sort_mod.o
