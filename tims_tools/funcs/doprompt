@@ -1,0 +1,36 @@
+prompt () 
+{ 
+    if [ "$#" = "0" ]; then
+        export PS1="[\u@\H \W]$";
+    else
+        case $1 in 
+            redhost)
+                export PS1="\[\e[1;31m\]\H->\e[0m\] "
+            ;;
+            redshort)
+                export PS1="\[\e[1;31m\]->\e[0m\] "
+            ;;
+            reddir)
+                export PS1="\[\e[1;31m\]\W->\e[0m\] "
+            ;;
+            normal)
+                export PS1="[\u@\H \W]$"
+            ;;
+            fixedl)
+                export PS1="[\u@HPC \W]$"
+            ;;
+            fixeds)
+                export PS1="[HPC \W]$"
+            ;;
+            short)
+                export PS1="-> "
+            ;;
+            redblack)
+                export PS1="\[\e[1;31m\]\e\033[40m->\e[0m\] "
+            ;;
+            *)
+                echo SELECT: redhost redshort reddir normal fixedl fixeds short redblack
+            ;;
+        esac;
+    fi
+}
