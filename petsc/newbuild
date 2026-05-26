@@ -1,0 +1,68 @@
+#!/bin/bash
+STARTDIR=`pwd`
+SCRIPT=$( readlink -m $( type -p $0 ))
+echo $SCRIPT
+
+module purge
+ml oneapi/2025.3.1 
+ml intel-oneapi-mpi/2021.17.2
+rm -rf *petsc-3.25.1*
+wget https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.25.1.tar.gz
+tar -xzf petsc-3.25.1.tar.gz
+cd petsc-3.25.1 
+export BD=`date +"%y%m%d"`
+export PF=/scratch/$USER/$BD/petsc/3.25.1
+rm -rf $PF
+mkdir -p $PF
+unset PETSC_DIR
+
+
+./configure --COPTFLAGS="-O2 -g" --CXXOPTFLAGS="-O2 -g" --FOPTFLAGS="-O2" \
+            --with-cc=mpiicx --with-cxx=mpiicpx \
+             --with-fc=mpiifx \
+            --with-blaslapack-dir=$MKLROOT --with-openmp \
+            --prefix=$PF  \
+            --with-debugging=0  
+
+
+
+
+make PETSC_DIR=`pwd` PETSC_ARCH=arch-linux-c-opt all
+make PETSC_DIR=`pwd` PETSC_ARCH=arch-linux-c-opt install
+
+cd $STARTDIR
+
+module purge
+ml oneapi/2025.3.1 
+ml openmpi
+
+rm -rf *petsc-3.25.1*
+wget https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.25.1.tar.gz
+tar -xzf petsc-3.25.1.tar.gz
+cd petsc-3.25.1 
+export BD=`date +"%y%m%d_openmpi"`
+export PF=/scratch/$USER/$BD/petsc/3.25.1
+rm -rf $PF
+mkdir -p $PF
+unset PETSC_DIR
+
+
+./configure --COPTFLAGS="-O2 -g" --CXXOPTFLAGS="-O2 -g" --FOPTFLAGS="-O2" \
+            --with-cc=mpicc --with-cxx=mpicxx \
+             --with-fc=mpifort \
+            --with-blaslapack-dir=$MKLROOT --with-openmp \
+            --prefix=$PF  \
+            --with-debugging=0  
+
+
+
+
+make PETSC_DIR=`pwd` PETSC_ARCH=arch-linux-c-opt all
+make PETSC_DIR=`pwd` PETSC_ARCH=arch-linux-c-opt install
+
+
+
+# mpicc -qopenmp  -g -O2 -L$PETSC_DIR/lib -I$PETSC_DIR/include -lpetsc ex16.c
+# addlib $PETSC_DIR/lib
+# mpirun  -n 4 ./a.out
+
