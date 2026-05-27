@@ -1,0 +1,59 @@
+#!/bin/bash
+#SBATCH --time=0:10:00
+#SBATCH --partition=debug
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --network=single_node_vni
+
+addlib ()
+{ 
+    if ! inlibpath $1; then
+        export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH;
+    fi
+}
+rmlibx () 
+{
+    lpaths=`echo $LD_LIBRARY_PATH | tr ":" " "`;
+    export OLD_LIBRARY_PATH=$LD_LIBRARY_PATH;
+    npath="";
+    for l in $( echo "$lpaths" ) ; do
+        if [[ $1 != $l ]]; then            
+            npath=$npath:`echo $l`
+        fi;
+    done;
+    export LD_LIBRARY_PATH=$npath
+}
+
+. /home/tkaiser2/lmod/052226_rel8/install/linux-x86_64/lmod-8.7.55-7aajiiitulyz33w3vf26jjlo24lokh6p/lmod/8.7.55/init/bash
+module use ~/mymods
+ml hpctoolkit/2026.0.1-osyjybq 
+ml papi/7.2.0-mf43d42
+
+ml oneapi
+ml openmpi
+PETSC_DIR=/scratch/tkaiser2/260526_openmpi/petsc/3.25.1
+mpicc -qopenmp  -g -O2 -L$PETSC_DIR/lib -I$PETSC_DIR/include -lpetsc ex16.c -o ex16
+addlib $PETSC_DIR/lib
+#mpirun -n 4 ./ex16 -n 500 -m 500 --ntimes 10
+mpirun -n 4 hpcrun -t -e PAPI_TOT_CYC -e PAPI_L2_TCA  ./ex16 -n 500 -m 500 -ntimes 10
+#mpirun -n 4 hpcrun -t  ./ex16 -n 500 -m 500 -ntimes 10
+
+hpcstruct hpctoolkit-ex16-measurements-$SLURM_JOB_ID
+hpcprof   hpctoolkit-ex16-measurements-$SLURM_JOB_ID
+mkdir openmpi
+mv hpctoolkit*$SLURM_JOB_ID openmpi
+
+module unload openmpi
+ml intel-oneapi-mpi/2021.17.2
+rmlibx $PETSC_DIR
+export PETSC_DIR=/scratch/tkaiser2/260526/petsc/3.25.1/
+mpiicx -qopenmp  -g -O2 -L$PETSC_DIR/lib -I$PETSC_DIR/include -lpetsc ex16.c -o ex16
+addlib $PETSC_DIR/lib
+mpirun -n 4 hpcrun -t -e PAPI_TOT_CYC -e PAPI_L2_TCA  ./ex16 -n 500 -m 500 -ntimes 10
+#mpirun -n 4 hpcrun -t  ./ex16 -n 500 -m 500 -ntimes 10
+
+hpcstruct hpctoolkit-ex16-measurements-$SLURM_JOB_ID
+hpcprof   hpctoolkit-ex16-measurements-$SLURM_JOB_ID
+mkdir intel
+mv hpctoolkit*$SLURM_JOB_ID intel
+
