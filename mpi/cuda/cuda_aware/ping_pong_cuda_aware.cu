@@ -20,6 +20,8 @@ int main(int argc, char *argv[])
 	--------------------------------------------------------------------------------------------*/
 	MPI_Init(&argc, &argv);
 
+	char version[MPI_MAX_LIBRARY_VERSION_STRING] ;
+	int vlan;
 	int size;
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 
@@ -27,7 +29,8 @@ int main(int argc, char *argv[])
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
 	MPI_Status stat;
-
+        MPI_Get_library_version(version,&vlan);
+        if (rank == 0 )printf("MPI VERSION %s\n",version);
 	if(size != 2){
 		if(rank == 0){
 			printf("This program requires exactly 2 MPI ranks, but you are attempting to use %d! Exiting...\n", size);
