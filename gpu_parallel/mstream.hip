@@ -1,4 +1,7 @@
 /*
+hipified version of mstream.cu
+export OMPI_CXX=hipcc
+mpicxx -g --offload-arch=gfx90a -Wno-unused-value mstream.hip -o mystream
   STREAM benchmark implementation in CUDA.
 
     COPY:       a(i) = b(i)                 
@@ -39,6 +42,7 @@ srun --tasks-per-node=4  ./mstream -n $VSIZE
 #include <mpi.h>
 #endif
 
+#include <hip/hip_runtime.h>
 #include <stdio.h>
 #include <float.h>
 #include <limits.h>
@@ -183,7 +187,7 @@ int main(int argc, char** argv)
     int  blockSize;
     int myid,ntasks,mpi_err;
     char hostbuffer[256];
-    cudaDeviceProp prop;
+    hipDeviceProp_t prop;
     gethostname(hostbuffer, sizeof(hostbuffer));
     ntasks=1;
     myid=ntasks-1;
@@ -198,7 +202,7 @@ int main(int argc, char** argv)
     if(myid == 0 ) {
         parse_options(argc, argv, SGPU,SI, N, blockSize);
     }
-    // int NGPUS; cudaGetDeviceCount(&NGPUS);
+    // int NGPUS; hipGetDeviceCount(&NGPUS);
 #ifndef SERIAL
     mpi_err=MPI_Bcast(&SGPU,1,MPI_INT,0,MPI_COMM_WORLD);
     mpi_err=MPI_Bcast(&SI,1,MPI_C_BOOL,0,MPI_COMM_WORLD);
@@ -208,8 +212,8 @@ int main(int argc, char** argv)
     GPU=myid % NGPUS;
     if (SGPU >= 0 ) GPU=SGPU;
     if (SGPU >= NGPUS ) GPU= (SGPU  % NGPUS);
-    cudaSetDevice(GPU);
-    cudaGetDeviceProperties(&prop, GPU);
+    hipSetDevice(GPU);
+    hipGetDeviceProperties(&prop, GPU);
     double st=mysecond();
 
     fprintf(FOUT," STREAM Benchmark implementation in CUDA on device %d of %s\n",GPU,hostbuffer);
@@ -221,9 +225,9 @@ int main(int argc, char** argv)
 
     /* Allocate memory on device */
     int ierr;
-    ierr=cudaMalloc((void**)&d_a, sizeof(real)*N);if (ierr > 0) fprintf(FOUT,"d_a ierr %d\n",ierr);
-    ierr=cudaMalloc((void**)&d_b, sizeof(real)*N);if (ierr > 0) fprintf(FOUT,"d_b ierr %d\n",ierr);
-    ierr=cudaMalloc((void**)&d_c, sizeof(real)*N);if (ierr > 0) fprintf(FOUT,"d_c ierr %d\n",ierr);
+    ierr=hipMalloc((void**)&d_a, sizeof(real)*N);if (ierr > 0) fprintf(FOUT,"d_a ierr %d\n",ierr);
+    ierr=hipMalloc((void**)&d_b, sizeof(real)*N);if (ierr > 0) fprintf(FOUT,"d_b ierr %d\n",ierr);
+    ierr=hipMalloc((void**)&d_c, sizeof(real)*N);if (ierr > 0) fprintf(FOUT,"d_c ierr %d\n",ierr);
 
     /* Compute execution configuration */
     dim3 dimBlock(blockSize);
@@ -250,22 +254,22 @@ int main(int argc, char** argv)
     {
         times[0][k]= mysecond();
         STREAM_Copy<real><<<dimGrid,dimBlock>>>(d_a, d_c, N);
-        cudaDeviceSynchronize();
+        hipDeviceSynchronize();
         times[0][k]= mysecond() -  times[0][k];
 
         times[1][k]= mysecond();
         STREAM_Scale<real><<<dimGrid,dimBlock>>>(d_b, d_c, scalar,  N);
-        cudaDeviceSynchronize();
+        hipDeviceSynchronize();
         times[1][k]= mysecond() -  times[1][k];
 
         times[2][k]= mysecond();
         STREAM_Add<real><<<dimGrid,dimBlock>>>(d_a, d_b, d_c,  N);
-        cudaDeviceSynchronize();
+        hipDeviceSynchronize();
         times[2][k]= mysecond() -  times[2][k];
 
         times[3][k]= mysecond();
         STREAM_Triad<real><<<dimGrid,dimBlock>>>(d_b, d_c, d_a, scalar,  N);
-        cudaDeviceSynchronize();
+        hipDeviceSynchronize();
         times[3][k]= mysecond() -  times[3][k];
     }
 
@@ -314,9 +318,9 @@ int main(int argc, char** argv)
     fclose(FOUT);
     f4=mysecond();
     /* Free memory on device */
-    cudaFree(d_a);
-    cudaFree(d_b);
-    cudaFree(d_c);
+    hipFree(d_a);
+    hipFree(d_b);
+    hipFree(d_c);
     printf("%4.4d %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n",myid,st,st2,f0,f1,f2,f3,f4,tt);
 #ifdef DEBUG
     sprintf(fname,"times.%4.4d",myid);
