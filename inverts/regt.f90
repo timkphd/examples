@@ -63,9 +63,9 @@ end module
 
 program tvert
 	use numz
-#ifdef MINE
-	use myinvert
-#endif
+!#ifdef MINE
+!	use myinvert
+!#endif
 	use doset
 	implicit none
 	real(b8), allocatable :: A(:,:),B(:,:),x(:),times(:)
@@ -73,9 +73,11 @@ program tvert
 	integer, allocatable :: IPIV(:)
 	integer, parameter:: rhs=1
 	integer n,nrhs,lda,ldb,info
+    character (len=128) cla
 	integer i,j,count
 	NRHS=rhs
-	read(*,*)N
+	CALL GET_COMMAND_ARGUMENT(1,cla)
+	read(cla,*)N
 	LDA=n
 	LDB=N
 	allocate(a(n,n))
