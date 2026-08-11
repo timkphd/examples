@@ -2,7 +2,7 @@
 import sys
 import os
 import pickle
-# This program must have as part of its name "env" and/or "mod"
+# This program must have as part of its name "env" or "mod"
 
 def dohelp(pname):
 	envname=pname.replace("mod","env")
@@ -20,7 +20,7 @@ def dohelp(pname):
 	print("     compare two files.  -v = show detailed differences\n")
 	print(envname,"|",modname," infile1 -d")
 	print("     dump the contents of the file as text\n")
-	print(envname,"|",modname," infile1 -D")
+	print(envname,"|",modname," infile1 -M")
 	print("     created a python pickle file from the input text file from module avail")
 	print("     input file is required\n")
 	print(envname,"|",modname," infile1 -E")
@@ -126,6 +126,7 @@ if files > 1:
 			pass
 		else:
 			print(k)
+			if(verb and domod): print(ev2[k])
 	print()
 	print("**** Only in ",ev1f,":")
 	for k in merged:
@@ -133,6 +134,7 @@ if files > 1:
 			pass
 		else:
 			print(k)
+			if(verb and domod): print(ev1[k])
 	exit()
 else:
 	""" Save your environment in a pickle file."""
@@ -156,8 +158,13 @@ else:
 		avails=x.readlines()
 		cdir=""
 		dlist={}
+		dic={}
+		mlist=[]
 		for a in avails:
 			a=a.strip()
+			a=a.replace("[","")
+			a=a.replace("]","")
+			print(a)
 			if(len(a) == 0 and len(cdir) > 0 ):
 				#print(cdir,mlist)
 				mlist.sort()
@@ -183,6 +190,9 @@ else:
 			ofile=ev1f
 		modfile=open(ofile,"wb")
 		pickle.dump(dlist,modfile)
+		#print(dlist.keys())
+		#dic['modules]']=dlist
+		#pickle.dump(dic,modfile)
 		modfile.close()
 		exit()
 
@@ -233,8 +243,11 @@ if dotenv:
 if dotmod:
 	cdir=""
 	dlist={}
+	dic={}
 	for a in x:
 		a=a.strip()
+		a.replace("[","")
+		a.replace("]","")
 		if(len(a) == 0 and len(cdir) > 0 ):
 			#print(cdir,mlist)
 			mlist.sort()
@@ -255,5 +268,8 @@ if dotmod:
 				if(mod.find("(") == -1 ) :
 					mlist.append(mod)
 	file=open(infile+".pkl","wb")
-	pickle.dump(dlist,file)
+	print(dlist.keys())
+	dic["modules"]=dlist
+	#pickle.dump(dlist,file)
+	pickle.dump(dic,file)
 	exit()
