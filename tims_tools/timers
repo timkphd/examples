@@ -3,17 +3,16 @@ stamp () { date +"%y%m%d%H%M%S"; }
 # A simple delta timer (seconds)
 # now=`mytime`
 # delta=`mytime $now`
-
 mytime () 
-{ 
-    now=`date +"%s.%N"`;
+{
+    now=`date +"%s.%N"`
     if (( $# > 0 )); then
+        #rtn=`python3 -c "print('%-15.3f' % ($now - $1))"`
         rtn=$(printf "%0.3f" `echo $now - $1 | bc`);
     else
-        rtn=$(printf "%0.3f" `echo $now`);
-    fi;
+       rtn=$(printf "%0.3f" `echo $now`);
+    fi
     echo $rtn
 }
-
 
 
