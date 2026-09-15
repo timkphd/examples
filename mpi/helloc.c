@@ -22,6 +22,7 @@ int main(int argc, char **argv ,char **envp)
     if (myid == 0 ) {
 	    MPI_Get_library_version(version, &vlan);
 	    printf("%s\n",version);
+            printf("compiler: %s\n", __VERSION__);
 	    // printenv_();
     }
     MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
