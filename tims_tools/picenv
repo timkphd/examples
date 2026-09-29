@@ -12,7 +12,7 @@ def dohelp(pname):
 
 	print("Usage:")
 	print(envname,"|",modname," outfile")
-	print("     create a python pickle file containing either the module avail list or the linux environment\n")
+	print("     Create a python pickle file containing either the module avail list or the linux environment\n")
 	print("     The default output is dependent on the name of this program.  If it contains `env` the output")
 	print("     will be for the environment.  If it contains `mod` it will be a dump of `module avail`.  The")
 	print("     command line options `-e` and `-m` override the program name convention.\n")
@@ -154,36 +154,28 @@ else:
 		exit()
 	""" Save your module list in a pickle file."""
 	if domod :
-		x=os.popen("module avail 2>&1","r")
-		avails=x.readlines()
-		cdir=""
-		dlist={}
-		dic={}
+		cdir=''
 		mlist=[]
+		dlist={}
+		x=os.popen("module -t avail 2>&1","r")
+		avails=x.readlines()
 		for a in avails:
 			a=a.strip()
-			a=a.replace("[","")
-			a=a.replace("]","")
-			print(a)
-			if(len(a) == 0 and len(cdir) > 0 ):
-				#print(cdir,mlist)
-				mlist.sort()
-				dlist[cdir]=mlist
-				cdir=""
-				continue
-			if (len(a) == 0):
-				cdir=""
-				continue
-			if a.find("-") == 0:
-				cdir=a.split()[1]
+			#print(a)
+			if a[-1] == ":" :
+				if(len(mlist) > 0):
+					mlist.sort()
+					dlist[cdir]=mlist			 
+				cdir=a.replace(":","/")
 				mlist=[]
-				#print(cdir)
+				#print(thedir)
 				continue
-			if len(cdir) > 0 :
-				mods=a.split()
-				for mod in mods:
-					if(mod.find("(") == -1 ) :
-						mlist.append(mod)
+			else:
+				mlist.append(a)
+				#print(mlist)
+		if(len(mlist) > 0):
+			mlist.sort()
+			dlist[cdir]=mlist				 
 		if len(ev1f) == 0:
 			ofile="mod_dump"
 		else:
@@ -238,38 +230,31 @@ if dotenv:
 		dic[d]=v.encode('utf-8')
 	file=open(infile+".pkl","wb")
 	pickle.dump(dic,file) 
-	exit()  
-"""created a python pickle file from the input text file from module avail"""
-if dotmod:
-	cdir=""
+	exit()	
+"""created a python pickle file from the input text file from module -t avail"""
+if dotmod :
+	cdir=''
+	mlist=[]
 	dlist={}
-	dic={}
-	for a in x:
+	x=os.popen("module -t avail 2>&1","r")
+	avails=x.readlines()
+	for a in avails:
 		a=a.strip()
-		a.replace("[","")
-		a.replace("]","")
-		if(len(a) == 0 and len(cdir) > 0 ):
-			#print(cdir,mlist)
-			mlist.sort()
-			dlist[cdir]=mlist
-			cdir=""
-			continue
-		if (len(a) == 0):
-			cdir=""
-			continue
-		if a.find("-") == 0:
-			cdir=a.split()[1]
+		#print(a)
+		if a[-1] == ":" :
+			if(len(mlist) > 0):
+				mlist.sort()
+				dlist[cdir]=mlist			 
+			cdir=a.replace(":","/")
 			mlist=[]
-			#print(cdir)
+			#print(thedir)
 			continue
-		if len(cdir) > 0 :
-			mods=a.split()
-			for mod in mods:
-				if(mod.find("(") == -1 ) :
-					mlist.append(mod)
+		else:
+			mlist.append(a)
+			#print(mlist)
+	if(len(mlist) > 0):
+		mlist.sort()
+		dlist[cdir]=mlist				 
 	file=open(infile+".pkl","wb")
-	print(dlist.keys())
-	dic["modules"]=dlist
-	#pickle.dump(dlist,file)
-	pickle.dump(dic,file)
+	pickle.dump(dlist,file)
 	exit()

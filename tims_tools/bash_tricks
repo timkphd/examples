@@ -221,17 +221,17 @@ fi
 **** String tests  
   
   
-if test "abc" = "def" ;then echo "abc = def" ; else echo "nope 1" ; fi  
+if test "abc" = "def" ;then echo "abc = def"    ; else echo "nope 1" ; fi  
   
-if test "abc" != "def" ;then echo "abc != def" ; else echo "nope 2" ; fi  
+if test "abc" != "def" ;then echo "abc != def"  ; else echo "nope 2" ; fi  
   
-if  [ "abc" \< "def" ];then echo "abc < def" ; else echo "nope 3" ; fi  
+if  [ "abc" \< "def" ];then echo "abc < def"    ; else echo "nope 3" ; fi  
   
-if  [ "abc" \> "def" ]; then echo "abc > def" ; else echo "nope 4" ; fi  
+if  [ "abc" \> "def" ]; then echo "abc > def"   ; else echo "nope 4" ; fi  
   
-if  [ "abc" \> "abc" ]; then echo "abc > abc" ; else echo "nope 5" ; fi  
+if  [ "abc" \> "abc" ]; then echo "abc > abc"   ; else echo "nope 5" ; fi  
   
-if test "abc" = "def" ;then echo "abc = def" ; else echo "nope 1" ; fi  
+if test "abc" = "def" ;then echo "abc = def"    ; else echo "nope 1" ; fi  
   
 if test "abc" != "def" ;then echo "abc != def" ; else echo "nope 2" ; fi  
   
@@ -245,14 +245,14 @@ if  [ "abc" \> "abc" ]; then echo "abc > abc" ; else echo "nope 5" ; fi
   
 for i in 1 2 3 ; do  
 	echo "i=" $i  
-	if [ $i == 1 ] ; then unset var ; fi  
-	if [ $i == 2 ] ; then var="" ; fi  
+	if [ $i == 1 ] ; then unset var  ; fi  
+	if [ $i == 2 ] ; then var=""     ; fi  
 	if [ $i == 3 ] ; then var="abcd" ; fi  
 	  
-	if [ -z "$var" ]  ;     then echo "var is unset or empty A"; fi   
-	if [ ! -n "$var" ] ;    then echo "var is unset or empty A2"; fi   
+	if [ -z "$var" ]      ; then echo "var is unset or empty A"; fi   
+	if [ ! -n "$var" ]    ; then echo "var is unset or empty A2"; fi   
 	if [ -z "${var-x}" ]  ; then echo "var is set but empty B"; fi   
-	if [ -n "$var" ] ;      then echo "var is set and not empty C"; fi   
+	if [ -n "$var" ]      ; then echo "var is set and not empty C"; fi   
        echo  
 done  
 
@@ -261,14 +261,15 @@ done
 **** Change lists to arrays and iterate over them
 
 
-#create our hostlist file 8 total tasks
-# counts should match what we have used in our config_file
-counts="1 7"
+#create our hostlist file 6 total tasks
+#counts should match what we have used in our config_file
+counts="1 2"
 # convert the counts string into an array
 c_ray=(${counts})
-
 # get a list of nodes
-nodes=`scontrol show hostnames`
+#nodes=`scontrol show hostnames`
+nodes=`scontrol show hostnames node[001-003]`
+echo $nodes
 # convert the nodes string into an array
 n_ray=(${nodes})
 # iterate through our arrays and 
@@ -276,7 +277,10 @@ n_ray=(${nodes})
 len=${#n_ray[@]}
 rm -rf hostlist
 for (( i=0; i<$len; i++ )); do
-	for x in `seq ${c_ray[$i]}` ; do
-		echo "${n_ray[$i]}" >> hostlist
+        for x in `seq ${c_ray[*]}` ; do
+                echo "${n_ray[$i]}" >> hostlist
     done
 done
+
+cat hostlist
+

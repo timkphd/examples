@@ -1,12 +1,13 @@
 module ccm_numz
 ! basic real types
     integer, parameter:: b8 = selected_real_kind(10)
+    integer, parameter:: c8 = selected_real_kind(10)
 contains
      function ccm_time()
         implicit none
         integer i
         integer :: ccm_start_time(8) = (/(-100,i=1,8)/)
-        real(b8) :: ccm_time,tmp
+        real(c8) :: ccm_time,tmp
         integer,parameter :: norm(13)=(/  &   
                0, 2678400, 5097600, 7776000,10368000,13046400,&
         15638400,18316800,20995200,23587200,26265600,28857600,31536000/)
