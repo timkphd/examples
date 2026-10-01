@@ -1,7 +1,7 @@
       module fmpi
-!DEC$ NOFREEFORM
+! here we create our own mpi module in 
+! case we want to include other things
       include "mpif.h"
-!DEC$ FREEFORM
       end module
 !****************************************************************
 !  This is a simple send/receive program in MPI
@@ -19,12 +19,6 @@
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
       call MPI_COMM_SIZE( MPI_COMM_WORLD, numprocs, ierr )
       tag=1234
-!      if (myid .eq. 0)then
-!        write(*,*)"enter the message tag"
-!        read(*,*)tag
-!      endif
-!      call mpi_bcast(tag,1,mpi_integer,0, MPI_COMM_WORLD,err)
-!      write(*,*)myid,"tag=",tag
       source=0
       destination=1
       count=1
