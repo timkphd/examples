@@ -5,7 +5,7 @@
 !*********************************************
       program hello
       use iso_fortran_env
-      include "mpif.h"
+      use mpi_f08
       integer myid,numprocs,ierr,nlength
       character(len=MPI_MAX_LIBRARY_VERSION_STRING) :: version
       character (len=MPI_MAX_PROCESSOR_NAME):: myname
@@ -28,10 +28,10 @@
       stop
       end
       subroutine pass(myid,numprocs)
+              use mpi_f08
               implicit none
-              include "mpif.h"
               integer myid,numprocs
-              integer status(MPI_STATUS_SIZE)
+              type(MPI_Status) :: status
               integer my_tag,to,from,i,ierr
               my_tag=1234
               i=myid
@@ -66,7 +66,7 @@
       end subroutine
 
 subroutine chkerr(ierr,myid,routine)
-      include "mpif.h"
+      use mpi_f08
       integer ierr,myid
       character (len=*)  routine
       if (ierr .ne. 0)then
@@ -76,8 +76,8 @@ subroutine chkerr(ierr,myid,routine)
 end subroutine
          
 subroutine waste(t)
+    use mpi_f08
     implicit none
-    include "mpif.h"
     double precision t
     double precision t1
     integer , allocatable:: avect(:)
