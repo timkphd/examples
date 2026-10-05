@@ -32,11 +32,12 @@ def show_usage(script_name, mybase):
     print("         -h               show this help and quit")
     print("         -s               work silently")
     print("         -n               don't time stamp the file name")
-    print("         -svn             include svn and CVS directories")
+    print("         -svn             include svn git OSX CVS directories")
     print("         -b directory     directory in which to place the archive")
     print("         -i file          file or directory to archive")
     print("         -o name          replace the machine name in the archive with this name")
     print("         -io file_name    combination of -i and -o using the same value for each\n")
+    print("         -e               encrypt the output (will be asked for a password)\n")
     sys.exit(0)
 
 def main():
@@ -50,6 +51,7 @@ def main():
     parser.add_argument("-i", type=str, default=None)
     parser.add_argument("-o", type=str, default=None)
     parser.add_argument("-io", type=str, default=None)
+    parser.add_argument("-e", type=str, default=False)
     args, unknown = parser.parse_known_args()
 
     verboseornoverbose = args.verbose
@@ -61,6 +63,7 @@ def main():
     i = args.i
     o = args.o
     io = args.io
+    crypt=args.e
 
     whoami = getpass.getuser()
     myname = "tkaiser"
@@ -101,7 +104,7 @@ def main():
 
     command += " -r "
 
-    exclude = " -x *.svn* -x *CVS* -x *CVSROOT* -x *.DS_Store* -x __MACOSX*"
+    exclude = " -x *.svn* -x *CVS* -x *CVSROOT* -x *.DS_Store* -x __MACOSX* -x .git -x .gitattributes"
     if svn:
         exclude = " -x *.DS_Store*"
 
@@ -111,9 +114,16 @@ def main():
         command += f"{fname} *"
 
     command += exclude
+    if crypt:
+    	command += " -e"
 
     if not silent:
         print(command)
+    if crypt:
+    	print("ENTER PASSWORD TWICE:")
+    	print("IT WILL NOT BE ECHOED:")
+   
+    
 
     # Execute the command and capture output
     try:
