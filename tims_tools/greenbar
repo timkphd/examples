@@ -137,6 +137,16 @@ out32_256	8	32	256	build5	0.257383043749996432
 out32_256	8	32	256	build7	0.284165476249995663
 out32_256	8	32	256	xxxxxx	0.202702161875002673
 """
+"""
+Another way to make a data file:
+printf '%s\t%s\t%s\n' x sin_x cos_x > toshow
+seq 0 .314159265359 3.14159265359 > x
+cat x | xargs -I {}  echo sin\({}\) | bc -l |  xargs -I {} printf "%9.5f\n" "{}" > sinx
+cat x | xargs -I {}  echo cos\({}\) | bc -l |  xargs -I {} printf "%9.5f\n" "{}" > cosx
+paste x sinx cosx >> toshow
+greenbar toshow -t "Trig in Bash" >toshow.html
+"""
+
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("-t", type=str, dest="Title",help="string - Title above the table")
 parser.add_argument("-n", action="store_true", dest="NoHeader",default=False,help="First Line is not a header")
