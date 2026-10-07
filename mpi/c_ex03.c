@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
-#include <math.h>
  
 /************************************************************
 This is a simple isend/ireceive program in MPI

@@ -1,15 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
-#include <math.h>
  
 /************************************************************
 This is a simple broadcast program in MPI
 ************************************************************/
 
-int main(argc,argv)
-int argc;
-char *argv[];
+int main(int argc, char **argv ,char **envp)
 {
     int i,myid, numprocs;
     int source,count;
@@ -27,6 +24,7 @@ char *argv[];
         buffer[i]=i;
     }
     MPI_Bcast(buffer,count,MPI_INT,source,MPI_COMM_WORLD);
+    printf("id=%d buffer=",myid);
     for(i=0;i<count;i++)
       printf("%d ",buffer[i]);
     printf("\n");

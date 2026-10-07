@@ -1,13 +1,8 @@
-      module fmpi
-!DEC$ NOFREEFORM
-      include "mpif.h"
-!DEC$ FREEFORM
-      end module
 !****************************************************************
 !  This is a simple broadcast program in MPI
 !****************************************************************
       program hello
-      use fmpi
+      use mpi
 !     include "mpif.h"
       integer myid, ierr,numprocs
       integer source,count

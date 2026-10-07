@@ -148,6 +148,7 @@ greenbar toshow -t "Trig in Bash" >toshow.html
 """
 
 parser = argparse.ArgumentParser(add_help=True)
+parser.add_argument("input_file", nargs="?", default=None, help="Path to the input file (optional)")
 parser.add_argument("-t", type=str, dest="Title",help="string - Title above the table")
 parser.add_argument("-n", action="store_true", dest="NoHeader",default=False,help="First Line is not a header")
 parser.add_argument("-b", action="store_true", dest="BlueBar",default=False,help="BlueBar")
@@ -166,8 +167,8 @@ else:
 color="green"
 if(args.BlueBar):
 	color="blue"
-if len(unknown_args) > 0:
-	f=open(unknown_args[0])
+if args.input_file != None:
+	f=open(args.input_file,"r")
 	data=f.read()
 print(header)
 if(color=="green"):
