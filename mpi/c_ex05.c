@@ -32,12 +32,13 @@ int main(int argc,char *argv[]){
 	count=4;
 	myray=(int*)malloc(count*sizeof(int));
 /* create the data to be sent on the root */
+/* and the array for the gathered data */
 	if(myid == mpi_root){
 	    size=count*numnodes;
 		send_ray=(int*)malloc(size*sizeof(int));
-		back_ray=(int*)malloc(numnodes*sizeof(int));
 		for(i=0;i<size;i++)
 			send_ray[i]=i;
+		back_ray=(int*)malloc(numnodes*sizeof(int));
 		}
 /* send different data to each processor */
 	mpi_err = MPI_Scatter(	send_ray, count,   MPI_INT,
@@ -49,7 +50,7 @@ int main(int argc,char *argv[]){
 	total=0;
 	for(i=0;i<count;i++)
 	    total=total+myray[i];
-	printf("myid= %d total= %d\n ",myid,total);
+	printf("myid= %d total= %d\n",myid,total);
 /* send the local sums back to the root */
     mpi_err = MPI_Gather(&total,    1,  MPI_INT, 
 						back_ray, 1,  MPI_INT, 

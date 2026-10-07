@@ -6,9 +6,7 @@
 This is a simple isend/ireceive program in MPI
 ************************************************************/
 
-int main(argc,argv)
-int argc;
-char *argv[];
+int main(int argc, char **argv ,char **envp)
 {
     int myid, numprocs;
     int tag,source,destination,count;

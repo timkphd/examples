@@ -8,7 +8,6 @@
 !****************************************************************
       program hello
       use mpi
-!     include "mpif.h"
       integer myid, ierr,numprocs
       integer tag,source,destination,count
       integer, allocatable :: buffer(:)

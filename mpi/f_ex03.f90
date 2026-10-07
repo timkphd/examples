@@ -1,14 +1,9 @@
-      module fmpi
-!DEC$ NOFREEFORM
-      include "mpif.h"
-!DEC$ FREEFORM
-      end module
+
 !****************************************************************
 !  This is a simple isend/ireceive program in MPI
 !****************************************************************
       program hello
-      use fmpi
-!     include "mpif.h"
+      use mpi
       integer myid, ierr,numprocs
       integer tag,source,destination,count
       integer, allocatable :: buffer(:)

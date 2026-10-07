@@ -34,13 +34,14 @@ program test1
 	count=4
 	allocate(myray(count))
 ! create the data to be sent on the root
+! and the array for the gathered data
 	if(myid == my_root)then
 	    size=count*numnodes	
 		allocate(send_ray(0:size-1))
-		allocate(back_ray(0:numnodes-1))
 		do i=0,size-1
 			send_ray(i)=i
 		enddo
+		allocate(back_ray(0:numnodes-1))
 	endif
 ! send different data to each processor 
 	call MPI_Scatter(	send_ray, count,  MPI_INTEGER, &
@@ -50,7 +51,7 @@ program test1
 	                
 ! each processor does a local sum
 	total=sum(myray)
-	write(*,*)"myid= ",myid," total= ",total
+	write(*,'("myid= ",i4," total= ",i4)')myid,total
 ! send the local sums back to the root
 	call MPI_Gather(	total,    1,  MPI_INTEGER, &
 						back_ray, 1,  MPI_INTEGER, &
@@ -58,7 +59,7 @@ program test1
 	                 	MPI_COMM_WORLD,mpi_err)
 ! the root prints the global sum
 	if(myid == my_root)then
-	  write(*,*)"results from all processors= ",sum(back_ray)
+	  write(*,'("results from all processors= ",i4)')sum(back_ray)
 	endif
 	
 	call mpi_finalize(mpi_err)
