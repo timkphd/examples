@@ -13,9 +13,7 @@ PMPI_Send(159): MPI_Send(buf=0x63ec7e0, count=60, MPI_INTEGER, dest=597, tag=119
 PMPI_Send(97).: Invalid tag, value is 1196597)
 */
 
-int main(argc,argv)
-int argc;
-char *argv[];
+int main(int argc, char **argv ,char **envp)
 {
     int myid, numprocs;
     int tag,source,destination,count;

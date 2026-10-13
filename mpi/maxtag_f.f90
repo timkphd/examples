@@ -29,11 +29,15 @@
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
       call MPI_COMM_SIZE( MPI_COMM_WORLD, numprocs, ierr )
       ! is this call working correctly?
+      val=-1
       call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE, val, flag, ierr)
       ! val should be equal to numprocs and no error
-      if (val .ne. numprocs .or. ierr .ne. 0)then
-        write(*,*)"somthing wrong with call to MPI_COMM_GET_ATTR"
-        write(*,*)val, flag, ierr
+      if (ierr .ne. 0 .or. val .eq. 0 .and. myid .eq. 0)then
+        write(*,*)"Somthing wrong with call to MPI_COMM_GET_ATTR with"
+        write(*,*)"             MPI_UNIVERSE_SIZE"
+        write(*,*)"It might need to be set outside of this program"
+        write(*,*)"For example:"     
+        write(*,*)"mpirun -usize 6 -n 4 ./maxtag_f"  
       endif 
       call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_TAG_UB, val, flag, ierr)
       write(*,*)val, flag, ierr

@@ -1,9 +1,5 @@
-      module fmpi
-!DEC$ NOFREEFORM
-      include "mpif.h"
-!DEC$ FREEFORM
-      end module
-! This program shows how to use fmpi_Scatter and MPI_Reduce
+
+! This program shows how to use MPI_Scatter and MPI_Reduce
 ! Each processor gets different data from the root processor
 ! by way of mpi_scatter.  The data is summed and then sent back
 ! to the root processor using MPI_Reduce.  The root processor
@@ -13,7 +9,7 @@ module global
 	integer, parameter :: my_root=0
 end module
 subroutine init
-    use fmpi
+    use mpi
     use global
     implicit none
 ! do the mpi init stuff
@@ -23,7 +19,7 @@ subroutine init
 end subroutine init
 
 program test1
-	use fmpi
+	use mpi
 	use global
 	implicit none
 	integer, allocatable :: myray(:),send_ray(:),back_ray(:)
@@ -50,14 +46,14 @@ program test1
 	                
 ! each processor does a local sum
 	total=sum(myray)
-	write(*,*)"myid= ",myid," total= ",total
+	write(*,'("myid= ",i4," total= ",i6)')myid,total
 ! send the local sums back to the root
 	call MPI_Reduce(	total,  gtotal, 1,      &
 	                    MPI_INTEGER, MPI_SUM,   &
 	                    my_root,MPI_COMM_WORLD,mpi_err)
 ! the root prints the global sum
 	if(myid == my_root)then
-	  write(*,*)"results from all processors= ",gtotal
+	  write(*,'("total from all processors= ",i4)')gtotal
 	endif
 	
 	call mpi_finalize(mpi_err)

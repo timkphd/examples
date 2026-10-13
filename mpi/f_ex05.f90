@@ -1,8 +1,3 @@
-      module fmpi
-!DEC$ NOFREEFORM
-      include "mpif.h"
-!DEC$ FREEFORM
-      end module
 ! This program shows how to use fmpi_Scatter and MPI_Gather
 ! Each processor gets different data from the root processor
 ! by way of mpi_scatter.  The data is summed and then sent back
@@ -13,7 +8,7 @@ module global
 	integer, parameter :: my_root=0
 end module
 subroutine init
-    use fmpi
+    use mpi
     use global
     implicit none
 ! do the mpi init stuff
@@ -23,7 +18,7 @@ subroutine init
 end subroutine init
 
 program test1
-	use fmpi
+	use mpi
 	use global
 	implicit none
 	integer, allocatable :: myray(:),send_ray(:),back_ray(:)
@@ -59,7 +54,7 @@ program test1
 	                 	MPI_COMM_WORLD,mpi_err)
 ! the root prints the global sum
 	if(myid == my_root)then
-	  write(*,'("results from all processors= ",i4)')sum(back_ray)
+	  write(*,'("total from all processors= ",i4)')sum(back_ray)
 	endif
 	
 	call mpi_finalize(mpi_err)

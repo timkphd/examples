@@ -48,7 +48,7 @@ int main(int argc,char *argv[]){
 	total=0;
 	for(i=0;i<count;i++)
 	    total=total+myray[i];
-	printf("myid= %d total= %d\n ",myid,total);
+	printf("myid= %d total= %d\n",myid,total);
 /* send the local sums back to the root */
     mpi_err = MPI_Reduce(&total,    &gtotal, 1,  MPI_INT, 
 						MPI_SUM, 

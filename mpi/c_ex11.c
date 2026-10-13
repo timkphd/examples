@@ -6,14 +6,12 @@ Shows how to use MPI_Type_vector to send noncontiguous blocks of data
 #include <stdlib.h>
 #include <mpi.h>
 #include <math.h>
-int main(argc,argv)
-int argc;
-char *argv[];
+int main(int argc, char **argv ,char **envp)
 {
     int myid, numprocs,mpi_err;
-#define SIZE 25
+#define SIZE 30
     double svect[SIZE],rvect[SIZE];
-    int i,bonk1,bonk2,numx,stride,extent;
+    int i,bonk1,bonk2,count,stride,blocklength;
     MPI_Datatype MPI_LEFT_RITE;
     MPI_Status status;
     
@@ -22,22 +20,24 @@ char *argv[];
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
  
     stride=5;
-    numx=(SIZE+1)/stride;
-    extent=1;
+    count=(SIZE+1)/stride;
+    blocklength=1;
     if(myid == 1){
-      printf("numx=%d  extent=%d stride=%d\n",numx,extent,stride);
+      printf("count=%d  blocklength=%d stride=%d\n",count,blocklength,stride);
     }
-    mpi_err=MPI_Type_vector(numx,extent,stride,MPI_DOUBLE,&MPI_LEFT_RITE);
+    mpi_err=MPI_Type_vector(count,blocklength,stride,MPI_DOUBLE,&MPI_LEFT_RITE);
     mpi_err=MPI_Type_commit(&MPI_LEFT_RITE);
     if(myid == 0){
-        for (i=0;i<SIZE;i++)
-            svect[i]=i;
+        for (i=0;i<SIZE;i++) 
+        	svect[i]=i;
+        // printf("svect "); for (i=0;i<SIZE;i++) {printf(" %g ",svect[i]);}  printf("\n");
         MPI_Send(svect,1,MPI_LEFT_RITE,1,100,MPI_COMM_WORLD);
     }
     if(myid == 1){
         for (i=0;i<SIZE;i++)
             rvect[i]=-1;
         MPI_Recv(rvect,1,MPI_LEFT_RITE,0,100,MPI_COMM_WORLD,&status);
+        // printf("rvect "); for (i=0;i<SIZE;i++) {printf(" %g ",rvect[i]);}  printf("\n");
     }
     if(myid == 1){
         MPI_Get_count(&status,MPI_LEFT_RITE,&bonk1);
@@ -49,14 +49,3 @@ char *argv[];
     }
     MPI_Finalize();
 }
-/*
-output
-numx=5  extent=5 stride=1
-got 1 elements of type MY_TYPE
-which contained 5 elements of type MPI_DOUBLE
-0 0
-5 5
-10 10
-15 15
-20 20
-*/

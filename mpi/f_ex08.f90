@@ -1,10 +1,6 @@
-      module fmpi
-!DEC$ NOFREEFORM
-      include "mpif.h"
-!DEC$ FREEFORM
-      end module
-! This program shows how to use fmpi_Gatherv.  Each processor sends a
-! different amount of data to the root processor.  We use fmpi_Gather
+
+! This program shows how to use mpi_Gatherv.  Each processor sends a
+! different amount of data to the root processor.  We use mpi_Gather
 ! first to tell the root how much data is going to be sent.
 
 module global
@@ -12,7 +8,7 @@ module global
 	integer, parameter :: my_root=0
 end module
 subroutine init
-    use fmpi
+    use mpi
     use global
     implicit none
 ! do the mpi init stuff
@@ -22,8 +18,7 @@ subroutine init
 end subroutine init
 
 program test1
-! poe a.out -procs 3 -rmpool 1
-	use fmpi
+	use mpi
 	use global
 	implicit none
 	integer, allocatable :: myray(:),displacements(:),counts(:),allray(:)
@@ -59,7 +54,7 @@ program test1
 	                 MPI_COMM_WORLD,mpi_err)
 	                
 	if(myid == my_root)then
-		write(*,*)allray
+		write(*,"(16i4)")allray
 	endif
 	call mpi_finalize(mpi_err)
 end program
