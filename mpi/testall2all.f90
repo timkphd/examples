@@ -16,11 +16,11 @@ module my_collective
 contains
 
     subroutine dump_stat(base)
+    use mpi
     implicit none
     character(len=*) , optional :: base
     character (len=80) temp
     integer myid, ierr
-    include "mpif.h"
     call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
     if (present(base) )then
     	write(temp,"(a,i5.5)")trim(base),myid
@@ -40,7 +40,7 @@ contains
 subroutine imyall2allv(sendbuf,sendcounts,sdispls,it1,&
                        recvbuf,recvcounts,rdispls,it2,&
                        comm,ierr)
-  include "mpif.h"
+    use mpi
 
   integer sendbuf(*),recvbuf(*)
   integer sendcounts(0:*),sdispls(0:*),recvcounts(0:*),rdispls(0:*)
@@ -112,7 +112,7 @@ end subroutine imyall2allv
 subroutine rmyall2allv(sendbuf,sendcounts,sdispls,it1,&
                        recvbuf,recvcounts,rdispls,it2,&
                        comm,ierr)
-  include "mpif.h"
+  use mpi
 
   real sendbuf(*),recvbuf(*)
   integer sendcounts(0:*),sdispls(0:*),recvcounts(0:*),rdispls(0:*)
@@ -184,7 +184,8 @@ end subroutine rmyall2allv
 subroutine dmyall2allv(sendbuf,sendcounts,sdispls,it1,&
                        recvbuf,recvcounts,rdispls,it2,&
                        comm,ierr)
-  include "mpif.h"
+      use mpi
+
 
   double precision sendbuf(*),recvbuf(*)
   integer sendcounts(0:*),sdispls(0:*),recvcounts(0:*),rdispls(0:*)
@@ -256,9 +257,6 @@ end subroutine dmyall2allv
 
 end module
 
-      module fmpi
-      include "mpif.h"
-      end module
 ! This program shows how to use fmpi_Alltoallv.  Each processor 
 ! send/rec a different and random amount of data to/from other
 ! processors.  
@@ -280,7 +278,7 @@ end subroutine init
 
 program test1
 ! poe a.out -procs 3 -rmpool 1
-    use fmpi
+    use mpi
     use global
     use my_collective
     implicit none
@@ -329,12 +327,12 @@ program test1
     call MPI_alltoallv( sray,scounts,sdisp,mytype, &
                         rray,rcounts,rdisp,mytype, &
                         MPI_COMM_WORLD,mpi_err)
-    write(*,*)"myid= ",myid,"    rray= ",rray
+    write(*,'("A myid=",i4," rray=",(50f5.1))')myid,rray
     call MYY_Alltoallv( sray,scounts,sdisp,mytype,  &
                         rray,rcounts,rdisp,mytype,  &
                         MPI_COMM_WORLD,mpi_err)
                     
-    write(*,*)"myid= ",myid,"    rray= ",rray
+    write(*,'("B myid=",i4," rray=",(50f5.1))')myid,rray
     call dump_stat()
     call mpi_finalize(mpi_err)
 end program
