@@ -25,7 +25,7 @@ int main(int argc, char **argv ,char **envp)
     int *maxtag;
     int flag;
     int ierr;
-    int val;
+    int *val;
  
     MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
@@ -42,10 +42,10 @@ int main(int argc, char **argv ,char **envp)
 			printf("mpirun -usize 6 -n 4 ./maxtag_f\n");  
 		  } 
 		  if(myid == 0){
-		      val=0; ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE,   &val, &flag);
-		      printf("MPI_UNIVERSE_SIZE returned    %14d flag %4d ierr %4d\n",val, flag, ierr);
-		      val=0; ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, &val, &flag);
-		       printf("MPI_WTIME_IS_GLOBAL returned %14d flag %4d ierr %4d\n",val, flag, ierr);
+		      ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE,   &val, &flag);
+		      printf("MPI_UNIVERSE_SIZE returned    %14d flag %4d ierr %4d\n",*val, flag, ierr);
+		      ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, &val, &flag);
+		      printf("MPI_WTIME_IS_GLOBAL returned %14d flag %4d ierr %4d\n",*val, flag, ierr);
 		      printf("Timer resolution: %14.8f\n",MPI_Wtick());
 		  }
 		  }
