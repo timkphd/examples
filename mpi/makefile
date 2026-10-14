@@ -4,7 +4,7 @@ CS ?= c_allred
 
 
 # MPIRUN command and the number to tasks
-RUN  = mpirun
+RUN  ?= mpirun
 NP ?= 4
 
 # MPI compilers

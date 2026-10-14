@@ -54,7 +54,7 @@ int main(int argc, char **argv ,char **envp)
 
     ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &maxtag, &flag);
     if(myid == 0)printf("maxtag %14d flag %4d ierr %4d\n",*maxtag,flag,ierr);
-    tag=1422709;
+    tag=63131;
     if (tag > *maxtag ) {
       printf("warning maxtag is %d tag is %d\n",*maxtag,tag);
     }

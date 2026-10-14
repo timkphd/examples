@@ -30,28 +30,28 @@
       ! is this call working correctly?
       val=-1
       if (getuniverse)then
-		  call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE, val, flag, ierr)
-		  ! val should be equal to numprocs and no error
-		  if (ierr .ne. 0 .or. val .eq. 0 .and. myid .eq. 0)then
-			write(*,*)"Somthing wrong with call to MPI_COMM_GET_ATTR with"
-			write(*,*)"             MPI_UNIVERSE_SIZE"
-			write(*,*)"It might need to be set outside of this program"
-			write(*,*)"For example:"     
-			write(*,*)"mpirun -usize 6 -n 4 ./maxtag_f"  
-		  endif 
-		  if(myid .eq. 0)then
-		      call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE, val, flag, ierr)
-		      write(*,'("MPI_UNIVERSE_SIZE returned    ",i14," flag ",l4," ierr ",i4)')val, flag, ierr
-		      call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, val, flag, ierr)
-		      write(*,'("MPI_WTIME_IS_GLOBAL returned  ",i14," flag ",l4," ierr ",i4)')val, flag, ierr
-		      write(*,'("Timer resolution: ",e13.4)')MPI_Wtick()
-		  endif
+          call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE, val, flag, ierr)
+          ! val should be equal to numprocs and no error
+          if (ierr .ne. 0 .or. val .eq. 0 .and. myid .eq. 0)then
+            write(*,*)"Somthing wrong with call to MPI_COMM_GET_ATTR with"
+            write(*,*)"             MPI_UNIVERSE_SIZE"
+            write(*,*)"It might need to be set outside of this program"
+            write(*,*)"For example:"     
+            write(*,*)"mpirun -usize 6 -n 4 ./maxtag_f"  
+          endif 
+          if(myid .eq. 0)then
+              call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE, val, flag, ierr)
+              write(*,'("MPI_UNIVERSE_SIZE returned    ",i14," flag ",l4," ierr ",i4)')val, flag, ierr
+              call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, val, flag, ierr)
+              write(*,'("MPI_WTIME_IS_GLOBAL returned  ",i14," flag ",l4," ierr ",i4)')val, flag, ierr
+              write(*,'("Timer resolution: ",e13.4)')MPI_Wtick()
+          endif
       endif
   
      call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_TAG_UB, val, flag, ierr)
      maxtag=VAL
      if(myid == 0)write(*,'("maxtag ",i14," flag ",l4," ierr ",i4)')maxtag,flag,ierr
-      tag=14227094
+      tag=63131
 !      tag=maxtag-1
       if(tag .gt. maxtag) then
         write(*,*)"warning maxtag is ",maxtag," tag is ",tag
