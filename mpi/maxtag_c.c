@@ -4,7 +4,8 @@
 #include <math.h>
  
 /************************************************************
-This is a simple send/receive program in MPI
+This is a simple send/receive program in MPI to which was
+added a call to find the maxtag.
 ************************************************************/
 /*
 PMPI_Send(97).: Invalid tag, value is 1196597
@@ -27,7 +28,7 @@ int main(int argc, char **argv ,char **envp)
     MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
     ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &maxtag, &flag);
-    printf("%d %d %d\n",*maxtag,flag,ierr);
+    if(myid == 0)printf("maxtag %14d flag %4d ierr %4d\n",*maxtag,flag,ierr);
     tag=1422709;
     if (tag > *maxtag ) {
       printf("warning maxtag is %d tag is %d\n",*maxtag,tag);
@@ -42,7 +43,7 @@ int main(int argc, char **argv ,char **envp)
     }
     if(myid == destination){
         MPI_Recv(&buffer,count,MPI_INT,source,tag,MPI_COMM_WORLD,&status);
-        printf("processor %d  got %d\n",myid,buffer);
+        printf("processor %d   got %d\n",myid,buffer);
     }
     MPI_Finalize();
 }

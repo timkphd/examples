@@ -257,17 +257,17 @@ end subroutine dmyall2allv
 
 end module
 
-! This program shows how to use fmpi_Alltoallv.  Each processor 
+! This program shows how to use mpi_Alltoallv.  Each processor 
 ! send/rec a different and random amount of data to/from other
 ! processors.  
-! We use fmpi_Alltoall to tell how much data is going to be sent.
+! We use mpi_Alltoall to tell how much data is going to be sent.
 
 module global
     integer numnodes,myid,mpi_err
     integer, parameter :: my_root=0
 end module
 subroutine init
-    use fmpi
+    use mpi
     use global
     implicit none
 ! do the mpi init stuff
