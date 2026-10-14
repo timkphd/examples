@@ -22,7 +22,7 @@
       integer status(MPI_STATUS_SIZE)
       integer (selected_int_kind (18)) :: maxtag
       LOGICAL FLAG 
-      LOGICAL :: getuniverse = .false.
+      LOGICAL :: getuniverse = .true.
       INTEGER (KIND=MPI_ADDRESS_KIND) VAL
       call MPI_INIT( ierr )
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
@@ -39,10 +39,18 @@
 			write(*,*)"For example:"     
 			write(*,*)"mpirun -usize 6 -n 4 ./maxtag_f"  
 		  endif 
-	  endif
-      call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_TAG_UB, val, flag, ierr)
-      if(myid == 0)write(*,'("maxtag ",i14," flag ",l4," ierr ",i4)')val, flag, ierr
-      maxtag=VAL
+		  if(myid .eq. 0)then
+		      call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE, val, flag, ierr)
+		      write(*,'("MPI_UNIVERSE_SIZE returned    ",i14," flag ",l4," ierr ",i4)')val, flag, ierr
+		      call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, val, flag, ierr)
+		      write(*,'("MPI_WTIME_IS_GLOBAL returned  ",i14," flag ",l4," ierr ",i4)')val, flag, ierr
+		      write(*,'("Timer resolution: ",e13.4)')MPI_Wtick()
+		  endif
+      endif
+  
+     call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_TAG_UB, val, flag, ierr)
+     maxtag=VAL
+     if(myid == 0)write(*,'("maxtag ",i14," flag ",l4," ierr ",i4)')maxtag,flag,ierr
       tag=14227094
 !      tag=maxtag-1
       if(tag .gt. maxtag) then
