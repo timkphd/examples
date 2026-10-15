@@ -22,14 +22,15 @@
       integer status(MPI_STATUS_SIZE)
       integer (selected_int_kind (18)) :: maxtag
       LOGICAL FLAG 
-      LOGICAL :: getuniverse = .true.
+      LOGICAL :: getuniverse = .false.
+      LOGICAL :: getclock = .true.
       INTEGER (KIND=MPI_ADDRESS_KIND) VAL
       call MPI_INIT( ierr )
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
       call MPI_COMM_SIZE( MPI_COMM_WORLD, numprocs, ierr )
       ! is this call working correctly?
       val=-1
-      if (getuniverse)then
+      if (getuniverse .and. myid .eq. 0)then
           call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE, val, flag, ierr)
           ! val should be equal to numprocs and no error
           if (ierr .ne. 0 .or. val .eq. 0 .and. myid .eq. 0)then
@@ -38,15 +39,15 @@
             write(*,*)"It might need to be set outside of this program"
             write(*,*)"For example:"     
             write(*,*)"mpirun -usize 6 -n 4 ./maxtag_f"  
-          endif 
-          if(myid .eq. 0)then
-              call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE, val, flag, ierr)
+          else
               write(*,'("MPI_UNIVERSE_SIZE returned    ",i14," flag ",l4," ierr ",i4)')val, flag, ierr
+          endif 
+      endif
+          if(getclock .and. myid .eq. 0)then
               call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, val, flag, ierr)
               write(*,'("MPI_WTIME_IS_GLOBAL returned  ",i14," flag ",l4," ierr ",i4)')val, flag, ierr
               write(*,'("Timer resolution: ",e13.4)')MPI_Wtick()
           endif
-      endif
   
      call MPI_COMM_GET_ATTR(MPI_COMM_WORLD, MPI_TAG_UB, val, flag, ierr)
      maxtag=VAL

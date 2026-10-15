@@ -4,7 +4,8 @@
 #include <math.h>
 #include <stdbool.h>
 
-#define getuniverse true
+#define getuniverse false
+#define getclock true
 /************************************************************
 This is a simple send/receive program in MPI to which was
 added a call to find the maxtag.
@@ -31,23 +32,23 @@ int main(int argc, char **argv ,char **envp)
     MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
     
-          if (getuniverse){
+          if (getuniverse && myid == 0){
 		  ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE, &val, &flag);
-		  // val should be equal to numprocs or more and no error
-		  if (ierr != 0 || (val == 0 && myid == 0)) {
+		  if (ierr != 0) {
 			printf("Somthing wrong with call to MPI_COMM_GET_ATTR with\n");
 			printf("             MPI_UNIVERSE_SIZE\n");
 			printf("It might need to be set outside of this program\n");
 			printf("For example:\n");    
-			printf("mpirun -usize 6 -n 4 ./maxtag_f\n");  
-		  } 
-		  if(myid == 0){
-		      ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_UNIVERSE_SIZE,   &val, &flag);
-		      printf("MPI_UNIVERSE_SIZE returned    %14d flag %4d ierr %4d\n",*val, flag, ierr);
-		      ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, &val, &flag);
-		      printf("MPI_WTIME_IS_GLOBAL returned %14d flag %4d ierr %4d\n",*val, flag, ierr);
-		      printf("Timer resolution: %14.8f\n",MPI_Wtick());
+			printf("mpirun -usize 6 -n 4 ./maxtag_c\n");  
 		  }
+		  else {
+		      printf("MPI_UNIVERSE_SIZE returned    %14d flag %4d ierr %4d\n",*val, flag, ierr);
+		  }
+	  }
+          if (getclock && myid == 0){
+		  ierr=MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, &val, &flag);
+		  printf("MPI_WTIME_IS_GLOBAL returned  %14d flag %4d ierr %4d\n",*val, flag, ierr);
+		  printf("Timer resolution: %14.8g\n",MPI_Wtick());
 		  }
 
 
