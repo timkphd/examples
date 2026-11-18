@@ -31,11 +31,11 @@ getit.o: getit.c
 bin2: binary.f90 getit.o
 	gfortran binary.f90 getit.o -o bin2
 
-t90: test1.f90
-	$(XLF90) test1.f90 -o t90
+t90: badprogram.f90
+	$(XLF90) badprogram.f90 -o t90
 
-t95: test1.f90
-	$(XLF95) test1.f90 -o t95
+t95: badprogram.f90
+	$(XLF95) badprogram.f90 -o t95
 
 clean:
 	rm -rf *.mod *o t95 t90 bin1 bin2 fandc a.out
