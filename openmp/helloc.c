@@ -14,4 +14,6 @@ int core,nt,j;
     }
   }
 }
-
+#ifdef __APPLE__
+int sched_getcpu() { return -1;}
+#endif

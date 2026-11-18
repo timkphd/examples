@@ -12,9 +12,9 @@ program backforth
     enddo
     ALLOCATE( RECV(SENDCOUNT) )
     mysum=-1.0
-    write(*,'("Fortran mysum before C call  = ",f7.1)'),mysum
+    write(*,'("Fortran mysum before C call  = ",f7.1)')mysum
     i=C_LIBRARY_FUNCTION(C_LOC(SEND), SENDCOUNT, C_LOC(RECV),mysum)
-    write(*,'("Back from C in Fortran mysum = ",f7.1)'),mysum
+    write(*,'("Back from C in Fortran mysum = ",f7.1)')mysum
 
     do i=1,SENDCOUNT
         write(*,*)send(i),recv(i)
